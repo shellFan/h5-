@@ -92,17 +92,40 @@ class Squad {
 
     /** 应用状态门效果 */
     applyGate(gate, effects) {
+        var added = 0;
         if (gate.op === 'add') {
+            added = gate.value;
             this.setCount(this.count + gate.value);
         } else if (gate.op === 'mul') {
+            added = this.count * (gate.value - 1);
             this.setCount(this.count * gate.value);
         } else if (gate.op === 'buff') {
             if (gate.value === 'damage') this.damageBuff += 1;
             else if (gate.value === 'firerate') this.fireRateBuff += 0.2;
         }
-        // 穿门冲击波
+        // 穿门反馈: 冲击波 + 膨胀文字 + 蓝色粒子
         if (effects) {
-            effects.shockwave(this.x, 0.05, this.z, 0x6EE7B7);
+            var isMul = gate.op === 'mul';
+            var isBuff = gate.op === 'buff';
+            // 冲击波(乘法门更大)
+            effects.shockwave(this.x, 0.05, this.z, isMul ? 0xFFC247 : 0x75DFFF);
+            if (isMul) {
+                effects.shockwave(this.x, 0.05, this.z, 0x75DFFF);
+            }
+            // +N 膨胀文字
+            if (added > 0) {
+                effects.floatText(this.x, 1.6, this.z, '+' + added, '#75DFFF', isMul);
+            }
+            // buff文字
+            if (isBuff) {
+                var buffText = gate.value === 'damage' ? '输出+1' : '射速+20%';
+                effects.floatText(this.x, 1.6, this.z, buffText, '#A14DFF', true);
+            }
+            // 蓝色粒子扩散(人数增加时)
+            if (added > 0) {
+                var pCount = Math.min(12, 4 + Math.floor(added / 5));
+                effects.burst(this.x, 0.5, this.z, 0x75DFFF, pCount, 3.5, 0.6);
+            }
         }
     }
 
