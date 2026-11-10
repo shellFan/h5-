@@ -7,12 +7,17 @@ class CombatSystem {
         this.bullets = [];
         this.fireTimer = 0;
 
-        // 弹道对象池 (金黄色发光弹)
+        // 弹道对象池 (金黄色示踪弹 - 胶囊形+加法混合发光)
         this.pool = [];
-        var geo = new THREE.SphereGeometry(0.07, 6, 4);
+        var geo = new THREE.CapsuleGeometry(0.045, 0.22, 4, 6);
+        geo.rotateX(Math.PI / 2); // 对齐Z轴(前进方向)
         for (var i = 0; i < CONFIG.BULLET_MAX_VISIBLE; i++) {
             var mat = new THREE.MeshBasicMaterial({
-                color: 0xFFD700, transparent: true, opacity: 0.95
+                color: 0xFFD700,
+                transparent: true,
+                opacity: 0.92,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
             });
             var mesh = new THREE.Mesh(geo, mat);
             mesh.visible = false;
@@ -83,15 +88,14 @@ class CombatSystem {
 
     _fire(pos, damage) {
         var mesh = this.pool.pop();
-        if (!mesh) return; // 弹道预算已满
+        if (!mesh) return;
         mesh.visible = true;
-        // 轻微随机散射
         var spreadX = randRange(-0.15, 0.15);
         mesh.position.set(pos.x + spreadX, pos.y + randRange(-0.05, 0.05), pos.z);
         mesh.material.color.setHex(0xFFD700);
-        mesh.material.opacity = 0.95;
-        // Z方向拉长形成弹道尾焰感
-        mesh.scale.set(1, 1, 3);
+        mesh.material.opacity = 0.92;
+        // 胶囊已沿Z拉长，无需额外scale
+        mesh.scale.set(1, 1, 1);
         this.bullets.push({ mesh: mesh, damage: damage, life: 1.2 });
 
         // 枪口闪光

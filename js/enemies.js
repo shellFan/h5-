@@ -15,6 +15,10 @@ class Enemy {
         this.spitTimer = randRange(1, 2);
         this.phase = Math.random() * Math.PI * 2;
         this.isBoss = (type === 'boss');
+        this.dying = false;
+        this.dieT = 0;
+        this.deathHandled = false;
+        this.removeReady = false;
 
         this.model = createZombieModel(type);
         this.model.position.set(x, 0, z);
@@ -52,13 +56,33 @@ class Enemy {
 
     die(effects) {
         this.alive = false;
+        this.dying = true;
+        this.dieT = 0;
         if (effects) {
+            // 卡通粒子爆开
             effects.burst(this.x, 0.5, this.z, this.cfg.color, 12, 3.5, 0.6);
             effects.burst(this.x, 0.5, this.z, 0xFFFFFF, 4, 2, 0.3);
+            // 金色积分光点
+            effects.burst(this.x, 0.7, this.z, 0xFFD700, 3, 2.2, 0.8);
         }
     }
 
     update(dt, time, squad, manager, effects) {
+        // === 死亡动画: 后仰+缩小 ===
+        if (this.dying) {
+            this.dieT += dt;
+            var dur = this.isBoss ? 0.8 : 0.35;
+            var t = Math.min(1, this.dieT / dur);
+            // 后仰
+            this.model.rotation.x = -t * 1.4;
+            // 缩小消失
+            var s = this.cfg.scale * (1 - easeOutCubic(t));
+            this.model.scale.setScalar(Math.max(0.001, s));
+            if (this.dieT >= dur) {
+                this.removeReady = true;
+            }
+            return;
+        }
         if (!this.alive) return;
 
         const dz = squad.z - this.z;
@@ -214,7 +238,9 @@ class EnemyManager {
         for (let i = this.enemies.length - 1; i >= 0; i--) {
             const e = this.enemies[i];
             e.update(dt, time, squad, this, this.effects);
-            if (!e.alive) {
+            // 刚死亡: 触发分裂/Boss爆炸(仅一次)
+            if (!e.alive && !e.deathHandled) {
+                e.deathHandled = true;
                 // 分裂僵尸: 死亡时排队分裂
                 if (e.type === 'split') {
                     this.splitQueue.push({ x: e.x, z: e.z, delay: 0.2 });
@@ -222,10 +248,16 @@ class EnemyManager {
                 }
                 if (e === this.boss) {
                     this.boss = null;
-                    // Boss死亡大爆炸
+                    // Boss死亡大爆炸 + 金色粒子
                     this.effects.burst(e.x, 1, e.z, 0xFF4444, 30, 5, 1);
                     this.effects.burst(e.x, 1, e.z, 0xFFD700, 20, 4, 0.8);
+                    this.effects.burst(e.x, 1.2, e.z, 0xFFFFFF, 15, 3, 0.6);
+                    // 冲击波
+                    this.effects.shockwave(e.x, 0.05, e.z, 0xFFD700);
                 }
+            }
+            // 死亡动画完成: 移除
+            if (e.removeReady) {
                 e.destroy(this.scene);
                 this.enemies.splice(i, 1);
             }
