@@ -1,0 +1,6 @@
+# 测试/调试临时文件
+test_auto*.html
+test_visual.html
+dom_dump.txt
+vis_dump.txt
+shot*.png

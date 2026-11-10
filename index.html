@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>膨胀小队</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+
+        <!-- 顶部HUD -->
+        <div id="hud" class="hidden">
+            <div id="progress-bar-container">
+                <div id="progress-bar-fill"></div>
+                <div id="progress-flag"><div class="flag-pole"></div><div class="flag-cloth"></div></div>
+            </div>
+            <div id="squad-count-badge">
+                <span id="squad-count-num">1</span>
+            </div>
+        </div>
+
+        <!-- Boss血条 -->
+        <div id="boss-bar-container" class="hidden">
+            <div id="boss-name">BOSS</div>
+            <div id="boss-bar-bg">
+                <div id="boss-bar-fill"></div>
+            </div>
+        </div>
+
+        <!-- 开始界面 -->
+        <div id="start-screen">
+            <div class="title-panel">
+                <h1 class="game-title">膨胀小队</h1>
+                <p class="game-subtitle">招兵买马 · 火力全开</p>
+                <button id="btn-start" class="btn-primary">开始游戏</button>
+                <p class="hint-text">左右拖动切换跑道</p>
+            </div>
+        </div>
+
+        <!-- 胜利界面 -->
+        <div id="win-screen" class="hidden">
+            <div class="title-panel">
+                <h1 class="result-title win">胜利!</h1>
+                <p class="result-subtitle">剩余小队: <span id="win-count">0</span> 人</p>
+                <button id="btn-restart-win" class="btn-primary">再来一次</button>
+            </div>
+        </div>
+
+        <!-- 失败界面 -->
+        <div id="lose-screen" class="hidden">
+            <div class="title-panel">
+                <h1 class="result-title lose">失败</h1>
+                <p class="result-subtitle">小队全灭，再接再厉</p>
+                <button id="btn-restart-lose" class="btn-primary">重新挑战</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局错误捕获: 将JS错误显示在页面上便于诊断
+        window.addEventListener('error', function(e) {
+            var div = document.getElementById('error-display');
+            if (!div) {
+                div = document.createElement('div');
+                div.id = 'error-display';
+                div.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#CC0000;color:#fff;padding:8px 12px;font-size:13px;font-family:monospace;white-space:pre-wrap;pointer-events:none;';
+                document.body.appendChild(div);
+            }
+            div.textContent += (div.textContent ? '\n' : '') + '[错误] ' + e.message + (e.filename ? ' (' + e.filename.split('/').pop() + ':' + e.lineno + ')' : '');
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+    <script>
+        // 检测Three.js是否加载成功
+        if (typeof THREE === 'undefined') {
+            document.addEventListener('DOMContentLoaded', function() {
+                var div = document.getElementById('error-display');
+                if (!div) {
+                    div = document.createElement('div');
+                    div.id = 'error-display';
+                    div.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#CC0000;color:#fff;padding:8px 12px;font-size:13px;font-family:monospace;white-space:pre-wrap;pointer-events:none;';
+                    document.body.appendChild(div);
+                }
+                div.textContent = '[错误] Three.js CDN加载失败，请检查网络连接';
+            });
+        }
+    </script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/models.js"></script>
+    <script src="js/world.js"></script>
+    <script src="js/effects.js"></script>
+    <script src="js/squad.js"></script>
+    <script src="js/gates.js"></script>
+    <script src="js/enemies.js"></script>
+    <script src="js/combat.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
