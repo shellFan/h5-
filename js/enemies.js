@@ -158,6 +158,7 @@ class EnemyManager {
         this.pendingSpawns = [];
         this.boss = null;
         this.splitQueue = [];
+        this.killCount = 0;
     }
 
     loadFromLevel(level) {
@@ -192,6 +193,7 @@ class EnemyManager {
         this.pendingSpawns = [];
         this.boss = null;
         this.splitQueue = [];
+        this.killCount = 0;
     }
 
     spawnSpit(x, y, z, squad) {
@@ -241,6 +243,7 @@ class EnemyManager {
             // 刚死亡: 触发分裂/Boss爆炸(仅一次)
             if (!e.alive && !e.deathHandled) {
                 e.deathHandled = true;
+                this.killCount++;
                 // 分裂僵尸: 死亡时排队分裂
                 if (e.type === 'split') {
                     this.splitQueue.push({ x: e.x, z: e.z, delay: 0.2 });

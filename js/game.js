@@ -16,6 +16,11 @@ class Game {
         this.lastTime = 0;
         this.bossSpawned = false;
         this.bossDefeated = false;
+        this.paused = false;
+        // 统计
+        this.kills = 0;
+        this.maxCount = 0;
+        this.elapsedTime = 0;
 
         // 待机画面: 1个士兵站在起点(跳过弹出动画直接显示)
         this.squad.reset(1);
@@ -81,21 +86,53 @@ class Game {
         var self = this;
         this.ui = {
             hud: document.getElementById('hud'),
+            levelName: document.getElementById('level-name'),
             progressFill: document.getElementById('progress-bar-fill'),
             progressFlag: document.getElementById('progress-flag'),
             countNum: document.getElementById('squad-count-num'),
             countBadge: document.getElementById('squad-count-badge'),
+            statCount: document.getElementById('stat-count'),
+            statDamage: document.getElementById('stat-damage'),
+            statFirerate: document.getElementById('stat-firerate'),
             bossBar: document.getElementById('boss-bar-container'),
             bossFill: document.getElementById('boss-bar-fill'),
             startScreen: document.getElementById('start-screen'),
             winScreen: document.getElementById('win-screen'),
             loseScreen: document.getElementById('lose-screen'),
-            winCount: document.getElementById('win-count')
+            winCount: document.getElementById('win-count'),
+            winKills: document.getElementById('win-kills'),
+            winMax: document.getElementById('win-max'),
+            winTime: document.getElementById('win-time'),
+            loseKills: document.getElementById('lose-kills'),
+            loseMax: document.getElementById('lose-max')
         };
 
         document.getElementById('btn-start').addEventListener('click', function() { self.start(); });
         document.getElementById('btn-restart-win').addEventListener('click', function() { self.start(); });
         document.getElementById('btn-restart-lose').addEventListener('click', function() { self.start(); });
+        document.getElementById('btn-pause').addEventListener('click', function() { self._togglePause(); });
+        document.getElementById('btn-revive').addEventListener('click', function() { self._revive(); });
+    }
+
+    _togglePause() {
+        if (this.state !== 'playing') return;
+        this.paused = !this.paused;
+        if (this.paused) {
+            // 显示暂停遮罩(复用lose-screen样式但不同内容)
+            this.ui.hud.style.opacity = '0.4';
+        } else {
+            this.ui.hud.style.opacity = '1';
+        }
+    }
+
+    _revive() {
+        // 复活: 恢复10人继续游戏
+        this.state = 'playing';
+        this.squad.alive = true;
+        this.squad.setCount(10);
+        this.ui.loseScreen.classList.add('hidden');
+        this.ui.hud.classList.remove('hidden');
+        this.ui.hud.style.opacity = '1';
     }
 
     _showError(msg) {
@@ -119,14 +156,22 @@ class Game {
             this.combat.clear();
 
             this.state = 'playing';
+            this.paused = false;
             this.time = 0;
+            this.elapsedTime = 0;
+            this.kills = 0;
+            this.maxCount = level.startCount;
             this.bossSpawned = false;
             this.bossDefeated = false;
+
+            // 更新关卡名
+            this.ui.levelName.textContent = level.name;
 
             this.ui.startScreen.classList.add('hidden');
             this.ui.winScreen.classList.add('hidden');
             this.ui.loseScreen.classList.add('hidden');
             this.ui.hud.classList.remove('hidden');
+            this.ui.hud.style.opacity = '1';
             this.ui.bossBar.classList.add('hidden');
             this._updateUI();
         } catch (err) {
@@ -140,8 +185,9 @@ class Game {
         var dt = Math.min((timestamp - this.lastTime) / 1000, 0.05);
         this.lastTime = timestamp;
 
-        if (this.state === 'playing') {
+        if (this.state === 'playing' && !this.paused) {
             this.time += dt;
+            this.elapsedTime += dt;
             this._update(dt);
         } else if (this.state === 'idle') {
             // 待机: 相机轻微摆动展示场景
@@ -201,13 +247,28 @@ class Game {
         this.ui.progressFill.style.width = (progress * 100) + '%';
         this.ui.progressFlag.style.left = (progress * 100) + '%';
 
-        // 人数徽章(变化时触发弹出动画)
+        // 人数气泡(变化时触发弹出/抖动动画)
         var countStr = String(this.squad.count);
         if (this.ui.countNum.textContent !== countStr) {
+            var prevCount = parseInt(this.ui.countNum.textContent) || 0;
             this.ui.countNum.textContent = countStr;
-            this.ui.countBadge.classList.remove('pop');
-            void this.ui.countBadge.offsetWidth; // 强制回流重启动画
-            this.ui.countBadge.classList.add('pop');
+            // 人数增加: 弹出; 减少: 抖动
+            var animClass = this.squad.count > prevCount ? 'pop' : 'shake';
+            this.ui.countBadge.classList.remove('pop', 'shake');
+            void this.ui.countBadge.offsetWidth;
+            this.ui.countBadge.classList.add(animClass);
+        }
+
+        // 追踪最大人数
+        if (this.squad.count > this.maxCount) {
+            this.maxCount = this.squad.count;
+        }
+
+        // 属性面板
+        if (this.ui.statCount) {
+            this.ui.statCount.textContent = this.squad.count;
+            this.ui.statDamage.textContent = this.squad.getDamage();
+            this.ui.statFirerate.textContent = this.squad.getFireRate().toFixed(1);
         }
     }
 
@@ -215,7 +276,11 @@ class Game {
         this.state = 'won';
         this.ui.hud.classList.add('hidden');
         this.ui.bossBar.classList.add('hidden');
+        // 填充结算数据
         this.ui.winCount.textContent = this.squad.count;
+        this.ui.winKills.textContent = this.enemies.killCount;
+        this.ui.winMax.textContent = this.maxCount;
+        this.ui.winTime.textContent = this.elapsedTime.toFixed(1) + 's';
         this.ui.winScreen.classList.remove('hidden');
     }
 
@@ -223,6 +288,9 @@ class Game {
         this.state = 'lost';
         this.ui.hud.classList.add('hidden');
         this.ui.bossBar.classList.add('hidden');
+        // 填充结算数据
+        this.ui.loseKills.textContent = this.enemies.killCount;
+        this.ui.loseMax.textContent = this.maxCount;
         this.ui.loseScreen.classList.remove('hidden');
     }
 }

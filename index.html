@@ -12,11 +12,44 @@
 
         <!-- 顶部HUD -->
         <div id="hud" class="hidden">
-            <div id="progress-bar-container">
-                <div id="progress-bar-fill"></div>
-                <div id="progress-flag"><div class="flag-pole"></div><div class="flag-cloth"></div></div>
+            <!-- 顶栏: 头像 | 关卡进度 | 暂停 -->
+            <div id="top-bar">
+                <div id="avatar-box">
+                    <div id="avatar-helmet"></div>
+                    <div id="avatar-face"></div>
+                    <div id="avatar-star"></div>
+                    <div id="level-badge">Lv.1</div>
+                </div>
+                <div id="progress-area">
+                    <div id="level-name">第 1 关</div>
+                    <div id="progress-bar-container">
+                        <div id="progress-bar-fill"></div>
+                        <div id="progress-flag"><div class="flag-pole"></div><div class="flag-cloth"></div></div>
+                    </div>
+                </div>
+                <button id="btn-pause" aria-label="暂停">
+                    <span class="pause-bar"></span>
+                    <span class="pause-bar"></span>
+                </button>
             </div>
+            <!-- 属性面板(左侧胶囊) -->
+            <div id="stats-panel">
+                <div class="stat-row">
+                    <svg class="stat-icon" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4" fill="#FFD700"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#FFD700"/></svg>
+                    <span class="stat-val" id="stat-count">1</span>
+                </div>
+                <div class="stat-row">
+                    <svg class="stat-icon" viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="#FF6B6B"/></svg>
+                    <span class="stat-val" id="stat-damage">1</span>
+                </div>
+                <div class="stat-row">
+                    <svg class="stat-icon" viewBox="0 0 24 24"><path d="M3 12h4l2-7 4 14 2-7h6" stroke="#7EE787" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span class="stat-val" id="stat-firerate">2.2</span>
+                </div>
+            </div>
+            <!-- 人数气泡 -->
             <div id="squad-count-badge">
+                <svg class="person-icon" viewBox="0 0 24 24"><circle cx="12" cy="6" r="4" fill="white"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="white"/></svg>
                 <span id="squad-count-num">1</span>
             </div>
         </div>
@@ -32,6 +65,10 @@
         <!-- 开始界面 -->
         <div id="start-screen">
             <div class="title-panel">
+                <div class="logo-badge">
+                    <div class="logo-helmet"></div>
+                    <div class="logo-star"></div>
+                </div>
                 <h1 class="game-title">膨胀小队</h1>
                 <p class="game-subtitle">招兵买马 · 火力全开</p>
                 <button id="btn-start" class="btn-primary">开始游戏</button>
@@ -43,7 +80,17 @@
         <div id="win-screen" class="hidden">
             <div class="title-panel">
                 <h1 class="result-title win">胜利!</h1>
-                <p class="result-subtitle">剩余小队: <span id="win-count">0</span> 人</p>
+                <div id="stars-row">
+                    <span class="star filled"></span>
+                    <span class="star filled"></span>
+                    <span class="star filled"></span>
+                </div>
+                <div id="win-stats">
+                    <div class="win-stat"><span class="ws-label">剩余人数</span><span class="ws-val" id="win-count">0</span></div>
+                    <div class="win-stat"><span class="ws-label">击杀数量</span><span class="ws-val" id="win-kills">0</span></div>
+                    <div class="win-stat"><span class="ws-label">最大人数</span><span class="ws-val" id="win-max">0</span></div>
+                    <div class="win-stat"><span class="ws-label">通关时间</span><span class="ws-val" id="win-time">0s</span></div>
+                </div>
                 <button id="btn-restart-win" class="btn-primary">再来一次</button>
             </div>
         </div>
@@ -53,7 +100,12 @@
             <div class="title-panel">
                 <h1 class="result-title lose">失败</h1>
                 <p class="result-subtitle">小队全灭，再接再厉</p>
+                <div id="lose-stats">
+                    <div class="win-stat"><span class="ws-label">击杀数量</span><span class="ws-val" id="lose-kills">0</span></div>
+                    <div class="win-stat"><span class="ws-label">最大人数</span><span class="ws-val" id="lose-max">0</span></div>
+                </div>
                 <button id="btn-restart-lose" class="btn-primary">重新挑战</button>
+                <button id="btn-revive" class="btn-secondary">复活继续</button>
             </div>
         </div>
     </div>
