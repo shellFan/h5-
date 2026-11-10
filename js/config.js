@@ -48,20 +48,39 @@ const CONFIG = {
     // 特效
     PARTICLE_MAX: 300,
 
-    // 颜色方案
+    // 颜色方案 (V2 商业级卡通配色)
     COLORS: {
-        sky: 0xB0DFFF,
-        fog: 0xC8E8FF,
-        road: 0xC8CDD4,
-        roadEdge: 0xDDE8F5,
-        grass: 0x7EC850,
-        grassDark: 0x6BB840,
-        soldierBlue: 0x4A90D9,
-        soldierHelmet: 0x3A7BC8,
-        soldierVest: 0x2E5F8A,
+        sky: 0x87CEEB,
+        fog: 0xB8D8F0,
+        // 道路: 浅灰紫柏油
+        road: 0xB8B4C8,
+        roadEdge: 0x9A94B0,
+        roadLine: 0xF0EEF5,
+        grass: 0x8FCB6F,
+        grassDark: 0x7ABA5A,
+        // 士兵: 明亮蓝
+        soldierBlue: 0x3B82F6,
+        soldierHelmet: 0x2563EB,
+        soldierVest: 0x1E40AF,
+        soldierPants: 0x2C3E60,
         skin: 0xF5C99B,
+        // 僵尸肤色
+        zombieSkin: 0x8FAE6E,
+        zombieSkinDark: 0x6B8A52,
+        zombieCloth: 0x6B5B45,
+        // 子弹
         bulletGold: 0xFFD700,
+        bulletCore: 0xFFF3B0,
+        // 门
         gateGlass: 0x88CCFF,
+    },
+
+    // 门稀有度配色
+    GATE_RARITY: {
+        common:  { frame: 0x3B82F6, glass: 0x93C5FD, glow: 0x60A5FA },  // 蓝
+        rare:    { frame: 0x8B5CF6, glass: 0xC4B5FD, glow: 0xA78BFA },  // 紫
+        epic:    { frame: 0xF59E0B, glass: 0xFDE68A, glow: 0xFBBF24 },  // 金
+        danger:  { frame: 0xEF4444, glass: 0xFCA5A5, glow: 0xF87171 },  // 红
     }
 };
 
