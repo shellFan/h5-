@@ -107,11 +107,17 @@ class Game {
             loseMax: document.getElementById('lose-max')
         };
 
-        document.getElementById('btn-start').addEventListener('click', function() { self.start(); });
-        document.getElementById('btn-restart-win').addEventListener('click', function() { self.start(); });
-        document.getElementById('btn-restart-lose').addEventListener('click', function() { self.start(); });
-        document.getElementById('btn-pause').addEventListener('click', function() { self._togglePause(); });
-        document.getElementById('btn-revive').addEventListener('click', function() { self._revive(); });
+        // 按钮事件绑定(防御性: 元素可能不存在于测试页面)
+        var btnStart = document.getElementById('btn-start');
+        if (btnStart) btnStart.addEventListener('click', function() { self.start(); });
+        var btnRestartWin = document.getElementById('btn-restart-win');
+        if (btnRestartWin) btnRestartWin.addEventListener('click', function() { self.start(); });
+        var btnRestartLose = document.getElementById('btn-restart-lose');
+        if (btnRestartLose) btnRestartLose.addEventListener('click', function() { self.start(); });
+        var btnPause = document.getElementById('btn-pause');
+        if (btnPause) btnPause.addEventListener('click', function() { self._togglePause(); });
+        var btnRevive = document.getElementById('btn-revive');
+        if (btnRevive) btnRevive.addEventListener('click', function() { self._revive(); });
     }
 
     _togglePause() {
@@ -165,7 +171,7 @@ class Game {
             this.bossDefeated = false;
 
             // 更新关卡名
-            this.ui.levelName.textContent = level.name;
+            if (this.ui.levelName) this.ui.levelName.textContent = level.name;
 
             this.ui.startScreen.classList.add('hidden');
             this.ui.winScreen.classList.add('hidden');
@@ -277,10 +283,10 @@ class Game {
         this.ui.hud.classList.add('hidden');
         this.ui.bossBar.classList.add('hidden');
         // 填充结算数据
-        this.ui.winCount.textContent = this.squad.count;
-        this.ui.winKills.textContent = this.enemies.killCount;
-        this.ui.winMax.textContent = this.maxCount;
-        this.ui.winTime.textContent = this.elapsedTime.toFixed(1) + 's';
+        if (this.ui.winCount) this.ui.winCount.textContent = this.squad.count;
+        if (this.ui.winKills) this.ui.winKills.textContent = this.enemies.killCount;
+        if (this.ui.winMax) this.ui.winMax.textContent = this.maxCount;
+        if (this.ui.winTime) this.ui.winTime.textContent = this.elapsedTime.toFixed(1) + 's';
         this.ui.winScreen.classList.remove('hidden');
     }
 
@@ -289,8 +295,8 @@ class Game {
         this.ui.hud.classList.add('hidden');
         this.ui.bossBar.classList.add('hidden');
         // 填充结算数据
-        this.ui.loseKills.textContent = this.enemies.killCount;
-        this.ui.loseMax.textContent = this.maxCount;
+        if (this.ui.loseKills) this.ui.loseKills.textContent = this.enemies.killCount;
+        if (this.ui.loseMax) this.ui.loseMax.textContent = this.maxCount;
         this.ui.loseScreen.classList.remove('hidden');
     }
 }
