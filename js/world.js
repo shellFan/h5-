@@ -7,14 +7,18 @@ class World {
         this.scene.background = new THREE.Color(CONFIG.COLORS.sky);
         this.scene.fog = new THREE.Fog(CONFIG.COLORS.fog, 25, 60);
 
+        // 画质自动检测 (0=低 1=中 2=高)
+        this.quality = this._detectQuality();
+
         // 渲染器
         this.renderer = new THREE.WebGLRenderer({
             canvas: canvas,
-            antialias: true,
+            antialias: this.quality >= 1,
             powerPreference: 'high-performance'
         });
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        this.renderer.shadowMap.enabled = true;
+        var maxRatio = this.quality === 0 ? 1 : (this.quality === 1 ? 1.5 : 2);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxRatio));
+        this.renderer.shadowMap.enabled = this.quality >= 1;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.outputEncoding = THREE.sRGBEncoding;
 
@@ -463,6 +467,17 @@ class World {
         this.sunLight.position.set(squadX + 4, 12, squadZ + 6);
         this.sunLight.target.position.set(squadX, 0, squadZ - 2);
         this.sunLight.target.updateMatrixWorld();
+    }
+
+    _detectQuality() {
+        var dpr = window.devicePixelRatio || 1;
+        var area = window.innerWidth * window.innerHeight;
+        // 移动端小屏 + 低DPR → 低画质
+        if (dpr <= 1 && area < 500000) return 0;
+        // 中等设备 → 中画质
+        if (dpr <= 1.5 || area < 800000) return 1;
+        // 高端设备 → 高画质
+        return 2;
     }
 
     resize() {

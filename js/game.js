@@ -4,6 +4,15 @@ class Game {
     constructor() {
         this.canvas = document.getElementById('game-canvas');
         this.world = new World(this.canvas);
+        // 按画质等级调整池大小
+        var q = this.world.quality;
+        if (q === 0) {
+            CONFIG.BULLET_MAX_VISIBLE = 50;
+            CONFIG.PARTICLE_MAX = 120;
+        } else if (q === 1) {
+            CONFIG.BULLET_MAX_VISIBLE = 90;
+            CONFIG.PARTICLE_MAX = 220;
+        }
         this.effects = new Effects(this.world.scene);
         this.squad = new Squad(this.world.scene);
         this.gates = new GateSystem(this.world.scene);
