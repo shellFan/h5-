@@ -10,20 +10,19 @@
     <div id="game-container">
         <canvas id="game-canvas"></canvas>
 
-        <!-- 顶部HUD -->
+        <!-- ===== 顶部HUD ===== -->
         <div id="hud" class="hidden">
-            <!-- 顶栏: 头像 | 关卡进度 | 暂停 -->
+            <!-- 顶栏: 头像 | 进度 | 暂停 -->
             <div id="top-bar">
                 <div id="avatar-box">
-                    <div id="avatar-helmet"></div>
-                    <div id="avatar-face"></div>
-                    <div id="avatar-star"></div>
+                    <img src="assets/art-v1/ui/soldier-avatar.svg" alt="士兵" draggable="false">
                     <div id="level-badge">Lv.1</div>
                 </div>
                 <div id="progress-area">
                     <div id="level-name">第 1 关</div>
                     <div id="progress-bar-container">
                         <div id="progress-bar-fill"></div>
+                        <div id="progress-nodes"></div>
                         <div id="progress-flag"><div class="flag-pole"></div><div class="flag-cloth"></div></div>
                     </div>
                 </div>
@@ -32,21 +31,26 @@
                     <span class="pause-bar"></span>
                 </button>
             </div>
+
             <!-- 属性面板(左侧胶囊) -->
             <div id="stats-panel">
-                <div class="stat-row">
-                    <svg class="stat-icon" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4" fill="#FFD700"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#FFD700"/></svg>
+                <div class="stat-row" id="stat-row-count">
+                    <svg class="stat-icon" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4" fill="#75DFFF"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#75DFFF"/></svg>
+                    <span class="stat-label">人数</span>
                     <span class="stat-val" id="stat-count">1</span>
                 </div>
-                <div class="stat-row">
-                    <svg class="stat-icon" viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="#FF6B6B"/></svg>
+                <div class="stat-row" id="stat-row-damage">
+                    <svg class="stat-icon" viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="#FFE66D"/></svg>
+                    <span class="stat-label">输出</span>
                     <span class="stat-val" id="stat-damage">1</span>
                 </div>
-                <div class="stat-row">
-                    <svg class="stat-icon" viewBox="0 0 24 24"><path d="M3 12h4l2-7 4 14 2-7h6" stroke="#7EE787" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div class="stat-row" id="stat-row-firerate">
+                    <svg class="stat-icon" viewBox="0 0 24 24"><path d="M3 12h4l2-7 4 14 2-7h6" stroke="#66D68F" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span class="stat-label">射速</span>
                     <span class="stat-val" id="stat-firerate">2.2</span>
                 </div>
             </div>
+
             <!-- 人数气泡 -->
             <div id="squad-count-badge">
                 <svg class="person-icon" viewBox="0 0 24 24"><circle cx="12" cy="6" r="4" fill="white"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="white"/></svg>
@@ -62,12 +66,21 @@
             </div>
         </div>
 
-        <!-- 开始界面 -->
+        <!-- ===== 暂停菜单 ===== -->
+        <div id="pause-screen" class="hidden">
+            <div class="title-panel">
+                <h2 class="pause-title">暂停</h2>
+                <button id="btn-resume" class="btn-primary">继续游戏</button>
+                <button id="btn-pause-restart" class="btn-secondary">重新开始</button>
+                <button id="btn-pause-menu" class="btn-secondary">返回主菜单</button>
+            </div>
+        </div>
+
+        <!-- ===== 开始界面 ===== -->
         <div id="start-screen">
             <div class="title-panel">
                 <div class="logo-badge">
-                    <div class="logo-helmet"></div>
-                    <div class="logo-star"></div>
+                    <img src="assets/art-v1/ui/soldier-avatar.svg" alt="膨胀小队" draggable="false">
                 </div>
                 <h1 class="game-title">膨胀小队</h1>
                 <p class="game-subtitle">招兵买马 · 火力全开</p>
@@ -76,7 +89,7 @@
             </div>
         </div>
 
-        <!-- 胜利界面 -->
+        <!-- ===== 胜利界面 ===== -->
         <div id="win-screen" class="hidden">
             <div class="title-panel">
                 <h1 class="result-title win">胜利!</h1>
@@ -95,7 +108,7 @@
             </div>
         </div>
 
-        <!-- 失败界面 -->
+        <!-- ===== 失败界面 ===== -->
         <div id="lose-screen" class="hidden">
             <div class="title-panel">
                 <h1 class="result-title lose">失败</h1>

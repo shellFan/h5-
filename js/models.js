@@ -419,6 +419,49 @@ function createZombieModel(type) {
 }
 
 /** 创建状态门模型(返回Group) - 稀有度发光边框 */
+/** 创建门玻璃纹理(参考gate-panel.svg设计: 渐变玻璃+高光弧线+边框光) */
+function createGateGlassTexture(hexColor) {
+    var c = document.createElement('canvas');
+    c.width = 256; c.height = 192;
+    var ctx = c.getContext('2d');
+    var col = new THREE.Color(hexColor);
+    var r = Math.round(col.r * 255), g = Math.round(col.g * 255), b = Math.round(col.b * 255);
+
+    // 玻璃渐变(上亮下暗 - 参考gate-panel.svg的glass渐变)
+    var grad = ctx.createLinearGradient(0, 0, 0, 192);
+    grad.addColorStop(0, 'rgba(' + r + ',' + g + ',' + b + ',0.55)');
+    grad.addColorStop(0.5, 'rgba(' + r + ',' + g + ',' + b + ',0.35)');
+    grad.addColorStop(1, 'rgba(' + Math.round(r*0.3) + ',' + Math.round(g*0.3) + ',' + Math.round(b*0.3) + ',0.6)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 256, 192);
+
+    // 顶部高光弧线(参考gate-panel.svg的白色弧线)
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 6;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(20, 42);
+    ctx.quadraticCurveTo(128, 16, 236, 42);
+    ctx.stroke();
+
+    // 侧边立柱暗影(参考gate-panel.svg的左右立柱)
+    ctx.fillStyle = 'rgba(48,73,107,0.7)';
+    ctx.fillRect(0, 0, 18, 192);
+    ctx.fillRect(238, 0, 18, 192);
+    // 立柱高光边
+    ctx.fillStyle = 'rgba(139,216,255,0.4)';
+    ctx.fillRect(16, 0, 3, 192);
+    ctx.fillRect(237, 0, 3, 192);
+
+    // 外发光边框
+    ctx.strokeStyle = 'rgba(' + Math.min(255, r+60) + ',' + Math.min(255, g+60) + ',' + Math.min(255, b+60) + ',0.6)';
+    ctx.lineWidth = 8;
+    ctx.strokeRect(4, 4, 248, 184);
+
+    var tex = new THREE.CanvasTexture(c);
+    return tex;
+}
+
 function createGateModel(gateData, gateWidth) {
     const group = new THREE.Group();
     const R = CONFIG.GATE_RARITY;
@@ -438,15 +481,18 @@ function createGateModel(gateData, gateWidth) {
         color: new THREE.Color(frameColor).multiplyScalar(0.6),
         emissive: glowColor, emissiveIntensity: 0.15
     });
+    const glassTex = createGateGlassTexture(glassColor);
     const glassMat = new THREE.MeshPhongMaterial({
-        color: glassColor,
+        color: 0xFFFFFF,
+        map: glassTex,
         transparent: true,
-        opacity: 0.28,
+        opacity: 0.55,
         shininess: 140,
         specular: 0xFFFFFF,
         side: THREE.DoubleSide,
         emissive: glowColor,
-        emissiveIntensity: 0.12
+        emissiveIntensity: 0.12,
+        depthWrite: false
     });
 
     var w = gateWidth || 1.5;

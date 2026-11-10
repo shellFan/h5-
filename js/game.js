@@ -21,6 +21,9 @@ class Game {
         this.kills = 0;
         this.maxCount = 0;
         this.elapsedTime = 0;
+        // 属性变化追踪(触发动画)
+        this._prevDamage = 1;
+        this._prevFireRate = 2.2;
 
         // 待机画面: 1个士兵站在起点(跳过弹出动画直接显示)
         this.squad.reset(1);
@@ -44,7 +47,7 @@ class Game {
 
         function onDown(x) { startX = x; dragging = true; }
         function onMove(x) {
-            if (!dragging || self.state !== 'playing') return;
+            if (!dragging || self.state !== 'playing' || self.paused) return;
             var dx = x - startX;
             if (Math.abs(dx) > 30) {
                 var dir = dx > 0 ? 1 : -1;
@@ -71,7 +74,7 @@ class Game {
 
         // 键盘 (方向键/AD)
         window.addEventListener('keydown', function(e) {
-            if (self.state !== 'playing') return;
+            if (self.state !== 'playing' || self.paused) return;
             if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
                 self.squad.lane = Math.max(0, self.squad.lane - 1);
                 self.squad.targetX = CONFIG.LANE_X[self.squad.lane];
@@ -87,18 +90,24 @@ class Game {
         this.ui = {
             hud: document.getElementById('hud'),
             levelName: document.getElementById('level-name'),
+            levelBadge: document.getElementById('level-badge'),
             progressFill: document.getElementById('progress-bar-fill'),
             progressFlag: document.getElementById('progress-flag'),
+            progressNodes: document.getElementById('progress-nodes'),
             countNum: document.getElementById('squad-count-num'),
             countBadge: document.getElementById('squad-count-badge'),
             statCount: document.getElementById('stat-count'),
             statDamage: document.getElementById('stat-damage'),
             statFirerate: document.getElementById('stat-firerate'),
+            statRowCount: document.getElementById('stat-row-count'),
+            statRowDamage: document.getElementById('stat-row-damage'),
+            statRowFirerate: document.getElementById('stat-row-firerate'),
             bossBar: document.getElementById('boss-bar-container'),
             bossFill: document.getElementById('boss-bar-fill'),
             startScreen: document.getElementById('start-screen'),
             winScreen: document.getElementById('win-screen'),
             loseScreen: document.getElementById('lose-screen'),
+            pauseScreen: document.getElementById('pause-screen'),
             winCount: document.getElementById('win-count'),
             winKills: document.getElementById('win-kills'),
             winMax: document.getElementById('win-max'),
@@ -106,6 +115,9 @@ class Game {
             loseKills: document.getElementById('lose-kills'),
             loseMax: document.getElementById('lose-max')
         };
+
+        // 进度节点数据(从关卡segments动态生成)
+        this.progressNodes = [];
 
         // 按钮事件绑定(防御性: 元素可能不存在于测试页面)
         var btnStart = document.getElementById('btn-start');
@@ -118,17 +130,81 @@ class Game {
         if (btnPause) btnPause.addEventListener('click', function() { self._togglePause(); });
         var btnRevive = document.getElementById('btn-revive');
         if (btnRevive) btnRevive.addEventListener('click', function() { self._revive(); });
+        // 暂停菜单按钮
+        var btnResume = document.getElementById('btn-resume');
+        if (btnResume) btnResume.addEventListener('click', function() { self._togglePause(); });
+        var btnPauseRestart = document.getElementById('btn-pause-restart');
+        if (btnPauseRestart) btnPauseRestart.addEventListener('click', function() {
+            if (self.ui.pauseScreen) self.ui.pauseScreen.classList.add('hidden');
+            self.paused = false;
+            self.start();
+        });
+        var btnPauseMenu = document.getElementById('btn-pause-menu');
+        if (btnPauseMenu) btnPauseMenu.addEventListener('click', function() { self._backToMenu(); });
+    }
+
+    /** 构建进度条节点(基于关卡segments) */
+    _buildProgressNodes(level) {
+        if (!this.ui.progressNodes) return;
+        this.ui.progressNodes.innerHTML = '';
+        this.progressNodes = [];
+        for (var i = 0; i < level.segments.length; i++) {
+            var seg = level.segments[i];
+            var nodePos = clamp(seg.z / level.totalZ, 0, 1) * 100;
+            var el = document.createElement('div');
+            el.className = 'pnode';
+            if (seg.type === 'boss') el.classList.add('boss-node');
+            el.style.left = nodePos + '%';
+            this.ui.progressNodes.appendChild(el);
+            this.progressNodes.push({ z: seg.z, el: el, type: seg.type });
+        }
+    }
+
+    /** 更新进度节点状态(基于小队当前位置) */
+    _updateProgressNodes() {
+        for (var i = 0; i < this.progressNodes.length; i++) {
+            var n = this.progressNodes[i];
+            if (!n.el) continue;
+            // 已通过的节点: 小队z已越过节点z(更负)
+            if (this.squad.z < n.z - 2) {
+                n.el.className = n.type === 'boss' ? 'pnode boss-node done' : 'pnode done';
+            }
+            // 当前节点: 小队接近节点
+            else if (Math.abs(this.squad.z - n.z) < 8) {
+                n.el.className = n.type === 'boss' ? 'pnode boss-node current' : 'pnode current';
+            }
+            // 未到达
+            else {
+                n.el.className = n.type === 'boss' ? 'pnode boss-node' : 'pnode';
+            }
+        }
     }
 
     _togglePause() {
         if (this.state !== 'playing') return;
         this.paused = !this.paused;
         if (this.paused) {
-            // 显示暂停遮罩(复用lose-screen样式但不同内容)
-            this.ui.hud.style.opacity = '0.4';
+            if (this.ui.pauseScreen) this.ui.pauseScreen.classList.remove('hidden');
         } else {
-            this.ui.hud.style.opacity = '1';
+            if (this.ui.pauseScreen) this.ui.pauseScreen.classList.add('hidden');
         }
+    }
+
+    _backToMenu() {
+        this.paused = false;
+        this.state = 'idle';
+        if (this.ui.pauseScreen) this.ui.pauseScreen.classList.add('hidden');
+        if (this.ui.hud) this.ui.hud.classList.add('hidden');
+        if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
+        if (this.ui.startScreen) this.ui.startScreen.classList.remove('hidden');
+        // 重置待机士兵
+        this.squad.reset(1);
+        for (var i = 0; i < this.squad.soldiers.length; i++) {
+            this.squad.soldiers[i].spawnT = 1;
+        }
+        this.gates.clear();
+        this.enemies.clear();
+        this.combat.clear();
     }
 
     _revive() {
@@ -136,9 +212,8 @@ class Game {
         this.state = 'playing';
         this.squad.alive = true;
         this.squad.setCount(10);
-        this.ui.loseScreen.classList.add('hidden');
-        this.ui.hud.classList.remove('hidden');
-        this.ui.hud.style.opacity = '1';
+        if (this.ui.loseScreen) this.ui.loseScreen.classList.add('hidden');
+        if (this.ui.hud) this.ui.hud.classList.remove('hidden');
     }
 
     _showError(msg) {
@@ -169,16 +244,22 @@ class Game {
             this.maxCount = level.startCount;
             this.bossSpawned = false;
             this.bossDefeated = false;
+            this._prevDamage = this.squad.getDamage();
+            this._prevFireRate = this.squad.getFireRate();
 
-            // 更新关卡名
+            // 更新关卡名和等级徽章
             if (this.ui.levelName) this.ui.levelName.textContent = level.name;
+            if (this.ui.levelBadge) this.ui.levelBadge.textContent = 'Lv.' + (this.levelIndex + 1);
 
-            this.ui.startScreen.classList.add('hidden');
-            this.ui.winScreen.classList.add('hidden');
-            this.ui.loseScreen.classList.add('hidden');
-            this.ui.hud.classList.remove('hidden');
-            this.ui.hud.style.opacity = '1';
-            this.ui.bossBar.classList.add('hidden');
+            // 构建进度节点
+            this._buildProgressNodes(level);
+
+            if (this.ui.startScreen) this.ui.startScreen.classList.add('hidden');
+            if (this.ui.winScreen) this.ui.winScreen.classList.add('hidden');
+            if (this.ui.loseScreen) this.ui.loseScreen.classList.add('hidden');
+            if (this.ui.pauseScreen) this.ui.pauseScreen.classList.add('hidden');
+            if (this.ui.hud) this.ui.hud.classList.remove('hidden');
+            if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
             this._updateUI();
         } catch (err) {
             this._showError('[start错误] ' + err.message + '\n' + (err.stack || ''));
@@ -233,12 +314,12 @@ class Game {
         // Boss血条
         if (this.enemies.boss) {
             this.bossSpawned = true;
-            this.ui.bossBar.classList.remove('hidden');
+            if (this.ui.bossBar) this.ui.bossBar.classList.remove('hidden');
             var ratio = Math.max(0, this.enemies.boss.hp / this.enemies.boss.maxHp);
-            this.ui.bossFill.style.width = (ratio * 100) + '%';
+            if (this.ui.bossFill) this.ui.bossFill.style.width = (ratio * 100) + '%';
         } else if (this.bossSpawned && !this.bossDefeated) {
             this.bossDefeated = true;
-            this.ui.bossBar.classList.add('hidden');
+            if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
         }
 
         // 胜负判定
@@ -247,22 +328,27 @@ class Game {
     }
 
     _updateUI() {
-        // 进度条 + 旗帜
         var level = LEVELS[this.levelIndex];
         var progress = clamp(-this.squad.z / -level.totalZ, 0, 1);
-        this.ui.progressFill.style.width = (progress * 100) + '%';
-        this.ui.progressFlag.style.left = (progress * 100) + '%';
+        if (this.ui.progressFill) this.ui.progressFill.style.width = (progress * 100) + '%';
+        if (this.ui.progressFlag) this.ui.progressFlag.style.left = (progress * 100) + '%';
+
+        // 进度节点
+        this._updateProgressNodes();
 
         // 人数气泡(变化时触发弹出/抖动动画)
-        var countStr = String(this.squad.count);
-        if (this.ui.countNum.textContent !== countStr) {
-            var prevCount = parseInt(this.ui.countNum.textContent) || 0;
-            this.ui.countNum.textContent = countStr;
-            // 人数增加: 弹出; 减少: 抖动
-            var animClass = this.squad.count > prevCount ? 'pop' : 'shake';
-            this.ui.countBadge.classList.remove('pop', 'shake');
-            void this.ui.countBadge.offsetWidth;
-            this.ui.countBadge.classList.add(animClass);
+        if (this.ui.countNum) {
+            var countStr = String(this.squad.count);
+            if (this.ui.countNum.textContent !== countStr) {
+                var prevCount = parseInt(this.ui.countNum.textContent) || 0;
+                this.ui.countNum.textContent = countStr;
+                var animClass = this.squad.count > prevCount ? 'pop' : 'shake';
+                if (this.ui.countBadge) {
+                    this.ui.countBadge.classList.remove('pop', 'shake');
+                    void this.ui.countBadge.offsetWidth;
+                    this.ui.countBadge.classList.add(animClass);
+                }
+            }
         }
 
         // 追踪最大人数
@@ -270,39 +356,62 @@ class Game {
             this.maxCount = this.squad.count;
         }
 
-        // 属性面板
+        // 属性面板(带变化动画)
         if (this.ui.statCount) {
             this.ui.statCount.textContent = this.squad.count;
             this.ui.statDamage.textContent = this.squad.getDamage();
             this.ui.statFirerate.textContent = this.squad.getFireRate().toFixed(1);
+
+            // 输出变化: 闪光
+            var curDmg = this.squad.getDamage();
+            if (curDmg !== this._prevDamage && this.ui.statRowDamage) {
+                this.ui.statRowDamage.classList.remove('flash');
+                void this.ui.statRowDamage.offsetWidth;
+                this.ui.statRowDamage.classList.add('flash');
+                this._prevDamage = curDmg;
+            }
+            // 射速变化: 加速反馈
+            var curFr = this.squad.getFireRate();
+            if (Math.abs(curFr - this._prevFireRate) > 0.01 && this.ui.statRowFirerate) {
+                this.ui.statRowFirerate.classList.remove('bump');
+                void this.ui.statRowFirerate.offsetWidth;
+                this.ui.statRowFirerate.classList.add('bump');
+                this._prevFireRate = curFr;
+            }
+            // 人数变化: 跳动
+            if (this.ui.statRowCount && this.ui.countNum &&
+                this.ui.statCount.textContent !== this.ui.countNum.textContent) {
+                this.ui.statRowCount.classList.remove('bump');
+                void this.ui.statRowCount.offsetWidth;
+                this.ui.statRowCount.classList.add('bump');
+            }
         }
     }
 
     _win() {
         this.state = 'won';
-        this.ui.hud.classList.add('hidden');
-        this.ui.bossBar.classList.add('hidden');
+        if (this.ui.hud) this.ui.hud.classList.add('hidden');
+        if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
         // 填充结算数据
         if (this.ui.winCount) this.ui.winCount.textContent = this.squad.count;
         if (this.ui.winKills) this.ui.winKills.textContent = this.enemies.killCount;
         if (this.ui.winMax) this.ui.winMax.textContent = this.maxCount;
         if (this.ui.winTime) this.ui.winTime.textContent = this.elapsedTime.toFixed(1) + 's';
-        this.ui.winScreen.classList.remove('hidden');
+        if (this.ui.winScreen) this.ui.winScreen.classList.remove('hidden');
     }
 
     _lose() {
         this.state = 'lost';
-        this.ui.hud.classList.add('hidden');
-        this.ui.bossBar.classList.add('hidden');
+        if (this.ui.hud) this.ui.hud.classList.add('hidden');
+        if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
         // 填充结算数据
         if (this.ui.loseKills) this.ui.loseKills.textContent = this.enemies.killCount;
         if (this.ui.loseMax) this.ui.loseMax.textContent = this.maxCount;
-        this.ui.loseScreen.classList.remove('hidden');
+        if (this.ui.loseScreen) this.ui.loseScreen.classList.remove('hidden');
     }
 }
 
 // 启动 (脚本在body底部, DOM已就绪, Three.js已同步加载完成)
-// 不使用 window.load: 避免CDN加载缓慢时按钮长时间无响应
 (function() {
     function showError(msg) {
         var div = document.getElementById('error-display');

@@ -7,22 +7,91 @@ class CombatSystem {
         this.bullets = [];
         this.fireTimer = 0;
 
-        // 弹道对象池 (金黄色示踪弹 - 胶囊形+加法混合发光)
+        // 弹道纹理: 加载 assets/art-v1/effects/bullet-glow.svg
+        this._bulletTex = null;
+        this._loadBulletTexture();
+
+        // 共享Sprite材质(所有子弹共用，减少DrawCall)
+        this._bulletMat = new THREE.SpriteMaterial({
+            color: 0xFFD700,
+            transparent: true,
+            opacity: 0.92,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        });
+
+        // 弹道对象池 (Sprite + bullet-glow纹理)
         this.pool = [];
-        var geo = new THREE.CapsuleGeometry(0.045, 0.22, 4, 6);
-        geo.rotateX(Math.PI / 2); // 对齐Z轴(前进方向)
         for (var i = 0; i < CONFIG.BULLET_MAX_VISIBLE; i++) {
-            var mat = new THREE.MeshBasicMaterial({
-                color: 0xFFD700,
-                transparent: true,
-                opacity: 0.92,
-                blending: THREE.AdditiveBlending,
-                depthWrite: false
-            });
-            var mesh = new THREE.Mesh(geo, mat);
-            mesh.visible = false;
-            scene.add(mesh);
-            this.pool.push(mesh);
+            var sprite = new THREE.Sprite(this._bulletMat);
+            sprite.visible = false;
+            sprite.scale.set(0.16, 0.5, 1);
+            scene.add(sprite);
+            this.pool.push(sprite);
+        }
+    }
+
+    /** 加载bullet-glow.svg作为弹道纹理 */
+    _loadBulletTexture() {
+        var self = this;
+        var img = new Image();
+        img.onload = function() {
+            try {
+                var c = document.createElement('canvas');
+                c.width = 64; c.height = 192;
+                var ctx = c.getContext('2d');
+                ctx.drawImage(img, 0, 0, 64, 192);
+                self._bulletTex = new THREE.CanvasTexture(c);
+                if (self._bulletMat) {
+                    self._bulletMat.map = self._bulletTex;
+                    self._bulletMat.needsUpdate = true;
+                }
+            } catch (e) {
+                self._makeFallbackTex();
+            }
+        };
+        img.onerror = function() {
+            self._makeFallbackTex();
+        };
+        img.src = 'assets/art-v1/effects/bullet-glow.svg';
+    }
+
+    /** SVG加载失败时的程序化兜底纹理(模拟bullet-glow.svg风格) */
+    _makeFallbackTex() {
+        var c = document.createElement('canvas');
+        c.width = 64; c.height = 192;
+        var ctx = c.getContext('2d');
+        // 径向光晕(弹头)
+        var g = ctx.createRadialGradient(32, 36, 0, 32, 36, 30);
+        g.addColorStop(0, '#FFFFFF');
+        g.addColorStop(0.2, '#FFF6A2');
+        g.addColorStop(0.48, '#FFBC2B');
+        g.addColorStop(1, 'rgba(255,122,0,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, 64, 72);
+        // 尾焰(向下渐隐)
+        var t = ctx.createLinearGradient(0, 23, 0, 192);
+        t.addColorStop(0, '#FFFAD1');
+        t.addColorStop(0.3, 'rgba(255,194,51,0.75)');
+        t.addColorStop(1, 'rgba(255,139,17,0)');
+        ctx.fillStyle = t;
+        ctx.beginPath();
+        ctx.moveTo(32, 23);
+        ctx.quadraticCurveTo(43, 35, 41, 63);
+        ctx.lineTo(32, 192);
+        ctx.lineTo(23, 63);
+        ctx.quadraticCurveTo(21, 35, 32, 23);
+        ctx.closePath();
+        ctx.fill();
+        // 亮核
+        ctx.fillStyle = '#FFF9CF';
+        ctx.beginPath();
+        ctx.ellipse(32, 35, 9, 17, 0, 0, Math.PI * 2);
+        ctx.fill();
+        this._bulletTex = new THREE.CanvasTexture(c);
+        if (this._bulletMat) {
+            this._bulletMat.map = this._bulletTex;
+            this._bulletMat.needsUpdate = true;
         }
     }
 
@@ -92,10 +161,8 @@ class CombatSystem {
         mesh.visible = true;
         var spreadX = randRange(-0.15, 0.15);
         mesh.position.set(pos.x + spreadX, pos.y + randRange(-0.05, 0.05), pos.z);
-        mesh.material.color.setHex(0xFFD700);
-        mesh.material.opacity = 0.92;
-        // 胶囊已沿Z拉长，无需额外scale
-        mesh.scale.set(1, 1, 1);
+        // Sprite scale: 金黄发光弹道
+        mesh.scale.set(0.16, 0.5, 1);
         this.bullets.push({ mesh: mesh, damage: damage, life: 1.2 });
 
         // 枪口闪光

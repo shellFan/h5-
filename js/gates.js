@@ -63,7 +63,7 @@ class GateSystem {
                     const intensity = 1 - dist / 6;
                     const glass = g.model.userData.glass;
                     if (glass) {
-                        glass.material.opacity = 0.3 + intensity * 0.2;
+                        glass.material.opacity = 0.45 + intensity * 0.3;
                     }
                 }
             }
@@ -88,7 +88,7 @@ class GateSystem {
         // 玻璃变亮
         const glass = g.model.userData.glass;
         if (glass) {
-            glass.material.opacity = 0.65;
+            glass.material.opacity = 0.85;
             glass.material.color.setHex(0xFFFFFF);
         }
         // 数值放大弹出
