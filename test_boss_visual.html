@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boss战视觉测试</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+        <div id="hud" class="hidden">
+            <div id="top-bar">
+                <div id="avatar-box"><div id="avatar-helmet"></div><div id="avatar-face"></div><div id="avatar-star"></div><div id="level-badge">Lv.1</div></div>
+                <div id="progress-area"><div id="level-name">第 1 关</div><div id="progress-bar-container"><div id="progress-bar-fill" style="width:0%"></div><div id="progress-flag" style="left:0%"><div class="flag-pole"></div><div class="flag-cloth"></div></div></div></div>
+                <button id="btn-pause"><span class="pause-bar"></span><span class="pause-bar"></span></button>
+            </div>
+            <div id="stats-panel">
+                <div class="stat-row"><svg class="stat-icon" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4" fill="#FFD700"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#FFD700"/></svg><span class="stat-val" id="stat-count">1</span></div>
+                <div class="stat-row"><svg class="stat-icon" viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="#FF6B6B"/></svg><span class="stat-val" id="stat-damage">1</span></div>
+                <div class="stat-row"><svg class="stat-icon" viewBox="0 0 24 24"><path d="M3 12h4l2-7 4 14 2-7h6" stroke="#7EE787" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="stat-val" id="stat-firerate">2.2</span></div>
+            </div>
+            <div id="squad-count-badge"><svg class="person-icon" viewBox="0 0 24 24"><circle cx="12" cy="6" r="4" fill="white"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="white"/></svg><span id="squad-count-num">1</span></div>
+        </div>
+        <div id="boss-bar-container" class="hidden"><div id="boss-name">BOSS</div><div id="boss-bar-bg"><div id="boss-bar-fill" style="width:100%"></div></div></div>
+        <div id="start-screen"><div class="title-panel"><div class="logo-badge"><div class="logo-helmet"></div><div class="logo-star"></div></div><h1 class="game-title">膨胀小队</h1><p class="game-subtitle">招兵买马 · 火力全开</p><button id="btn-start" class="btn-primary">开始游戏</button><p class="hint-text">左右拖动切换跑道</p></div></div>
+        <div id="win-screen" class="hidden"><div class="title-panel"><h1 class="result-title win">胜利!</h1><div id="stars-row"><span class="star filled"></span><span class="star filled"></span><span class="star filled"></span></div><div id="win-stats"><div class="win-stat"><span class="ws-label">剩余人数</span><span class="ws-val" id="win-count">0</span></div><div class="win-stat"><span class="ws-label">击杀数量</span><span class="ws-val" id="win-kills">0</span></div><div class="win-stat"><span class="ws-label">最大人数</span><span class="ws-val" id="win-max">0</span></div><div class="win-stat"><span class="ws-label">通关时间</span><span class="ws-val" id="win-time">0s</span></div></div><button id="btn-restart-win" class="btn-primary">再来一次</button></div></div>
+        <div id="lose-screen" class="hidden"><div class="title-panel"><h1 class="result-title lose">失败</h1><p class="result-subtitle">小队全灭，再接再厉</p><div id="lose-stats"><div class="win-stat"><span class="ws-label">击杀数量</span><span class="ws-val" id="lose-kills">0</span></div><div class="win-stat"><span class="ws-label">最大人数</span><span class="ws-val" id="lose-max">0</span></div></div><button id="btn-restart-lose" class="btn-primary">重新挑战</button><button id="btn-revive" class="btn-secondary">复活继续</button></div></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/models.js"></script>
+    <script src="js/world.js"></script>
+    <script src="js/effects.js"></script>
+    <script src="js/squad.js"></script>
+    <script src="js/gates.js"></script>
+    <script src="js/enemies.js"></script>
+    <script src="js/combat.js"></script>
+    <script src="js/game.js"></script>
+    <script>
+        (function() {
+            window.requestAnimationFrame = function() { return 0; };
+            var virtualTime = 0;
+            var game = window.__game;
+
+            var gatePlan = [
+                { z: -14, lane: 0 }, { z: -28, lane: 0 }, { z: -56, lane: 2 },
+                { z: -84, lane: 0 }, { z: -112, lane: 0 }
+            ];
+            function autoLane() {
+                var sq = game.squad;
+                for (var i = 0; i < gatePlan.length; i++) {
+                    var gp = gatePlan[i];
+                    if (!sq.dead && sq.z > gp.z && sq.z - gp.z < 5) {
+                        sq.lane = gp.lane;
+                        sq.targetX = CONFIG.LANE_X[gp.lane];
+                        break;
+                    }
+                }
+            }
+
+            document.getElementById('btn-start').click();
+
+            // 推进到Boss战(~30秒)
+            for (var f = 0; f < 1800; f++) {
+                virtualTime += 16.7;
+                autoLane();
+                game._loop(virtualTime);
+                // Boss出现后停止(Boss血条可见)
+                if (game.enemies.boss) break;
+            }
+            // 再推进几秒让Boss战开始
+            for (var f2 = 0; f2 < 120; f2++) {
+                virtualTime += 16.7;
+                game._loop(virtualTime);
+                if (game.state === 'won' || game.state === 'lost') break;
+            }
+        })();
+    </script>
+</body>
+</html>

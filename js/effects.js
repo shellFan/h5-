@@ -100,17 +100,44 @@ class Effects {
         this.shockwaves.push({ mesh: ring, life: 0.5, maxLife: 0.5 });
     }
 
-    /** 枪口闪光 */
+    /** 枪口闪光 (星形+加法混合发光) */
     muzzleFlash(x, y, z) {
-        const flash = new THREE.Mesh(
-            new THREE.SphereGeometry(0.08, 6, 4),
-            new THREE.MeshBasicMaterial({
-                color: 0xFFE066, transparent: true, opacity: 0.9
-            })
-        );
+        // 惰性创建星形闪光纹理
+        if (!this._muzzleTex) {
+            var c = document.createElement('canvas');
+            c.width = 64; c.height = 64;
+            var ctx = c.getContext('2d');
+            // 四角星形
+            var cx = 32, cy = 32;
+            ctx.fillStyle = '#FFF8DC';
+            ctx.beginPath();
+            ctx.moveTo(cx, 0);
+            ctx.quadraticCurveTo(cx + 4, cy - 4, 64, cy);
+            ctx.quadraticCurveTo(cx + 4, cy + 4, cx, 64);
+            ctx.quadraticCurveTo(cx - 4, cy + 4, 0, cy);
+            ctx.quadraticCurveTo(cx - 4, cy - 4, cx, 0);
+            ctx.closePath();
+            ctx.fill();
+            // 中心亮核
+            var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 14);
+            grad.addColorStop(0, '#FFFFFF');
+            grad.addColorStop(0.4, '#FFE066');
+            grad.addColorStop(1, 'rgba(255,160,40,0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 64, 64);
+            this._muzzleTex = new THREE.CanvasTexture(c);
+        }
+        var flash = new THREE.Sprite(new THREE.SpriteMaterial({
+            map: this._muzzleTex,
+            transparent: true,
+            opacity: 0.95,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        }));
         flash.position.set(x, y, z);
+        flash.scale.set(0.35, 0.35, 1);
         this.scene.add(flash);
-        this.flashes.push({ mesh: flash, life: 0.08, maxLife: 0.08 });
+        this.flashes.push({ mesh: flash, life: 0.07, maxLife: 0.07 });
     }
 
     update(dt) {
@@ -184,14 +211,16 @@ class Effects {
             f.life -= dt;
             if (f.life <= 0) {
                 this.scene.remove(f.mesh);
-                f.mesh.geometry.dispose();
-                f.mesh.material.dispose();
+                // Sprite共享内部几何体不可dispose; Mesh需dispose
+                if (f.mesh.isMesh && f.mesh.geometry) f.mesh.geometry.dispose();
+                if (f.mesh.material) f.mesh.material.dispose();
                 this.flashes.splice(i, 1);
                 continue;
             }
             const t = f.life / f.maxLife;
-            f.mesh.material.opacity = t * 0.9;
-            f.mesh.scale.setScalar(0.5 + (1 - t) * 1.2);
+            f.mesh.material.opacity = t * 0.95;
+            var sc = 0.35 + (1 - t) * 0.5;
+            f.mesh.scale.set(sc, sc, 1);
         }
     }
 }
