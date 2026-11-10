@@ -12,8 +12,8 @@ const CONFIG = {
     SQUAD_SPEED: 5.0,           // 前进速度 单位/秒
     SQUAD_LANE_LERP: 10,        // 切换跑道插值速度
     FORMATION_COLS: 7,          // 阵型最大列数
-    FORMATION_SPACING_X: 0.48,
-    FORMATION_SPACING_Z: 0.42,
+    FORMATION_SPACING_X: 0.52,
+    FORMATION_SPACING_Z: 0.46,
 
     // 射击
     BULLET_SPEED: 28,
@@ -24,12 +24,12 @@ const CONFIG = {
 
     // 僵尸属性
     ZOMBIE: {
-        normal:  { hp: 3,  speed: 1.6,  scale: 1.0,  color: 0xE85D3A, killScore: 1 },
-        fast:    { hp: 2,  speed: 3.2,  scale: 0.8,  color: 0xF07050, killScore: 1 },
-        shield:  { hp: 10, speed: 1.1,  scale: 1.1,  color: 0xC0392B, killScore: 2 },
-        split:   { hp: 5,  speed: 1.4,  scale: 0.9,  color: 0x9B59B6, killScore: 2 },
-        spitter: { hp: 4,  speed: 1.2,  scale: 0.95, color: 0x27AE60, killScore: 2 },
-        boss:    { hp: 200, speed: 0.8, scale: 3.2,  color: 0x8B1A1A, killScore: 50 }
+        normal:  { hp: 3,  speed: 1.6,  scale: 1.3,  color: 0xE85D3A, killScore: 1 },
+        fast:    { hp: 2,  speed: 3.2,  scale: 1.05, color: 0xF07050, killScore: 1 },
+        shield:  { hp: 10, speed: 1.1,  scale: 1.45, color: 0xC0392B, killScore: 2 },
+        split:   { hp: 5,  speed: 1.4,  scale: 1.15, color: 0x9B59B6, killScore: 2 },
+        spitter: { hp: 4,  speed: 1.2,  scale: 1.25, color: 0x27AE60, killScore: 2 },
+        boss:    { hp: 200, speed: 0.8, scale: 3.6,  color: 0x8B1A1A, killScore: 50 }
     },
 
     // 僵尸攻击小队的距离
@@ -39,11 +39,12 @@ const CONFIG = {
     // 每次攻击杀死士兵数
     ZOMBIE_ATTACK_KILL: 1,
 
-    // 相机
-    CAMERA_OFFSET_Y: 8.5,
-    CAMERA_OFFSET_Z: 7.5,
-    CAMERA_LOOK_AHEAD: -4,
+    // 相机 (V2.2: 降低高度/减小俯角，士兵占画面65-80%)
+    CAMERA_OFFSET_Y: 5.0,
+    CAMERA_OFFSET_Z: 6.5,
+    CAMERA_LOOK_AHEAD: -5,
     CAMERA_FOLLOW_X: 0.35,
+    CAMERA_FOV: 55,
 
     // 特效
     PARTICLE_MAX: 300,

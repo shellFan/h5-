@@ -5,7 +5,7 @@ class World {
         this.canvas = canvas;
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(CONFIG.COLORS.sky);
-        this.scene.fog = new THREE.Fog(CONFIG.COLORS.fog, 25, 60);
+        this.scene.fog = new THREE.Fog(CONFIG.COLORS.fog, 30, 80);
 
         // 画质自动检测 (0=低 1=中 2=高)
         this.quality = this._detectQuality();
@@ -22,8 +22,8 @@ class World {
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.outputEncoding = THREE.sRGBEncoding;
 
-        // 相机
-        this.camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+        // 相机 (V2.2: FOV 55° 竖屏构图)
+        this.camera = new THREE.PerspectiveCamera(CONFIG.CAMERA_FOV || 55, 1, 0.1, 120);
 
         this._setupLights();
         this._buildRoad();
@@ -94,19 +94,20 @@ class World {
             rctx.lineTo(sx + randRange(-20, 20), sy + randRange(10, 40));
             rctx.stroke();
         }
-        // 车道分隔线(白色虚线 - 更亮)
+        // 车道分隔线(白色虚线 - 对齐实际车道边界 X=±1)
         rctx.fillStyle = '#F0EEF5';
         for (let y = 0; y < 512; y += 48) {
-            rctx.fillRect(82, y, 5, 30);
-            rctx.fillRect(169, y, 5, 30);
+            rctx.fillRect(88, y, 5, 30);
+            rctx.fillRect(163, y, 5, 30);
         }
-        // 路边实线(白色)
-        rctx.fillStyle = '#E0DDE8';
-        rctx.fillRect(4, 0, 4, 512);
-        rctx.fillRect(248, 0, 4, 512);
+        // 路边实线(黄色警示边线)
+        rctx.fillStyle = '#E8C840';
+        rctx.fillRect(4, 0, 5, 512);
+        rctx.fillRect(247, 0, 5, 512);
         const roadTex = new THREE.CanvasTexture(roadCanvas);
         roadTex.wrapS = THREE.RepeatWrapping;
         roadTex.wrapT = THREE.RepeatWrapping;
+        roadTex.anisotropy = 4;
 
         const roadMat = new THREE.MeshLambertMaterial({ map: roadTex });
         // 石质护栏材质

@@ -25,7 +25,7 @@ class CombatSystem {
         for (var i = 0; i < CONFIG.BULLET_MAX_VISIBLE; i++) {
             var sprite = new THREE.Sprite(this._bulletMat);
             sprite.visible = false;
-            sprite.scale.set(0.16, 0.5, 1);
+            sprite.scale.set(0.22, 0.65, 1);
             scene.add(sprite);
             this.pool.push(sprite);
         }
@@ -161,8 +161,8 @@ class CombatSystem {
         mesh.visible = true;
         var spreadX = randRange(-0.15, 0.15);
         mesh.position.set(pos.x + spreadX, pos.y + randRange(-0.05, 0.05), pos.z);
-        // Sprite scale: 金黄发光弹道
-        mesh.scale.set(0.16, 0.5, 1);
+        // Sprite scale: 金黄发光弹道 (V2.2: 增大增强视觉冲击)
+        mesh.scale.set(0.22, 0.65, 1);
         this.bullets.push({ mesh: mesh, damage: damage, life: 1.2 });
 
         // 枪口闪光

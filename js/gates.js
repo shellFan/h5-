@@ -11,13 +11,8 @@ class GateSystem {
         this.clear();
         for (const seg of level.segments) {
             if (seg.type !== 'gates') continue;
-            // 2门段: 门宽=两门间距，确保无缝衔接填满跑道
-            var gateWidth = 1.5;
-            if (seg.gates.length === 2) {
-                var xa = CONFIG.LANE_X[seg.gates[0].lane];
-                var xb = CONFIG.LANE_X[seg.gates[1].lane];
-                gateWidth = Math.abs(xb - xa);
-            }
+            // V2.2: 每扇门宽度=单车道宽(1.8)，不再用两门间距(4.0导致门超出路面)
+            var gateWidth = CONFIG.LANE_WIDTH * 0.9;
             for (const gd of seg.gates) {
                 const model = createGateModel(gd, gateWidth);
                 model.position.set(CONFIG.LANE_X[gd.lane], 0, seg.z);
@@ -53,7 +48,7 @@ class GateSystem {
             // 远处的门: 标签轻微浮动
             if (!g.triggered && g.model.userData.label) {
                 g.model.userData.label.position.y =
-                    2.75 + Math.sin(time * 2 + g.x) * 0.06;
+                    2.42 + Math.sin(time * 2 + g.x) * 0.06;
             }
 
             // 接近发光

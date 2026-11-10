@@ -76,16 +76,24 @@ class Squad {
     /** 僵尸击杀士兵 */
     killSoldiers(n, effects) {
         const before = this.count;
+        // V2.2修复: 先保存被杀士兵位置，再截断数组(原代码先截断再读取导致undefined)
+        var deathPos = [];
+        if (effects && n > 0) {
+            var startIdx = Math.max(0, before - n);
+            for (let i = startIdx; i < Math.min(before, startIdx + 3); i++) {
+                if (this.soldiers[i]) {
+                    deathPos.push({ x: this.soldiers[i].x, z: this.soldiers[i].z });
+                }
+            }
+        }
         this.setCount(this.count - n);
         // 在被杀士兵位置生成蓝色死亡粒子
-        if (effects && before > this.count) {
-            for (let i = this.count; i < Math.min(before, this.count + 3); i++) {
-                if (this.soldiers[i]) {
-                    effects.burst(
-                        this.x + this.soldiers[i].x, 0.5, this.z + this.soldiers[i].z,
-                        0x4A90D9, 5, 2.5, 0.4
-                    );
-                }
+        if (effects && deathPos.length > 0) {
+            for (let i = 0; i < deathPos.length; i++) {
+                effects.burst(
+                    this.x + deathPos[i].x, 0.5, this.z + deathPos[i].z,
+                    0x4A90D9, 5, 2.5, 0.4
+                );
             }
         }
     }

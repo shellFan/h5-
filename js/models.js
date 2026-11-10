@@ -495,8 +495,8 @@ function createGateModel(gateData, gateWidth) {
         depthWrite: false
     });
 
-    var w = gateWidth || 1.5;
-    var h = 2.4;
+    var w = gateWidth || 1.8;
+    var h = 2.0;
 
     // 左右立柱(带发光)
     var postGeo = new THREE.BoxGeometry(0.16, h, 0.16);
@@ -572,11 +572,11 @@ function createGateModel(gateData, gateWidth) {
         strokeWidth: 16
     });
     var sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
-    sprite.position.y = h + 0.55;
+    sprite.position.y = h + 0.42;
     var aspect = tex.image.width / tex.image.height;
-    var baseH = 0.6;
+    var baseH = 0.5;
     var baseW = baseH * aspect;
-    if (baseW > 2.0) { baseW = 2.0; baseH = baseW / aspect; }
+    if (baseW > 1.6) { baseW = 1.6; baseH = baseW / aspect; }
     sprite.scale.set(baseW, baseH, 1);
     group.add(sprite);
     group.userData.label = sprite;

@@ -22,6 +22,8 @@ class Enemy {
 
         this.model = createZombieModel(type);
         this.model.position.set(x, 0, z);
+        this.model.scale.setScalar(this.cfg.scale); // V2.2修复: 存活时应用类型scale
+        this.visScale = this.cfg.scale; // 实际视觉scale(分裂僵尸会缩小)
         scene.add(this.model);
 
         // 收集可闪烁材质
@@ -75,8 +77,8 @@ class Enemy {
             var t = Math.min(1, this.dieT / dur);
             // 后仰
             this.model.rotation.x = -t * 1.4;
-            // 缩小消失
-            var s = this.cfg.scale * (1 - easeOutCubic(t));
+            // 缩小消失 (V2.2: 使用visScale避免分裂僵尸跳变)
+            var s = this.visScale * (1 - easeOutCubic(t));
             this.model.scale.setScalar(Math.max(0.001, s));
             if (this.dieT >= dur) {
                 this.removeReady = true;
@@ -230,6 +232,7 @@ class EnemyManager {
             if (sq.delay <= 0) {
                 const e = new Enemy('normal', sq.x + randRange(-0.5, 0.5), sq.z, this.scene);
                 e.model.scale.multiplyScalar(0.6);
+                e.visScale = e.cfg.scale * 0.6;
                 e.hp = 2;
                 this.enemies.push(e);
                 this.splitQueue.splice(i, 1);
