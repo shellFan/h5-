@@ -31,6 +31,9 @@ class Game {
             }
         };
         this.pacing.onBossWarning = function(w) { self._showBossWarning(true); };
+        // V4.0 爽感: 乘法门慢动作+震屏 / Boss入场爆发
+        this.gates.onMul = function(g) { self._slowmo(); self.world.shake(0.22); };
+        this.pacing._onBossSpawnFx = function() { self.world.shake(0.5); };
         this.pacing.onBossSpawn = function(w) { self._showBossWarning(false); };
         // V3.4: 广告协调器(复活/双倍/刷门; Platform.ads已在页面引导装配)
         this.adCoord = (typeof GameAdCoordinator !== 'undefined' && window.__adService)
@@ -46,6 +49,9 @@ class Game {
         this._doubleTaken = false;
 
         this.state = 'idle'; // idle | playing | won | lost
+        // V4.0: 慢动作(乘法门/Boss击杀) — dt缩放, UI与输入不受影响
+        this._timeScale = 1;
+        this._slowmoT = 0;
         this.levelIndex = 0;
         this.time = 0;
         this.lastTime = 0;
@@ -277,6 +283,12 @@ class Game {
     }
 
     /** V4.0: Boss出场预警横幅(震动+音效, 预警结束由onBossSpawn隐藏) */
+    /** V4.0: 短暂慢动作(0.35s, 时间流速0.35), 不打断操作 */
+    _slowmo() {
+        this._timeScale = 0.35;
+        this._slowmoT = 0.35;
+    }
+
     _showBossWarning(show) {
         var el = document.getElementById('boss-warning');
         if (!el) return;
@@ -629,9 +641,16 @@ class Game {
         if (this._frameTimes.length > 300) this._frameTimes.shift();
 
         if (this.state === 'playing' && !this.paused) {
-            this.time += dt;
+            // V4.0: 慢动作缩放游戏时间(输入/UI仍用真实dt)
+            if (this._slowmoT > 0) {
+                this._slowmoT -= dt;
+            } else {
+                this._timeScale = 1;
+            }
+            var ts = this._timeScale;
+            this.time += dt * ts;
             this.elapsedTime += dt;
-            this._update(dt);
+            this._update(dt * ts);
         } else if (this.state === 'idle') {
             // 待机: 相机轻微摆动展示场景
             this.time += dt;

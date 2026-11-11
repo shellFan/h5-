@@ -24,6 +24,7 @@ class Enemy {
         this.dieT = 0;
         this.deathHandled = false;
         this.removeReady = false;
+        this.spawnT = this.isBoss ? 0 : 1; // V4.0: Boss弹性入场动画
 
         // V3.5: 大众僵尸使用合并批处理模型(2 mesh/只), Boss/精英保留Group模型(细节动画+独立材质)
         var useMerged = (type !== 'boss' && type !== 'elite' && typeof createZombieMerged === 'function');
@@ -99,6 +100,13 @@ class Enemy {
             return;
         }
         if (!this.alive) return;
+
+        // V4.0: Boss入场弹性缩放(0.5s, 期间不移动不攻击)
+        if (this.spawnT < 1) {
+            this.spawnT = Math.min(1, this.spawnT + dt * 2);
+            this.model.scale.setScalar(this.visScale * Math.max(0.05, easeOutBack(this.spawnT)));
+            if (this.spawnT < 1) return;
+        }
 
         // V3.3: 冰冻减速
         if (this.frozenT > 0) this.frozenT -= dt;

@@ -82,6 +82,7 @@ class GateSystem {
                     g.triggered = true;
                     squad.applyGate(g.data, effects);
                     this._highlight(g, effects);
+                    if (g.data.op === 'mul' && this.onMul) this.onMul(g); // V4.0: 翻倍慢动作+震屏
                 }
             }
 

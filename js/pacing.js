@@ -93,6 +93,7 @@ class GamePacingController {
                 var bz = w.z + P.bossSpawnSetback;
                 if (this.spawnFn) this.spawnFn('boss', 0, bz, w.hp);
                 w.state = 'done';
+                if (this._onBossSpawnFx) this._onBossSpawnFx(); // V4.0: 入场震屏
                 if (this.onBossSpawn) this.onBossSpawn(w);
                 return true;
             }

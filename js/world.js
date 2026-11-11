@@ -493,12 +493,25 @@ class World {
         cam.position.x = damp(cam.position.x, targetPos.x, 6, dt);
         cam.position.y = damp(cam.position.y, targetPos.y, 5, dt);
         cam.position.z = damp(cam.position.z, targetPos.z, 8, dt);
+        // V4.0: 屏幕震动(受击/翻倍/Boss入场), 指数衰减
+        if (this._shakeT > 0.001) {
+            this._shakeT = Math.max(0, this._shakeT - dt * 2.2);
+            var sAmp = this._shakeAmp * this._shakeT;
+            cam.position.x += (Math.random() - 0.5) * sAmp;
+            cam.position.y += (Math.random() - 0.5) * sAmp * 0.5;
+        }
         cam.lookAt(targetX * 0.5, 0, squadZ + lookAhead);
 
         // 阴影相机跟随
         this.sunLight.position.set(squadX + 4, 12, squadZ + 6);
         this.sunLight.target.position.set(squadX, 0, squadZ - 2);
         this.sunLight.target.updateMatrixWorld();
+    }
+
+    /** V4.0: 触发屏幕震动(amp≈世界单位幅度) */
+    shake(amp) {
+        this._shakeT = 1;
+        this._shakeAmp = amp || 0.3;
     }
 
     _detectQuality() {
