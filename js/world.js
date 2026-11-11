@@ -477,11 +477,12 @@ class World {
     // 12人: 6.1/7.8(清晰) | 100人: +1.2 | 300人: +2.0 | 500人: +2.6(全景)
     updateCamera(squadX, squadZ, dt, squadCount) {
         const cam = this.camera;
-        var cf = Math.sqrt(clamp((squadCount || 1) / 500, 0, 1));
+        var cf = clamp(Math.sqrt(clamp((squadCount || 1) / 500, 0, 1)) * 1.2, 0, 1);
         if (this._camScale === undefined) this._camScale = cf;
         this._camScale = damp(this._camScale, cf, 3, dt);   // 人数变化时平滑过渡
-        var offY = CONFIG.CAMERA_OFFSET_Y + this._camScale * 2.6;
-        var offZ = CONFIG.CAMERA_OFFSET_Z + this._camScale * 2.2;
+        // V4.3: 俯角下调(~36°, 背面人群更立体; 基线降低+距离拉开)
+        var offY = 5.6 + this._camScale * 3.1;
+        var offZ = 8.4 + this._camScale * 2.0;
         var lookAhead = CONFIG.CAMERA_LOOK_AHEAD - this._camScale * 2.0;
 
         const targetX = squadX * CONFIG.CAMERA_FOLLOW_X;

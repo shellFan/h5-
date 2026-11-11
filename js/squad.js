@@ -51,8 +51,8 @@ class Squad {
         this._e = new THREE.Euler();  // V3.2: 姿态欧拉角
         this._axisY = new THREE.Vector3(0, 1, 0);
         // V3.7: 腿部摆动矩阵缓存
-        this._hipL = new THREE.Matrix4().makeTranslation(-0.09, 0.3, 0);
-        this._hipR = new THREE.Matrix4().makeTranslation(0.09, 0.3, 0);
+        this._hipL = new THREE.Matrix4().makeTranslation(-0.095, 0.34, 0);
+        this._hipR = new THREE.Matrix4().makeTranslation(0.095, 0.34, 0);
         this._rSwing = new THREE.Matrix4();
     }
 
@@ -95,7 +95,7 @@ class Squad {
         if (n <= 1)        { cols = 1;  sx = 0.72; sz = 0.66; }
         else if (n <= 10)  { cols = n;  sx = Math.min(0.72, 4.3 / (n - 1)); sz = 0.66; }
         else if (n <= 30)  { cols = 8;  sx = 0.56; sz = 0.56; }
-        else if (n <= 100) { cols = 9;  sx = 0.50; sz = 0.52; }
+        else if (n <= 100) { cols = 8;  sx = 0.58; sz = 0.56; }
         else if (n <= 300) { cols = 11; sx = 0.40; sz = 0.47; }
         else               { cols = 13; sx = 0.34; sz = 0.40; }
         this._formationCols = cols;
@@ -262,8 +262,8 @@ class Squad {
             var swingL = 0, swingR = 0;
             if (moving) {
                 const ph = time * 8 + s.phase;
-                swingL = Math.sin(ph) * 0.62;
-                swingR = Math.sin(ph + Math.PI) * 0.62;
+                swingL = Math.sin(ph) * 0.8;
+                swingR = Math.sin(ph + Math.PI) * 0.8;
             }
             // 左腿 = bodyM * hipL * Rx(swingL)
             this._rSwing.makeRotationX(swingL);

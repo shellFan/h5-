@@ -89,7 +89,7 @@ const CONFIG = {
         grassDark: 0x7ABA5A,
         // 士兵: 明亮蓝
         soldierBlue: 0x3B82F6,
-        soldierHelmet: 0x2563EB,
+        soldierHelmet: 0x1E3A8A,   // V4.3: 深藏青头盔(与亮蓝军服色块分离, 背面可辨头/身)
         soldierVest: 0x1E40AF,
         soldierPants: 0x2C3E60,
         skin: 0xF5C99B,

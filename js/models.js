@@ -25,51 +25,55 @@ function createSoldierBodyGeometry() {
     const C = CONFIG.COLORS;
 
     // === 躯干(亮蓝军服 - 圆胖胶囊) ===
-    p.push(colorize(new THREE.CapsuleGeometry(0.2, 0.2, 6, 12), C.soldierBlue)
+    p.push(colorize(new THREE.CapsuleGeometry(0.21, 0.14, 6, 12), C.soldierBlue)
         .translate(0, 0.5, 0));
     // 战术背心(深蓝环带)
-    p.push(colorize(new THREE.CylinderGeometry(0.215, 0.215, 0.14, 14), C.soldierVest)
-        .translate(0, 0.54, 0));
+    p.push(colorize(new THREE.CylinderGeometry(0.23, 0.23, 0.16, 14), C.soldierVest)
+        .translate(0, 0.55, 0));
     // 腰带(深色) + 扣
-    p.push(colorize(new THREE.CylinderGeometry(0.205, 0.205, 0.05, 14), 0x1a2040)
-        .translate(0, 0.36, 0));
+    p.push(colorize(new THREE.CylinderGeometry(0.215, 0.215, 0.05, 14), 0x1a2040)
+        .translate(0, 0.35, 0));
     p.push(colorize(new THREE.BoxGeometry(0.08, 0.05, 0.02), 0xD8B048)
-        .translate(0, 0.36, -0.21));
+        .translate(0, 0.35, -0.22));
+    // 领口暗环(V4.2: 头/身分界, 消除头身粘连)
+    p.push(colorize(new THREE.CylinderGeometry(0.12, 0.14, 0.05, 12), 0x16306B)
+        .translate(0, 0.76, 0));
 
     // === 背包系统(背面剪影核心) ===
     // 主包(棕)
-    p.push(colorize(new THREE.BoxGeometry(0.28, 0.21, 0.14), 0x8B6914)
-        .translate(0, 0.5, 0.21));
+    p.push(colorize(new THREE.BoxGeometry(0.30, 0.26, 0.15), 0x8B6914)
+        .translate(0, 0.52, 0.22));
     // 包扣(浅棕)
     p.push(colorize(new THREE.BoxGeometry(0.26, 0.03, 0.14), 0xA07830)
         .translate(0, 0.44, 0.2));
     // bedroll 卷(顶部圆筒)
     p.push(colorize(new THREE.CylinderGeometry(0.055, 0.055, 0.26, 8), 0xC49A58)
         .rotateZ(Math.PI / 2).translate(0, 0.675, 0.2));
-    // 双肩背带(深色, 从肩到包)
-    p.push(colorize(new THREE.BoxGeometry(0.045, 0.2, 0.02), 0x5A4310)
-        .translate(-0.1, 0.58, 0.205));
-    p.push(colorize(new THREE.BoxGeometry(0.045, 0.2, 0.02), 0x5A4310)
-        .translate(0.1, 0.58, 0.205));
+    // 白色交叉背带(V4.3: 背面X形Harness — 强士兵符号, 大白色块)
+    p.push(colorize(new THREE.BoxGeometry(0.05, 0.34, 0.02), 0xF0F4F8)
+        .rotateZ(0.42).translate(0, 0.52, 0.315));
+    p.push(colorize(new THREE.BoxGeometry(0.05, 0.34, 0.02), 0xF0F4F8)
+        .rotateZ(-0.42).translate(0, 0.52, 0.317));
 
-    // === 肩甲(深蓝半球) ===
-    p.push(colorize(new THREE.SphereGeometry(0.09, 8, 6), C.soldierVest)
-        .translate(-0.235, 0.62, 0));
-    p.push(colorize(new THREE.SphereGeometry(0.09, 8, 6), C.soldierVest)
-        .translate(0.235, 0.62, 0));
+    // === 肩甲(V4.4: 亮蓝大半球 — 超出帽檐宽度, 背面剪影=深盔+亮蓝肩线) ===
+    p.push(colorize(new THREE.SphereGeometry(0.105, 8, 6), C.soldierBlue)
+        .translate(-0.27, 0.63, 0));
+    p.push(colorize(new THREE.SphereGeometry(0.105, 8, 6), C.soldierBlue)
+        .translate(0.27, 0.63, 0));
 
     // === 双手持枪(V3.7: 左臂前伸扶护木, 右臂持握把) ===
     // 右臂(上臂从右肩前伸)
     p.push(colorize(new THREE.CapsuleGeometry(0.056, 0.13, 4, 8), C.soldierBlue)
         .rotateX(-1.2).translate(0.18, 0.55, -0.1));
-    // 左臂(从左肩斜向前内扶枪)
-    p.push(colorize(new THREE.CapsuleGeometry(0.056, 0.13, 4, 8), C.soldierBlue)
-        .rotateX(-1.0).rotateZ(-0.45).translate(-0.13, 0.53, -0.14));
-    // 白手套(右手-握把 / 左手-护木)
+    // 左臂(V4.3: 贴身下垂后摆 — 背面可见的'手臂'轮廓, 与躯干色差)
+    p.push(colorize(new THREE.CapsuleGeometry(0.055, 0.15, 4, 8), C.soldierBlue)
+        .rotateX(0.55).rotateZ(0.12).translate(-0.29, 0.44, 0.06));
+    // 左手手套(后摆位)
+    p.push(colorize(new THREE.SphereGeometry(0.055, 8, 6), 0xF0F0F0)
+        .translate(-0.29, 0.31, 0.12));
+    // 白手套(右手-握把)
     p.push(colorize(new THREE.SphereGeometry(0.06, 8, 6), 0xF0F0F0)
         .translate(0.14, 0.5, -0.18));
-    p.push(colorize(new THREE.SphereGeometry(0.06, 8, 6), 0xF0F0F0)
-        .translate(-0.04, 0.5, -0.26));
 
     // === 枪械(迷你自动步枪 - 加大加长, 枪托外露保证背面可读) ===
     // 枪托(后端 - 从背后可见)
@@ -92,39 +96,46 @@ function createSoldierBodyGeometry() {
         .translate(0.08, 0.58, -0.32));
 
     // === 头部(大圆头 - Q版) ===
-    p.push(colorize(new THREE.SphereGeometry(0.225, 16, 12), C.skin)
+    p.push(colorize(new THREE.SphereGeometry(0.2, 16, 12), C.skin)
         .translate(0, 0.9, 0));
     // 眼睛(大而黑) + 高光
-    p.push(colorize(new THREE.SphereGeometry(0.05, 8, 6), 0x1a1a2e)
-        .translate(-0.09, 0.92, -0.2));
-    p.push(colorize(new THREE.SphereGeometry(0.05, 8, 6), 0x1a1a2e)
-        .translate(0.09, 0.92, -0.2));
-    p.push(colorize(new THREE.SphereGeometry(0.019, 6, 4), 0xFFFFFF)
-        .translate(-0.065, 0.945, -0.235));
-    p.push(colorize(new THREE.SphereGeometry(0.019, 6, 4), 0xFFFFFF)
-        .translate(0.104, 0.945, -0.235));
+    p.push(colorize(new THREE.SphereGeometry(0.045, 8, 6), 0x1a1a2e)
+        .translate(-0.075, 0.92, -0.185));
+    p.push(colorize(new THREE.SphereGeometry(0.045, 8, 6), 0x1a1a2e)
+        .translate(0.075, 0.92, -0.185));
+    p.push(colorize(new THREE.SphereGeometry(0.017, 6, 4), 0xFFFFFF)
+        .translate(-0.055, 0.945, -0.21));
+    p.push(colorize(new THREE.SphereGeometry(0.017, 6, 4), 0xFFFFFF)
+        .translate(0.09, 0.945, -0.21));
     // 腮红
-    p.push(colorize(new THREE.SphereGeometry(0.032, 6, 4), 0xFFB8B8)
-        .translate(-0.155, 0.85, -0.16));
-    p.push(colorize(new THREE.SphereGeometry(0.032, 6, 4), 0xFFB8B8)
-        .translate(0.155, 0.85, -0.16));
+    p.push(colorize(new THREE.SphereGeometry(0.03, 6, 4), 0xFFB8B8)
+        .translate(-0.135, 0.84, -0.15));
+    p.push(colorize(new THREE.SphereGeometry(0.03, 6, 4), 0xFFB8B8)
+        .translate(0.135, 0.84, -0.15));
 
     // === 头盔 ===
     // 蓝色圆润头盔(半球)
-    p.push(colorize(new THREE.SphereGeometry(0.248, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.58), C.soldierHelmet)
+    p.push(colorize(new THREE.SphereGeometry(0.205, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.6), C.soldierHelmet)
         .translate(0, 0.9, 0));
     // 帽檐环(深蓝)
-    p.push(colorize(new THREE.CylinderGeometry(0.252, 0.252, 0.045, 16), C.soldierVest)
-        .translate(0, 0.8, 0));
+    // 帽檐裙边(V4.2核心: 锥形裙边从背后俯视呈椭圆环 = 明确的'头盔'轮廓; 斜面无共面, 密阵相交不闪)
+    p.push(colorize(new THREE.CylinderGeometry(0.195, 0.26, 0.06, 16), C.soldierHelmet)
+        .translate(0, 0.81, 0));
+    // 帽檐深色包边
+    p.push(colorize(new THREE.TorusGeometry(0.255, 0.02, 6, 18), 0x16306B)
+        .rotateX(Math.PI / 2).translate(0, 0.79, 0));
     // 白色五角星(正面)
-    p.push(colorize(createStarGeometry(0.07, 0.03), 0xFFFFFF)
-        .rotateY(Math.PI).translate(0, 0.97, -0.235));
+    p.push(colorize(createStarGeometry(0.06, 0.026), 0xFFFFFF)
+        .rotateY(Math.PI).translate(0, 0.96, -0.205));
     // 头盔后部白色竖条纹(V4.0: 从背后看是'小军人'而非'蓝球'的关键识别条)
-    p.push(colorize(new THREE.BoxGeometry(0.07, 0.16, 0.02), 0xF0F4F8)
-        .translate(0, 0.99, 0.222));
+    p.push(colorize(new THREE.BoxGeometry(0.09, 0.15, 0.018), 0xF0F4F8)
+        .translate(0, 0.97, 0.19));
     // 头盔顶饰
-    p.push(colorize(new THREE.SphereGeometry(0.042, 8, 6), 0xFFFFFF)
-        .translate(0, 1.155, 0));
+    // 顶饰天线+绒球(V4.2: 打破俯视球轮廓)
+    p.push(colorize(new THREE.CylinderGeometry(0.012, 0.012, 0.07, 6), 0x16306B)
+        .translate(0, 1.105, 0));
+    p.push(colorize(new THREE.SphereGeometry(0.038, 8, 6), 0xFFFFFF)
+        .translate(0, 1.15, 0));
 
     return mergeGeometries(p);
 }
@@ -133,15 +144,15 @@ function createSoldierBodyGeometry() {
 function createSoldierLegGeometry(side) {
     const p = [];
     const C = CONFIG.COLORS;
-    // 裤腿(从髋垂下)
-    p.push(colorize(new THREE.CapsuleGeometry(0.07, 0.13, 4, 8), C.soldierPants)
-        .translate(side * 0.09, -0.1, 0));
+    // 裤腿(V4.2: 加长加粗, 从躯干下真实露出)
+    p.push(colorize(new THREE.CapsuleGeometry(0.085, 0.15, 4, 8), C.soldierPants)
+        .translate(side * 0.095, -0.145, 0));
     // 裤脚环(浅)
-    p.push(colorize(new THREE.CylinderGeometry(0.075, 0.075, 0.03, 8), 0x3E5175)
-        .translate(side * 0.09, -0.185, 0));
-    // 靴子(前伸)
-    p.push(colorize(new THREE.BoxGeometry(0.15, 0.09, 0.22), 0x1a2040)
-        .translate(side * 0.09, -0.25, -0.03));
+    p.push(colorize(new THREE.CylinderGeometry(0.088, 0.088, 0.035, 8), 0x3E5175)
+        .translate(side * 0.095, -0.21, 0));
+    // 靴子(加大前伸)
+    p.push(colorize(new THREE.BoxGeometry(0.17, 0.1, 0.26), 0x1a2040)
+        .translate(side * 0.095, -0.27, -0.04));
     return mergeGeometries(p);
 }
 
