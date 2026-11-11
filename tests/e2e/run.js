@@ -144,15 +144,51 @@ async function suiteBasics(page) {
 
     _current = '移动队伍';
     await step('键盘方向键切道(lane 1→0)', async () => {
-        await gameApi(page, '(g) => { g.squad.lane = 1; g.squad.targetX = 0; }');
+        await gameApi(page, '(g) => { g.squad.targetX = 0; }');
         await page.keyboard.press('ArrowLeft');
         await page.waitForTimeout(120);
-        assert(await gameApi(page, '(g) => g.squad.lane') === 0, 'lane应变为0');
+        const txKb = await gameApi(page, '(g) => g.squad.targetX');
+        assert(Math.abs(txKb - (-1.2)) < 0.01, 'V4键盘连续位移: targetX应为-1.2, 实际' + txKb);
     });
     await step('平滑移动收敛到目标X', async () => {
         await page.waitForTimeout(700);
         const x = await gameApi(page, '(g) => g.squad.x');
-        assert(Math.abs(x - (-2)) < 0.4, 'x应收敛到-2, 实际' + x);
+        assert(Math.abs(x - (-1.2)) < 0.4, 'x应收敛到-keyStep(1.2), 实际' + x);
+    });
+
+    // ===== V4.0 移动手感专项 =====
+    await step('V4拖动映射: 像素位移按灵敏度换算世界坐标', async () => {
+        // 固定状态: 远离门区(z=-2)/1人/目标归零, 消除磁吸与前序测试干扰
+        await gameApi(page, '(g) => { g.squad.z = -2; g.squad.targetX = 0; g.squad.x = 0; }');
+        await page.waitForTimeout(120);
+        const cw = await page.evaluate(() => document.getElementById('game-canvas').clientWidth || 390);
+        const maxX = await gameApi(page, '(g) => MovementMath.centerBounds(g.squad.getHalfWidth())');
+        const dragPx = Math.round(cw * 0.325); // 半个可玩范围(65%灵敏度的一半)
+        await page.mouse.move(195, 400);
+        await page.mouse.down();
+        await page.mouse.move(195 + dragPx, 400, { steps: 8 });
+        await page.waitForTimeout(120);
+        const tx = await gameApi(page, '(g) => g.squad.targetX');
+        await page.mouse.up();
+        const expect = Math.min(maxX, dragPx * (maxX * 2) / (cw * 0.65));
+        assert(Math.abs(tx - expect) < 0.15, '拖动' + dragPx + 'px → targetX ' + tx.toFixed(2) + ' 期望' + expect.toFixed(2));
+    });
+    await step('V4平滑跟随: 无单帧位置跳变', async () => {
+        await gameApi(page, '(g) => { g.squad.targetX = 2.0; }');
+        const samples = await gameApi(page, `(g) => new Promise(res => { const xs = []; let n = 0; const iv = setInterval(() => { xs.push(g.squad.x); if (++n >= 20) { clearInterval(iv); res(xs); } }, 30); })`);
+        let maxJump = 0;
+        for (let i = 1; i < samples.length; i++) maxJump = Math.max(maxJump, Math.abs(samples[i] - samples[i - 1]));
+        assert(maxJump < 0.45, '30ms采样最大跳变' + maxJump.toFixed(3) + ' 应平滑(<0.45)');
+    });
+    await step('V4边界: 500人军团人群边缘不出路且侧门可达', async () => {
+        await gameApi(page, '(g) => { g.squad.setCount(500); g.squad.targetX = 99; g.squad.x = 99; }');
+        await page.waitForTimeout(300);
+        const info = await gameApi(page, '(g) => ({ x: g.squad.x, half: g.squad.getHalfWidth(), tx: g.squad.targetX })');
+        const edge = info.x + info.half;
+        assert(edge <= 3.41, '人群边缘' + edge.toFixed(2) + ' ≤ 路半宽3.4(含容差)');
+        const win = await gameApi(page, '(g) => MovementMath.gateTriggerWindow(0.9, g.squad.getHalfWidth())');
+        assert(Math.abs(info.x) + win > 2, '边界处可触发侧门: |x|+win=' + (Math.abs(info.x) + win).toFixed(2));
+        await gameApi(page, '(g) => { g.squad.setCount(1); g.squad.targetX = 0; }');
     });
 }
 
@@ -298,7 +334,7 @@ async function suiteAdMock(page) {
     _current = '双倍结算E2E';
     await step('通关后广告领取双倍(限1次)', async () => {
         await gotoGame(page, '?adtest=auto_complete');
-        await gameApi(page, "(g) => { g.start(); g.squad.setCount(60); g.squad.z = -136; }");
+        await gameApi(page, "(g) => { g.start(); g.squad.setCount(60); g.squad.z = -126; }");
         // 等待Boss被击杀→won
         await page.waitForFunction(() => { const g = window.__game; return g && g.state === 'won'; }, { timeout: 12000 }).catch(() => {});
         assert(await gameApi(page, '(g) => g.state') === 'won', '应进入胜利状态');
