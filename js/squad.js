@@ -84,21 +84,22 @@ class Squad {
         this._updateFormation();
     }
 
-    /** 重新计算阵型目标位置 (V3.7: 分层阵型策略 — 按人数动态调整列数/间距/纵深)
-     *  1-10人: 单排全展(每个角色完整可见)
-     *  11-30: 紧凑小队(8列)
-     *  31-100: 自然军团(9列, 行交错)
-     *  101-300: 密集有层次(11列)
-     *  301-500: 视觉聚合(13列, 靠拢)
+    /** 重新计算阵型目标位置 (V3.7分层阵型 + V4.0宽度约束)
+     *  1-10人: 单排全展(sx按人数自适应, 保证不出路)
+     *  11-30: 紧凑小队(8列) / 31-100: 自然军团(9列) / 101-300: 密集(11列) / 301-500: 军团纵深(13列)
+     *  V4.0约束: 队伍半宽≤2.3 — 边界钳制下保留±1.0中心移动范围, 侧门经触发窗口扩展可达
      */
     _updateFormation() {
         const n = this.count;
         let cols, sx, sz;
-        if (n <= 10)       { cols = Math.max(1, n); sx = 0.72; sz = 0.66; }
-        else if (n <= 30)  { cols = Math.min(n, 8);  sx = 0.64; sz = 0.56; }
-        else if (n <= 100) { cols = 9;              sx = 0.58; sz = 0.52; }
-        else if (n <= 300) { cols = 11;             sx = 0.54; sz = 0.47; }
-        else               { cols = 12;             sx = 0.52; sz = 0.43; }
+        if (n <= 1)        { cols = 1;  sx = 0.72; sz = 0.66; }
+        else if (n <= 10)  { cols = n;  sx = Math.min(0.72, 4.3 / (n - 1)); sz = 0.66; }
+        else if (n <= 30)  { cols = 8;  sx = 0.56; sz = 0.56; }
+        else if (n <= 100) { cols = 9;  sx = 0.50; sz = 0.52; }
+        else if (n <= 300) { cols = 11; sx = 0.40; sz = 0.47; }
+        else               { cols = 13; sx = 0.34; sz = 0.40; }
+        this._formationCols = cols;
+        this._formationSpacingX = sx;
 
         for (let i = 0; i < n; i++) {
             const row = Math.floor(i / cols);
@@ -109,6 +110,13 @@ class Squad {
             s.fx = (col - (cols - 1) / 2) * sx + stagger + s.jx;
             s.fz = -row * sz + s.jz;
         }
+    }
+
+    /** 队伍半宽(含单兵半径+交错余量) — 移动边界钳制与门触发窗口共用 */
+    getHalfWidth() {
+        var cols = this._formationCols || CONFIG.FORMATION_COLS;
+        var sx = this._formationSpacingX || CONFIG.FORMATION_SPACING_X;
+        return ((cols - 1) / 2) * sx + sx * 0.25 + 0.2;
     }
 
     /** 僵尸击杀士兵 (V3.3: 复活无敌期间免疫) */
@@ -213,8 +221,12 @@ class Squad {
             this.z -= CONFIG.SQUAD_SPEED * dt;
         }
 
-        // 跑道平滑切换
-        this.x = damp(this.x, this.targetX, CONFIG.SQUAD_LANE_LERP, dt);
+        // V4.0: 连续目标位置 + 帧率无关平滑跟随(替代旧跳道急吸附)
+        // 目标与实际位置都钳制在随队伍宽度变化的可移动边界内
+        var bound = MovementMath.centerBounds(this.getHalfWidth());
+        this.targetX = MovementMath.clampCenter(this.targetX, bound);
+        this.x = MovementMath.clampCenter(
+            damp(this.x, this.targetX, MovementMath.followLambda(), dt), bound);
         // V3.2: 换道倾斜(速度感) + 跑动前倾
         const tilt = clamp((this.x - this.targetX) * 0.28, -0.28, 0.28);
         const lean = moving ? 0.1 : 0.02;

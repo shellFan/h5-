@@ -12,6 +12,9 @@ const ROOT = path.join(__dirname, '..', '..');
 // 各源文件以全局类/函数形式互相依赖, 拼接后单次执行保证作用域共享
 const SOURCE_FILES = [
     'js/config.js',
+    'js/utils.js',          // V4.0: damp/lerp/clamp/randRange(纯函数)
+    'js/movement.js',       // V4.0: 移动手感数学
+    'js/pacing.js',         // V4.0: 节奏控制器(纯逻辑)
     'js/platform/storage-adapter.js',
     'js/platform/lifecycle-adapter.js',
     'js/platform/audio-adapter.js',

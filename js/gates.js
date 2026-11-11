@@ -42,7 +42,12 @@ class GateSystem {
         this.gates = [];
     }
 
-    update(squad, effects, time) {
+    update(squad, effects, time, dt) {
+        // V4.0: 触发窗口随队伍宽度扩展(大人数边缘可达侧门), 封顶保证左右门区间永不重叠
+        var gateHalf = (CONFIG.LANE_WIDTH * 0.9) / 2;
+        var triggerWin = MovementMath.gateTriggerWindow(gateHalf, squad.getHalfWidth ? squad.getHalfWidth() : 0);
+        var stepDt = dt || 0.016;
+
         for (let i = this.gates.length - 1; i >= 0; i--) {
             const g = this.gates[i];
 
@@ -64,9 +69,16 @@ class GateSystem {
                 }
             }
 
-            // 穿门检测
+            // V4.0: 门磁吸辅助 — 仅当玩家已选边(距门中心<磁吸距离)时轻微吸附到该门跑道中心,
+            // 不替代玩家选择(左右门磁吸区相距4, 永不重叠)
+            if (!g.triggered && squad.z > g.z && squad.z - g.z < 4 &&
+                Math.abs(squad.x - g.x) < CONFIG.MOVE.gateMagnetDist) {
+                squad.targetX = damp(squad.targetX, g.x, CONFIG.MOVE.gateMagnetLambda, stepDt);
+            }
+
+            // 穿门检测(V4.0: 窗口=门半宽+队伍半宽补偿, 与视觉区域一致)
             if (!g.triggered && squad.z <= g.z + 0.2 && squad.z >= g.z - 0.8) {
-                if (Math.abs(squad.x - g.x) < 1.0) {
+                if (Math.abs(squad.x - g.x) < triggerWin) {
                     g.triggered = true;
                     squad.applyGate(g.data, effects);
                     this._highlight(g, effects);

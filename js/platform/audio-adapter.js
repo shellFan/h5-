@@ -41,13 +41,13 @@ class AudioAdapter {
 
     /**
      * 合成音效: 简单包络振荡器
-     * type: 'shoot'|'hit'|'gate'|'win'|'lose'|'click'
+     * type: 'shoot'|'hit'|'gate'|'win'|'lose'|'click'|'bossWarn'
      * 限流避免大量士兵同时射击时的音频爆音
      */
     play(type) {
         if (!this._enabled || this._muted || !this._ctx) return;
         var now = performance.now();
-        var minGap = { shoot: 90, hit: 60, gate: 200, win: 0, lose: 0, click: 50 }[type] || 80;
+        var minGap = { shoot: 90, hit: 60, gate: 200, win: 0, lose: 0, click: 50, bossWarn: 0 }[type] || 80;
         if (this._lastPlay[type] && now - this._lastPlay[type] < minGap) return;
         this._lastPlay[type] = now;
 
@@ -64,7 +64,8 @@ class AudioAdapter {
                 gate:  { freq: 440, end: 880, dur: 0.25, vol: 0.18, wave: 'sine' },
                 win:   { freq: 523, end: 1046, dur: 0.5, vol: 0.22, wave: 'sine' },
                 lose:  { freq: 330, end: 110, dur: 0.6, vol: 0.2, wave: 'sawtooth' },
-                click: { freq: 660, end: 660, dur: 0.05, vol: 0.1, wave: 'sine' }
+                click: { freq: 660, end: 660, dur: 0.05, vol: 0.1, wave: 'sine' },
+                bossWarn: { freq: 150, end: 60, dur: 0.7, vol: 0.25, wave: 'sawtooth' }
             }[type] || { freq: 440, end: 440, dur: 0.1, vol: 0.1, wave: 'sine' };
 
             osc.type = conf.wave;

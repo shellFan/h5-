@@ -19,6 +19,19 @@ class Game {
         this.gates = new GateSystem(this.world.scene);
         this.enemies = new EnemyManager(this.world.scene, this.effects);
         this.combat = new CombatSystem(this.world.scene, this.effects);
+        // V4.0: 节奏控制器 — 分批刷怪/场上上限/Boss预警(替代整波同帧生成)
+        this.pacing = new GamePacingController(this);
+        var self = this;
+        this.pacing.spawnFn = function(type, x, z, hp) { return self.enemies.spawnEnemy(type, x, z, hp); };
+        this.pacing.aliveCountFn = function() { return self.enemies.aliveCount; };
+        this.pacing.onWaveStart = function(w) { /* 波次激活(怪物尚在屏幕外涌入) */ };
+        this.pacing.onWaveClear = function(w) {
+            if (self.effects && self.state === 'playing') {
+                self.effects.floatText(self.squad.x, 2.2, self.squad.z - 1.5, '波次清除!', '#66D68F', false);
+            }
+        };
+        this.pacing.onBossWarning = function(w) { self._showBossWarning(true); };
+        this.pacing.onBossSpawn = function(w) { self._showBossWarning(false); };
         // V3.4: 广告协调器(复活/双倍/刷门; Platform.ads已在页面引导装配)
         this.adCoord = (typeof GameAdCoordinator !== 'undefined' && window.__adService)
             ? new GameAdCoordinator(window.__adService, {
@@ -76,19 +89,23 @@ class Game {
 
     _setupInput() {
         var self = this;
-        var startX = 0;
+        // V4.0: 连续拖动 → 目标位置(锚点相对映射, 无阈值跳道), 队伍经阻尼平滑跟随
+        var dragAnchorPx = 0;
+        var dragAnchorWX = 0;
         var dragging = false;
 
-        function onDown(x) { startX = x; dragging = true; }
+        function canvasWidth() { return self.canvas.clientWidth || window.innerWidth; }
+        function onDown(x) {
+            if (self.state !== 'playing' || self.paused) return;
+            dragAnchorPx = x;
+            dragAnchorWX = self.squad.targetX;
+            dragging = true;
+        }
         function onMove(x) {
             if (!dragging || self.state !== 'playing' || self.paused) return;
-            var dx = x - startX;
-            if (Math.abs(dx) > 30) {
-                var dir = dx > 0 ? 1 : -1;
-                self.squad.lane = clamp(self.squad.lane + dir, 0, 2);
-                self.squad.targetX = CONFIG.LANE_X[self.squad.lane];
-                startX = x;
-            }
+            self.squad.targetX = MovementMath.dragTarget(
+                dragAnchorWX, x - dragAnchorPx, canvasWidth(),
+                MovementMath.centerBounds(self.squad.getHalfWidth()));
         }
         function onUp() { dragging = false; }
 
@@ -106,15 +123,14 @@ class Game {
         window.addEventListener('mousemove', function(e) { onMove(e.clientX); });
         window.addEventListener('mouseup', onUp);
 
-        // 键盘 (方向键/AD)
+        // 键盘 (方向键/AD) — 连续位移(不吸附固定跑道)
         window.addEventListener('keydown', function(e) {
             if (self.state !== 'playing' || self.paused) return;
+            var maxX = MovementMath.centerBounds(self.squad.getHalfWidth());
             if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-                self.squad.lane = Math.max(0, self.squad.lane - 1);
-                self.squad.targetX = CONFIG.LANE_X[self.squad.lane];
+                self.squad.targetX = MovementMath.keyTarget(self.squad.targetX, -1, maxX);
             } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-                self.squad.lane = Math.min(2, self.squad.lane + 1);
-                self.squad.targetX = CONFIG.LANE_X[self.squad.lane];
+                self.squad.targetX = MovementMath.keyTarget(self.squad.targetX, 1, maxX);
             }
         });
     }
@@ -260,6 +276,25 @@ class Game {
         }
     }
 
+    /** V4.0: Boss出场预警横幅(震动+音效, 预警结束由onBossSpawn隐藏) */
+    _showBossWarning(show) {
+        var el = document.getElementById('boss-warning');
+        if (!el) return;
+        if (show) {
+            el.classList.remove('hidden');
+            // 强制重启动画
+            void el.offsetWidth;
+            el.classList.add('warning-anim');
+            if (typeof Platform !== 'undefined' && Platform.audio) {
+                Platform.audio.init();
+                Platform.audio.play('bossWarn');
+            }
+        } else {
+            el.classList.add('hidden');
+            el.classList.remove('warning-anim');
+        }
+    }
+
     _backToMenu() {
         this.paused = false;
         this.state = 'idle';
@@ -274,6 +309,8 @@ class Game {
         }
         this.gates.clear();
         this.enemies.clear();
+        this.pacing.clear();
+        this._showBossWarning(false);
         this.combat.clear();
         // V3.3: 刷新关卡选择解锁状态
         this._refreshLevelSelect();
@@ -528,6 +565,9 @@ class Game {
             this.squad.reset(level.startCount);
             this.gates.loadFromLevel(level);
             this.enemies.loadFromLevel(level);
+            // V4.0: 波次计划移交节奏控制器(分批生成)
+            this.pacing.loadFromLevel(level, this.levelIndex);
+            this._showBossWarning(false);
             this.combat.clear();
             // V3.4: 每局重置广告次数 + 音频手势初始化
             if (this.adCoord) this.adCoord.startRun();
@@ -618,7 +658,9 @@ class Game {
         // Boss存活时小队在Boss前方停下，击败Boss才能继续
         var stopZ = this.enemies.boss ? this.enemies.boss.z + 4.5 : null;
         this.squad.update(dt, this.time, stopZ);
-        this.gates.update(this.squad, this.effects, this.time);
+        this.gates.update(this.squad, this.effects, this.time, dt);
+        // V4.0: 节奏控制器驱动分批刷怪/Boss预警
+        this.pacing.update(dt, this.squad);
         this.enemies.update(dt, this.time, this.squad);
         this.combat.update(dt, this.squad, this.enemies);
         this.effects.update(dt);
@@ -780,6 +822,7 @@ class Game {
         this.state = 'won';
         if (this.ui.hud) this.ui.hud.classList.add('hidden');
         if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
+        this._showBossWarning(false);
         // 填充结算数据
         if (this.ui.winCount) this.ui.winCount.textContent = this.squad.count;
         if (this.ui.winKills) this.ui.winKills.textContent = this.enemies.killCount;
@@ -803,6 +846,7 @@ class Game {
         this.state = 'lost';
         if (this.ui.hud) this.ui.hud.classList.add('hidden');
         if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
+        this._showBossWarning(false);
         // 填充结算数据
         if (this.ui.loseKills) this.ui.loseKills.textContent = this.enemies.killCount;
         if (this.ui.loseMax) this.ui.loseMax.textContent = this.maxCount;

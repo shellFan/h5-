@@ -10,10 +10,37 @@ const CONFIG = {
     SQUAD_START_COUNT: 1,
     SQUAD_MAX_COUNT: 500,
     SQUAD_SPEED: 5.0,           // 前进速度 单位/秒
-    SQUAD_LANE_LERP: 10,        // 切换跑道插值速度
-    FORMATION_COLS: 7,          // 阵型最大列数
+    FORMATION_COLS: 7,          // 阵型基础列数(V4: 大人数自适应扩列, 见squad._updateFormation)
     FORMATION_SPACING_X: 0.52,
     FORMATION_SPACING_Z: 0.46,
+
+    // ===== V4.0 移动手感 (P0: 全部可配置, 禁止写死在事件处理中) =====
+    MOVE: {
+        touchSensitivity: 0.65,     // 拖动屏幕宽度的65% = 横穿全部可玩范围
+        followSmoothTime: 0.15,     // 队伍跟随目标的时间常数(秒): 越小越跟手, 0.15≈跟手带轻微平滑
+        laneTransitionTime: 0.45,   // 磁吸收敛参考时长(秒)
+        gateMagnetDist: 0.55,       // 门磁吸触发距离(仅轻微吸附已选中的门, 不代选)
+        gateMagnetLambda: 6.0,      // 磁吸阻尼强度
+        centerMargin: 0.12,         // 队伍边缘与路缘的最小间隙
+        minCenterRange: 1.1,        // 大人数时中心保底可移动范围(配合门触发窗口扩展保证门可达)
+        keyStep: 1.2                // 键盘单次移动距离(世界单位)
+    },
+
+    // ===== V4.0 节奏控制 (P0: 全部真实游戏秒, 与帧率无关) =====
+    PACING: {
+        waveTriggerAhead: 14,       // 波次激活提前量(队伍距波点z, 世界单位)
+        spawnIntervalMin: 0.8,      // 批次生成间隔下限(秒)
+        spawnIntervalMax: 1.5,      // 批次生成间隔上限(秒)
+        batchSizeBase: 1,           // 批次规模下限(只/批)
+        batchSizeMax: 4,            // 批次规模上限
+        maxAliveBase: 10,           // 场上活敌上限基准(L1), 每关+1
+        maxAliveCap: 20,            // 场上活敌上限封顶
+        spawnDepth: 9,              // 生成纵深(z向散布, 屏幕外逐步涌入)
+        bossTriggerAhead: 24,       // Boss预警提前量(世界单位)
+        bossWarningTime: 1.6,       // Boss预警展示时长(秒)
+        bossSpawnSetback: 4,        // Boss出生点向屏幕外后退量(禁止贴脸刷新)
+        firstContactGrace: 0.5      // 波激活后首批生成延迟(观察窗口, 秒)
+    },
 
     // 射击
     BULLET_SPEED: 28,
@@ -22,15 +49,15 @@ const CONFIG = {
     BULLET_MAX_VISIBLE: 120,    // 最大可见弹道数
     BULLET_RANGE: 18,           // 子弹射程
 
-    // 僵尸属性 (V3.7: 整体放大增强视觉威胁, 类型用装备/轮廓区分)
+    // 僵尸属性 (V4.0: 保留V3.7放大轮廓; 速度重校准 快速=1.5×普通, 盾/精英低速压迫感)
     ZOMBIE: {
-        normal:  { hp: 3,  speed: 1.6,  scale: 1.45, color: 0x8FBC5A, killScore: 1 },
-        fast:    { hp: 2,  speed: 3.2,  scale: 1.18, color: 0xA9CB6B, killScore: 1 },
-        shield:  { hp: 10, speed: 1.1,  scale: 1.6,  color: 0x7EA35F, killScore: 2 },
-        split:   { hp: 4,  speed: 1.3,  scale: 1.28, color: 0xA583C9, killScore: 2 },
-        spitter: { hp: 4,  speed: 1.2,  scale: 1.38, color: 0x63C24B, killScore: 2 },
+        normal:  { hp: 3,  speed: 1.7,  scale: 1.45, color: 0x8FBC5A, killScore: 1 },
+        fast:    { hp: 2,  speed: 2.55, scale: 1.18, color: 0xA9CB6B, killScore: 1 },
+        shield:  { hp: 10, speed: 1.15, scale: 1.6,  color: 0x7EA35F, killScore: 2 },
+        split:   { hp: 4,  speed: 1.35, scale: 1.28, color: 0xA583C9, killScore: 2 },
+        spitter: { hp: 4,  speed: 1.25, scale: 1.38, color: 0x63C24B, killScore: 2 },
         elite:   { hp: 26, speed: 1.0,  scale: 2.5,  color: 0x6F9A52, killScore: 5 },
-        boss:    { hp: 200, speed: 0.8, scale: 3.9,  color: 0x9C3B32, killScore: 50 }
+        boss:    { hp: 200, speed: 0.9, scale: 3.9,  color: 0x9C3B32, killScore: 50 }
     },
 
     // 僵尸攻击小队的距离

@@ -1,1 +1,122 @@
-{"timestamp":"2026-11-11T17:59:52.079Z","sceneObjects":861,"provenance":{"js/world.js:_buildRoad() CanvasTexture 256x512(柏油+车辙+补丁+车道线)":{"objects":48,"visible":48},"js/world.js:_buildCitySkyline() 程序化低多边形建筑+发光窗":{"objects":96,"visible":96},"js/world.js:_buildEnvironment() 程序化道具(树/灯/锥/车/路障/箱)":{"objects":148,"visible":148},"js/models.js:createSoldierBodyGeometry+createSoldierLegGeometry (InstancedMesh x3)":{"objects":1,"visible":1},"assets/art-v1/effects/bullet-glow.svg (CanvasTexture)":{"objects":90,"visible":0},"js/models.js:createGateModel(add/+5) 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)":{"objects":21,"visible":21},"js/models.js:createGateModel(mul/×2) 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)":{"objects":84,"visible":84},"js/models.js:createGateModel(add/+10) 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)":{"objects":42,"visible":42},"js/models.js:createGateModel(add/+8) 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)":{"objects":21,"visible":21},"js/models.js:createGateModel(buff/输出+1) 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)":{"objects":21,"visible":21},"js/models.js:createGateModel(buff/射速+20%) 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)":{"objects":21,"visible":21}},"untaggedRenderables":345,"assets":[{"src":"ui/soldier-avatar.svg","status":"LOADED","used":"UI/士兵"},{"src":"ui/zombie-avatar.svg","status":"LOADED","used":"UI/boss"},{"src":"ui/soldier-avatar.svg","status":"LOADED","used":"UI/膨胀小队"},{"src":"assets/art-v1/effects/bullet-glow.svg","status":"LOADED","used":"弹道Sprite纹理"}],"perf":{"fps":60,"workMs":15.18,"p95FrameMs":16.7,"drawCalls":434,"triangles":236586,"geometries":238,"textures":23,"squadCount":60,"enemyCount":4,"quality":1},"camera":{"pos":[0,6.1,-27.67],"fov":53},"modelPolicy":"assets/art-v1/仅含4个SVG(bullet-glow/双头像/gate-panel) — 无GLB/无角色PNG; 角色按大纲优先级3程序化建模"}
+{
+ "timestamp": "2026-11-11T18:18:23.893Z",
+ "sceneObjects": 762,
+ "provenance": {
+  "js/world.js:_buildRoad() CanvasTexture 256x512(柏油+车辙+补丁+车道线)": {
+   "objects": 48,
+   "visible": 48
+  },
+  "js/world.js:_buildCitySkyline() 程序化低多边形建筑+发光窗": {
+   "objects": 96,
+   "visible": 96
+  },
+  "js/world.js:_buildEnvironment() 程序化道具(树/灯/锥/车/路障/箱)": {
+   "objects": 144,
+   "visible": 144
+  },
+  "js/world.js:_buildEnvironment() 程序化云朵": {
+   "objects": 40,
+   "visible": 40
+  },
+  "js/models.js:createSoldierBodyGeometry+createSoldierLegGeometry (InstancedMesh x3)": {
+   "objects": 1,
+   "visible": 1
+  },
+  "assets/art-v1/effects/bullet-glow.svg (CanvasTexture)": {
+   "objects": 35,
+   "visible": 35
+  },
+  "js/models.js:createGateModel(add/+5) 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)": {
+   "objects": 21,
+   "visible": 21
+  },
+  "js/models.js:createGateModel(mul/×2) 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)": {
+   "objects": 84,
+   "visible": 84
+  },
+  "js/models.js:createGateModel(add/+10) 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)": {
+   "objects": 42,
+   "visible": 42
+  },
+  "js/models.js:createGateModel(add/+8) 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)": {
+   "objects": 21,
+   "visible": 21
+  },
+  "js/models.js:createGateModel(buff/输出+1) 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)": {
+   "objects": 21,
+   "visible": 21
+  },
+  "js/models.js:createGateModel(buff/射速+20%) 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)": {
+   "objects": 21,
+   "visible": 21
+  },
+  "js/models.js:createZombieMerged(normal) [20mesh->2mesh批处理]": {
+   "objects": 2,
+   "visible": 2
+  },
+  "js/models.js:createZombieMerged(fast) [20mesh->2mesh批处理]": {
+   "objects": 2,
+   "visible": 2
+  },
+  "js/models.js:createZombieMerged(shield) [20mesh->2mesh批处理]": {
+   "objects": 2,
+   "visible": 2
+  },
+  "js/models.js:createZombieMerged(split) [20mesh->2mesh批处理]": {
+   "objects": 2,
+   "visible": 2
+  },
+  "js/models.js:createZombieMerged(spitter) [20mesh->2mesh批处理]": {
+   "objects": 2,
+   "visible": 2
+  },
+  "js/models.js:createZombieModel(elite) [Group细节模型]": {
+   "objects": 27,
+   "visible": 27
+  }
+ },
+ "untaggedRenderables": 187,
+ "assets": [
+  {
+   "src": "ui/soldier-avatar.svg",
+   "status": "LOADED",
+   "used": "UI/士兵"
+  },
+  {
+   "src": "ui/zombie-avatar.svg",
+   "status": "LOADED",
+   "used": "UI/boss"
+  },
+  {
+   "src": "ui/soldier-avatar.svg",
+   "status": "LOADED",
+   "used": "UI/膨胀小队"
+  },
+  {
+   "src": "assets/art-v1/effects/bullet-glow.svg",
+   "status": "LOADED",
+   "used": "弹道Sprite纹理"
+  }
+ ],
+ "perf": {
+  "fps": 59,
+  "workMs": 3.94,
+  "p95FrameMs": 16.7,
+  "drawCalls": 501,
+  "triangles": 387606,
+  "geometries": 1091,
+  "textures": 37,
+  "squadCount": 100,
+  "enemyCount": 6,
+  "quality": 0
+ },
+ "camera": {
+  "pos": [
+   0.01,
+   6.1,
+   -14.26
+  ],
+  "fov": 53
+ },
+ "modelPolicy": "assets/art-v1/仅含4个SVG(bullet-glow/双头像/gate-panel) — 无GLB/无角色PNG; 角色按大纲优先级3程序化建模"
+}

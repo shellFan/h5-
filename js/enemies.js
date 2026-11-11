@@ -210,29 +210,17 @@ class EnemyManager {
         this.killCount = 0;
     }
 
+    /** V4.0: loadFromLevel 只负责清场; 波次计划移交 GamePacingController 分批驱动 */
     loadFromLevel(level) {
         this.clear();
-        for (const seg of level.segments) {
-            if (seg.type === 'wave') {
-                for (const e of seg.enemies) {
-                    for (let i = 0; i < e.count; i++) {
-                        const lane = Math.floor(Math.random() * 3);
-                        this.pendingSpawns.push({
-                            type: e.type,
-                            x: CONFIG.LANE_X[lane] + randRange(-0.4, 0.4),
-                            z: seg.z - randRange(0, 4),
-                            triggerZ: seg.z + 14
-                        });
-                    }
-                }
-            } else if (seg.type === 'boss') {
-                this.pendingSpawns.push({
-                    type: 'boss', x: 0, z: seg.z,
-                    hp: seg.boss && seg.boss.hp ? seg.boss.hp : null, // V3.3: 关卡血量覆盖
-                    triggerZ: seg.z + 16, isBoss: true
-                });
-            }
-        }
+    }
+
+    /** V4.0: 统一出生入口(供节奏控制器/分裂/E2E注入调用) */
+    spawnEnemy(type, x, z, hp) {
+        const e = new Enemy(type, x, z, this.scene, hp || null);
+        this.enemies.push(e);
+        if (type === 'boss') this.boss = e;
+        return e;
     }
 
     clear() {
@@ -262,16 +250,7 @@ class EnemyManager {
     }
 
     update(dt, time, squad) {
-        // 触发生成
-        for (let i = this.pendingSpawns.length - 1; i >= 0; i--) {
-            const ps = this.pendingSpawns[i];
-            if (squad.z <= ps.triggerZ) {
-                const e = new Enemy(ps.type, ps.x, ps.z, this.scene, ps.hp);
-                this.enemies.push(e);
-                if (ps.isBoss) this.boss = e;
-                this.pendingSpawns.splice(i, 1);
-            }
-        }
+        // V4.0: 生成由 GamePacingController 驱动(分批+上限), 此处不再整波触发
 
         // 分裂僵尸死亡后产生小僵尸
         for (let i = this.splitQueue.length - 1; i >= 0; i--) {

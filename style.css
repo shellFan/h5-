@@ -386,6 +386,59 @@ html, body {
     animation: countShake 0.35s ease;
 }
 
+/* ===== V4.0: Boss出场预警横幅 ===== */
+#boss-warning {
+    position: absolute;
+    top: 32%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 30;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 26px;
+    background: linear-gradient(135deg, rgba(90,10,14,0.92), rgba(150,20,24,0.88));
+    border: 2px solid #FF6B5E;
+    border-radius: 40px;
+    box-shadow: 0 0 26px rgba(255,60,48,0.55), inset 0 0 18px rgba(255,90,70,0.25);
+}
+
+#boss-warning .bw-icon {
+    font-size: 26px;
+    color: #FFD24A;
+    text-shadow: 0 0 12px rgba(255,180,60,0.8);
+    animation: bwPulse 0.5s ease-in-out infinite alternate;
+}
+
+#boss-warning .bw-text {
+    font-size: 19px;
+    font-weight: 900;
+    color: #FFEFEA;
+    letter-spacing: 3px;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+@keyframes bwPulse {
+    from { transform: scale(1); }
+    to   { transform: scale(1.25); }
+}
+
+#boss-warning.warning-anim {
+    animation: bwShake 0.4s ease-in-out 3, bwFadeIn 0.25s ease-out;
+}
+
+@keyframes bwShake {
+    0%, 100% { transform: translate(-50%, -50%); }
+    25% { transform: translate(calc(-50% - 5px), -50%); }
+    75% { transform: translate(calc(-50% + 5px), -50%); }
+}
+
+@keyframes bwFadeIn {
+    from { opacity: 0; transform: translate(-50%, -30%) scale(0.7); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
 /* ===== Boss血条 ===== */
 #boss-bar-container {
     position: absolute;
