@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>屏幕投影诊断</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        #game-container { max-width: none !important; width: 390px !important; height: 844px !important; }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+        <div id="diag-output" style="position:absolute;top:0;left:0;right:0;z-index:9999;background:rgba(0,0,0,0.85);color:#0F0;font-family:monospace;font-size:11px;padding:6px;line-height:1.5;pointer-events:none;white-space:pre;">诊断中...</div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/models.js"></script>
+    <script src="js/world.js"></script>
+    <script>
+        (function() {
+            try {
+                var canvas = document.getElementById('game-canvas');
+                var world = new World(canvas);
+                // 模拟相机跟随位置(squad在z=-10) — 直接设置到收敛位置
+                var squadX = 0, squadZ = -10;
+                var cam = world.camera;
+                cam.position.set(
+                    squadX * CONFIG.CAMERA_FOLLOW_X,
+                    CONFIG.CAMERA_OFFSET_Y,
+                    squadZ + CONFIG.CAMERA_OFFSET_Z
+                );
+                cam.lookAt(squadX * 0.5, 0, squadZ + CONFIG.CAMERA_LOOK_AHEAD);
+                cam.updateMatrixWorld();
+
+                var cam = world.camera;
+                var lines = [];
+
+                function project(x, y, z) {
+                    var v = new THREE.Vector3(x, y, z);
+                    v.project(cam);
+                    return {
+                        sx: Math.round((v.x * 0.5 + 0.5) * 100),
+                        sy: Math.round((-v.y * 0.5 + 0.5) * 100),
+                        visible: v.z < 1
+                    };
+                }
+
+                lines.push('=== 相机参数 V2.2 ===');
+                lines.push('FOV: ' + cam.fov + ' aspect: ' + cam.aspect.toFixed(3));
+                lines.push('pos: (' + cam.position.x.toFixed(1) + ',' + cam.position.y.toFixed(1) + ',' + cam.position.z.toFixed(1) + ')');
+                lines.push('OFFSET_Y: ' + CONFIG.CAMERA_OFFSET_Y + ' OFFSET_Z: ' + CONFIG.CAMERA_OFFSET_Z + ' LOOK_AHEAD: ' + CONFIG.CAMERA_LOOK_AHEAD);
+                lines.push('');
+
+                lines.push('=== 屏幕投影 (0-100%, squadZ=-10) ===');
+                var sp = project(squadX, 0, squadZ);
+                var sh = project(squadX, 1.2, squadZ);
+                lines.push('士兵脚: x=' + sp.sx + '% y=' + sp.sy + '%');
+                lines.push('士兵头: x=' + sh.sx + '% y=' + sh.sy + '%');
+
+                var rl = project(-3.4, 0, squadZ);
+                var rr = project(3.4, 0, squadZ);
+                lines.push('路左缘: x=' + rl.sx + '% y=' + rl.sy + '%');
+                lines.push('路右缘: x=' + rr.sx + '% y=' + rr.sy + '%');
+
+                var rf = project(0, 0, squadZ - 10);
+                lines.push('前方10u: x=' + rf.sx + '% y=' + rf.sy + '%');
+
+                var hz = project(0, 0, squadZ - 100);
+                lines.push('地平线: x=' + hz.sx + '% y=' + hz.sy + '% visible=' + hz.visible);
+
+                // 门投影(z=-24, 距squad 14u)
+                var g0l = project(-2 - 0.9, 1.0, -24);
+                var g0r = project(-2 + 0.9, 1.0, -24);
+                var g0t = project(-2, 2.0, -24);
+                var g0b = project(-2, 0, -24);
+                lines.push('门0(z=-24): 底y=' + g0b.sy + '% 顶y=' + g0t.sy + '% 左x=' + g0l.sx + '% 右x=' + g0r.sx + '%');
+
+                var g1l = project(2 - 0.9, 1.0, -24);
+                var g1r = project(2 + 0.9, 1.0, -24);
+                lines.push('门1(z=-24): 左x=' + g1l.sx + '% 右x=' + g1r.sx + '%');
+
+                lines.push('');
+                lines.push('=== 布局检查 ===');
+                var ok = true;
+                if (sp.sy < 65 || sp.sy > 88) { lines.push('FAIL 士兵脚y=' + sp.sy + '% 应在65-88%'); ok = false; }
+                else lines.push('PASS 士兵脚y=' + sp.sy + '%');
+                if (sh.sy < 55 || sh.sy > 82) { lines.push('FAIL 士兵头y=' + sh.sy + '% 应在55-82%'); ok = false; }
+                else lines.push('PASS 士兵头y=' + sh.sy + '%');
+                if (rl.sx < -5 || rr.sx > 105) { lines.push('FAIL 道路超出屏幕 ' + rl.sx + '-' + rr.sx); ok = false; }
+                else lines.push('PASS 道路在屏幕内: ' + rl.sx + '%-' + rr.sx + '%');
+                if (g0l.sx < 2 || g1r.sx > 98) { lines.push('FAIL 门超出屏幕 ' + g0l.sx + '-' + g1r.sx); ok = false; }
+                else lines.push('PASS 门在屏幕内: ' + g0l.sx + '%-' + g1r.sx + '%');
+                if (hz.sy < 5 || hz.sy > 25) { lines.push('FAIL 地平线y=' + hz.sy + '% 应在5-25%'); ok = false; }
+                else lines.push('PASS 地平线y=' + hz.sy + '%');
+                lines.push(ok ? '=== ALL PASS ===' : '=== HAS FAILURES ===');
+
+                document.getElementById('diag-output').textContent = lines.join('\n');
+                document.title = ok ? 'DIAG_PASS' : 'DIAG_FAIL';
+            } catch(e) {
+                document.getElementById('diag-output').textContent = 'ERROR: ' + e.message + '\n' + e.stack;
+                document.title = 'DIAG_ERROR';
+            }
+        })();
+    </script>
+</body>
+</html>

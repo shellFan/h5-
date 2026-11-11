@@ -1,0 +1,15 @@
+{
+  "name": "pengzhang-xiaodui",
+  "version": "3.0.0",
+  "description": "膨胀小队 - 竖屏3D卡通射击 H5 / 抖音小游戏",
+  "private": true,
+  "scripts": {
+    "dev": "node tools/server.js",
+    "dev:douyin": "node tools/server.js",
+    "build:h5": "node tools/build-h5.js",
+    "build:douyin": "node tools/build-douyin.js",
+    "test:unit": "node tests/unit/run.js",
+    "test:e2e": "node tests/e2e/run.js",
+    "test:visual": "node tests/e2e/visual.js"
+  }
+}
