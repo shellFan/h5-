@@ -77,7 +77,7 @@ class Game {
             this.squad.soldiers[i].spawnT = 1;
         }
         this.squad.update(0.001, 0);
-        this.world.updateCamera(0, 0, 0.016);
+        this.world.updateCamera(0, 0, 0.016, 1);
 
         this._setupInput();
         this._setupUI();
@@ -635,7 +635,7 @@ class Game {
         } else if (this.state === 'idle') {
             // 待机: 相机轻微摆动展示场景
             this.time += dt;
-            this.world.updateCamera(Math.sin(this.time * 0.4) * 0.6, 0, dt);
+            this.world.updateCamera(Math.sin(this.time * 0.4) * 0.6, 0, dt, 1);
         }
 
         this.world.renderer.render(this.world.scene, this.world.camera);
@@ -691,7 +691,7 @@ class Game {
 
         // 场景跟随
         this.world.updateRoadScroll(this.squad.z);
-        this.world.updateCamera(this.squad.x, this.squad.z, dt);
+        this.world.updateCamera(this.squad.x, this.squad.z, dt, this.squad.count);
 
         // UI刷新
         this._updateUI();

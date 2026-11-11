@@ -38,8 +38,8 @@ function createSoldierBodyGeometry() {
 
     // === 背包系统(背面剪影核心) ===
     // 主包(棕)
-    p.push(colorize(new THREE.BoxGeometry(0.24, 0.19, 0.13), 0x8B6914)
-        .translate(0, 0.52, 0.2));
+    p.push(colorize(new THREE.BoxGeometry(0.28, 0.21, 0.14), 0x8B6914)
+        .translate(0, 0.5, 0.21));
     // 包扣(浅棕)
     p.push(colorize(new THREE.BoxGeometry(0.26, 0.03, 0.14), 0xA07830)
         .translate(0, 0.44, 0.2));
@@ -92,36 +92,39 @@ function createSoldierBodyGeometry() {
         .translate(0.08, 0.58, -0.32));
 
     // === 头部(大圆头 - Q版) ===
-    p.push(colorize(new THREE.SphereGeometry(0.26, 16, 12), C.skin)
+    p.push(colorize(new THREE.SphereGeometry(0.225, 16, 12), C.skin)
         .translate(0, 0.9, 0));
     // 眼睛(大而黑) + 高光
     p.push(colorize(new THREE.SphereGeometry(0.05, 8, 6), 0x1a1a2e)
-        .translate(-0.095, 0.92, -0.22));
+        .translate(-0.09, 0.92, -0.2));
     p.push(colorize(new THREE.SphereGeometry(0.05, 8, 6), 0x1a1a2e)
-        .translate(0.095, 0.92, -0.22));
+        .translate(0.09, 0.92, -0.2));
     p.push(colorize(new THREE.SphereGeometry(0.019, 6, 4), 0xFFFFFF)
-        .translate(-0.078, 0.94, -0.26));
+        .translate(-0.065, 0.945, -0.235));
     p.push(colorize(new THREE.SphereGeometry(0.019, 6, 4), 0xFFFFFF)
-        .translate(0.112, 0.94, -0.26));
+        .translate(0.104, 0.945, -0.235));
     // 腮红
-    p.push(colorize(new THREE.SphereGeometry(0.034, 6, 4), 0xFFB8B8)
-        .translate(-0.18, 0.85, -0.18));
-    p.push(colorize(new THREE.SphereGeometry(0.034, 6, 4), 0xFFB8B8)
-        .translate(0.18, 0.85, -0.18));
+    p.push(colorize(new THREE.SphereGeometry(0.032, 6, 4), 0xFFB8B8)
+        .translate(-0.155, 0.85, -0.16));
+    p.push(colorize(new THREE.SphereGeometry(0.032, 6, 4), 0xFFB8B8)
+        .translate(0.155, 0.85, -0.16));
 
     // === 头盔 ===
     // 蓝色圆润头盔(半球)
-    p.push(colorize(new THREE.SphereGeometry(0.285, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.58), C.soldierHelmet)
+    p.push(colorize(new THREE.SphereGeometry(0.248, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.58), C.soldierHelmet)
         .translate(0, 0.9, 0));
     // 帽檐环(深蓝)
-    p.push(colorize(new THREE.CylinderGeometry(0.29, 0.29, 0.045, 16), C.soldierVest)
+    p.push(colorize(new THREE.CylinderGeometry(0.252, 0.252, 0.045, 16), C.soldierVest)
         .translate(0, 0.8, 0));
     // 白色五角星(正面)
-    p.push(colorize(createStarGeometry(0.075, 0.032), 0xFFFFFF)
-        .rotateY(Math.PI).translate(0, 0.97, -0.26));
+    p.push(colorize(createStarGeometry(0.07, 0.03), 0xFFFFFF)
+        .rotateY(Math.PI).translate(0, 0.97, -0.235));
+    // 头盔后部白色竖条纹(V4.0: 从背后看是'小军人'而非'蓝球'的关键识别条)
+    p.push(colorize(new THREE.BoxGeometry(0.07, 0.16, 0.02), 0xF0F4F8)
+        .translate(0, 0.99, 0.222));
     // 头盔顶饰
-    p.push(colorize(new THREE.SphereGeometry(0.045, 8, 6), 0xFFFFFF)
-        .translate(0, 1.17, 0));
+    p.push(colorize(new THREE.SphereGeometry(0.042, 8, 6), 0xFFFFFF)
+        .translate(0, 1.155, 0));
 
     return mergeGeometries(p);
 }

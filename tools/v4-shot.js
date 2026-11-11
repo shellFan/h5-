@@ -5,9 +5,9 @@ const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright-core');
 const ROOT = path.join(__dirname, '..');
-const OUT = path.join(ROOT, 'docs', 'screenshots', 'v4-after-p12');
+const OUT = path.join(ROOT, 'docs', 'screenshots', 'v4-after-p3');
 
-const PORT = process.env.E2E_PORT || 8192;
+const PORT = process.env.E2E_PORT || 8194;
 const BASE = 'http://localhost:' + PORT;
 
 function startServer() {
