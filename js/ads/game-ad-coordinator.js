@@ -62,12 +62,12 @@ class GameAdCoordinator {
         });
     }
 
-    /** 4.1 激励视频复活(失败界面按钮) */
+    /** 4.1 激励视频复活(失败界面按钮) V3.5: 次数在请求时消耗(防授奖竞态), 奖励仍由幂等账本保证 */
     requestRevive(maxCountBeforeDeath) {
         var self = this;
         if (!this.canRevive()) return Promise.resolve(false);
+        this._runCounters.revive++;
         return this._showAndGrant(AdPlacement.REVIVE, function() {
-            self._runCounters.revive++;
             var reviveCount = Math.max(AD_RULES.REVIVE_MIN,
                 Math.floor((maxCountBeforeDeath || 10) * AD_RULES.REVIVE_RATIO));
             if (self._hooks.onReviveReward) {
@@ -80,8 +80,8 @@ class GameAdCoordinator {
     requestDoubleReward() {
         var self = this;
         if (!this.canDoubleReward()) return Promise.resolve(false);
+        this._runCounters.double++;
         return this._showAndGrant(AdPlacement.DOUBLE_REWARD, function() {
-            self._runCounters.double++;
             if (self._hooks.onDoubleReward) self._hooks.onDoubleReward();
         });
     }
@@ -93,8 +93,8 @@ class GameAdCoordinator {
         if (this._hooks.canRefreshGates && !this._hooks.canRefreshGates()) {
             return Promise.resolve(false); // 当前无未触发的门可刷新
         }
+        this._runCounters.gateRefresh++;
         return this._showAndGrant(AdPlacement.REFRESH_GATES, function() {
-            self._runCounters.gateRefresh++;
             if (self._hooks.onGatesRefresh) self._hooks.onGatesRefresh();
         });
     }

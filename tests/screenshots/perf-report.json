@@ -1,0 +1,84 @@
+{
+  "device": "headless-msedge/390x844@dpr2",
+  "samples": [
+    {
+      "count": 1,
+      "fps": 58.7,
+      "workMs": 1.6,
+      "p95FrameMs": 18.5,
+      "drawCalls": 260,
+      "triangles": 44756,
+      "geometries": 302,
+      "textures": 34,
+      "quality": 1,
+      "enemyCount": 22
+    },
+    {
+      "count": 12,
+      "fps": 59,
+      "workMs": 2.4,
+      "p95FrameMs": 18.4,
+      "drawCalls": 292.3,
+      "triangles": 66696,
+      "geometries": 302,
+      "textures": 36,
+      "quality": 1,
+      "enemyCount": 14.3
+    },
+    {
+      "count": 31,
+      "fps": 56.7,
+      "workMs": 2.4,
+      "p95FrameMs": 18.5,
+      "drawCalls": 322,
+      "triangles": 131399.3,
+      "geometries": 309,
+      "textures": 36,
+      "quality": 1,
+      "enemyCount": 14
+    },
+    {
+      "count": 100,
+      "fps": 66.7,
+      "workMs": 2.6,
+      "p95FrameMs": 18.3,
+      "drawCalls": 337.7,
+      "triangles": 366555.3,
+      "geometries": 298,
+      "textures": 36,
+      "quality": 1,
+      "enemyCount": 12.3
+    },
+    {
+      "count": 300,
+      "fps": 79.7,
+      "workMs": 2.7,
+      "p95FrameMs": 18.2,
+      "drawCalls": 319.7,
+      "triangles": 1060171.3,
+      "geometries": 308,
+      "textures": 36,
+      "quality": 1,
+      "enemyCount": 12.7
+    },
+    {
+      "count": 500,
+      "fps": 65.3,
+      "workMs": 2.6,
+      "p95FrameMs": 18.5,
+      "drawCalls": 323.7,
+      "triangles": 1750526.7,
+      "geometries": 301,
+      "textures": 36,
+      "quality": 1,
+      "enemyCount": 14
+    }
+  ],
+  "memTrend": {
+    "startMB": 15.4,
+    "endMB": 22.6,
+    "growthMB": 7.2,
+    "note": "10秒500人持续运行"
+  },
+  "time": "2026-11-11T17:15:12.559Z"
+}

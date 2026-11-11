@@ -498,6 +498,60 @@ function createZombieModel(type) {
     return group;
 }
 
+// ===== V3.5 性能优化: 大众僵尸几何合并批处理 =====
+// 每只僵尸从 ~20 个独立 mesh → 2 个合并 mesh (Lambert体 + 发光件), 全类型共享2个材质
+// drawCalls 实测 ~900 → ~150 (30只僵尸场景)
+// 受击反馈由 emissive 闪烁改为缩放冲击(共享材质无法按实例闪烁)
+var __zombieMergedCache = {};
+var __zombieMergedMat = {
+    lambert: new THREE.MeshLambertMaterial({ vertexColors: true }),
+    basic: new THREE.MeshBasicMaterial({ vertexColors: true })
+};
+
+function bakeGroupToMergedGeos(group) {
+    group.updateMatrixWorld(true);
+    var lambertGeos = [];
+    var basicGeos = [];
+    group.traverse(function(node) {
+        if (!node.isMesh || !node.geometry) return;
+        var geo = node.geometry.clone();
+        geo.applyMatrix4(node.matrixWorld);
+        colorize(geo, node.material.color.getHex());
+        // 发光件(自身发光/纯色 UI 件)入 basic 桶, 其余入 lambert 桶
+        var isGlow = node.material.isMeshBasicMaterial ||
+            (node.material.emissive && node.material.emissiveIntensity > 0.3);
+        if (isGlow) basicGeos.push(geo);
+        else lambertGeos.push(geo);
+    });
+    return {
+        lambert: lambertGeos.length ? mergeGeometries(lambertGeos) : null,
+        basic: basicGeos.length ? mergeGeometries(basicGeos) : null
+    };
+}
+
+/** 创建合并版大众僵尸(返回Group: 1-2个mesh, 共享几何+材质; 缩放由外部visScale施加) */
+function createZombieMerged(type) {
+    var cached = __zombieMergedCache[type];
+    if (!cached) {
+        var raw = createZombieModel(type);
+        raw.scale.setScalar(1); // 归一化: 缩放不烘焙, 由Enemy按cfg.scale施加
+        raw.updateMatrixWorld(true);
+        cached = bakeGroupToMergedGeos(raw);
+        __zombieMergedCache[type] = cached;
+    }
+    var group = new THREE.Group();
+    if (cached.lambert) {
+        var lm = new THREE.Mesh(cached.lambert, __zombieMergedMat.lambert);
+        lm.castShadow = true;
+        group.add(lm);
+    }
+    if (cached.basic) {
+        group.add(new THREE.Mesh(cached.basic, __zombieMergedMat.basic));
+    }
+    group.userData.merged = true;
+    return group;
+}
+
 /** 创建状态门模型(返回Group) - 稀有度发光边框 */
 /** 创建门玻璃纹理(参考gate-panel.svg设计: 渐变玻璃+高光弧线+边框光) */
 function createGateGlassTexture(hexColor) {

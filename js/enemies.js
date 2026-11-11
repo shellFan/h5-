@@ -25,13 +25,15 @@ class Enemy {
         this.deathHandled = false;
         this.removeReady = false;
 
-        this.model = createZombieModel(type);
+        // V3.5: 大众僵尸使用合并批处理模型(2 mesh/只), Boss/精英保留Group模型(细节动画+独立材质)
+        var useMerged = (type !== 'boss' && type !== 'elite' && typeof createZombieMerged === 'function');
+        this.model = useMerged ? createZombieMerged(type) : createZombieModel(type);
         this.model.position.set(x, 0, z);
         this.model.scale.setScalar(this.cfg.scale); // V2.2修复: 存活时应用类型scale
         this.visScale = this.cfg.scale; // 实际视觉scale(分裂僵尸会缩小)
         scene.add(this.model);
 
-        // 收集可闪烁材质
+        // 收集可闪烁材质(合并模型无独立材质 → 用缩放冲击代替闪烁)
         this.flashMats = [];
         this.model.traverse(function(obj) {
             if (obj.material && obj.material.emissive) {
@@ -165,12 +167,19 @@ class Enemy {
             this.model.rotation.x = Math.sin(time * walkSpeed + this.phase) * 0.05;
         }
 
-        // 受击闪烁 (V3.6: 压低强度避免Boss被连续命中时刷成全白)
+        // 受击反馈 (V3.5: 合并模型用缩放冲击, Group模型用emissive闪烁)
         if (this.hitFlash > 0) {
             this.hitFlash -= dt;
-            const k = Math.max(0, this.hitFlash / 0.08) * 0.35;
-            for (let i = 0; i < this.flashMats.length; i++) {
-                this.flashMats[i].emissive.setRGB(k, k * 0.85, k * 0.6);
+            const k = Math.max(0, this.hitFlash / 0.08);
+            if (this.model.userData.merged) {
+                // 缩放冲击: 短暂膨胀回弹
+                var punch = 1 + k * 0.18;
+                this.model.scale.setScalar(this.visScale * punch);
+            } else {
+                const f = k * 0.35;
+                for (let i = 0; i < this.flashMats.length; i++) {
+                    this.flashMats[i].emissive.setRGB(f, f * 0.85, f * 0.6);
+                }
             }
         }
     }

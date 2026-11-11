@@ -112,78 +112,62 @@ class World {
         roadTex.anisotropy = 4;
 
         const roadMat = new THREE.MeshLambertMaterial({ map: roadTex });
-        // 石质护栏材质
-        const railMat = new THREE.MeshLambertMaterial({ color: 0x8E8AA0 });
-        const railTopMat = new THREE.MeshLambertMaterial({ color: 0xA8A4B8 });
-        // 人行道材质
-        const sidewalkMat = new THREE.MeshLambertMaterial({ color: 0xC8C4D0 });
-        // 地基(草地/泥地)
-        const groundMat = new THREE.MeshLambertMaterial({ color: C.grass });
 
+        // V3.5: 每段合并为3个mesh(路面/路侧结构/草地) — 原9个, drawCalls 108→36
         for (let i = 0; i < SEG_COUNT; i++) {
             const seg = new THREE.Group();
 
-            // 道路面
+            // 道路面(带纹理)
             const road = new THREE.Mesh(new THREE.PlaneGeometry(6.8, SEG_LEN), roadMat);
             road.rotation.x = -Math.PI / 2;
             road.receiveShadow = true;
             seg.add(road);
 
-            // 左右人行道(略高于路面)
-            var swGeo = new THREE.BoxGeometry(0.8, 0.1, SEG_LEN);
-            var swL = new THREE.Mesh(swGeo, sidewalkMat);
-            swL.position.set(-3.8, 0.05, 0);
-            swL.receiveShadow = true;
-            seg.add(swL);
-            var swR = swL.clone();
-            swR.position.x = 3.8;
-            seg.add(swR);
+            // 路侧结构合并: 人行道×2 + 护栏×2 + 顶盖×2 (顶点色单材质)
+            var structGeos = [
+                { g: new THREE.BoxGeometry(0.8, 0.1, SEG_LEN), x: -3.8, y: 0.05, z: 0, c: 0xC8C4D0 },
+                { g: new THREE.BoxGeometry(0.8, 0.1, SEG_LEN), x: 3.8, y: 0.05, z: 0, c: 0xC8C4D0 },
+                { g: new THREE.BoxGeometry(0.25, 0.35, SEG_LEN), x: -4.35, y: 0.17, z: 0, c: 0x8E8AA0 },
+                { g: new THREE.BoxGeometry(0.25, 0.35, SEG_LEN), x: 4.35, y: 0.17, z: 0, c: 0x8E8AA0 },
+                { g: new THREE.BoxGeometry(0.3, 0.06, SEG_LEN), x: -4.35, y: 0.37, z: 0, c: 0xA8A4B8 },
+                { g: new THREE.BoxGeometry(0.3, 0.06, SEG_LEN), x: 4.35, y: 0.37, z: 0, c: 0xA8A4B8 }
+            ].map(function(item) {
+                item.g.translate(item.x, item.y, item.z);
+                return colorize(item.g, item.c);
+            });
+            var structMesh = new THREE.Mesh(mergeGeometries(structGeos),
+                new THREE.MeshLambertMaterial({ vertexColors: true }));
+            structMesh.castShadow = true;
+            structMesh.receiveShadow = true;
+            seg.add(structMesh);
 
-            // 左右石质护栏(矮墙)
-            var railGeo = new THREE.BoxGeometry(0.25, 0.35, SEG_LEN);
-            var railL = new THREE.Mesh(railGeo, railMat);
-            railL.position.set(-4.35, 0.17, 0);
-            railL.castShadow = true;
-            railL.receiveShadow = true;
-            seg.add(railL);
-            var railR = railL.clone();
-            railR.position.x = 4.35;
-            seg.add(railR);
-            // 护栏顶盖(浅色)
-            var capGeo = new THREE.BoxGeometry(0.3, 0.06, SEG_LEN);
-            var capL = new THREE.Mesh(capGeo, railTopMat);
-            capL.position.set(-4.35, 0.37, 0);
-            seg.add(capL);
-            var capR = capL.clone();
-            capR.position.x = 4.35;
-            seg.add(capR);
-
-            // 左右地面(草地/泥地)
-            const groundGeo = new THREE.PlaneGeometry(20, SEG_LEN);
-            const groundL = new THREE.Mesh(groundGeo, groundMat);
-            groundL.rotation.x = -Math.PI / 2;
-            groundL.position.set(-14, -0.02, 0);
-            groundL.receiveShadow = true;
-            seg.add(groundL);
-            const groundR = groundL.clone();
-            groundR.position.x = 14;
-            seg.add(groundR);
+            // 草地(两侧合并)
+            var gL = new THREE.PlaneGeometry(20, SEG_LEN);
+            gL.rotateX(-Math.PI / 2);
+            gL.translate(-14, -0.02, 0);
+            var gR = new THREE.PlaneGeometry(20, SEG_LEN);
+            gR.rotateX(-Math.PI / 2);
+            gR.translate(14, -0.02, 0);
+            var groundMesh = new THREE.Mesh(mergeGeometries([colorize(gL, C.grass), colorize(gR, C.grass)]),
+                new THREE.MeshLambertMaterial({ vertexColors: true }));
+            groundMesh.receiveShadow = true;
+            seg.add(groundMesh);
 
             seg.position.z = -i * SEG_LEN + SEG_LEN;
             this.scene.add(seg);
             this.roadSegments.push({ group: seg, length: SEG_LEN });
         }
 
-        // 起点线(斑马线样式 - 白色横条组)
+        // 起点线(斑马线样式 - 白色横条合并为单mesh)
+        var stripeGeos = [];
         for (var si = 0; si < 5; si++) {
-            var stripe = new THREE.Mesh(
-                new THREE.PlaneGeometry(1.0, 0.25),
-                new THREE.MeshBasicMaterial({ color: 0xFFFFFF })
-            );
-            stripe.rotation.x = -Math.PI / 2;
-            stripe.position.set(-2.8 + si * 1.4, 0.012, 0.5);
-            this.scene.add(stripe);
+            var sg = new THREE.PlaneGeometry(1.0, 0.25);
+            sg.rotateX(-Math.PI / 2);
+            sg.translate(-2.8 + si * 1.4, 0.012, 0.5);
+            stripeGeos.push(colorize(sg, 0xFFFFFF));
         }
+        this.scene.add(new THREE.Mesh(mergeGeometries(stripeGeos),
+            new THREE.MeshBasicMaterial({ vertexColors: true })));
     }
 
     _buildEnvironment() {
@@ -377,7 +361,7 @@ class World {
         }
     }
 
-    /** 远景城市天际线(低多边形建筑群) */
+    /** 远景城市天际线(低多边形建筑群) V3.5: 窗户合并为单mesh降低drawCalls */
     _buildCitySkyline() {
         var buildingMats = [
             new THREE.MeshLambertMaterial({ color: 0x8A94A8 }),
@@ -385,7 +369,7 @@ class World {
             new THREE.MeshLambertMaterial({ color: 0x9AA4B8 }),
             new THREE.MeshLambertMaterial({ color: 0x6A7488 })
         ];
-        var windowMat = new THREE.MeshBasicMaterial({ color: 0xFFF8C8 });
+        var windowMat = new THREE.MeshLambertMaterial({ color: 0xFFF8C8, emissive: 0x888040, emissiveIntensity: 0.35 });
 
         for (var side = -1; side <= 1; side += 2) {
             for (var i = 0; i < 12; i++) {
@@ -402,20 +386,24 @@ class World {
                 var roof = new THREE.Mesh(new THREE.BoxGeometry(w * 0.6, 0.3, d * 0.6), roofMat);
                 roof.position.y = h + 0.15;
                 b.add(roof);
-                // 窗户(发光小方块 - 正面)
+                // 窗户(V3.5: 收集到数组, 合并为单个mesh — 原每建筑10-30个独立面片)
                 var rows = Math.floor(h / 1.2);
                 var cols = Math.floor(w / 0.6);
+                var winGeos = [];
                 for (var r = 0; r < rows; r++) {
                     for (var c = 0; c < cols; c++) {
                         if (Math.random() < 0.4) continue; // 部分窗户亮
-                        var win = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.3), windowMat);
-                        win.position.set(
+                        var wg = new THREE.PlaneGeometry(0.2, 0.3);
+                        wg.translate(
                             (c - (cols - 1) / 2) * 0.55,
                             0.8 + r * 1.1,
                             d / 2 + 0.01
                         );
-                        b.add(win);
+                        winGeos.push(wg);
                     }
+                }
+                if (winGeos.length) {
+                    b.add(new THREE.Mesh(mergeGeometries(winGeos), windowMat));
                 }
                 // 位置: 远景两侧(距离建筑群)
                 var bx = side * randRange(10, 16);
