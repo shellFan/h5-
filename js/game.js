@@ -22,7 +22,15 @@ class Game {
         // V4.0: 节奏控制器 — 分批刷怪/场上上限/Boss预警(替代整波同帧生成)
         this.pacing = new GamePacingController(this);
         var self = this;
-        this.pacing.spawnFn = function(type, x, z, hp) { return self.enemies.spawnEnemy(type, x, z, hp); };
+        this.pacing.spawnFn = function(type, x, z, hp) {
+            // V4.0: Boss血量按出场时队伍战力动态缩放 — 任何策略/养成水平都面临~8-12s Boss战
+            if (type === 'boss') {
+                var base = hp || CONFIG.ZOMBIE.boss.hp;
+                var dpsNow = self.squad.count * self.squad.getDamage() * self.squad.getFireRate();
+                hp = Math.round((base + dpsNow * 8) / 50) * 50;
+            }
+            return self.enemies.spawnEnemy(type, x, z, hp);
+        };
         this.pacing.aliveCountFn = function() { return self.enemies.aliveCount; };
         this.pacing.onWaveStart = function(w) { /* 波次激活(怪物尚在屏幕外涌入) */ };
         this.pacing.onWaveClear = function(w) {

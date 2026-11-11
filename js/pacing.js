@@ -111,7 +111,8 @@ class GamePacingController {
                         var type = w.queue.shift();
                         var lane = Math.floor(Math.random() * 3);
                         var x = CONFIG.LANE_X[lane] + randRange(-0.4, 0.4);
-                        var z = w.z - randRange(0, P.spawnDepth);   // 纵深散布, 屏幕外逐步涌入
+                        // V4.0: 屏幕外预生成 — 相对队伍前方11~(11+纵深)单位, 无论队伍速度如何怪永远迎面涌入
+                        var z = squad.z - randRange(11, 11 + P.spawnDepth);
                         if (this.spawnFn) this.spawnFn(type, x, z, null);
                         w.spawned++;
                     }

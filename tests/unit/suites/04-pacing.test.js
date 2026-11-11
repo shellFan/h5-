@@ -88,13 +88,13 @@ module.exports.run = function(ctx) {
             assertEq(p.waves[0].state, 'done');
             assertEq(cleared, 1, '波清回调触发');
         });
-        test('生成位置在波点后方纵深散布', () => {
+        test('生成位置在队伍前方屏幕外(11~11+纵深)', () => {
             var { p, spawned } = makeCtl(0);
             var squad = { z: -24 };
             p.update(CONFIG.PACING.firstContactGrace + 0.5, squad);
             for (var i = 0; i < spawned.length; i++) {
-                assert(spawned[i].z <= -38 && spawned[i].z >= -38 - CONFIG.PACING.spawnDepth,
-                    'z=' + spawned[i].z + ' 应在[' + (-38 - CONFIG.PACING.spawnDepth) + ', -38]');
+                assert(spawned[i].z <= -35 && spawned[i].z >= -35 - CONFIG.PACING.spawnDepth,
+                    'z=' + spawned[i].z + ' 应在队伍前方屏幕外');
                 assert(Math.abs(spawned[i].x) <= 2.4 + 0.4, 'x在跑道附近');
             }
         });
