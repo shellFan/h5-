@@ -66,6 +66,7 @@ class World {
         const C = CONFIG.COLORS;
         const roadGroup = new THREE.Group();
         this.roadGroup = roadGroup;
+        roadGroup.userData.artSource = 'js/world.js:_buildRoad() CanvasTexture 256x512(柏油+车辙+补丁+车道线)';
         this.roadSegments = [];
 
         const SEG_LEN = 12;
@@ -96,6 +97,18 @@ class World {
             rctx.lineTo(sx + randRange(-20, 20), sy + randRange(10, 40));
             rctx.stroke();
         }
+        // V3.7: 车辙印(两条纵向暗带 — 增加柏油路真实感)
+        rctx.fillStyle = 'rgba(60,55,80,0.07)';
+        rctx.fillRect(52, 0, 22, 512);
+        rctx.fillRect(182, 0, 22, 512);
+        // V3.7: 深色补丁(随机圆形沥青修补痕)
+        for (let pi = 0; pi < 5; pi++) {
+            var px = randRange(30, 226), py = randRange(20, 480), pr = randRange(8, 18);
+            rctx.fillStyle = 'rgba(70,64,90,0.1)';
+            rctx.beginPath();
+            rctx.ellipse(px, py, pr, pr * 0.7, 0, 0, Math.PI * 2);
+            rctx.fill();
+        }
         // 车道分隔线(白色虚线 - 对齐实际车道边界 X=±1)
         rctx.fillStyle = '#F0EEF5';
         for (let y = 0; y < 512; y += 48) {
@@ -116,6 +129,7 @@ class World {
         // V3.5: 每段合并为3个mesh(路面/路侧结构/草地) — 原9个, drawCalls 108→36
         for (let i = 0; i < SEG_COUNT; i++) {
             const seg = new THREE.Group();
+            seg.userData.artSource = 'js/world.js:_buildRoad() CanvasTexture 256x512(柏油+车辙+补丁+车道线)';
 
             // 道路面(带纹理)
             const road = new THREE.Mesh(new THREE.PlaneGeometry(6.8, SEG_LEN), roadMat);
@@ -336,6 +350,7 @@ class World {
             item.position.set(x, 0, z + randRange(-1.5, 1.5));
             var sc = randRange(0.85, 1.15);
             item.scale.setScalar(sc);
+            item.userData.artSource = 'js/world.js:_buildEnvironment() 程序化道具(树/灯/锥/车/路障/箱)';
             this.scene.add(item);
             this.decoItems.push(item);
             z -= randRange(4, 7);
@@ -356,6 +371,7 @@ class World {
                 cloud.add(puff);
             }
             cloud.position.set(randRange(-10, 10), randRange(8, 13), -i * 12 - 5);
+            cloud.userData.artSource = 'js/world.js:_buildEnvironment() 程序化云朵';
             this.scene.add(cloud);
             this.clouds.push(cloud);
         }
@@ -409,6 +425,7 @@ class World {
                 var bx = side * randRange(10, 16);
                 var bz = -i * 14 - randRange(2, 8);
                 b.position.set(bx, 0, bz);
+                b.userData.artSource = 'js/world.js:_buildCitySkyline() 程序化低多边形建筑+发光窗';
                 this.scene.add(b);
                 this.buildings.push(b);
             }

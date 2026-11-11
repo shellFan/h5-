@@ -17,6 +17,7 @@ class Effects {
             });
             const m = new THREE.Mesh(geo, mat);
             m.visible = false;
+            m.userData.artSource = 'js/effects.js 程序化粒子池(共享SphereGeometry)';
             scene.add(m);
             this.pool.push(m);
         }
@@ -139,7 +140,7 @@ class Effects {
             depthWrite: false
         }));
         flash.position.set(x, y, z);
-        flash.scale.set(0.35, 0.35, 1);
+        flash.scale.set(0.48, 0.48, 1); // V3.7: 枪口火焰更醒目
         this.scene.add(flash);
         this.flashes.push({ mesh: flash, life: 0.07, maxLife: 0.07 });
     }
@@ -223,7 +224,7 @@ class Effects {
             }
             const t = f.life / f.maxLife;
             f.mesh.material.opacity = t * 0.95;
-            var sc = 0.35 + (1 - t) * 0.5;
+            var sc = 0.48 + (1 - t) * 0.55; // V3.7
             f.mesh.scale.set(sc, sc, 1);
         }
     }

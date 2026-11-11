@@ -28,10 +28,14 @@ class Enemy {
         // V3.5: 大众僵尸使用合并批处理模型(2 mesh/只), Boss/精英保留Group模型(细节动画+独立材质)
         var useMerged = (type !== 'boss' && type !== 'elite' && typeof createZombieMerged === 'function');
         this.model = useMerged ? createZombieMerged(type) : createZombieModel(type);
+        this.model.userData.artSource = useMerged
+            ? ('js/models.js:createZombieMerged(' + type + ') [20mesh->2mesh批处理]')
+            : ('js/models.js:createZombieModel(' + type + ') [Group细节模型]');
         this.model.position.set(x, 0, z);
         this.model.scale.setScalar(this.cfg.scale); // V2.2修复: 存活时应用类型scale
         this.visScale = this.cfg.scale; // 实际视觉scale(分裂僵尸会缩小)
         scene.add(this.model);
+        this._baseRotY = this.model.rotation.y; // V3.7: 行走摇摆基准朝向(合并模型0 / Group模型PI)
 
         // 收集可闪烁材质(合并模型无独立材质 → 用缩放冲击代替闪烁)
         this.flashMats = [];
@@ -154,12 +158,13 @@ class Enemy {
             this.knockback *= Math.pow(0.05, dt);
         }
 
-        // 行走动画: 摇摆+弹跳
+        // 行走动画: 摇摆+弹跳+V3.7左右摇头蹒跚(尸吊感)
         const walkSpeed = this.isBoss ? 3 : 5;
         const sway = Math.sin(time * walkSpeed + this.phase) * 0.1;
         const bob = Math.abs(Math.sin(time * walkSpeed + this.phase)) * 0.06;
         this.model.position.set(this.x, bob, this.z);
         this.model.rotation.z = sway;
+        this.model.rotation.y = this._baseRotY + Math.sin(time * walkSpeed * 0.5 + this.phase) * 0.12;
         // V3.2: 攻击时前扑啃咬动画(近战范围内身体前倾伸缩)
         if (dist <= attackDist) {
             this.model.rotation.x = -0.16 + Math.sin(time * 9 + this.phase) * 0.13;

@@ -22,15 +22,15 @@ const CONFIG = {
     BULLET_MAX_VISIBLE: 120,    // 最大可见弹道数
     BULLET_RANGE: 18,           // 子弹射程
 
-    // 僵尸属性 (V3.6: 肤色统一绿色系, 类型用装备/轮廓区分)
+    // 僵尸属性 (V3.7: 整体放大增强视觉威胁, 类型用装备/轮廓区分)
     ZOMBIE: {
-        normal:  { hp: 3,  speed: 1.6,  scale: 1.3,  color: 0x8FBC5A, killScore: 1 },
-        fast:    { hp: 2,  speed: 3.2,  scale: 1.05, color: 0xA9CB6B, killScore: 1 },
-        shield:  { hp: 10, speed: 1.1,  scale: 1.45, color: 0x7EA35F, killScore: 2 },
-        split:   { hp: 4,  speed: 1.3,  scale: 1.15, color: 0xA583C9, killScore: 2 },
-        spitter: { hp: 4,  speed: 1.2,  scale: 1.25, color: 0x63C24B, killScore: 2 },
-        elite:   { hp: 26, speed: 1.0,  scale: 2.3,  color: 0x6F9A52, killScore: 5 },
-        boss:    { hp: 200, speed: 0.8, scale: 3.6,  color: 0x9C3B32, killScore: 50 }
+        normal:  { hp: 3,  speed: 1.6,  scale: 1.45, color: 0x8FBC5A, killScore: 1 },
+        fast:    { hp: 2,  speed: 3.2,  scale: 1.18, color: 0xA9CB6B, killScore: 1 },
+        shield:  { hp: 10, speed: 1.1,  scale: 1.6,  color: 0x7EA35F, killScore: 2 },
+        split:   { hp: 4,  speed: 1.3,  scale: 1.28, color: 0xA583C9, killScore: 2 },
+        spitter: { hp: 4,  speed: 1.2,  scale: 1.38, color: 0x63C24B, killScore: 2 },
+        elite:   { hp: 26, speed: 1.0,  scale: 2.5,  color: 0x6F9A52, killScore: 5 },
+        boss:    { hp: 200, speed: 0.8, scale: 3.9,  color: 0x9C3B32, killScore: 50 }
     },
 
     // 僵尸攻击小队的距离
@@ -40,12 +40,12 @@ const CONFIG = {
     // 每次攻击杀死士兵数
     ZOMBIE_ATTACK_KILL: 1,
 
-    // 相机 (V3.1: 微调后移+抬高, 门在选门窗口期(8-15单位)完整可见, 士兵保持画面下部)
-    CAMERA_OFFSET_Y: 5.4,
-    CAMERA_OFFSET_Z: 7.2,
-    CAMERA_LOOK_AHEAD: -6.5,
-    CAMERA_FOLLOW_X: 0.35,
-    CAMERA_FOV: 55,
+    // 相机 (V3.7: 抬高+拉远+看更远 — 军团占画面下部合理比例, 远处怪潮可见, 不挡路)
+    CAMERA_OFFSET_Y: 6.1,
+    CAMERA_OFFSET_Z: 7.8,
+    CAMERA_LOOK_AHEAD: -8.5,
+    CAMERA_FOLLOW_X: 0.32,
+    CAMERA_FOV: 53,
 
     // 特效
     PARTICLE_MAX: 300,

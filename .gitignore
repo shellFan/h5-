@@ -8,3 +8,4 @@ shot*.png
 node_modules/
 package-lock.json
 dist/
+server.log

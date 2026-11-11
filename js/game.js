@@ -68,6 +68,7 @@ class Game {
 
         this._setupInput();
         this._setupUI();
+        this._setupDebugPanel(); // V3.7: ?debug=1 显示运行时美术/性能面板
 
         this._loop = this._loop.bind(this);
         requestAnimationFrame(this._loop);
@@ -424,6 +425,101 @@ class Game {
             enemyCount: this.enemies.enemies.length,
             quality: this.world.quality
         };
+    }
+
+    /** V3.7 运行时美术资源追踪报告: 证明实际渲染场景使用的模型/材质/纹理来源 */
+    artReport() {
+        var self = this;
+        var provenance = {};   // artSource标签 -> {objects, meshes}
+        var untaggedMeshes = 0;
+        var sceneObjs = 0;
+        this.world.scene.traverse(function(node) {
+            sceneObjs++;
+            var src = node.userData && node.userData.artSource;
+            if (node.isMesh || node.isSprite || node.isInstancedMesh) {
+                if (src) {
+                    if (!provenance[src]) provenance[src] = { objects: 0, visible: 0 };
+                    provenance[src].objects++;
+                    if (node.visible) provenance[src].visible++;
+                } else if (node.parent && !(node.parent.userData && node.parent.userData.artSource)) {
+                    untaggedMeshes++;
+                }
+            }
+        });
+        // 归组: 带标签的Group/InstancedMesh自身记1, 其子mesh跟随标签(上面parent逻辑会跳过计数, 但要并入)
+        // 简化: 重新遍历, 子对象继承最近祖先标签; Sprite继承共享材质标签
+        var grouped = {};
+        this.world.scene.traverse(function(node) {
+            var src = null;
+            var n = node;
+            while (n) {
+                if (n.userData && n.userData.artSource) { src = n.userData.artSource; break; }
+                n = n.parent;
+            }
+            if (!src && node.material && node.material.userData && node.material.userData.artSource) {
+                src = node.material.userData.artSource;
+            }
+            if (!src) return;
+            if (!node.visible) return; // 隐藏对象(如粒子池)不计入实际渲染
+            if (!grouped[src]) grouped[src] = { objects: 0, visible: 0 };
+            grouped[src].objects++;
+            grouped[src].visible++;
+        });
+
+        // 外部资产加载状态
+        var assetStatus = [];
+        var imgs = document.images;
+        for (var i = 0; i < imgs.length; i++) {
+            assetStatus.push({
+                src: imgs[i].src.split('/').slice(-2).join('/'),
+                status: imgs[i].complete && imgs[i].naturalWidth > 0 ? 'LOADED' : 'FAILED',
+                used: 'UI/' + (imgs[i].alt || 'img')
+            });
+        }
+        var bulletTexLoaded = !!(this.combat && this.combat._bulletTex);
+        assetStatus.push({
+            src: 'assets/art-v1/effects/bullet-glow.svg',
+            status: bulletTexLoaded ? 'LOADED' : (this.combat && this.combat._bulletMat && this.combat._bulletMat.map ? 'FALLBACK(程序化兜底)' : 'LOADING'),
+            used: '弹道Sprite纹理'
+        });
+
+        var perf = this.getPerf();
+        return {
+            timestamp: new Date().toISOString(),
+            sceneObjects: sceneObjs,
+            provenance: grouped,
+            untaggedRenderables: untaggedMeshes,
+            assets: assetStatus,
+            perf: perf,
+            camera: {
+                pos: this.world.camera.position.toArray().map(function(x) { return +x.toFixed(2); }),
+                fov: this.world.camera.fov
+            },
+            modelPolicy: 'assets/art-v1/仅含4个SVG(bullet-glow/双头像/gate-panel) — 无GLB/无角色PNG; 角色按大纲优先级3程序化建模'
+        };
+    }
+
+    /** V3.7 调试面板(?debug=1): FPS/DrawCall/模型来源 实时显示 */
+    _setupDebugPanel() {
+        if (location.search.indexOf('debug') === -1) return;
+        var self = this;
+        var div = document.createElement('div');
+        div.id = 'art-debug-panel';
+        div.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:99998;background:rgba(10,20,40,0.82);color:#7FE0FF;font:11px/1.5 monospace;padding:8px 10px;border-radius:8px;pointer-events:none;white-space:pre;max-width:46vw;';
+        document.body.appendChild(div);
+        this._debugPanel = div;
+        setInterval(function() {
+            if (!self._debugPanel) return;
+            var p = self.getPerf();
+            var src = [
+                '士兵: ' + (self.squad.mesh && self.squad.mesh.userData.artSource ? 'createSoldierBodyGeometry+Leg(实例化x3)' : '?'),
+                '僵尸: ' + (self.enemies.enemies.length ? (self.enemies.enemies[0].model.userData.artSource || '?') : '场景无僵尸'),
+                'Boss: ' + (self.enemies.boss ? (self.enemies.boss.model.userData.artSource || '?') : '未出现')
+            ].join('\n');
+            self._debugPanel.textContent =
+                'FPS ' + p.fps + ' | work ' + p.workMs + 'ms | DC ' + p.drawCalls + ' | Tri ' + (p.triangles / 1000).toFixed(0) + 'k\n' +
+                '兵 ' + p.squadCount + ' | 敌 ' + p.enemyCount + ' | 画质 ' + p.quality + '\n' + src;
+        }, 500);
     }
 
     start() {

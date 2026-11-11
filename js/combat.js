@@ -19,6 +19,7 @@ class CombatSystem {
             opacity: 1,
             depthWrite: false
         });
+        this._bulletMat.userData = { artSource: 'assets/art-v1/effects/bullet-glow.svg (CanvasTexture)' };
 
         // 弹道对象池 (Sprite + bullet-glow纹理)
         this.pool = [];
@@ -103,7 +104,7 @@ class CombatSystem {
             if (this.fireTimer <= 0) {
                 var count = squad.count;
                 // 视觉弹道频率: 随人数增长但有上限(性能保护)
-                var visualRate = Math.min(2 + Math.sqrt(count) * 1.6, 16);
+                var visualRate = Math.min(2 + Math.sqrt(count) * 1.8, 22); // V3.7: 弹幕更壮观(池120容量内)
                 this.fireTimer = 1 / visualRate;
 
                 // 每发子弹伤害 = 总DPS / 视觉弹道频率
@@ -111,7 +112,7 @@ class CombatSystem {
                 var dmg = Math.max(1, Math.round(totalDPS / visualRate));
 
                 // 齐射数量: 1~4发(人数越多越多)
-                var volley = Math.min(4, 1 + Math.floor(Math.sqrt(count) / 3));
+                var volley = Math.min(5, 1 + Math.floor(Math.sqrt(count) / 2.6)); // V3.7: 齐射最多5发
                 var positions = squad.getShootPositions(volley);
                 for (var k = 0; k < positions.length; k++) {
                     // V3.1: 每发子弹瞄准前方最近敌人(修复阵型散布导致5/7子弹打不中Boss的问题)

@@ -15,6 +15,7 @@ class GateSystem {
             var gateWidth = CONFIG.LANE_WIDTH * 0.9;
             for (const gd of seg.gates) {
                 const model = createGateModel(gd, gateWidth);
+                model.userData.artSource = 'js/models.js:createGateModel(' + gd.op + '/' + (gd.label || '') + ') 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)';
                 model.position.set(CONFIG.LANE_X[gd.lane], 0, seg.z);
                 this.scene.add(model);
                 this.gates.push({
