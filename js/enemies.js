@@ -199,9 +199,10 @@ class Enemy {
 
     destroy(scene) {
         scene.remove(this.model);
+        var merged = !!this.model.userData.merged; // V4.0: 合并僵尸几何为全类型共享缓存, 不可dispose
         this.model.traverse(function(obj) {
-            if (obj.geometry) obj.geometry.dispose();
-            if (obj.material) obj.material.dispose();
+            if (obj.geometry && !merged) obj.geometry.dispose();
+            if (obj.material && !merged) obj.material.dispose();
         });
     }
 }

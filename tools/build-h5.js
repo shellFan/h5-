@@ -16,12 +16,14 @@ const COPY_LIST = [
     'assets',
     'js/config.js',
     'js/utils.js',
+    'js/movement.js',   // V4.0
     'js/models.js',
     'js/world.js',
     'js/effects.js',
     'js/squad.js',
     'js/gates.js',
     'js/enemies.js',
+    'js/pacing.js',    // V4.0
     'js/combat.js',
     'js/platform/storage-adapter.js',
     'js/platform/lifecycle-adapter.js',

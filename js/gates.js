@@ -33,8 +33,9 @@ class GateSystem {
     clear() {
         for (const g of this.gates) {
             this.scene.remove(g.model);
-            // 释放纹理
+            // V4.0: 释放纹理+材质+几何体(每局重建, 不释放会累积GPU缓冲)
             g.model.traverse(function(obj) {
+                if (obj.geometry) obj.geometry.dispose();
                 if (obj.material && obj.material.map) obj.material.map.dispose();
                 if (obj.material) obj.material.dispose();
             });
@@ -143,6 +144,7 @@ class GateSystem {
             // 重建模型
             this.scene.remove(g.model);
             g.model.traverse(function(obj) {
+                if (obj.geometry) obj.geometry.dispose();
                 if (obj.material && obj.material.map) obj.material.map.dispose();
                 if (obj.material) obj.material.dispose();
             });

@@ -142,9 +142,27 @@ async function suiteBasics(page) {
         assert(await gameApi(page, '(g) => !g.paused') === true);
     });
 
+    _current = 'V4暂停冻结';
+    await step('V4暂停冻结: 暂停时位置/敌人/节奏全部停止推进', async () => {
+        await gotoGame(page);
+        await gameApi(page, '(g) => { g.start(); g.squad.setCount(30); }');
+        await page.waitForTimeout(400);
+        await page.evaluate(() => window.__game._togglePause());
+        const before = await gameApi(page, '(g) => ({ z: g.squad.z, n: g.enemies.enemies.length, t: g.time, w: g.pacing.summary().map(x => x.state).join() })');
+        await page.waitForTimeout(900);
+        const after = await gameApi(page, '(g) => ({ z: g.squad.z, n: g.enemies.enemies.length, t: g.time, w: g.pacing.summary().map(x => x.state).join() })');
+        assert(before.z === after.z, '暂停中队伍z不得推进: ' + before.z + '→' + after.z);
+        assert(before.t === after.t, '暂停中游戏时间不得推进');
+        assert(before.n === after.n && before.w === after.w, '暂停中敌人/波次状态不得变化');
+        await page.evaluate(() => window.__game._togglePause());
+        await page.waitForTimeout(300);
+        const resume = await gameApi(page, '(g) => g.squad.z');
+        assert(resume < after.z, '恢复后应继续前进: ' + after.z + '→' + resume);
+    });
+
     _current = '移动队伍';
     await step('键盘方向键切道(lane 1→0)', async () => {
-        await gameApi(page, '(g) => { g.squad.targetX = 0; }');
+        await gameApi(page, '(g) => { g.squad.setCount(1); g.squad.targetX = 0; }');
         await page.keyboard.press('ArrowLeft');
         await page.waitForTimeout(120);
         const txKb = await gameApi(page, '(g) => g.squad.targetX');

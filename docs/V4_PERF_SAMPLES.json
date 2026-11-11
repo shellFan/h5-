@@ -1,0 +1,52 @@
+{
+  "env": "headless SwiftShader(软件渲染), 真机数据需实机补测",
+  "secondsPerTier": 40,
+  "squadCount": 200,
+  "results": [
+    {
+      "tier": "low(q0)",
+      "memMB": 17.4,
+      "dsf": 1,
+      "fps": 67,
+      "workMs": 2.44,
+      "p95FrameMs": 18.1,
+      "drawCalls": 373,
+      "triangles": 731618,
+      "geometries": 512,
+      "textures": 68,
+      "squadCount": 200,
+      "enemyCount": 1,
+      "quality": 0
+    },
+    {
+      "tier": "mid(q1)",
+      "memMB": 15.6,
+      "dsf": 1.5,
+      "fps": 62,
+      "workMs": 2.95,
+      "p95FrameMs": 18.1,
+      "drawCalls": 381,
+      "triangles": 729178,
+      "geometries": 511,
+      "textures": 69,
+      "squadCount": 200,
+      "enemyCount": 0,
+      "quality": 1
+    },
+    {
+      "tier": "high(q2)",
+      "memMB": 16.3,
+      "dsf": 2,
+      "fps": 63,
+      "workMs": 2.85,
+      "p95FrameMs": 18.2,
+      "drawCalls": 366,
+      "triangles": 729090,
+      "geometries": 515,
+      "textures": 69,
+      "squadCount": 200,
+      "enemyCount": 0,
+      "quality": 1
+    }
+  ]
+}
