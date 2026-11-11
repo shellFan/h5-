@@ -1,47 +1,45 @@
 # AGENT_PROGRESS — V4 通宵自主开发进度
 
-> 新会话恢复: 先读本文件 + `git log --oneline -5`, 再继续"下一步"。
+> 新会话恢复: 先读本文件 + `git log --oneline -8`, 再继续"下一步"。
 
 ## 当前状态
 
-- **阶段**: Phase 0✓ Phase 1✓ Phase 2✓ → Phase 3(美术重制)开始
-- **最近提交**: 9e3800a(V3.7保全) → 本次提交: V4移动+节奏
-- **测试状态**: 单测 50/50 ✓ | E2E 28/28 ✓
-- **环境要点**: Node 在 `D:\hclaw\node`(需 export PATH); 服务器 8080 已常驻; Playwright 用系统 Edge
+- **阶段**: Phase 0-9, 11 全部完成 → Phase 13 交付文档完成 → 待最终推送/收尾
+- **HEAD**: 9b24d6f + 文档提交
+- **测试**: 单测 50/50 | E2E 29/29 | 视觉 32/32 | 模拟 greedy/left 10/10 | 浸泡 PASS(内存0增长)
+- **环境要点**: Node 在 `D:\hclaw\node`(需 `export PATH="/d/hclaw/node:$PATH"`); 服务器 8080 常驻; Playwright 用系统 Edge; E2E 在 SwiftShader 下偶发超时重跑即绿
 
-## ⚠️ 并发会话处理记录 (2026-11-12 01:58)
+## 并发会话协作记录
 
-- Phase 0 期间检测到并发 V3.7 会话修改同一批文件 → 让路监控至静默, 以 9e3800a 保全提交其成果。
-- 该会话后续仍间歇活跃: 02:13 发现本会话新建的 movement.js/pacing.js 并主动接线到 index.html(协作行为)。
-- 本会话所有编辑前都重新读取目标文件, 每阶段尽快提交防冲突。
+- 一个 V3.7 会话与本研究并行工作过(01:52-02:13 活跃): 其成果以 9e3800a/e4e9890 提交保全; 它还主动把本研究新建的 movement.js/pacing.js 接线进 index.html。此后未再检测到其活动。所有工作在 master 线性提交, 无冲突丢失。
 
-## 已完成任务
+## 阶段完成索引
 
-- [x] Phase 0: 仓库审计 + 基线截图(docs/screenshots/v4-before/) + docs/V4_BASELINE_AUDIT.md + 保全提交 9e3800a
-- [x] Phase 1: 移动重构 — js/movement.js(纯数学: 拖动灵敏度0.65映射/中心边界/跟随λ/门窗口) + game.js输入(锚点连续拖动替代30px跳道, 键盘keyStep1.2) + squad.js(平滑跟随0.15s/自适应阵型V4宽度约束半宽≤2.3/getHalfWidth) + gates.js(磁吸0.55不代选+触发窗口随队伍宽度扩展封顶0.7保证左右门不重叠)
-- [x] Phase 2: 节奏重构 — js/pacing.js(GamePacingController: 波次激活/批次0.8-1.5s×1-4只/maxAlive 10+关/纵深9散布/Boss预警1.6s+屏幕外出身/波清回调) + enemies.js(spawnEnemy工厂, 移除整波同帧pendingSpawns) + game.js接线 + Boss预警UI(#boss-warning+bwShake/bwPulse动画+bossWarn音效) + 僵尸速度重校准(快速2.55=1.5×普通1.7)
-- [x] 测试: 单测新增03-movement(13例)+04-pacing(13例)=50全绿; E2E新增3例V4移动专项(拖动映射/平滑跟随/500人边界)=28全绿; 修正3个旧语义断言(键盘/收敛/Boss传送点)
+| Phase | 提交 | 报告 |
+|---|---|---|
+| 0 审计+基线 | 9e3800a | V4_BASELINE_AUDIT.md |
+| 1 移动手感 | 97a6dec | V4_MOVEMENT_TUNING.md |
+| 2 节奏 | 97a6dec | V4_GAME_PACING.md |
+| 3/5 美术+相机 | 129fe3f | V4_ART_INTEGRATION.md |
+| 4 UI | (增量) | V4_UI_REDESIGN.md |
+| 6 爽感 | 0286e35 | V4_GAMEPLAY_BALANCE.md |
+| 6.5 数值/关卡 | dffde14 | V4_GAMEPLAY_BALANCE.md + V4_SIM_RESULTS.json |
+| 7/8 测试+泄漏修复 | 9b24d6f | V4_TEST_REPORT.md + V4_SOAK_RESULT.json + V4_PERF_SAMPLES.json |
+| 9 抖音/广告 | (审查+构建修复) | V4_RELEASE_CHECKLIST.md |
+| 13 交付 | (本次) | V4_*.md ×8 |
 
-## 下一步
+## 关键成果摘要
 
-Phase 3 美术重制: ①士兵头盔/身体比例修正(球阵问题根治: 减小头盔球径占比+背面轮廓层次) ②相机随人数动态拉远 ③门立体化(门柱基座/地面光斑) ④道路街景层次 ⑤僵尸细节强化; 每步截图对照验收。
+1. 移动: 30px跳道→连续目标+阻尼跟随(0.65灵敏度/0.15s/门磁吸不代选), 帧率无关(单测证明)
+2. 节奏: 整波同帧→GamePacingController分批+上限+屏幕外预生成+Boss预警; 僵尸速度重校准(快速=1.5×普通)
+3. 美术: "蓝色球阵"根治(头盔0.248/头0.225/背条纹/背包加大+动态相机sqrt曲线+自适应阵型)
+4. 数值: 关卡扩容至2-4分钟, Boss血量按战力动态缩放, 5策略模拟验证
+5. 质量: 50+29+32 全绿; 内存泄漏修复(9.8MB→0.0); 构建清单补缺(douyin/h5)
+6. 爽感: 乘法门慢动作+震屏+Boss弹性入场+预警横幅
 
-## 未完成任务(按序)
+## 下一步(若有后续会话)
 
-- [ ] Phase 1: 移动重构(连续目标位置+damp跟随+门轻吸附+边界钳制) → js/game.js, js/squad.js, js/config.js
-- [ ] Phase 2: GamePacingController(js/pacing.js) 分批刷怪+maxAlive+波次休息+Boss预警 → enemies.js/game.js/config.js
-- [ ] Phase 3: 美术重制: 士兵比例修正+阵型自适应+相机动态拉远; 僵尸轮廓强化; 门立体化; 道路街景层次; (js/models.js, world.js, squad.js)
-- [ ] Phase 4: UI 精修(style.css + index.html)
-- [ ] Phase 5: 摄像机构图(并入 Phase 3 相机动态)
-- [ ] Phase 6: 爽感(人数爆发/慢动作/弹幕增强/连杀)
-- [ ] Phase 7: 功能回归(先跑 V3.5 测试套件再迭代)
-- [ ] Phase 8: 测试扩展(移动帧率无关性/节奏参数单测; 视觉4分辨率; 性能实测)
-- [ ] Phase 9: 抖音/广告回归(只测不改)
-- [ ] Phase 11: 分阶段 Git 提交推送 origin/master
-- [ ] Phase 13: 交付报告 V4_*.md ×8
-
-## 已知问题(见 V4_BASELINE_AUDIT.md 第二节)
-
-## 下一步
-
-Phase 1: 实现 MOVE 配置(CONFIG.MOVE: touchSensitivity 0.65 / followSmoothTime 0.15 / laneTransitionTime 0.45 / 边界±2.6), 输入改连续 targetX, squad 阻尼跟随, 门轻吸附; 写移动单测; 真机模拟拖动 E2E; 提交。
+1. 真机验证清单执行(V4_RELEASE_CHECKLIST 第二节 P0/P1)
+2. balanced 策略 L2-L4 失败路线的选门 AI 可优化(非阻塞)
+3. 可选: Blender GLB 管线(程序化模型的天花板)
+4. 若用户反馈"还不够": 士兵表情/受击表情、僵尸攻击前扑已有、Boss技能(冲撞/召唤)是下一层内容
