@@ -22,14 +22,15 @@ const CONFIG = {
     BULLET_MAX_VISIBLE: 120,    // 最大可见弹道数
     BULLET_RANGE: 18,           // 子弹射程
 
-    // 僵尸属性
+    // 僵尸属性 (V3.6: 肤色统一绿色系, 类型用装备/轮廓区分)
     ZOMBIE: {
-        normal:  { hp: 3,  speed: 1.6,  scale: 1.3,  color: 0xE85D3A, killScore: 1 },
-        fast:    { hp: 2,  speed: 3.2,  scale: 1.05, color: 0xF07050, killScore: 1 },
-        shield:  { hp: 10, speed: 1.1,  scale: 1.45, color: 0xC0392B, killScore: 2 },
-        split:   { hp: 5,  speed: 1.4,  scale: 1.15, color: 0x9B59B6, killScore: 2 },
-        spitter: { hp: 4,  speed: 1.2,  scale: 1.25, color: 0x27AE60, killScore: 2 },
-        boss:    { hp: 200, speed: 0.8, scale: 3.6,  color: 0x8B1A1A, killScore: 50 }
+        normal:  { hp: 3,  speed: 1.6,  scale: 1.3,  color: 0x8FBC5A, killScore: 1 },
+        fast:    { hp: 2,  speed: 3.2,  scale: 1.05, color: 0xA9CB6B, killScore: 1 },
+        shield:  { hp: 10, speed: 1.1,  scale: 1.45, color: 0x7EA35F, killScore: 2 },
+        split:   { hp: 5,  speed: 1.4,  scale: 1.15, color: 0xA583C9, killScore: 2 },
+        spitter: { hp: 4,  speed: 1.2,  scale: 1.25, color: 0x63C24B, killScore: 2 },
+        elite:   { hp: 26, speed: 1.0,  scale: 2.3,  color: 0x6F9A52, killScore: 5 },
+        boss:    { hp: 200, speed: 0.8, scale: 3.6,  color: 0xA0755F, killScore: 50 }
     },
 
     // 僵尸攻击小队的距离
@@ -118,8 +119,9 @@ const LEVELS = [
                 { lane: 2, op: 'buff', value: 'damage', label: '输出+1' }
             ]},
             { type: 'wave', z: -98, enemies: [
-                { type: 'normal', count: 12 },
-                { type: 'shield', count: 3 }
+                { type: 'normal', count: 10 },
+                { type: 'shield', count: 3 },
+                { type: 'split',  count: 3 }
             ]},
             { type: 'gates', z: -112, gates: [
                 { lane: 0, op: 'mul', value: 2,  label: '×2' },
@@ -128,7 +130,8 @@ const LEVELS = [
             { type: 'wave', z: -126, enemies: [
                 { type: 'normal', count: 10 },
                 { type: 'fast',   count: 6 },
-                { type: 'spitter',count: 2 }
+                { type: 'spitter',count: 2 },
+                { type: 'elite',  count: 1 }
             ]},
             { type: 'boss', z: -142, boss: { type: 'boss', hp: 200 } }
         ]

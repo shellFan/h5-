@@ -268,10 +268,10 @@ html, body {
     box-shadow: 0 0 4px rgba(117, 223, 255, 0.5);
 }
 
-/* ===== 属性面板(左侧胶囊) ===== */
+/* ===== 属性面板(左侧胶囊) V3.6: 下移避让Boss血条 ===== */
 #stats-panel {
     position: absolute;
-    top: 70px;
+    top: 128px;
     left: 14px;
     display: flex;
     flex-direction: column;
@@ -333,7 +333,7 @@ html, body {
     text-align: right;
 }
 
-/* ===== 人数气泡 ===== */
+/* ===== 人数气泡 (V3.6: left/top由JS按小队3D投影动态设置) ===== */
 #squad-count-badge {
     position: absolute;
     top: 68px;
@@ -347,7 +347,8 @@ html, body {
     border-radius: 22px;
     border: 2.5px solid rgba(255, 255, 255, 0.9);
     box-shadow: 0 4px 16px rgba(35, 139, 255, 0.45), 0 0 20px rgba(117, 223, 255, 0.2), inset 0 1px 0 rgba(255,255,255,0.3);
-    transition: transform 0.15s ease;
+    pointer-events: none;
+    will-change: left, top;
 }
 
 .person-icon {
@@ -388,10 +389,10 @@ html, body {
 /* ===== Boss血条 ===== */
 #boss-bar-container {
     position: absolute;
-    top: 108px;
+    top: 74px;
     left: 50%;
     transform: translateX(-50%);
-    width: 72%;
+    width: 62%;
     z-index: 10;
     pointer-events: none;
     display: flex;

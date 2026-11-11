@@ -33,6 +33,8 @@ class Game {
         // 属性变化追踪(触发动画)
         this._prevDamage = 1;
         this._prevFireRate = 2.2;
+        // 人数气泡3D投影用临时向量
+        this._badgeV = new THREE.Vector3();
 
         // 待机画面: 1个士兵站在起点(跳过弹出动画直接显示)
         this.squad.reset(1);
@@ -344,6 +346,27 @@ class Game {
 
         // 进度节点
         this._updateProgressNodes();
+
+        // 人数气泡: 跟随小队头顶(V3.6: 3D投影定位,随队伍移动不遮挡弹道)
+        if (this.ui.countBadge && this.state === 'playing') {
+            var cam = this.world.camera;
+            this._badgeV.set(this.squad.x, 2.0, this.squad.z - 0.3).project(cam);
+            if (this._badgeV.z < 1) {
+                var cw = this.world.canvas.clientWidth || window.innerWidth;
+                var ch = this.world.canvas.clientHeight || window.innerHeight;
+                var sx = (this._badgeV.x * 0.5 + 0.5) * cw;
+                var sy = (-this._badgeV.y * 0.5 + 0.5) * ch;
+                // 屏幕内钳制: 避免压到HUD或飞出边界
+                sx = clamp(sx, 46, cw - 46);
+                sy = clamp(sy, 150, ch - 40);
+                if (sy < 200 && sx < 145) sx = 145; // 避让左上属性面板
+                this.ui.countBadge.style.left = sx + 'px';
+                this.ui.countBadge.style.top = (sy - 40) + 'px';
+                this.ui.countBadge.style.display = 'flex';
+            } else {
+                this.ui.countBadge.style.display = 'none';
+            }
+        }
 
         // 人数气泡(变化时触发弹出/抖动动画)
         if (this.ui.countNum) {

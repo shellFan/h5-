@@ -5,7 +5,7 @@ class World {
         this.canvas = canvas;
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(CONFIG.COLORS.sky);
-        this.scene.fog = new THREE.Fog(CONFIG.COLORS.fog, 30, 80);
+        this.scene.fog = new THREE.Fog(CONFIG.COLORS.fog, 45, 130);
 
         // 画质自动检测 (0=低 1=中 2=高)
         this.quality = this._detectQuality();
@@ -20,7 +20,7 @@ class World {
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxRatio));
         this.renderer.shadowMap.enabled = this.quality >= 1;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        this.renderer.outputEncoding = THREE.sRGBEncoding;
+        // V3.6修复: 移除sRGBEncoding(会把所有颜色洗白成粉彩,导致路面过曝/僵尸肤色失真)
 
         // 相机 (V2.2: FOV 55° 竖屏构图)
         this.camera = new THREE.PerspectiveCamera(CONFIG.CAMERA_FOV || 55, 1, 0.1, 120);
@@ -74,8 +74,8 @@ class World {
         roadCanvas.width = 256;
         roadCanvas.height = 512;
         const rctx = roadCanvas.getContext('2d');
-        // 底色: 浅灰紫
-        rctx.fillStyle = '#B8B4C8';
+        // 底色: 灰紫柏油(V3.6: 加深一档,对抗雾色保证路面可读)
+        rctx.fillStyle = '#A6A0B8';
         rctx.fillRect(0, 0, 256, 512);
         // 柏油噪点纹理
         for (let i = 0; i < 400; i++) {

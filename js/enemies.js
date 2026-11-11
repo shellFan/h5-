@@ -44,8 +44,8 @@ class Enemy {
         // 命中火花
         if (effects) {
             effects.burst(this.x, 0.55, this.z, 0xFFE066, 3, 2, 0.25);
-            // 暴击/伤害数字 (30%概率显示)
-            if (Math.random() < 0.3) {
+            // 伤害数字 (V3.6: 降低概率避免大规模战斗时文字刷屏)
+            if (Math.random() < 0.12) {
                 effects.floatText(this.x, 0.9, this.z, String(dmg), '#FFD700', false);
             }
         }
@@ -132,12 +132,12 @@ class Enemy {
         this.model.position.set(this.x, bob, this.z);
         this.model.rotation.z = sway;
 
-        // 受击闪烁
+        // 受击闪烁 (V3.6: 压低强度避免Boss被连续命中时刷成全白)
         if (this.hitFlash > 0) {
             this.hitFlash -= dt;
-            const k = Math.max(0, this.hitFlash / 0.08);
+            const k = Math.max(0, this.hitFlash / 0.08) * 0.35;
             for (let i = 0; i < this.flashMats.length; i++) {
-                this.flashMats[i].emissive.setRGB(k, k, k);
+                this.flashMats[i].emissive.setRGB(k, k * 0.85, k * 0.6);
             }
         }
     }

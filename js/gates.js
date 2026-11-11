@@ -48,7 +48,7 @@ class GateSystem {
             // 远处的门: 标签轻微浮动
             if (!g.triggered && g.model.userData.label) {
                 g.model.userData.label.position.y =
-                    2.42 + Math.sin(time * 2 + g.x) * 0.06;
+                    2.46 + Math.sin(time * 2 + g.x) * 0.06;
             }
 
             // 接近发光

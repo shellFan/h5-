@@ -12,11 +12,11 @@ class CombatSystem {
         this._loadBulletTexture();
 
         // 共享Sprite材质(所有子弹共用，减少DrawCall)
+        // V3.6修复: 改用Normal混合(Additive在浅色路面上会加成纯白,弹道完全不可见)
         this._bulletMat = new THREE.SpriteMaterial({
             color: 0xFFD700,
             transparent: true,
-            opacity: 0.92,
-            blending: THREE.AdditiveBlending,
+            opacity: 1,
             depthWrite: false
         });
 
@@ -25,7 +25,7 @@ class CombatSystem {
         for (var i = 0; i < CONFIG.BULLET_MAX_VISIBLE; i++) {
             var sprite = new THREE.Sprite(this._bulletMat);
             sprite.visible = false;
-            sprite.scale.set(0.22, 0.65, 1);
+            sprite.scale.set(0.3, 0.9, 1);
             scene.add(sprite);
             this.pool.push(sprite);
         }
@@ -161,8 +161,8 @@ class CombatSystem {
         mesh.visible = true;
         var spreadX = randRange(-0.15, 0.15);
         mesh.position.set(pos.x + spreadX, pos.y + randRange(-0.05, 0.05), pos.z);
-        // Sprite scale: 金黄发光弹道 (V2.2: 增大增强视觉冲击)
-        mesh.scale.set(0.22, 0.65, 1);
+        // Sprite scale: 金黄发光弹道 (V3.6: 加大尺寸保证清晰可见)
+        mesh.scale.set(0.3, 0.9, 1);
         this.bullets.push({ mesh: mesh, damage: damage, life: 1.2 });
 
         // 枪口闪光

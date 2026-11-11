@@ -131,7 +131,6 @@ class Effects {
             map: this._muzzleTex,
             transparent: true,
             opacity: 0.95,
-            blending: THREE.AdditiveBlending,
             depthWrite: false
         }));
         flash.position.set(x, y, z);

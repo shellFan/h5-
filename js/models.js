@@ -341,6 +341,57 @@ function createZombieModel(type) {
         }
     }
 
+    // 精英巨尸: 体型魁梧 + 金属肩甲 + 巨型拳头 + 红眼 (V3.6新增)
+    if (type === 'elite') {
+        // 红色发光眼睛
+        eyeL.material = new THREE.MeshBasicMaterial({ color: 0xFF3333 });
+        eyeR.material = eyeL.material;
+        eyeL.scale.setScalar(1.2);
+        eyeR.scale.setScalar(1.2);
+        // 金属头盔
+        const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.24, 12, 8, 0, Math.PI * 2, 0, Math.PI * 0.58), metalMat);
+        helmet.position.y = 0.71;
+        helmet.castShadow = true;
+        torso.add(helmet);
+        // 莫西干头冠(深红)
+        const crestMat = new THREE.MeshLambertMaterial({ color: 0x8B2020 });
+        var crest = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.1, 0.3), crestMat);
+        crest.position.set(0, 0.95, 0);
+        torso.add(crest);
+        // 厚重肩甲
+        const shGeo = new THREE.SphereGeometry(0.14, 10, 8);
+        const eshL = new THREE.Mesh(shGeo, metalMat);
+        eshL.position.set(-0.27, 0.52, 0);
+        eshL.castShadow = true;
+        torso.add(eshL);
+        const eshR = eshL.clone();
+        eshR.position.x = 0.27;
+        torso.add(eshR);
+        // 胸甲
+        const plate = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.2, 0.05), metalMat);
+        plate.position.set(0, 0.42, -0.15);
+        torso.add(plate);
+        // 巨型拳头(替换爪子)
+        const fistMat = new THREE.MeshLambertMaterial({ color: skinColor });
+        const fistGeo = new THREE.SphereGeometry(0.09, 8, 6);
+        clawL.visible = false;
+        clawR.visible = false;
+        const efistL = new THREE.Mesh(fistGeo, fistMat);
+        efistL.position.set(-0.2, 0.42, -0.3);
+        efistL.scale.setScalar(1.4);
+        torso.add(efistL);
+        const efistR = efistL.clone();
+        efistR.position.x = 0.2;
+        torso.add(efistR);
+        // 手臂加粗
+        armL.scale.set(1.35, 1.15, 1.35);
+        armR.scale.set(1.35, 1.15, 1.35);
+        // 腰带
+        const belt = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.19, 0.07, 12), metalDarkMat);
+        belt.position.y = 0.22;
+        group.add(belt);
+    }
+
     // Boss: 巨型 + 金属头盔 + 厚重肩甲 + 红眼 + 巨大手臂
     if (type === 'boss') {
         // 红色发光眼睛(替换黄色)
@@ -415,6 +466,8 @@ function createZombieModel(type) {
     }
 
     group.scale.setScalar(cfg.scale);
+    // V3.6修复: 模型正面朝-Z, 而僵尸向+Z进攻小队 → 旋转180°让脸/武器朝向玩家
+    group.rotation.y = Math.PI;
     return group;
 }
 
@@ -546,37 +599,37 @@ function createGateModel(gateData, gateWidth) {
     group.add(glass);
     group.userData.glass = glass;
 
-    // 玻璃内文字(半透明大号 - 刻在门上)
-    var innerText = gateData.op === 'add' ? '+' : (gateData.op === 'mul' ? 'x' : 'B');
+    // 玻璃内文字(半透明大号 - 刻在门上) V3.6: buff门改用★标记
+    var innerText = gateData.op === 'add' ? '+' : (gateData.op === 'mul' ? '×' : '★');
     var innerTex = createTextTexture(innerText, {
         fontSize: 130,
         fill: '#FFFFFF',
         stroke: '#' + new THREE.Color(glowColor).getHexString(),
         strokeWidth: 12
     });
-    var innerSprite = new THREE.Sprite(new THREE.SpriteMaterial({ 
-        map: innerTex, transparent: true, opacity: 0.35, depthWrite: false 
+    var innerSprite = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: innerTex, transparent: true, opacity: 0.5, depthWrite: false
     }));
     innerSprite.position.y = h * 0.45;
     var innerAspect = innerTex.image.width / innerTex.image.height;
     innerSprite.scale.set(0.8 * innerAspect, 0.8, 1);
     group.add(innerSprite);
 
-    // 顶部数值文字 (Sprite宽度按文字长度自适应)
+    // 顶部数值文字 (Sprite宽度按文字长度自适应) V3.6: 加大字号保证远处可读
     var textFill = '#FFFFFF';
     var textStroke = '#' + new THREE.Color(glowColor).multiplyScalar(0.5).getHexString();
     var tex = createTextTexture(gateData.label, {
-        fontSize: 100,
+        fontSize: 150,
         fill: textFill,
         stroke: textStroke,
-        strokeWidth: 16
+        strokeWidth: 18
     });
     var sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
-    sprite.position.y = h + 0.42;
+    sprite.position.y = h + 0.46;
     var aspect = tex.image.width / tex.image.height;
-    var baseH = 0.5;
+    var baseH = 0.66;
     var baseW = baseH * aspect;
-    if (baseW > 1.6) { baseW = 1.6; baseH = baseW / aspect; }
+    if (baseW > 2.0) { baseW = 2.0; baseH = baseW / aspect; }
     sprite.scale.set(baseW, baseH, 1);
     group.add(sprite);
     group.userData.label = sprite;
