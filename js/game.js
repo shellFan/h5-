@@ -155,6 +155,7 @@ class Game {
             levelSelect: document.getElementById('level-select'),
             btnNextLevel: document.getElementById('btn-next-level'),
             // V3.4: 广告入口
+            btnRevive: document.getElementById('btn-revive'),
             btnDouble: document.getElementById('btn-double-reward'),
             btnRefreshGates: document.getElementById('btn-refresh-gates'),
             rgCount: document.getElementById('rg-count'),

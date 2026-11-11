@@ -800,3 +800,103 @@ html, body {
     box-shadow: none;
     cursor: default;
 }
+
+/* ===== V3.4: 广告入口按钮 ===== */
+
+/* 双倍奖励(金色) */
+.btn-gold {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 12px 42px;
+    font-size: 17px;
+    font-weight: 800;
+    color: #4A2B00;
+    background: linear-gradient(180deg, #FFD966 0%, #FFC247 50%, #F0A020 100%);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 36px;
+    cursor: pointer;
+    pointer-events: auto;
+    letter-spacing: 1px;
+    box-shadow: 0 5px 16px rgba(255, 180, 40, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.5);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.btn-gold:active {
+    transform: scale(0.95);
+}
+
+.btn-gold:disabled {
+    opacity: 0.65;
+    cursor: default;
+    box-shadow: 0 2px 8px rgba(255, 180, 40, 0.2);
+}
+
+/* 广告复活(视频图标渐变) */
+.btn-ad {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 12px 38px;
+    font-size: 16px;
+    font-weight: 800;
+    color: #FFF;
+    background: linear-gradient(180deg, #FF8C42 0%, #F77030 100%);
+    border: 2px solid rgba(255, 255, 255, 0.75);
+    border-radius: 36px;
+    cursor: pointer;
+    pointer-events: auto;
+    letter-spacing: 1px;
+    box-shadow: 0 5px 16px rgba(247, 112, 48, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.4);
+    transition: transform 0.12s ease;
+}
+
+.btn-ad:active {
+    transform: scale(0.95);
+}
+
+/* 刷门悬浮按钮(右下圆形) */
+#btn-refresh-gates {
+    position: absolute;
+    right: 16px;
+    bottom: 90px;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: linear-gradient(160deg, #8B5CF6, #6D28D9);
+    border: 2.5px solid rgba(255, 255, 255, 0.85);
+    color: #FFF;
+    cursor: pointer;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(109, 40, 217, 0.5), 0 0 16px rgba(167, 139, 250, 0.35);
+    transition: transform 0.12s ease;
+}
+
+#btn-refresh-gates:active {
+    transform: scale(0.9);
+}
+
+#btn-refresh-gates .rg-icon {
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+#btn-refresh-gates .rg-count {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 20px;
+    height: 20px;
+    background: linear-gradient(180deg, #FFC247, #F0A020);
+    color: #4A2B00;
+    font-size: 12px;
+    font-weight: 900;
+    border-radius: 10px;
+    border: 1.5px solid #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+}

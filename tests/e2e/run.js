@@ -161,18 +161,17 @@ async function suiteGameplay(page) {
     await step('穿门人数增加(+5)', async () => {
         await gotoGame(page);
         await gameApi(page, '(g) => g.start()');
-        // 传送到+5门前(第1关第1段 lane0 z=-14, 队伍z=-13.5)
-        await gameApi(page, '(g) => { g.squad.z = -13.5; g.squad.x = -2; g.squad.lane = 0; g.squad.targetX = -2; }');
+        // 传送到门前(V3.3关卡: 第一组门 z=-10, lane0 为 +5 门, 队伍停在门前1单位)
+        await gameApi(page, '(g) => { g.squad.z = -9; g.squad.x = -2; g.squad.lane = 0; g.squad.targetX = -2; }');
         await page.waitForTimeout(500);
         const count = await gameApi(page, '(g) => g.squad.count');
         assert(count >= 6, '穿门后人数应≥6, 实际' + count);
     });
     await step('门触发后移除(无残留碰撞)', async () => {
-        await gameApi(page, '(g) => g.gates.gates.filter(x => x.data.value === 5).length');
         // 越过门后等待淡出
-        await gameApi(page, '(g) => { g.squad.z = -22; }');
+        await gameApi(page, '(g) => { g.squad.z = -18; }');
         await page.waitForTimeout(400);
-        const left = await gameApi(page, '(g) => g.gates.gates.filter(x => x.triggered && x.z === -14).length');
+        const left = await gameApi(page, '(g) => g.gates.gates.filter(x => x.triggered && x.z === -10).length');
         assert(left === 0, '触发的门应被移除');
     });
 
@@ -270,6 +269,63 @@ async function suiteAdMock(page) {
         await gotoGame(page, '?adtest=auto_complete');
         const avail = await page.evaluate(() => window.Platform && Platform.ads && Platform.ads.isAvailable());
         assert(avail, 'Platform.ads应可用');
+    });
+
+    _current = '广告复活E2E';
+    await step('广告完整观看 → 复活成功(人数恢复+无敌)', async () => {
+        await gotoGame(page, '?adtest=auto_complete');
+        await gameApi(page, '(g) => g.start()');
+        await gameApi(page, '(g) => g.squad.setCount(0)');
+        await page.waitForTimeout(400);
+        const btnVisible = await page.evaluate(() => !document.getElementById('btn-revive').classList.contains('hidden'));
+        assert(btnVisible, '失败界面应显示复活按钮');
+        // 点击 → 模拟器3秒自动完整观看
+        await page.evaluate(() => document.getElementById('btn-revive').click());
+        await page.waitForTimeout(4600);
+        assert(await gameApi(page, '(g) => g.state') === 'playing', '应复活为playing');
+        const count = await gameApi(page, '(g) => g.squad.count');
+        assert(count >= 5, '复活人数应≥5, 实际' + count);
+        const inv = await gameApi(page, '(g) => g.squad.invulnT');
+        assert(inv > 0, '应有复活无敌, 实际' + inv);
+    });
+    await step('二次死亡: 复活按钮隐藏(每局1次)', async () => {
+        await gameApi(page, '(g) => g.squad.setCount(0)');
+        await page.waitForTimeout(400);
+        const btnVisible = await page.evaluate(() => !document.getElementById('btn-revive').classList.contains('hidden'));
+        assert(!btnVisible, '第二次失败复活按钮应隐藏');
+    });
+
+    _current = '双倍结算E2E';
+    await step('通关后广告领取双倍(限1次)', async () => {
+        await gotoGame(page, '?adtest=auto_complete');
+        await gameApi(page, "(g) => { g.start(); g.squad.setCount(60); g.squad.z = -136; }");
+        // 等待Boss被击杀→won
+        await page.waitForFunction(() => { const g = window.__game; return g && g.state === 'won'; }, { timeout: 12000 }).catch(() => {});
+        assert(await gameApi(page, '(g) => g.state') === 'won', '应进入胜利状态');
+        const btnVisible = await page.evaluate(() => !document.getElementById('btn-double-reward').classList.contains('hidden'));
+        assert(btnVisible, '双倍按钮应显示');
+        await page.evaluate(() => document.getElementById('btn-double-reward').click());
+        await page.waitForTimeout(4600);
+        const label = await page.evaluate(() => document.getElementById('btn-double-reward').textContent);
+        assert(label.indexOf('已领取') >= 0, '按钮应变为已领取, 实际: ' + label);
+        // 重开一局按钮重置
+        await gameApi(page, '(g) => g.start()');
+        await page.waitForTimeout(200);
+        const again = await page.evaluate(() => !document.getElementById('btn-double-reward').classList.contains('hidden'));
+        assert(again, '新一局双倍按钮应恢复');
+    });
+
+    _current = '广告提前关闭E2E';
+    await step('提前关闭 → 不复活保持失败界面', async () => {
+        await gotoGame(page, '?adtest=auto_abandon');
+        await gameApi(page, '(g) => g.start()');
+        await gameApi(page, '(g) => g.squad.setCount(0)');
+        await page.waitForTimeout(400);
+        await page.evaluate(() => document.getElementById('btn-revive').click());
+        await page.waitForTimeout(2000);
+        assert(await gameApi(page, '(g) => g.state') === 'lost', '提前关闭应保持lost');
+        const loseVisible = await page.evaluate(() => !document.getElementById('lose-screen').classList.contains('hidden'));
+        assert(loseVisible, '失败界面应保持显示');
     });
 }
 

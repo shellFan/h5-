@@ -197,6 +197,8 @@
     <script src="js/ads/game-ad-coordinator.js"></script>
     <script>
         // V3.4: 广告服务引导装配(在Game实例化之前)
+        // ?adtest=<scenario> 仅供E2E测试注入模拟器场景(auto_complete/auto_abandon/error)
+        window.__AD_TEST_SCENARIO = (location.search.match(/adtest=(\w+)/) || [])[1] || null;
         Platform.initialize();
         window.__adService = setupAdService();
     </script>
