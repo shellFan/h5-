@@ -11,5 +11,8 @@
     "test:unit": "node tests/unit/run.js",
     "test:e2e": "node tests/e2e/run.js",
     "test:visual": "node tests/e2e/visual.js"
+  },
+  "dependencies": {
+    "playwright-core": "^1.65.0"
   }
 }

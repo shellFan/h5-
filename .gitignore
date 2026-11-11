@@ -4,3 +4,6 @@ test_visual.html
 dom_dump.txt
 vis_dump.txt
 shot*.png
+# Node
+node_modules/
+package-lock.json
