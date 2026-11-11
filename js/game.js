@@ -30,6 +30,12 @@ class Game {
         this.kills = 0;
         this.maxCount = 0;
         this.elapsedTime = 0;
+        // V3.3: 连杀系统
+        this.combo = 0;
+        this.comboTimer = 0;
+        this.maxCombo = 0;
+        this._prevKillCount = 0;
+        this._comboMilestone = 0;
         // 性能统计
         this._fpsEma = 0;
         this._frameTimes = [];
@@ -126,8 +132,15 @@ class Game {
             winKills: document.getElementById('win-kills'),
             winMax: document.getElementById('win-max'),
             winTime: document.getElementById('win-time'),
+            winCombo: document.getElementById('win-combo'),
             loseKills: document.getElementById('lose-kills'),
-            loseMax: document.getElementById('lose-max')
+            loseMax: document.getElementById('lose-max'),
+            loseCombo: document.getElementById('lose-combo'),
+            loseReason: document.getElementById('lose-reason'),
+            comboBox: document.getElementById('combo-box'),
+            comboNum: document.getElementById('combo-num'),
+            levelSelect: document.getElementById('level-select'),
+            btnNextLevel: document.getElementById('btn-next-level')
         };
 
         // 进度节点数据(从关卡segments动态生成)
@@ -144,6 +157,15 @@ class Game {
         if (btnPause) btnPause.addEventListener('click', function() { self._togglePause(); });
         var btnRevive = document.getElementById('btn-revive');
         if (btnRevive) btnRevive.addEventListener('click', function() { self._revive(); });
+        // V3.3: 下一关按钮
+        if (this.ui.btnNextLevel) {
+            this.ui.btnNextLevel.addEventListener('click', function() {
+                if (self.levelIndex + 1 < LEVELS.length) {
+                    self.levelIndex++;
+                    self.start();
+                }
+            });
+        }
         // 暂停菜单按钮
         var btnResume = document.getElementById('btn-resume');
         if (btnResume) btnResume.addEventListener('click', function() { self._togglePause(); });
@@ -155,6 +177,16 @@ class Game {
         });
         var btnPauseMenu = document.getElementById('btn-pause-menu');
         if (btnPauseMenu) btnPauseMenu.addEventListener('click', function() { self._backToMenu(); });
+
+        // V3.3: 生成关卡选择按钮
+        if (this.ui.levelSelect) {
+            for (var i = 0; i < LEVELS.length; i++) {
+                var b = document.createElement('button');
+                b.textContent = String(i + 1);
+                this.ui.levelSelect.appendChild(b);
+            }
+        }
+        this._refreshLevelSelect();
     }
 
     /** 构建进度条节点(基于关卡segments) */
@@ -219,13 +251,16 @@ class Game {
         this.gates.clear();
         this.enemies.clear();
         this.combat.clear();
+        // V3.3: 刷新关卡选择解锁状态
+        this._refreshLevelSelect();
     }
 
     _revive() {
-        // 复活: 恢复10人继续游戏
+        // 复活: 恢复10人继续游戏 + 短暂无敌(V3.3: 2秒无敌由enemies侧通过squad.invulnT实现)
         this.state = 'playing';
         this.squad.alive = true;
         this.squad.setCount(10);
+        this.squad.invulnT = 2.0;
         if (this.ui.loseScreen) this.ui.loseScreen.classList.add('hidden');
         if (this.ui.hud) this.ui.hud.classList.remove('hidden');
     }
@@ -277,6 +312,13 @@ class Game {
             this.maxCount = level.startCount;
             this.bossSpawned = false;
             this.bossDefeated = false;
+            // V3.3: 重置连杀
+            this.combo = 0;
+            this.comboTimer = 0;
+            this.maxCombo = 0;
+            this._prevKillCount = 0;
+            this._comboMilestone = 0;
+            if (this.ui.comboBox) this.ui.comboBox.classList.add('hidden');
             this._prevDamage = this.squad.getDamage();
             this._prevFireRate = this.squad.getFireRate();
 
@@ -348,6 +390,30 @@ class Game {
         this.combat.update(dt, this.squad, this.enemies);
         this.effects.update(dt);
 
+        // V3.3: 连杀系统 — 击杀数增长时combo+1, 2秒无击杀清零
+        var kc = this.enemies.killCount;
+        if (kc > this._prevKillCount) {
+            this.combo += kc - this._prevKillCount;
+            this.comboTimer = 2.0;
+            // 连杀里程碑
+            var milestones = [10, 30, 50, 100];
+            for (var mi = 0; mi < milestones.length; mi++) {
+                if (this.combo >= milestones[mi] && this._prevKillCount < milestones[mi] && kc - this._prevKillCount <= milestones[mi] - this._prevKillCount) {
+                    if (this._comboMilestone !== milestones[mi]) {
+                        this._comboMilestone = milestones[mi];
+                        this.effects.floatText(this.squad.x, 2.2, this.squad.z - 1, milestones[mi] + '连杀!', '#FFC247', true);
+                        this.effects.shockwave(this.squad.x, 0.05, this.squad.z, 0xFFC247);
+                    }
+                }
+            }
+            this.maxCombo = Math.max(this.maxCombo || 0, this.combo);
+        }
+        this._prevKillCount = kc;
+        if (this.comboTimer > 0) {
+            this.comboTimer -= dt;
+            if (this.comboTimer <= 0) { this.combo = 0; this._comboMilestone = 0; }
+        }
+
         // 场景跟随
         this.world.updateRoadScroll(this.squad.z);
         this.world.updateCamera(this.squad.x, this.squad.z, dt);
@@ -368,7 +434,15 @@ class Game {
 
         // 胜负判定
         if (this.bossDefeated) { this._win(); return; }
-        if (!this.squad.alive || this.squad.count <= 0) { this._lose(); return; }
+        if (!this.squad.alive || this.squad.count <= 0) {
+            // V3.3: 失败原因追踪
+            var reason = '小队全灭';
+            if (this.enemies.boss) reason = 'Boss战失利 · 输出不足';
+            else if (this.enemies.aliveCount > 8) reason = '被怪潮吞噬 · 人数不足';
+            else reason = '阵亡于残敌 · 火力分散';
+            this._lose(reason);
+            return;
+        }
     }
 
     _updateUI() {
@@ -421,6 +495,17 @@ class Game {
             this.maxCount = this.squad.count;
         }
 
+        // V3.3: 连杀HUD (combo>=5时显示)
+        if (this.ui.comboBox) {
+            if (this.combo >= 5 && this.state === 'playing') {
+                this.ui.comboBox.classList.remove('hidden');
+                if (this.ui.comboNum) this.ui.comboNum.textContent = this.combo;
+                this.ui.comboBox.classList.toggle('hot', this.combo >= 30);
+            } else {
+                this.ui.comboBox.classList.add('hidden');
+            }
+        }
+
         // 属性面板(带变化动画)
         if (this.ui.statCount) {
             this.ui.statCount.textContent = this.squad.count;
@@ -462,17 +547,65 @@ class Game {
         if (this.ui.winKills) this.ui.winKills.textContent = this.enemies.killCount;
         if (this.ui.winMax) this.ui.winMax.textContent = this.maxCount;
         if (this.ui.winTime) this.ui.winTime.textContent = this.elapsedTime.toFixed(1) + 's';
+        // V3.3: 连杀统计
+        if (this.ui.winCombo) this.ui.winCombo.textContent = this.maxCombo || 0;
+        // V3.3: 通关存档 — 解锁下一关
+        this._saveProgress(Math.min(LEVELS.length, this.levelIndex + 2));
         if (this.ui.winScreen) this.ui.winScreen.classList.remove('hidden');
+        // V3.3: 胜利→下一关按钮
+        var hasNext = this.levelIndex + 1 < LEVELS.length;
+        if (this.ui.btnNextLevel) {
+            this.ui.btnNextLevel.classList.toggle('hidden', !hasNext);
+        }
     }
 
-    _lose() {
+    _lose(reason) {
         this.state = 'lost';
         if (this.ui.hud) this.ui.hud.classList.add('hidden');
         if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
         // 填充结算数据
         if (this.ui.loseKills) this.ui.loseKills.textContent = this.enemies.killCount;
         if (this.ui.loseMax) this.ui.loseMax.textContent = this.maxCount;
+        if (this.ui.loseCombo) this.ui.loseCombo.textContent = this.maxCombo || 0;
+        // V3.3: 失败原因
+        if (this.ui.loseReason) this.ui.loseReason.textContent = reason || '小队全灭';
         if (this.ui.loseScreen) this.ui.loseScreen.classList.remove('hidden');
+    }
+
+    // ===== V3.3: 存档系统(关卡解锁进度) =====
+    _loadProgress() {
+        try {
+            var v = parseInt(window.localStorage.getItem('pz_progress')) || 1;
+            return clamp(v, 1, LEVELS.length);
+        } catch (e) { return 1; }
+    }
+
+    _saveProgress(unlocked) {
+        try {
+            var cur = this._loadProgress();
+            if (unlocked > cur) {
+                window.localStorage.setItem('pz_progress', String(unlocked));
+            }
+        } catch (e) { /* 存储不可用则跳过 */ }
+    }
+
+    /** 刷新关卡选择按钮(解锁状态) */
+    _refreshLevelSelect() {
+        if (!this.ui.levelSelect) return;
+        var unlocked = this._loadProgress();
+        var self = this;
+        var btns = this.ui.levelSelect.querySelectorAll('button');
+        for (var i = 0; i < btns.length; i++) {
+            (function(idx, btn) {
+                var isUnlocked = idx < unlocked;
+                btn.className = 'lv-btn' + (isUnlocked ? ' unlocked' : ' locked') + (idx + 1 === unlocked ? ' current' : '');
+                btn.disabled = !isUnlocked;
+                btn.onclick = function() {
+                    self.levelIndex = idx;
+                    self.start();
+                };
+            })(i, btns[i]);
+        }
     }
 }
 

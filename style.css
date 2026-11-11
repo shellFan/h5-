@@ -717,3 +717,86 @@ html, body {
     color: #999;
     letter-spacing: 1px;
 }
+/* ===== V3.3: 连杀HUD ===== */
+#combo-box {
+    position: absolute;
+    right: 14px;
+    top: 128px;
+    z-index: 11;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, rgba(255, 194, 71, 0.95), rgba(255, 140, 40, 0.95));
+    border-radius: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 3px 12px rgba(255, 140, 40, 0.45);
+    pointer-events: none;
+    animation: comboPop 0.2s ease;
+}
+
+#combo-box.hot {
+    background: linear-gradient(135deg, rgba(255, 91, 88, 0.95), rgba(220, 40, 40, 0.95));
+    box-shadow: 0 3px 16px rgba(255, 60, 40, 0.6);
+}
+
+#combo-num {
+    font-size: 20px;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(120, 40, 0, 0.5);
+}
+
+.combo-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+@keyframes comboPop {
+    0% { transform: scale(0.7); }
+    60% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+/* ===== V3.3: 关卡选择 ===== */
+#level-select {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 14px;
+    padding: 0 6px;
+}
+
+#level-select .lv-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    background: linear-gradient(180deg, #4C9AFF, #238BFF);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 900;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(23, 59, 121, 0.35);
+    transition: transform 0.12s ease;
+}
+
+#level-select .lv-btn.unlocked:hover {
+    transform: translateY(-2px) scale(1.06);
+}
+
+#level-select .lv-btn.current {
+    background: linear-gradient(180deg, #FFC247, #F59E0B);
+    box-shadow: 0 0 10px rgba(255, 194, 71, 0.6);
+}
+
+#level-select .lv-btn.locked {
+    background: rgba(120, 130, 150, 0.45);
+    color: rgba(255, 255, 255, 0.45);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: none;
+    cursor: default;
+}

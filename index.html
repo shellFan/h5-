@@ -56,6 +56,11 @@
                 <svg class="person-icon" viewBox="0 0 24 24"><circle cx="12" cy="6" r="4" fill="white"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="white"/></svg>
                 <span id="squad-count-num">1</span>
             </div>
+
+            <!-- V3.3: 连杀HUD -->
+            <div id="combo-box" class="hidden">
+                <span id="combo-num">0</span><span class="combo-label">连杀</span>
+            </div>
         </div>
 
         <!-- Boss血条 -->
@@ -88,6 +93,7 @@
                 <h1 class="game-title">膨胀小队</h1>
                 <p class="game-subtitle">招兵买马 · 火力全开</p>
                 <button id="btn-start" class="btn-primary">开始游戏</button>
+                <div id="level-select" aria-label="关卡选择"></div>
                 <p class="hint-text">左右拖动切换跑道</p>
             </div>
         </div>
@@ -104,10 +110,11 @@
                 <div id="win-stats">
                     <div class="win-stat"><span class="ws-label">剩余人数</span><span class="ws-val" id="win-count">0</span></div>
                     <div class="win-stat"><span class="ws-label">击杀数量</span><span class="ws-val" id="win-kills">0</span></div>
-                    <div class="win-stat"><span class="ws-label">最大人数</span><span class="ws-val" id="win-max">0</span></div>
+                    <div class="win-stat"><span class="ws-label">最大连杀</span><span class="ws-val" id="win-combo">0</span></div>
                     <div class="win-stat"><span class="ws-label">通关时间</span><span class="ws-val" id="win-time">0s</span></div>
                 </div>
-                <button id="btn-restart-win" class="btn-primary">再来一次</button>
+                <button id="btn-next-level" class="btn-primary">下一关 →</button>
+                <button id="btn-restart-win" class="btn-secondary">再来一次</button>
             </div>
         </div>
 
@@ -115,10 +122,10 @@
         <div id="lose-screen" class="hidden">
             <div class="title-panel">
                 <h1 class="result-title lose">失败</h1>
-                <p class="result-subtitle">小队全灭，再接再厉</p>
+                <p class="result-subtitle" id="lose-reason">小队全灭，再接再厉</p>
                 <div id="lose-stats">
                     <div class="win-stat"><span class="ws-label">击杀数量</span><span class="ws-val" id="lose-kills">0</span></div>
-                    <div class="win-stat"><span class="ws-label">最大人数</span><span class="ws-val" id="lose-max">0</span></div>
+                    <div class="win-stat"><span class="ws-label">最大连杀</span><span class="ws-val" id="lose-combo">0</span></div>
                 </div>
                 <button id="btn-restart-lose" class="btn-primary">重新挑战</button>
                 <button id="btn-revive" class="btn-secondary">复活继续</button>

@@ -1,17 +1,19 @@
 // ===== 僵尸/Boss 系统 =====
 
 class Enemy {
-    constructor(type, x, z, scene) {
+    constructor(type, x, z, scene, hpOverride) {
         this.type = type;
         this.cfg = CONFIG.ZOMBIE[type] || CONFIG.ZOMBIE.normal;
-        this.hp = this.cfg.hp;
-        this.maxHp = this.cfg.hp;
+        this.hp = hpOverride || this.cfg.hp;   // V3.3: 关卡可覆盖Boss血量
+        this.maxHp = this.hp;
         this.x = x;
         this.z = z;
         this.alive = true;
         this.attackTimer = 0;
         this.hitFlash = 0;
         this.knockback = 0;
+        this.frozenT = 0;       // V3.3: 冰冻减速剩余时间
+        this._frozenFx = false; // 冰冻粒子只播一次
         this.spitTimer = randRange(1, 2);
         this.phase = Math.random() * Math.PI * 2;
         this.isBoss = (type === 'boss');
@@ -38,7 +40,7 @@ class Enemy {
         }.bind(this));
     }
 
-    takeDamage(dmg, effects, fromX) {
+    takeDamage(dmg, effects, fromX, isCrit) {
         if (!this.alive) return false;
         this.hp -= dmg;
         this.hitFlash = 0.08;
@@ -46,9 +48,11 @@ class Enemy {
         if (!this.isBoss) this.knockback = Math.min(this.knockback + 1.5, 3);
         // 命中火花
         if (effects) {
-            effects.burst(this.x, 0.55, this.z, 0xFFE066, 3, 2, 0.25);
-            // 伤害数字 (V3.6: 降低概率避免大规模战斗时文字刷屏)
-            if (Math.random() < 0.12) {
+            effects.burst(this.x, 0.55, this.z, isCrit ? 0xFF8844 : 0xFFE066, 3, 2, 0.25);
+            // 伤害数字 (V3.6: 降低概率避免大规模战斗时文字刷屏; V3.3: 暴击必显大字)
+            if (isCrit) {
+                effects.floatText(this.x, 1.0, this.z, String(dmg), '#FF8844', true);
+            } else if (Math.random() < 0.12) {
                 effects.floatText(this.x, 0.9, this.z, String(dmg), '#FFD700', false);
             }
         }
@@ -90,6 +94,10 @@ class Enemy {
         }
         if (!this.alive) return;
 
+        // V3.3: 冰冻减速
+        if (this.frozenT > 0) this.frozenT -= dt;
+        const frozen = this.frozenT > 0;
+
         const dz = squad.z - this.z;
         const dist = Math.abs(dz);
         const attackDist = CONFIG.ZOMBIE_ATTACK_DIST * (this.isBoss ? 2.5 : 1);
@@ -120,16 +128,16 @@ class Enemy {
         }
 
         if (dist > attackDist) {
-            // 向小队移动
-            const spd = this.cfg.speed * (this.speedMul || 1);
+            // 向小队移动 (V3.3: 冰冻时减速70%)
+            const spd = this.cfg.speed * (this.speedMul || 1) * (frozen ? 0.3 : 1);
             this.z += Math.sign(dz) * spd * dt;
             const dx = squad.x - this.x;
             this.x += clamp(dx, -1, 1) * spd * 0.4 * dt;
         } else {
-            // 近战攻击
+            // 近战攻击 (V3.3: 冰冻时攻击间隔延长)
             this.attackTimer -= dt;
             if (this.attackTimer <= 0) {
-                this.attackTimer = CONFIG.ZOMBIE_ATTACK_INTERVAL * (this.attackMul || 1);
+                this.attackTimer = CONFIG.ZOMBIE_ATTACK_INTERVAL * (this.attackMul || 1) * (frozen ? 2 : 1);
                 const kill = this.isBoss ? (this.enraged ? 5 : 3) : CONFIG.ZOMBIE_ATTACK_KILL;
                 squad.killSoldiers(kill, effects);
                 if (effects) {
@@ -206,6 +214,7 @@ class EnemyManager {
             } else if (seg.type === 'boss') {
                 this.pendingSpawns.push({
                     type: 'boss', x: 0, z: seg.z,
+                    hp: seg.boss && seg.boss.hp ? seg.boss.hp : null, // V3.3: 关卡血量覆盖
                     triggerZ: seg.z + 16, isBoss: true
                 });
             }
@@ -243,7 +252,7 @@ class EnemyManager {
         for (let i = this.pendingSpawns.length - 1; i >= 0; i--) {
             const ps = this.pendingSpawns[i];
             if (squad.z <= ps.triggerZ) {
-                const e = new Enemy(ps.type, ps.x, ps.z, this.scene);
+                const e = new Enemy(ps.type, ps.x, ps.z, this.scene, ps.hp);
                 this.enemies.push(e);
                 if (ps.isBoss) this.boss = e;
                 this.pendingSpawns.splice(i, 1);

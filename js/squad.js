@@ -10,6 +10,11 @@ class Squad {
         this.count = 0;
         this.damageBuff = 0;
         this.fireRateBuff = 0;
+        // V3.3: 扩展Buff体系
+        this.pierce = 0;        // 穿透层数(0-3)
+        this.critChance = 0;    // 暴击率(0-0.5)
+        this.freezeStacks = 0;  // 冰冻弹(命中减速)
+        this.vampStacks = 0;    // 吸血(击杀回复)
         this.alive = true;
 
         // 士兵数据数组
@@ -74,8 +79,9 @@ class Squad {
         }
     }
 
-    /** 僵尸击杀士兵 */
+    /** 僵尸击杀士兵 (V3.3: 复活无敌期间免疫) */
     killSoldiers(n, effects) {
+        if (this.invulnT > 0) return; // 复活无敌
         const before = this.count;
         // V2.2修复: 先保存被杀士兵位置，再截断数组(原代码先截断再读取导致undefined)
         var deathPos = [];
@@ -99,7 +105,7 @@ class Squad {
         }
     }
 
-    /** 应用状态门效果 */
+    /** 应用状态门效果 (V3.3: 完整Buff体系) */
     applyGate(gate, effects) {
         var added = 0;
         if (gate.op === 'add') {
@@ -108,27 +114,55 @@ class Squad {
         } else if (gate.op === 'mul') {
             added = this.count * (gate.value - 1);
             this.setCount(this.count * gate.value);
+        } else if (gate.op === 'risk') {
+            // V3.3: 风险门 — 红色, 人数-30%换输出+2
+            var lost = Math.floor(this.count * 0.3);
+            this.setCount(Math.max(1, this.count - lost));
+            this.damageBuff = Math.min(99, this.damageBuff + 2);
+            added = -lost;
         } else if (gate.op === 'buff') {
-            if (gate.value === 'damage') this.damageBuff += 1;
-            else if (gate.value === 'firerate') this.fireRateBuff += 0.2;
+            switch (gate.value) {
+                case 'damage':  this.damageBuff = Math.min(99, this.damageBuff + 1); break;
+                case 'damage2': this.damageBuff = Math.min(99, Math.max(2, this.damageBuff * 2)); break;
+                case 'firerate': this.fireRateBuff = Math.min(0.5, this.fireRateBuff + 0.2); break; // 上限3.0射速
+                case 'pierce':  this.pierce = Math.min(3, this.pierce + 1); break;
+                case 'crit':    this.critChance = Math.min(0.5, this.critChance + 0.1); break;
+                case 'freeze':  this.freezeStacks = Math.min(2, this.freezeStacks + 1); break;
+                case 'vamp':    this.vampStacks = Math.min(2, this.vampStacks + 1); break;
+            }
         }
-        // 穿门反馈: 冲击波 + 膨胀文字 + 蓝色粒子
+        // 穿门反馈: 冲击波 + 膨胀文字 + 粒子
         if (effects) {
             var isMul = gate.op === 'mul';
+            var isRisk = gate.op === 'risk';
             var isBuff = gate.op === 'buff';
-            // 冲击波(乘法门更大)
-            effects.shockwave(this.x, 0.05, this.z, isMul ? 0xFFC247 : 0x75DFFF);
-            if (isMul) {
-                effects.shockwave(this.x, 0.05, this.z, 0x75DFFF);
-            }
-            // +N 膨胀文字
+            // 冲击波(乘法门更大/风险门红色)
+            effects.shockwave(this.x, 0.05, this.z, isRisk ? 0xFF5B58 : (isMul ? 0xFFC247 : 0x75DFFF));
+            if (isMul) effects.shockwave(this.x, 0.05, this.z, 0x75DFFF);
+            // 人数变化文字
             if (added > 0) {
                 effects.floatText(this.x, 1.6, this.z, '+' + added, '#75DFFF', isMul);
+            } else if (added < 0) {
+                effects.floatText(this.x, 1.6, this.z, String(added), '#FF5B58', true);
             }
-            // buff文字
-            if (isBuff) {
-                var buffText = gate.value === 'damage' ? '输出+1' : '射速+20%';
-                effects.floatText(this.x, 1.6, this.z, buffText, '#A14DFF', true);
+            // Buff文字(按类型配色)
+            if (isBuff || isRisk) {
+                var texts = {
+                    damage:  ['输出+1', '#FFE66D'],
+                    damage2: ['输出×2', '#FFE66D'],
+                    firerate:['射速+20%', '#66D68F'],
+                    pierce:  ['穿透+1', '#75DFFF'],
+                    crit:    ['暴击+10%', '#FFC247'],
+                    freeze:  ['冰冻弹', '#9AD8FF'],
+                    vamp:    ['吸血', '#66D68F'],
+                    risk:    ['输出+2', '#FF5B58']
+                };
+                var t = texts[gate.value] || ['BUFF', '#A14DFF'];
+                effects.floatText(this.x, 1.7, this.z, t[0], t[1], true);
+                var burstCol = gate.value === 'crit' ? 0xFFC247 :
+                    gate.value === 'freeze' ? 0x9AD8FF :
+                    gate.value === 'vamp' ? 0x66D68F : 0xA14DFF;
+                effects.burst(this.x, 0.6, this.z, burstCol, 10, 3, 0.5);
             }
             // 蓝色粒子扩散(人数增加时)
             if (added > 0) {
@@ -139,6 +173,8 @@ class Squad {
     }
 
     update(dt, time, stopZ) {
+        // V3.3: 复活无敌倒计时
+        if (this.invulnT > 0) this.invulnT -= dt;
         // 前进 (Boss战时在Boss前方停下，击败Boss后继续)
         var moving = (stopZ === undefined || stopZ === null || this.z > stopZ);
         if (moving) {
@@ -213,14 +249,14 @@ class Squad {
         return positions;
     }
 
-    /** 获取伤害值(含buff) */
+    /** 获取伤害值(含buff) V3.3: 上限99 */
     getDamage() {
-        return CONFIG.BULLET_DAMAGE_BASE + this.damageBuff;
+        return Math.min(99, CONFIG.BULLET_DAMAGE_BASE + this.damageBuff);
     }
 
-    /** 获取射速(含buff) */
+    /** 获取射速(含buff) V3.3: 上限3.0 */
     getFireRate() {
-        return CONFIG.BULLET_FIRE_RATE_BASE * (1 + this.fireRateBuff);
+        return Math.min(3.0, CONFIG.BULLET_FIRE_RATE_BASE * (1 + this.fireRateBuff));
     }
 
     reset(startCount) {
@@ -230,6 +266,10 @@ class Squad {
         this.targetX = CONFIG.LANE_X[1];
         this.damageBuff = 0;
         this.fireRateBuff = 0;
+        this.pierce = 0;
+        this.critChance = 0;
+        this.freezeStacks = 0;
+        this.vampStacks = 0;
         this.alive = true;
         this.soldiers = [];
         this.count = 0; // 必须重置count, 否则setCount认为人数未变不补充士兵

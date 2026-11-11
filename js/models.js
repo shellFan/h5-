@@ -546,10 +546,11 @@ function createGateModel(gateData, gateWidth) {
     const group = new THREE.Group();
     const R = CONFIG.GATE_RARITY;
 
-    // 稀有度: add=common(蓝) / mul=epic(金) / buff=rare(紫)
+    // 稀有度: add=common(蓝) / mul=epic(金) / buff=rare(紫) / risk=danger(红) — V3.3
     var rarity = 'common';
     if (gateData.op === 'mul') rarity = 'epic';
     else if (gateData.op === 'buff') rarity = 'rare';
+    else if (gateData.op === 'risk') rarity = 'danger';
     var rc = R[rarity] || R.common;
 
     var frameColor = rc.frame;
@@ -627,7 +628,8 @@ function createGateModel(gateData, gateWidth) {
     group.userData.glass = glass;
 
     // 玻璃内文字(半透明大号 - 刻在门上) V3.6: buff门改用★标记
-    var innerText = gateData.op === 'add' ? '+' : (gateData.op === 'mul' ? '×' : '★');
+    // V3.3: 风险门用"!"图标, 其余buff用★
+    var innerText = gateData.op === 'add' ? '+' : (gateData.op === 'mul' ? '×' : (gateData.op === 'risk' ? '!' : '★'));
     var innerTex = createTextTexture(innerText, {
         fontSize: 130,
         fill: '#FFFFFF',
