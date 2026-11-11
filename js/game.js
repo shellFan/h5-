@@ -2,6 +2,7 @@
 
 class Game {
     constructor() {
+        var self = this;
         this.canvas = document.getElementById('game-canvas');
         this.world = new World(this.canvas);
         // 按画质等级调整池大小
@@ -18,6 +19,18 @@ class Game {
         this.gates = new GateSystem(this.world.scene);
         this.enemies = new EnemyManager(this.world.scene, this.effects);
         this.combat = new CombatSystem(this.world.scene, this.effects);
+        // V3.4: 广告协调器(复活/双倍/刷门; Platform.ads已在页面引导装配)
+        this.adCoord = (typeof GameAdCoordinator !== 'undefined' && window.__adService)
+            ? new GameAdCoordinator(window.__adService, {
+                pauseGame: function() { self.paused = true; },
+                resumeGame: function() { self.paused = false; },
+                onReviveReward: function(count, invSec) { self._applyRevive(count, invSec); },
+                onDoubleReward: function() { self._onDoubleReward(); },
+                onGatesRefresh: function() { self._onGatesRefreshed(); },
+                canRefreshGates: function() { return self._hasRerollableGates(); }
+            })
+            : null;
+        this._doubleTaken = false;
 
         this.state = 'idle'; // idle | playing | won | lost
         this.levelIndex = 0;
@@ -140,7 +153,12 @@ class Game {
             comboBox: document.getElementById('combo-box'),
             comboNum: document.getElementById('combo-num'),
             levelSelect: document.getElementById('level-select'),
-            btnNextLevel: document.getElementById('btn-next-level')
+            btnNextLevel: document.getElementById('btn-next-level'),
+            // V3.4: 广告入口
+            btnDouble: document.getElementById('btn-double-reward'),
+            btnRefreshGates: document.getElementById('btn-refresh-gates'),
+            rgCount: document.getElementById('rg-count'),
+            btnSound: document.getElementById('btn-sound-toggle')
         };
 
         // 进度节点数据(从关卡segments动态生成)
@@ -157,6 +175,10 @@ class Game {
         if (btnPause) btnPause.addEventListener('click', function() { self._togglePause(); });
         var btnRevive = document.getElementById('btn-revive');
         if (btnRevive) btnRevive.addEventListener('click', function() { self._revive(); });
+        // V3.4: 双倍结算 / 刷门 / 音效开关
+        if (this.ui.btnDouble) this.ui.btnDouble.addEventListener('click', function() { self._doubleRewardViaAd(); });
+        if (this.ui.btnRefreshGates) this.ui.btnRefreshGates.addEventListener('click', function() { self._refreshGatesViaAd(); });
+        if (this.ui.btnSound) this.ui.btnSound.addEventListener('click', function() { self._toggleSound(); });
         // V3.3: 下一关按钮
         if (this.ui.btnNextLevel) {
             this.ui.btnNextLevel.addEventListener('click', function() {
@@ -256,13 +278,120 @@ class Game {
     }
 
     _revive() {
-        // 复活: 恢复10人继续游戏 + 短暂无敌(V3.3: 2秒无敌由enemies侧通过squad.invulnT实现)
+        // V3.4: 复活必须通过激励视频(每局最多1次, 平台确认完整观看才发奖)
+        if (!this.adCoord || !this.adCoord.canRevive()) {
+            // 无广告环境/次数用尽: 按钮已隐藏, 此处兜底不复活
+            return;
+        }
+        var maxBefore = Math.max(this.maxCount, 10);
+        this.adCoord.requestRevive(maxBefore).then(function(granted) {
+            if (!granted) {
+                // 提前关闭/展示失败: 保持失败界面, 用户可重试或重新挑战
+            }
+        });
+    }
+
+    /** 实际复活执行(由广告协调器发奖回调) */
+    _applyRevive(count, invSec) {
         this.state = 'playing';
         this.squad.alive = true;
-        this.squad.setCount(10);
-        this.squad.invulnT = 2.0;
+        this.squad.setCount(count);
+        this.squad.invulnT = invSec || 2.0;
         if (this.ui.loseScreen) this.ui.loseScreen.classList.add('hidden');
         if (this.ui.hud) this.ui.hud.classList.remove('hidden');
+        // 复活反馈
+        if (this.effects) {
+            this.effects.floatText(this.squad.x, 2.2, this.squad.z, '复活!', '#75DFFF', true);
+            this.effects.shockwave(this.squad.x, 0.05, this.squad.z, 0x75DFFF);
+        }
+    }
+
+    /** V3.4: 双倍结算(胜利界面按钮 → 激励视频) */
+    _doubleRewardViaAd() {
+        if (!this.adCoord || this._doubleTaken) return;
+        var self = this;
+        this.adCoord.requestDoubleReward().then(function(granted) {
+            if (!granted && self.state === 'won') {
+                // 提前关闭: 按钮恢复可点, 用户可重试
+                if (self.ui.btnDouble) self.ui.btnDouble.disabled = false;
+            }
+        });
+    }
+
+    /** 双倍奖励发放回调 */
+    _onDoubleReward() {
+        this._doubleTaken = true;
+        if (this.ui.btnDouble) {
+            this.ui.btnDouble.textContent = '✓ 已领取双倍';
+            this.ui.btnDouble.disabled = true;
+        }
+        if (this.effects) {
+            this.effects.floatText(this.squad.x, 2.0, this.squad.z, '奖励×2!', '#FFC247', true);
+        }
+    }
+
+    /** V3.4: 广告刷门(HUD按钮 → 激励视频) */
+    _refreshGatesViaAd() {
+        if (!this.adCoord || !this.adCoord.canRefreshGates() || !this._hasRerollableGates()) return;
+        this.adCoord.requestGateRefresh().then(function(granted) { /* 发奖回调 _onGatesRefreshed */ });
+    }
+
+    /** 当前是否有"前方未触发且可重随"的门 */
+    _hasRerollableGates() {
+        if (!this.gates || this.state !== 'playing') return false;
+        for (var i = 0; i < this.gates.gates.length; i++) {
+            var g = this.gates.gates[i];
+            if (!g.triggered && g.z < this.squad.z) return true;
+        }
+        return false;
+    }
+
+    /** 刷门发奖回调: 重随前方门 */
+    _onGatesRefreshed() {
+        if (!this.gates) return;
+        var n = this.gates.refreshAhead(this.squad.z);
+        if (n > 0 && this.effects) {
+            this.effects.floatText(this.squad.x, 2.4, this.squad.z, '状态门刷新!', '#A14DFF', true);
+            this.effects.shockwave(this.squad.x, 0.05, this.squad.z, 0xA14DFF);
+        }
+        this._updateAdButtons();
+    }
+
+    /** V3.4: 音效开关(暂停菜单) */
+    _toggleSound() {
+        if (typeof Platform === 'undefined') return;
+        Platform.audio.init(); // 用户手势触发初始化
+        var muted = !Platform.audio.isMuted();
+        Platform.audio.setMuted(muted);
+        this._updateSoundLabel();
+        Platform.audio.play('click');
+    }
+
+    _updateSoundLabel() {
+        if (!this.ui.btnSound || typeof Platform === 'undefined') return;
+        this.ui.btnSound.textContent = Platform.audio.isMuted() ? '🔇 音效: 关' : '🔊 音效: 开';
+    }
+
+    /** V3.4: 广告入口按钮可见性(随状态/次数刷新) */
+    _updateAdButtons() {
+        var coord = this.adCoord;
+        // 复活按钮: 失败界面 && 尚有次数
+        if (this.ui.btnRevive) {
+            var canRevive = !!(coord && coord.canRevive());
+            this.ui.btnRevive.classList.toggle('hidden', !canRevive);
+        }
+        // 双倍按钮: 胜利界面 && 尚有次数 && 未领取
+        if (this.ui.btnDouble) {
+            var canDouble = !!(coord && coord.canDoubleReward()) && !this._doubleTaken;
+            this.ui.btnDouble.classList.toggle('hidden', !canDouble);
+            if (canDouble) { this.ui.btnDouble.textContent = '📺 双倍奖励'; this.ui.btnDouble.disabled = false; }
+        }
+        // 刷门按钮: 战斗中 && 尚有次数 && 有可刷的门
+        if (this.ui.btnRefreshGates) {
+            var canRefresh = !!(coord && coord.canRefreshGates()) && this._hasRerollableGates();
+            this.ui.btnRefreshGates.classList.toggle('hidden', !canRefresh);
+            if (coord && this.ui.rgCount) this.ui.rgCount.textContent = coord.getGateRefreshLeft();
+        }
     }
 
     _showError(msg) {
@@ -303,6 +432,10 @@ class Game {
             this.gates.loadFromLevel(level);
             this.enemies.loadFromLevel(level);
             this.combat.clear();
+            // V3.4: 每局重置广告次数 + 音频手势初始化
+            if (this.adCoord) this.adCoord.startRun();
+            this._doubleTaken = false;
+            if (typeof Platform !== 'undefined') Platform.audio.init();
 
             this.state = 'playing';
             this.paused = false;
@@ -335,6 +468,9 @@ class Game {
             if (this.ui.pauseScreen) this.ui.pauseScreen.classList.add('hidden');
             if (this.ui.hud) this.ui.hud.classList.remove('hidden');
             if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
+            // V3.4: 刷新广告按钮可见性
+            this._updateAdButtons();
+            this._updateSoundLabel();
             this._updateUI();
         } catch (err) {
             this._showError('[start错误] ' + err.message + '\n' + (err.stack || ''));
@@ -506,6 +642,11 @@ class Game {
             }
         }
 
+        // V3.4: 刷门按钮状态刷新(战斗中)
+        if (this.adCoord && this.state === 'playing') {
+            this._updateAdButtons();
+        }
+
         // 属性面板(带变化动画)
         if (this.ui.statCount) {
             this.ui.statCount.textContent = this.squad.count;
@@ -551,6 +692,8 @@ class Game {
         if (this.ui.winCombo) this.ui.winCombo.textContent = this.maxCombo || 0;
         // V3.3: 通关存档 — 解锁下一关
         this._saveProgress(Math.min(LEVELS.length, this.levelIndex + 2));
+        // V3.4: 双倍按钮(每通关限1次)
+        this._updateAdButtons();
         if (this.ui.winScreen) this.ui.winScreen.classList.remove('hidden');
         // V3.3: 胜利→下一关按钮
         var hasNext = this.levelIndex + 1 < LEVELS.length;
@@ -569,6 +712,8 @@ class Game {
         if (this.ui.loseCombo) this.ui.loseCombo.textContent = this.maxCombo || 0;
         // V3.3: 失败原因
         if (this.ui.loseReason) this.ui.loseReason.textContent = reason || '小队全灭';
+        // V3.4: 复活按钮(每局限1次)
+        this._updateAdButtons();
         if (this.ui.loseScreen) this.ui.loseScreen.classList.remove('hidden');
     }
 

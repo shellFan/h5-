@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>膨胀小队 - 数值模拟器</title>
+    <style>
+        body { background: #1a2233; color: #dde; font: 13px/1.5 monospace; padding: 16px; }
+        #log { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h2>数值模拟器 (确定性步进驱动真实引擎)</h2>
+    <div id="log">初始化中...</div>
+    <canvas id="game-canvas" width="390" height="844" style="display:none"></canvas>
+    <script src="/js/vendor/three.min.js"></script>
+    <script src="/js/config.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/models.js"></script>
+    <script src="/js/world.js"></script>
+    <script src="/js/effects.js"></script>
+    <script src="/js/squad.js"></script>
+    <script src="/js/gates.js"></script>
+    <script src="/js/enemies.js"></script>
+    <script src="/js/combat.js"></script>
+    <script src="/js/game.js"></script>
+    <script>
+        // 屏蔽真实启动: game.js的IIFE会自动new Game() — 保留它作为模拟引擎
+        window.__simReady = typeof window.__game !== 'undefined';
+        document.getElementById('log').textContent = '模拟引擎就绪: ' + window.__simReady;
+    </script>
+    <script src="/tools/sim-driver.js"></script>
+</body>
+</html>

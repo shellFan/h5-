@@ -61,6 +61,12 @@
             <div id="combo-box" class="hidden">
                 <span id="combo-num">0</span><span class="combo-label">连杀</span>
             </div>
+
+            <!-- V3.4: 广告刷门按钮(有未触发门且次数>0时显示) -->
+            <button id="btn-refresh-gates" class="hidden" aria-label="广告刷新状态门">
+                <span class="rg-icon">⟳</span>
+                <span class="rg-count" id="rg-count">2</span>
+            </button>
         </div>
 
         <!-- Boss血条 -->
@@ -79,6 +85,7 @@
             <div class="title-panel">
                 <h2 class="pause-title">暂停</h2>
                 <button id="btn-resume" class="btn-primary">继续游戏</button>
+                <button id="btn-sound-toggle" class="btn-secondary">🔊 音效: 开</button>
                 <button id="btn-pause-restart" class="btn-secondary">重新开始</button>
                 <button id="btn-pause-menu" class="btn-secondary">返回主菜单</button>
             </div>
@@ -114,6 +121,7 @@
                     <div class="win-stat"><span class="ws-label">通关时间</span><span class="ws-val" id="win-time">0s</span></div>
                 </div>
                 <button id="btn-next-level" class="btn-primary">下一关 →</button>
+                <button id="btn-double-reward" class="btn-gold">📺 双倍奖励</button>
                 <button id="btn-restart-win" class="btn-secondary">再来一次</button>
             </div>
         </div>
@@ -128,7 +136,7 @@
                     <div class="win-stat"><span class="ws-label">最大连杀</span><span class="ws-val" id="lose-combo">0</span></div>
                 </div>
                 <button id="btn-restart-lose" class="btn-primary">重新挑战</button>
-                <button id="btn-revive" class="btn-secondary">复活继续</button>
+                <button id="btn-revive" class="btn-ad">📺 观看广告复活</button>
             </div>
         </div>
     </div>
@@ -146,8 +154,13 @@
             div.textContent += (div.textContent ? '\n' : '') + '[错误] ' + e.message + (e.filename ? ' (' + e.filename.split('/').pop() + ':' + e.lineno + ')' : '');
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+    <!-- V3.3: Three.js本地副本优先(抖音小游戏必需), CDN兜底 -->
+    <script src="js/vendor/three.min.js"></script>
     <script>
+        // 本地加载失败时回退CDN
+        if (typeof THREE === 'undefined') {
+            document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"><\/script>');
+        }
         // 检测Three.js是否加载成功
         if (typeof THREE === 'undefined') {
             document.addEventListener('DOMContentLoaded', function() {
@@ -158,7 +171,7 @@
                     div.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#CC0000;color:#fff;padding:8px 12px;font-size:13px;font-family:monospace;white-space:pre-wrap;pointer-events:none;';
                     document.body.appendChild(div);
                 }
-                div.textContent = '[错误] Three.js CDN加载失败，请检查网络连接';
+                div.textContent = '[错误] Three.js 加载失败(本地+CDN均失败)，请检查部署完整性';
             });
         }
     </script>
@@ -171,6 +184,22 @@
     <script src="js/gates.js"></script>
     <script src="js/enemies.js"></script>
     <script src="js/combat.js"></script>
+    <!-- V3.4: 平台抽象层 + 广告系统(在game.js之前装配) -->
+    <script src="js/platform/storage-adapter.js"></script>
+    <script src="js/platform/lifecycle-adapter.js"></script>
+    <script src="js/platform/audio-adapter.js"></script>
+    <script src="js/platform/share-adapter.js"></script>
+    <script src="js/platform/platform.js"></script>
+    <script src="js/ads/ad-service.js"></script>
+    <script src="js/ads/web-mock-ad.js"></script>
+    <script src="js/ads/douyin-ad.js"></script>
+    <script src="js/ads/wechat-ad.js"></script>
+    <script src="js/ads/game-ad-coordinator.js"></script>
+    <script>
+        // V3.4: 广告服务引导装配(在Game实例化之前)
+        Platform.initialize();
+        window.__adService = setupAdService();
+    </script>
     <script src="js/game.js"></script>
 </body>
 </html>

@@ -82,7 +82,7 @@ const levels = [
     {
         name: '第 3 关 盾墙', totalZ: -160, segs: [
             gatesSeg(-10, [G_ADD(0, 10), G_BUFF(2, 'damage')]),
-            W(-28, ['normal', 8], ['shield', 5]),
+            W(-32, ['normal', 8], ['shield', 5]),
             gatesSeg(-46, [G_BUFF(0, 'crit'), G_BUFF(2, 'damage2')]),
             W(-64, ['shield', 8], ['fast', 6]),
             gatesSeg(-82, [G_MUL2(0), G_BUFF(2, 'pierce')]),
@@ -95,10 +95,10 @@ const levels = [
     {
         name: '第 4 关 分裂潮', totalZ: -160, segs: [
             gatesSeg(-10, [G_ADD(0, 10), G_BUFF(2, 'freeze')]),
-            W(-28, ['split', 8], ['normal', 6]),
-            gatesSeg(-46, [G_BUFF(0, 'freeze'), G_MUL2(2)]),
-            W(-64, ['split', 10], ['fast', 6]),
-            gatesSeg(-82, [G_BUFF(0, 'pierce'), G_MUL2(2)]),
+            W(-34, ['split', 6], ['normal', 4]),
+            gatesSeg(-46, [G_MUL2(0), G_BUFF(2, 'freeze')]),
+            W(-66, ['split', 8], ['fast', 6]),
+            gatesSeg(-82, [G_MUL2(0), G_BUFF(2, 'pierce')]),
             W(-100, ['split', 12], ['shield', 4]),
             gatesSeg(-118, [G_ADD(0, 15), G_BUFF(2, 'crit')]),
             W(-134, ['split', 10], ['fast', 8]),
@@ -108,7 +108,7 @@ const levels = [
     {
         name: '第 5 关 吐痰者', totalZ: -165, segs: [
             gatesSeg(-10, [G_ADD(0, 12), G_BUFF(2, 'vamp')]),
-            W(-28, ['spitter', 5], ['normal', 10]),
+            W(-34, ['spitter', 4], ['normal', 8]),
             gatesSeg(-46, [G_BUFF(0, 'vamp'), G_BUFF(2, 'firerate')]),
             W(-64, ['spitter', 7], ['fast', 8]),
             gatesSeg(-82, [G_MUL2(0), G_BUFF(2, 'crit')]),
@@ -121,7 +121,7 @@ const levels = [
     {
         name: '第 6 关 双线压力', totalZ: -170, segs: [
             gatesSeg(-10, [G_ADD(0, 12), G_BUFF(2, 'damage2')]),
-            W(-28, ['fast', 10], ['spitter', 5]),
+            W(-34, ['fast', 8], ['spitter', 4]),
             gatesSeg(-46, [G_BUFF(0, 'firerate'), G_BUFF(2, 'vamp')]),
             W(-64, ['fast', 12], ['spitter', 7], ['shield', 3]),
             gatesSeg(-82, [G_MUL2(0), G_BUFF(2, 'freeze')]),
@@ -134,7 +134,7 @@ const levels = [
     {
         name: '第 7 关 尸海', totalZ: -175, segs: [
             gatesSeg(-10, [G_ADD(0, 20), G_MUL2(2)]),
-            W(-28, ['normal', 20], ['fast', 10]),
+            W(-34, ['normal', 16], ['fast', 8]),
             gatesSeg(-46, [G_MUL3(0), G_ADD(2, 20)]),
             W(-66, ['normal', 24], ['fast', 12]),
             gatesSeg(-84, [G_BUFF(0, 'pierce'), G_MUL2(2)]),
@@ -147,7 +147,7 @@ const levels = [
     {
         name: '第 8 关 精英军团', totalZ: -180, segs: [
             gatesSeg(-10, [G_ADD(0, 15), G_BUFF(2, 'damage2')]),
-            W(-30, ['elite', 1], ['normal', 12]),
+            W(-36, ['elite', 1], ['normal', 10]),
             gatesSeg(-48, [G_BUFF(0, 'crit'), G_BUFF(2, 'pierce')]),
             W(-68, ['elite', 2], ['shield', 6], ['fast', 6]),
             gatesSeg(-86, [G_MUL2(0), G_BUFF(2, 'vamp')]),
@@ -160,7 +160,7 @@ const levels = [
     {
         name: '第 9 关 终局前夜', totalZ: -185, segs: [
             gatesSeg(-10, [G_ADD(0, 20), G_BUFF(2, 'freeze')]),
-            W(-30, ['normal', 14], ['fast', 10], ['spitter', 6]),
+            W(-36, ['normal', 12], ['fast', 8], ['spitter', 6]),
             gatesSeg(-48, [G_BUFF(0, 'damage2'), G_BUFF(2, 'crit')]),
             W(-68, ['shield', 8], ['split', 8], ['fast', 10]),
             gatesSeg(-86, [G_MUL2(0), G_BUFF(2, 'pierce')]),
@@ -173,7 +173,7 @@ const levels = [
     {
         name: '第 10 关 终极膨胀', totalZ: -190, segs: [
             gatesSeg(-10, [G_ADD(0, 25), G_MUL3(2)]),
-            W(-30, ['normal', 20], ['fast', 14]),
+            W(-36, ['normal', 16], ['fast', 10]),
             gatesSeg(-48, [G_MUL3(0), G_RISK(2)]),
             W(-70, ['elite', 3], ['split', 10], ['fast', 12]),
             gatesSeg(-88, [G_BUFF(0, 'damage2'), G_BUFF(2, 'vamp')]),
@@ -197,7 +197,7 @@ console.log('LEVELS 10关写入完成');
 
 // 自验证: 语法+数据完整性
 try {
-    eval(fs.readFileSync(filePath, 'utf8'));
+    const LEVELS = new Function(fs.readFileSync(filePath, 'utf8') + '; return LEVELS;')();
     if (LEVELS.length !== 10) throw new Error('关卡数不是10: ' + LEVELS.length);
     LEVELS.forEach((l, i) => {
         const gates = l.segments.filter(s => s.type === 'gates').length;

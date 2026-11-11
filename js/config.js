@@ -27,7 +27,7 @@ const CONFIG = {
         normal:  { hp: 3,  speed: 1.6,  scale: 1.3,  color: 0x8FBC5A, killScore: 1 },
         fast:    { hp: 2,  speed: 3.2,  scale: 1.05, color: 0xA9CB6B, killScore: 1 },
         shield:  { hp: 10, speed: 1.1,  scale: 1.45, color: 0x7EA35F, killScore: 2 },
-        split:   { hp: 5,  speed: 1.4,  scale: 1.15, color: 0xA583C9, killScore: 2 },
+        split:   { hp: 4,  speed: 1.3,  scale: 1.15, color: 0xA583C9, killScore: 2 },
         spitter: { hp: 4,  speed: 1.2,  scale: 1.25, color: 0x63C24B, killScore: 2 },
         elite:   { hp: 26, speed: 1.0,  scale: 2.3,  color: 0x6F9A52, killScore: 5 },
         boss:    { hp: 200, speed: 0.8, scale: 3.6,  color: 0x9C3B32, killScore: 50 }
@@ -186,7 +186,7 @@ const LEVELS = [
                 { lane: 0, op: 'add', value: 10, label: '+10' },
                 { lane: 2, op: 'buff', value: 'damage', label: '输出+1' }
             ]},
-            { type: 'wave', z: -28, enemies: [
+            { type: 'wave', z: -32, enemies: [
                 { type: 'normal', count: 8 },
                 { type: 'shield', count: 5 }
             ]},
@@ -227,21 +227,21 @@ const LEVELS = [
                 { lane: 0, op: 'add', value: 10, label: '+10' },
                 { lane: 2, op: 'buff', value: 'freeze', label: '冰冻弹' }
             ]},
-            { type: 'wave', z: -28, enemies: [
-                { type: 'split', count: 8 },
-                { type: 'normal', count: 6 }
+            { type: 'wave', z: -34, enemies: [
+                { type: 'split', count: 6 },
+                { type: 'normal', count: 4 }
             ]},
             { type: 'gates', z: -46, gates: [
-                { lane: 0, op: 'buff', value: 'freeze', label: '冰冻弹' },
-                { lane: 2, op: 'mul', value: 2, label: '×2' }
+                { lane: 0, op: 'mul', value: 2, label: '×2' },
+                { lane: 2, op: 'buff', value: 'freeze', label: '冰冻弹' }
             ]},
-            { type: 'wave', z: -64, enemies: [
-                { type: 'split', count: 10 },
+            { type: 'wave', z: -66, enemies: [
+                { type: 'split', count: 8 },
                 { type: 'fast', count: 6 }
             ]},
             { type: 'gates', z: -82, gates: [
-                { lane: 0, op: 'buff', value: 'pierce', label: '穿透+1' },
-                { lane: 2, op: 'mul', value: 2, label: '×2' }
+                { lane: 0, op: 'mul', value: 2, label: '×2' },
+                { lane: 2, op: 'buff', value: 'pierce', label: '穿透+1' }
             ]},
             { type: 'wave', z: -100, enemies: [
                 { type: 'split', count: 12 },
@@ -268,9 +268,9 @@ const LEVELS = [
                 { lane: 0, op: 'add', value: 12, label: '+12' },
                 { lane: 2, op: 'buff', value: 'vamp', label: '吸血' }
             ]},
-            { type: 'wave', z: -28, enemies: [
-                { type: 'spitter', count: 5 },
-                { type: 'normal', count: 10 }
+            { type: 'wave', z: -34, enemies: [
+                { type: 'spitter', count: 4 },
+                { type: 'normal', count: 8 }
             ]},
             { type: 'gates', z: -46, gates: [
                 { lane: 0, op: 'buff', value: 'vamp', label: '吸血' },
@@ -310,9 +310,9 @@ const LEVELS = [
                 { lane: 0, op: 'add', value: 12, label: '+12' },
                 { lane: 2, op: 'buff', value: 'damage2', label: '输出×2' }
             ]},
-            { type: 'wave', z: -28, enemies: [
-                { type: 'fast', count: 10 },
-                { type: 'spitter', count: 5 }
+            { type: 'wave', z: -34, enemies: [
+                { type: 'fast', count: 8 },
+                { type: 'spitter', count: 4 }
             ]},
             { type: 'gates', z: -46, gates: [
                 { lane: 0, op: 'buff', value: 'firerate', label: '射速+20%' },
@@ -354,9 +354,9 @@ const LEVELS = [
                 { lane: 0, op: 'add', value: 20, label: '+20' },
                 { lane: 2, op: 'mul', value: 2, label: '×2' }
             ]},
-            { type: 'wave', z: -28, enemies: [
-                { type: 'normal', count: 20 },
-                { type: 'fast', count: 10 }
+            { type: 'wave', z: -34, enemies: [
+                { type: 'normal', count: 16 },
+                { type: 'fast', count: 8 }
             ]},
             { type: 'gates', z: -46, gates: [
                 { lane: 0, op: 'mul', value: 3, label: '×3' },
@@ -397,9 +397,9 @@ const LEVELS = [
                 { lane: 0, op: 'add', value: 15, label: '+15' },
                 { lane: 2, op: 'buff', value: 'damage2', label: '输出×2' }
             ]},
-            { type: 'wave', z: -30, enemies: [
+            { type: 'wave', z: -36, enemies: [
                 { type: 'elite', count: 1 },
-                { type: 'normal', count: 12 }
+                { type: 'normal', count: 10 }
             ]},
             { type: 'gates', z: -48, gates: [
                 { lane: 0, op: 'buff', value: 'crit', label: '暴击+10%' },
@@ -441,9 +441,9 @@ const LEVELS = [
                 { lane: 0, op: 'add', value: 20, label: '+20' },
                 { lane: 2, op: 'buff', value: 'freeze', label: '冰冻弹' }
             ]},
-            { type: 'wave', z: -30, enemies: [
-                { type: 'normal', count: 14 },
-                { type: 'fast', count: 10 },
+            { type: 'wave', z: -36, enemies: [
+                { type: 'normal', count: 12 },
+                { type: 'fast', count: 8 },
                 { type: 'spitter', count: 6 }
             ]},
             { type: 'gates', z: -48, gates: [
@@ -486,9 +486,9 @@ const LEVELS = [
                 { lane: 0, op: 'add', value: 25, label: '+25' },
                 { lane: 2, op: 'mul', value: 3, label: '×3' }
             ]},
-            { type: 'wave', z: -30, enemies: [
-                { type: 'normal', count: 20 },
-                { type: 'fast', count: 14 }
+            { type: 'wave', z: -36, enemies: [
+                { type: 'normal', count: 16 },
+                { type: 'fast', count: 10 }
             ]},
             { type: 'gates', z: -48, gates: [
                 { lane: 0, op: 'mul', value: 3, label: '×3' },

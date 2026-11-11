@@ -111,4 +111,57 @@ class GateSystem {
             }
         }
     }
+
+    /**
+     * V3.4: 广告刷门 — 重随前方(squadZ更小一侧)未触发的门
+     * 只影响未触发门(旧门奖励作废), 已触发门保持; 加门权重随人数收敛, 防无限刷稀有门
+     * @returns 重随的门数量
+     */
+    refreshAhead(squadZ) {
+        var gateWidth = CONFIG.LANE_WIDTH * 0.9;
+        var rerolled = 0;
+        for (var i = 0; i < this.gates.length; i++) {
+            var g = this.gates[i];
+            if (g.triggered) continue;
+            if (g.z >= squadZ) continue; // 已越过/脚下的门不重随
+
+            var nd = GateSystem._rerollGateData(g.data, CONFIG.SQUAD_MAX_COUNT);
+            // 重建模型
+            this.scene.remove(g.model);
+            g.model.traverse(function(obj) {
+                if (obj.material && obj.material.map) obj.material.map.dispose();
+                if (obj.material) obj.material.dispose();
+            });
+            var model = createGateModel(nd, gateWidth);
+            model.position.set(CONFIG.LANE_X[nd.lane], 0, g.z);
+            this.scene.add(model);
+            g.data = nd;
+            g.model = model;
+            g.triggered = false;
+            g.passed = false;
+            rerolled++;
+        }
+        return rerolled;
+    }
+
+    /** 门数据重随: op/value/label 全部重新生成 */
+    static _rerollGateData(oldData, maxCount) {
+        var r = Math.random();
+        var op, value, label;
+        // 概率分布: add 45% / mul 25% / buff 30% (mul封顶25%防刷稀有)
+        if (r < 0.45) {
+            op = 'add';
+            value = Math.max(5, Math.min(50, Math.floor(maxCount * 0.15) + Math.floor(Math.random() * 8)));
+            label = '+' + value;
+        } else if (r < 0.70) {
+            op = 'mul';
+            value = (Math.random() < 0.2) ? 3 : 2;
+            label = '×' + value;
+        } else {
+            op = 'buff';
+            value = (Math.random() < 0.5) ? 'damage' : 'firerate';
+            label = (value === 'damage') ? '输出+1' : '射速+20%';
+        }
+        return { lane: oldData.lane, op: op, value: value, label: label };
+    }
 }
