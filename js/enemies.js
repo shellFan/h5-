@@ -15,6 +15,9 @@ class Enemy {
         this.spitTimer = randRange(1, 2);
         this.phase = Math.random() * Math.PI * 2;
         this.isBoss = (type === 'boss');
+        this.enraged = false;   // V3.2: Boss狂暴阶段标记
+        this.speedMul = 1;      // 移速倍率
+        this.attackMul = 1;     // 攻击间隔倍率
         this.dying = false;
         this.dieT = 0;
         this.deathHandled = false;
@@ -91,6 +94,22 @@ class Enemy {
         const dist = Math.abs(dz);
         const attackDist = CONFIG.ZOMBIE_ATTACK_DIST * (this.isBoss ? 2.5 : 1);
 
+        // V3.2: Boss狂暴阶段 — 血量50%触发, 移速/攻击提升 + 红色氛围
+        if (this.isBoss && !this.enraged && this.hp <= this.maxHp * 0.5) {
+            this.enraged = true;
+            this.speedMul = 1.5;
+            this.attackMul = 0.65; // 攻击间隔缩短
+            if (effects) {
+                effects.floatText(this.x, 2.6, this.z, '狂暴!', '#FF4444', true);
+                effects.shockwave(this.x, 0.05, this.z, 0xFF4444);
+                effects.burst(this.x, 1.2, this.z, 0xFF3333, 18, 4, 0.7);
+            }
+            var self = this;
+            this.model.traverse(function(obj) {
+                if (obj.material && obj.material.emissive) obj.material.emissive.setHex(0x3A0000);
+            });
+        }
+
         // 吐痰僵尸: 远程攻击
         if (this.type === 'spitter' && dist > attackDist && dist < 10) {
             this.spitTimer -= dt;
@@ -102,7 +121,7 @@ class Enemy {
 
         if (dist > attackDist) {
             // 向小队移动
-            const spd = this.cfg.speed;
+            const spd = this.cfg.speed * (this.speedMul || 1);
             this.z += Math.sign(dz) * spd * dt;
             const dx = squad.x - this.x;
             this.x += clamp(dx, -1, 1) * spd * 0.4 * dt;
@@ -110,8 +129,8 @@ class Enemy {
             // 近战攻击
             this.attackTimer -= dt;
             if (this.attackTimer <= 0) {
-                this.attackTimer = CONFIG.ZOMBIE_ATTACK_INTERVAL;
-                const kill = this.isBoss ? 3 : CONFIG.ZOMBIE_ATTACK_KILL;
+                this.attackTimer = CONFIG.ZOMBIE_ATTACK_INTERVAL * (this.attackMul || 1);
+                const kill = this.isBoss ? (this.enraged ? 5 : 3) : CONFIG.ZOMBIE_ATTACK_KILL;
                 squad.killSoldiers(kill, effects);
                 if (effects) {
                     effects.burst(squad.x, 0.5, squad.z, 0xFF4444, 5, 2, 0.3);
@@ -131,6 +150,12 @@ class Enemy {
         const bob = Math.abs(Math.sin(time * walkSpeed + this.phase)) * 0.06;
         this.model.position.set(this.x, bob, this.z);
         this.model.rotation.z = sway;
+        // V3.2: 攻击时前扑啃咬动画(近战范围内身体前倾伸缩)
+        if (dist <= attackDist) {
+            this.model.rotation.x = -0.16 + Math.sin(time * 9 + this.phase) * 0.13;
+        } else {
+            this.model.rotation.x = Math.sin(time * walkSpeed + this.phase) * 0.05;
+        }
 
         // 受击闪烁 (V3.6: 压低强度避免Boss被连续命中时刷成全白)
         if (this.hitFlash > 0) {

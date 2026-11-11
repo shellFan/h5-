@@ -400,77 +400,96 @@ function createZombieModel(type) {
         group.add(belt);
     }
 
-    // Boss: 巨型 + 金属头盔 + 厚重肩甲 + 红眼 + 巨大手臂
+    // Boss: 巨型 + 深红皮肤 + 暗金属重甲 + 红眼 + 巨角 (V3.2: 独立轮廓, 告别白色圆球)
     if (type === 'boss') {
-        // 红色发光眼睛(替换黄色)
+        // Boss专属材质: 深红皮肤 + 暗黑金属
+        const bossSkinMat = new THREE.MeshLambertMaterial({ color: 0x9C3B32 });
+        const bossSkinDarkMat = new THREE.MeshLambertMaterial({ color: 0x6E241E });
+        const bossArmorMat = new THREE.MeshLambertMaterial({ color: 0x454B5A });
+        const bossArmorDarkMat = new THREE.MeshLambertMaterial({ color: 0x2E3340 });
+        // 头部换深红皮肤
+        head.material = bossSkinMat;
+        brow.material = bossSkinDarkMat;
+
+        // 红色发光大眼睛(替换黄色, 加大)
         eyeL.material = new THREE.MeshBasicMaterial({ color: 0xFF2222 });
         eyeR.material = eyeL.material;
-        eyeL.scale.setScalar(1.4);
-        eyeR.scale.setScalar(1.4);
+        eyeL.scale.setScalar(1.7);
+        eyeR.scale.setScalar(1.7);
+        eyeL.position.z = -0.19;
+        eyeR.position.z = -0.19;
 
-        // 大型金属头盔(全罩)
-        const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.26, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.62), metalMat);
-        helmet.position.y = 0.72;
+        // 重型金属头盔(暗色, 不全包头顶留出深红皮肤)
+        const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.245, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.5), bossArmorMat);
+        helmet.position.y = 0.75;
         helmet.castShadow = true;
         torso.add(helmet);
-        // 头盔面甲(深色)
-        const visor = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.06, 0.04), metalDarkMat);
-        visor.position.set(0, 0.74, -0.22);
+        // 头盔面甲(深色T型)
+        const visor = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.05, 0.04), bossArmorDarkMat);
+        visor.position.set(0, 0.745, -0.21);
         torso.add(visor);
-        // 头盔角(黑色弯角)
-        const hornMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
-        const hornGeo = new THREE.ConeGeometry(0.06, 0.28, 8);
+        // 头盔巨角(深色弯角, 加大加弯)
+        const hornMat = bossArmorDarkMat;
+        const hornGeo = new THREE.ConeGeometry(0.075, 0.42, 8);
         const hornL = new THREE.Mesh(hornGeo, hornMat);
-        hornL.position.set(-0.16, 0.92, 0.02);
-        hornL.rotation.z = 0.4;
+        hornL.position.set(-0.2, 0.98, 0.02);
+        hornL.rotation.z = 0.55;
         torso.add(hornL);
         const hornR = hornL.clone();
-        hornR.position.x = 0.16;
-        hornR.rotation.z = -0.4;
+        hornR.position.x = 0.2;
+        hornR.rotation.z = -0.55;
         torso.add(hornR);
 
-        // 厚重肩甲(大金属半球)
-        const shGeo = new THREE.SphereGeometry(0.16, 12, 8);
-        const bshL = new THREE.Mesh(shGeo, metalMat);
-        bshL.position.set(-0.3, 0.52, 0);
+        // 厚重肩甲(暗金属大半球 + 尖刺)
+        const shGeo = new THREE.SphereGeometry(0.17, 12, 8);
+        const bshL = new THREE.Mesh(shGeo, bossArmorMat);
+        bshL.position.set(-0.31, 0.52, 0);
         bshL.castShadow = true;
         torso.add(bshL);
         const bshR = bshL.clone();
-        bshR.position.x = 0.3;
+        bshR.position.x = 0.31;
         torso.add(bshR);
-        // 肩甲尖刺
-        const spikeGeo = new THREE.ConeGeometry(0.04, 0.12, 6);
-        const spikeL = new THREE.Mesh(spikeGeo, metalDarkMat);
-        spikeL.position.set(-0.3, 0.68, 0);
+        const spikeGeo = new THREE.ConeGeometry(0.05, 0.16, 6);
+        const spikeL = new THREE.Mesh(spikeGeo, bossArmorDarkMat);
+        spikeL.position.set(-0.31, 0.7, 0);
         torso.add(spikeL);
         const spikeR = spikeL.clone();
-        spikeR.position.x = 0.3;
+        spikeR.position.x = 0.31;
         torso.add(spikeR);
 
-        // 胸甲板(大金属板)
-        const plate = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.22, 0.06), metalMat);
+        // 胸甲板(暗金属) + 红色发光核心
+        const plate = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.24, 0.06), bossArmorMat);
         plate.position.set(0, 0.42, -0.16);
         torso.add(plate);
-        // 胸甲核心(红色发光)
-        const core = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 6), 
+        const core = new THREE.Mesh(new THREE.SphereGeometry(0.065, 8, 6),
             new THREE.MeshBasicMaterial({ color: 0xFF3333 }));
-        core.position.set(0, 0.42, -0.2);
+        core.position.set(0, 0.42, -0.21);
         torso.add(core);
+        // 核心外圈(暗环)
+        const coreRing = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.02, 6, 12), bossArmorDarkMat);
+        coreRing.position.set(0, 0.42, -0.2);
+        torso.add(coreRing);
 
-        // 巨大手臂(替换普通手臂)
+        // 巨大手臂(替换普通手臂, 深红皮肤)
+        armL.material = bossSkinMat;
+        armR.material = bossSkinMat;
         armL.scale.setScalar(1.5);
         armR.scale.setScalar(1.5);
         armL.position.x = -0.26;
         armR.position.x = 0.26;
+        clawL.material = bossSkinDarkMat;
+        clawR.material = bossSkinDarkMat;
         clawL.scale.setScalar(1.6);
         clawR.scale.setScalar(1.6);
         clawL.position.x = -0.26;
         clawR.position.x = 0.26;
 
-        // 腰部金属带
-        const belt = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.08, 12), metalDarkMat);
+        // 腰部金属带 + 腿部护甲
+        const belt = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.08, 12), bossArmorDarkMat);
         belt.position.y = 0.22;
         group.add(belt);
+        legL.material = bossSkinDarkMat;
+        legR.material = bossSkinDarkMat;
     }
 
     group.scale.setScalar(cfg.scale);

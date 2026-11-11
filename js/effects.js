@@ -73,7 +73,12 @@ class Effects {
         const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
             map: tex, transparent: true, depthTest: false
         }));
-        sprite.position.set(x + randRange(-0.2, 0.2), y, z);
+        // V3.2: 分散出生点, 避免连续暴击文字完全重叠
+        sprite.position.set(
+            x + randRange(-0.5, 0.5),
+            y + randRange(0, 0.35),
+            z + randRange(-0.4, 0.4)
+        );
         const sc = big ? 0.9 : 0.55;
         sprite.scale.set(sc, sc * 0.5, 1);
         sprite.renderOrder = 999;

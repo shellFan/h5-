@@ -29,6 +29,7 @@ class Squad {
         this._p = new THREE.Vector3();
         this._q = new THREE.Quaternion();
         this._s = new THREE.Vector3();
+        this._e = new THREE.Euler();  // V3.2: 姿态欧拉角
         this._axisY = new THREE.Vector3(0, 1, 0);
     }
 
@@ -139,12 +140,16 @@ class Squad {
 
     update(dt, time, stopZ) {
         // 前进 (Boss战时在Boss前方停下，击败Boss后继续)
-        if (stopZ === undefined || stopZ === null || this.z > stopZ) {
+        var moving = (stopZ === undefined || stopZ === null || this.z > stopZ);
+        if (moving) {
             this.z -= CONFIG.SQUAD_SPEED * dt;
         }
 
         // 跑道平滑切换
         this.x = damp(this.x, this.targetX, CONFIG.SQUAD_LANE_LERP, dt);
+        // V3.2: 换道倾斜(速度感) + 跑动前倾
+        const tilt = clamp((this.x - this.targetX) * 0.28, -0.28, 0.28);
+        const lean = moving ? 0.1 : 0.02;
 
         // 更新每个士兵
         for (let i = 0; i < this.count; i++) {
@@ -160,13 +165,15 @@ class Squad {
             s.z = damp(s.z, s.fz, 9, dt);
 
             // 跑动弹跳 (绝对值保证不穿地)
-            const bob = Math.abs(Math.sin(time * 7 + s.phase)) * 0.09;
+            const bob = moving ? Math.abs(Math.sin(time * 7 + s.phase)) * 0.09 : Math.sin(time * 2 + s.phase) * 0.02;
 
             // 弹出缩放 (easeOutBack 有回弹效果)
             const scale = easeOutBack(s.spawnT);
 
             this._p.set(this.x + s.x, bob, this.z + s.z);
-            this._q.setFromAxisAngle(this._axisY, s.rotY);
+            // V3.2: 组合旋转(前倾 + 换道侧倾 + 个体朝向)
+            this._e.set(lean, s.rotY, tilt, 'YXZ');
+            this._q.setFromEuler(this._e);
             this._s.setScalar(Math.max(0.001, scale));
             this._m.compose(this._p, this._q, this._s);
             this.mesh.setMatrixAt(i, this._m);

@@ -30,7 +30,7 @@ const CONFIG = {
         split:   { hp: 5,  speed: 1.4,  scale: 1.15, color: 0xA583C9, killScore: 2 },
         spitter: { hp: 4,  speed: 1.2,  scale: 1.25, color: 0x63C24B, killScore: 2 },
         elite:   { hp: 26, speed: 1.0,  scale: 2.3,  color: 0x6F9A52, killScore: 5 },
-        boss:    { hp: 200, speed: 0.8, scale: 3.6,  color: 0xA0755F, killScore: 50 }
+        boss:    { hp: 200, speed: 0.8, scale: 3.6,  color: 0x9C3B32, killScore: 50 }
     },
 
     // 僵尸攻击小队的距离
