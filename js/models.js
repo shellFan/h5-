@@ -45,12 +45,20 @@ function createSoldierGeometry() {
     // 腰带(深色)
     p.push(colorize(new THREE.CylinderGeometry(0.205, 0.205, 0.05, 14), 0x1a2040)
         .translate(0, 0.36, 0));
-    // 棕色背包
-    p.push(colorize(new THREE.BoxGeometry(0.22, 0.18, 0.11), 0x8B6914)
+    // 棕色背包 (V3.1: 加大加强背面轮廓)
+    p.push(colorize(new THREE.BoxGeometry(0.24, 0.19, 0.12), 0x8B6914)
         .translate(0, 0.52, 0.18));
     // 背包扣(浅棕)
-    p.push(colorize(new THREE.BoxGeometry(0.24, 0.03, 0.12), 0xA07830)
-        .translate(0, 0.45, 0.18));
+    p.push(colorize(new THREE.BoxGeometry(0.26, 0.03, 0.13), 0xA07830)
+        .translate(0, 0.44, 0.18));
+    // 背包顶 bedroll 卷(浅棕圆筒 - V3.1新增, 强化背面剪影)
+    p.push(colorize(new THREE.CylinderGeometry(0.055, 0.055, 0.24, 8), 0xC49A58)
+        .rotateZ(Math.PI / 2).translate(0, 0.66, 0.18));
+    // 肩甲(深蓝半球 - V3.1新增, 背面/侧面都可辨识)
+    p.push(colorize(new THREE.SphereGeometry(0.088, 8, 6), C.soldierVest)
+        .translate(-0.235, 0.63, 0));
+    p.push(colorize(new THREE.SphereGeometry(0.088, 8, 6), C.soldierVest)
+        .translate(0.235, 0.63, 0));
     // 左臂(亮蓝 - 微张跑动姿势)
     p.push(colorize(new THREE.CapsuleGeometry(0.058, 0.14, 4, 8), C.soldierBlue)
         .rotateZ(0.35).translate(-0.25, 0.5, 0.02));

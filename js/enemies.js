@@ -291,12 +291,13 @@ class EnemyManager {
         }
     }
 
-    /** 获取最近的活僵尸(子弹追踪用) */
+    /** 获取最近的活僵尸(子弹追踪用) V3.1: 只瞄准前方(e.z更小)的敌人 */
     getNearest(x, z, maxDist) {
         let best = null;
         let bestDist = maxDist || 20;
         for (const e of this.enemies) {
             if (!e.alive) continue;
+            if (e.z > z + 1) continue; // 身后的敌人不瞄准
             const d = Math.abs(e.z - z);
             if (d < bestDist) {
                 bestDist = d;

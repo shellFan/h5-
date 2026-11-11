@@ -40,10 +40,10 @@ const CONFIG = {
     // 每次攻击杀死士兵数
     ZOMBIE_ATTACK_KILL: 1,
 
-    // 相机 (V2.2: 降低高度/减小俯角，士兵占画面65-80%)
-    CAMERA_OFFSET_Y: 5.0,
-    CAMERA_OFFSET_Z: 6.5,
-    CAMERA_LOOK_AHEAD: -5,
+    // 相机 (V3.1: 微调后移+抬高, 门在选门窗口期(8-15单位)完整可见, 士兵保持画面下部)
+    CAMERA_OFFSET_Y: 5.4,
+    CAMERA_OFFSET_Z: 7.2,
+    CAMERA_LOOK_AHEAD: -6.5,
     CAMERA_FOLLOW_X: 0.35,
     CAMERA_FOV: 55,
 
@@ -77,12 +77,12 @@ const CONFIG = {
         gateGlass: 0x88CCFF,
     },
 
-    // 门稀有度配色
+    // 门稀有度配色 (V3.1: 玻璃加深饱和, 对抗过曝保持色彩可读)
     GATE_RARITY: {
-        common:  { frame: 0x3B82F6, glass: 0x93C5FD, glow: 0x60A5FA },  // 蓝
-        rare:    { frame: 0x8B5CF6, glass: 0xC4B5FD, glow: 0xA78BFA },  // 紫
-        epic:    { frame: 0xF59E0B, glass: 0xFDE68A, glow: 0xFBBF24 },  // 金
-        danger:  { frame: 0xEF4444, glass: 0xFCA5A5, glow: 0xF87171 },  // 红
+        common:  { frame: 0x2F6FE0, glass: 0x5FA8F5, glow: 0x60A5FA },  // 蓝
+        rare:    { frame: 0x7C3AED, glass: 0xA78BFA, glow: 0xA78BFA },  // 紫
+        epic:    { frame: 0xD97706, glass: 0xF5B93A, glow: 0xFBBF24 },  // 金
+        danger:  { frame: 0xDC2626, glass: 0xF87171, glow: 0xF87171 },  // 红
     }
 };
 

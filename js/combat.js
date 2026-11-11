@@ -113,7 +113,9 @@ class CombatSystem {
                 var volley = Math.min(4, 1 + Math.floor(Math.sqrt(count) / 3));
                 var positions = squad.getShootPositions(volley);
                 for (var k = 0; k < positions.length; k++) {
-                    this._fire(positions[k], dmg);
+                    // V3.1: 每发子弹瞄准前方最近敌人(修复阵型散布导致5/7子弹打不中Boss的问题)
+                    var target = enemyManager.getNearest(positions[k].x, positions[k].z, CONFIG.BULLET_RANGE);
+                    this._fire(positions[k], dmg, target);
                 }
             }
         }
@@ -126,6 +128,11 @@ class CombatSystem {
             b.mesh.position.z = newZ;
             b.life -= dt;
 
+            // V3.1: 弹道向目标x收敛(轻微追踪, 保证视觉上弹道汇聚到敌人身上)
+            if (b.target && b.target.alive) {
+                b.mesh.position.x = damp(b.mesh.position.x, b.target.x, 10, dt);
+            }
+
             // 碰撞检测: 检查是否穿越僵尸Z面
             var hit = false;
             var enemies = enemyManager.enemies;
@@ -134,7 +141,9 @@ class CombatSystem {
                 if (!e.alive) continue;
                 // 子弹从前往后穿越僵尸位置
                 if (oldZ >= e.z - 0.2 && newZ <= e.z + 0.4) {
-                    if (Math.abs(b.mesh.position.x - e.x) < 0.7) {
+                    // V3.1: 命中窗加宽(0.7→0.9), Boss等大体型敌人按体型放大判定
+                    var winX = e.isBoss ? 1.4 : 0.9;
+                    if (Math.abs(b.mesh.position.x - e.x) < winX) {
                         var died = e.takeDamage(b.damage, this.effects, b.mesh.position.x);
                         // 暴击数字
                         if (died && b.damage >= 5) {
@@ -155,7 +164,7 @@ class CombatSystem {
         }
     }
 
-    _fire(pos, damage) {
+    _fire(pos, damage, target) {
         var mesh = this.pool.pop();
         if (!mesh) return;
         mesh.visible = true;
@@ -163,7 +172,7 @@ class CombatSystem {
         mesh.position.set(pos.x + spreadX, pos.y + randRange(-0.05, 0.05), pos.z);
         // Sprite scale: 金黄发光弹道 (V3.6: 加大尺寸保证清晰可见)
         mesh.scale.set(0.3, 0.9, 1);
-        this.bullets.push({ mesh: mesh, damage: damage, life: 1.2 });
+        this.bullets.push({ mesh: mesh, damage: damage, life: 1.2, target: target || null });
 
         // 枪口闪光
         this.effects.muzzleFlash(pos.x + spreadX, pos.y, pos.z - 0.05);

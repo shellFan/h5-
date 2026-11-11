@@ -34,12 +34,14 @@ class World {
     }
 
     _setupLights() {
+        // V3.1: 灯光再平衡。旧参数合计~1.85x导致Lambert钳制发白(路面/草地洗成白蓝)。
+        // raw-linear工作流下, 水平面有效光照 ≈ 0.7*0.85 + 0.5*0.6 + 0.15 ≈ 1.1, 保留少量高光余量。
         // 半球光: 天空蓝 -> 地面绿
-        const hemi = new THREE.HemisphereLight(0xB0DFFF, 0x8FBC8F, 0.75);
+        const hemi = new THREE.HemisphereLight(0xB0DFFF, 0x8FBC8F, 0.5);
         this.scene.add(hemi);
 
         // 主方向光 (暖白色, 产生阴影)
-        const dir = new THREE.DirectionalLight(0xFFF4E0, 0.85);
+        const dir = new THREE.DirectionalLight(0xFFF4E0, 0.72);
         dir.position.set(4, 12, 6);
         dir.castShadow = true;
         dir.shadow.mapSize.set(2048, 2048);
@@ -55,7 +57,7 @@ class World {
         this.sunLight = dir;
 
         // 补光 (淡蓝色, 从前方照射)
-        const fill = new THREE.DirectionalLight(0xC8E0FF, 0.25);
+        const fill = new THREE.DirectionalLight(0xC8E0FF, 0.15);
         fill.position.set(-3, 6, -8);
         this.scene.add(fill);
     }
@@ -425,27 +427,42 @@ class World {
         }
     }
 
-    /** 道路无限滚动: 将身后路段移到前方 */
+    /**
+     * 道路/装饰无限滚动 (V3.1: 无状态平铺)
+     * 旧实现只在 z > squadZ+阈值 时向后跳一格, 重开(squad回0)后所有段滞留远处,
+     * 玩家踩空100+单位 → 大面积空白。改为按 squadZ 直接计算每段归属位置,
+     * 重开/复活/传送自动正确。
+     */
     updateRoadScroll(squadZ) {
         const SEG_LEN = 12;
-        for (const seg of this.roadSegments) {
-            if (seg.group.position.z > squadZ + SEG_LEN * 2) {
-                seg.group.position.z -= SEG_LEN * this.roadSegments.length;
-            }
+        // 路段: 覆盖 [squadZ+18, squadZ-114], 共12段
+        const base = Math.ceil((squadZ + SEG_LEN * 1.5) / SEG_LEN) * SEG_LEN;
+        for (let i = 0; i < this.roadSegments.length; i++) {
+            this.roadSegments[i].group.position.z = base - i * SEG_LEN;
         }
+
+        // 装饰/建筑/云: 双向折返进窗口 [squadZ-170, squadZ+15]
+        const span = 170;
         for (const item of this.decoItems) {
             if (item.position.z > squadZ + 15) {
-                item.position.z -= 170;
+                item.position.z -= span * Math.ceil((item.position.z - (squadZ + 15)) / span);
+            } else if (item.position.z < squadZ - (span - 15)) {
+                item.position.z += span * Math.ceil((squadZ - (span - 15) - item.position.z) / span);
             }
         }
         for (const building of this.buildings) {
             if (building.position.z > squadZ + 20) {
-                building.position.z -= 170;
+                building.position.z -= span * Math.ceil((building.position.z - (squadZ + 20)) / span);
+            } else if (building.position.z < squadZ - (span - 20)) {
+                building.position.z += span * Math.ceil((squadZ - (span - 20) - building.position.z) / span);
             }
         }
         for (const cloud of this.clouds) {
+            const cSpan = 110;
             if (cloud.position.z > squadZ + 20) {
-                cloud.position.z -= 110;
+                cloud.position.z -= cSpan * Math.ceil((cloud.position.z - (squadZ + 20)) / cSpan);
+            } else if (cloud.position.z < squadZ - (cSpan - 20)) {
+                cloud.position.z += cSpan * Math.ceil((squadZ - (cSpan - 20) - cloud.position.z) / cSpan);
             }
         }
     }

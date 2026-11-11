@@ -30,6 +30,9 @@ class Game {
         this.kills = 0;
         this.maxCount = 0;
         this.elapsedTime = 0;
+        // 性能统计
+        this._fpsEma = 0;
+        this._frameTimes = [];
         // 属性变化追踪(触发动画)
         this._prevDamage = 1;
         this._prevFireRate = 2.2;
@@ -239,6 +242,25 @@ class Game {
         console.error(msg);
     }
 
+    /** 性能报告: FPS/P95帧耗时/DrawCall/三角形 (V3.6测试用) */
+    getPerf() {
+        var ft = (this._frameTimes || []).slice().sort(function(a, b) { return a - b; });
+        var p95 = ft.length ? ft[Math.floor(ft.length * 0.95)] : 0;
+        var r = this.world.renderer.info;
+        return {
+            fps: Math.round(this._fpsEma),
+            workMs: +(this._workMs || 0).toFixed(2),
+            p95FrameMs: +p95.toFixed(2),
+            drawCalls: r.render.calls,
+            triangles: r.render.triangles,
+            geometries: r.memory.geometries,
+            textures: r.memory.textures,
+            squadCount: this.squad.count,
+            enemyCount: this.enemies.enemies.length,
+            quality: this.world.quality
+        };
+    }
+
     start() {
         try {
             var level = LEVELS[this.levelIndex];
@@ -279,9 +301,17 @@ class Game {
 
     _loop(timestamp) {
         requestAnimationFrame(this._loop);
+        var workT0 = performance.now();
         if (this.lastTime === 0) { this.lastTime = timestamp; return; }
         var dt = Math.min((timestamp - this.lastTime) / 1000, 0.05);
         this.lastTime = timestamp;
+
+        // 性能采样: FPS指数移动平均 + P95帧耗时统计 (V3.6)
+        this._fpsEma = this._fpsEma ? this._fpsEma * 0.95 + (1 / Math.max(dt, 0.0001)) * 0.05 : 1 / Math.max(dt, 0.0001);
+        this._frameMs = dt * 1000;
+        if (!this._frameTimes) this._frameTimes = [];
+        this._frameTimes.push(this._frameMs);
+        if (this._frameTimes.length > 300) this._frameTimes.shift();
 
         if (this.state === 'playing' && !this.paused) {
             this.time += dt;
@@ -294,6 +324,9 @@ class Game {
         }
 
         this.world.renderer.render(this.world.scene, this.world.camera);
+
+        // 单帧计算耗时(含update+render提交, 不受rAF节流影响)
+        this._workMs = this._workMs ? this._workMs * 0.9 + (performance.now() - workT0) * 0.1 : (performance.now() - workT0);
     }
 
     _update(dt) {
