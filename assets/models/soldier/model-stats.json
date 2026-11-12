@@ -1,0 +1,22 @@
+{
+  "blender": "4.2.15 LTS",
+  "triangles": 12258,
+  "lodTriangles": 3672,
+  "height": 1.42,
+  "forward": "-Z",
+  "up": "+Y",
+  "parts": [
+    "Body",
+    "Head",
+    "Arms",
+    "LegL",
+    "LegR"
+  ],
+  "muzzle": [
+    0.16,
+    0.64,
+    -0.78
+  ],
+  "animations": "Six procedural rigid-part states in js/soldier-renderer.js",
+  "originalReferenceAvailable": false
+}
