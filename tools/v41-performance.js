@@ -279,6 +279,9 @@ async function runMemoryCycles(browser) {
         await page.waitForTimeout(1500);
         const result = await page.evaluate(async () => {
             const game = window.__game;
+            // Freeze unrelated simulation for the reset retention audit; the
+            // separate FPS matrix above measures the real advancing game.
+            game.paused = true;
             const nextFrames = count => new Promise(resolve => {
                 function frame() {
                     if (--count <= 0) resolve();
@@ -302,9 +305,13 @@ async function runMemoryCycles(browser) {
             const normal = [snapshot('start')];
             for (let cycle = 1; cycle <= 10; cycle++) {
                 game.squad.setCount(500);
+                game.squad.update(.1, cycle, game.squad.z);
+                game.world.render();
                 await nextFrames(3);
                 normal.push(snapshot(`cycle-${cycle}-grown`));
                 game.squad.reset(1);
+                game.squad.update(.1, cycle+.1, game.squad.z);
+                game.world.render();
                 await nextFrames(3);
                 normal.push(snapshot(`cycle-${cycle}-reset`));
             }
@@ -317,6 +324,7 @@ async function runMemoryCycles(browser) {
             }
             return {
                 cycles: 10,
+                scenario: 'Both GLB banks and scene pools warmed; unrelated gameplay paused during repeated grow/reset render audit.',
                 normal,
                 explicitGc: {
                     available: typeof window.gc === 'function',
