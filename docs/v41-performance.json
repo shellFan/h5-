@@ -1,0 +1,935 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-12T13:32:00.929Z",
+  "harness": {
+    "browserLaunch": "msedge",
+    "headless": true,
+    "port": 8242,
+    "seed": 1103167470,
+    "warmupMs": 2000,
+    "requestedSampleMs": 3000,
+    "deviceScaleFactor": 1,
+    "desktopEmulation": true
+  },
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0",
+    "platform": "Win32",
+    "hardwareConcurrency": 14,
+    "deviceMemoryGB": 32,
+    "webglRenderer": "ANGLE (Intel, Intel(R) Arc(TM) 130T GPU (16GB) (0x00007D51) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "webglVendor": "Google Inc. (Intel)"
+  },
+  "scenario": {
+    "description": "Deterministically seeded real game in playing state; squad advances normally.",
+    "isolation": "After Game.start(), enemies, gates, pacing, and combat projectiles are cleared to remove battle timing variance.",
+    "interpretation": "Headless desktop system-browser measurements are comparative development data, not claims about mobile-device speed."
+  },
+  "samples": [
+    {
+      "viewport": "360x800",
+      "width": 360,
+      "height": 800,
+      "deviceScaleFactor": 1,
+      "squadCount": 1,
+      "loadMs": 37.1,
+      "frameSampleMs": 3004.9,
+      "frameCount": 173,
+      "fps": 57.57,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.2,
+      "renderer": {
+        "calls": 161,
+        "triangles": 17302,
+        "geometries": 185,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 1,
+        "squadZ": -25.185999999999982,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 19431432,
+        "totalJSHeapSize": 29040512,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "360x800",
+      "width": 360,
+      "height": 800,
+      "deviceScaleFactor": 1,
+      "squadCount": 12,
+      "loadMs": 27,
+      "frameSampleMs": 3003.8,
+      "frameCount": 172,
+      "fps": 57.26,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.3,
+      "renderer": {
+        "calls": 170,
+        "triangles": 154314,
+        "geometries": 185,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 12,
+        "squadZ": -25.452999999999978,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 18600714,
+        "totalJSHeapSize": 28254106,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "360x800",
+      "width": 360,
+      "height": 800,
+      "deviceScaleFactor": 1,
+      "squadCount": 31,
+      "loadMs": 44.2,
+      "frameSampleMs": 3002,
+      "frameCount": 173,
+      "fps": 57.63,
+      "medianFrameMs": 17.6,
+      "p95FrameMs": 18.2,
+      "renderer": {
+        "calls": 187,
+        "triangles": 390974,
+        "geometries": 186,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 31,
+        "squadZ": -25.375999999999994,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 19439003,
+        "totalJSHeapSize": 29040519,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "360x800",
+      "width": 360,
+      "height": 800,
+      "deviceScaleFactor": 1,
+      "squadCount": 100,
+      "loadMs": 35.5,
+      "frameSampleMs": 3001,
+      "frameCount": 175,
+      "fps": 58.31,
+      "medianFrameMs": 17.6,
+      "p95FrameMs": 18.2,
+      "renderer": {
+        "calls": 205,
+        "triangles": 1250414,
+        "geometries": 186,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 100,
+        "squadZ": -25.367999999999984,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 16426292,
+        "totalJSHeapSize": 29302664,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "360x800",
+      "width": 360,
+      "height": 800,
+      "deviceScaleFactor": 1,
+      "squadCount": 300,
+      "loadMs": 27.9,
+      "frameSampleMs": 3003.7,
+      "frameCount": 174,
+      "fps": 57.93,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.4,
+      "renderer": {
+        "calls": 212,
+        "triangles": 1124138,
+        "geometries": 186,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 300,
+        "squadZ": -25.176499999999983,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 18643564,
+        "totalJSHeapSize": 29302664,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "360x800",
+      "width": 360,
+      "height": 800,
+      "deviceScaleFactor": 1,
+      "squadCount": 500,
+      "loadMs": 35.6,
+      "frameSampleMs": 3017.2,
+      "frameCount": 174,
+      "fps": 57.67,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.3,
+      "renderer": {
+        "calls": 205,
+        "triangles": 1870124,
+        "geometries": 191,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 500,
+        "squadZ": -25.45949999999999,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 16325160,
+        "totalJSHeapSize": 29826952,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "390x844",
+      "width": 390,
+      "height": 844,
+      "deviceScaleFactor": 1,
+      "squadCount": 1,
+      "loadMs": 26.9,
+      "frameSampleMs": 3004.6,
+      "frameCount": 175,
+      "fps": 58.24,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.4,
+      "renderer": {
+        "calls": 161,
+        "triangles": 17302,
+        "geometries": 186,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 1,
+        "squadZ": -25.581999999999994,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 16314028,
+        "totalJSHeapSize": 28254080,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "390x844",
+      "width": 390,
+      "height": 844,
+      "deviceScaleFactor": 1,
+      "squadCount": 12,
+      "loadMs": 25.7,
+      "frameSampleMs": 3007.2,
+      "frameCount": 173,
+      "fps": 57.53,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.2,
+      "renderer": {
+        "calls": 171,
+        "triangles": 154326,
+        "geometries": 186,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 12,
+        "squadZ": -25.614999999999977,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 18816431,
+        "totalJSHeapSize": 28778375,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "390x844",
+      "width": 390,
+      "height": 844,
+      "deviceScaleFactor": 1,
+      "squadCount": 31,
+      "loadMs": 24.8,
+      "frameSampleMs": 3014.6,
+      "frameCount": 175,
+      "fps": 58.05,
+      "medianFrameMs": 17.6,
+      "p95FrameMs": 18.3,
+      "renderer": {
+        "calls": 189,
+        "triangles": 391066,
+        "geometries": 186,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 31,
+        "squadZ": -25.540499999999977,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 16436715,
+        "totalJSHeapSize": 28778375,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "390x844",
+      "width": 390,
+      "height": 844,
+      "deviceScaleFactor": 1,
+      "squadCount": 100,
+      "loadMs": 24.2,
+      "frameSampleMs": 3010.2,
+      "frameCount": 174,
+      "fps": 57.8,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.2,
+      "renderer": {
+        "calls": 208,
+        "triangles": 1250440,
+        "geometries": 186,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 100,
+        "squadZ": -25.29749999999999,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 19903664,
+        "totalJSHeapSize": 28778376,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "390x844",
+      "width": 390,
+      "height": 844,
+      "deviceScaleFactor": 1,
+      "squadCount": 300,
+      "loadMs": 27.5,
+      "frameSampleMs": 3016.8,
+      "frameCount": 174,
+      "fps": 57.68,
+      "medianFrameMs": 17.8,
+      "p95FrameMs": 18.2,
+      "renderer": {
+        "calls": 213,
+        "triangles": 1124150,
+        "geometries": 187,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 300,
+        "squadZ": -25.307499999999962,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 18632247,
+        "totalJSHeapSize": 29564827,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "390x844",
+      "width": 390,
+      "height": 844,
+      "deviceScaleFactor": 1,
+      "squadCount": 500,
+      "loadMs": 25.9,
+      "frameSampleMs": 3000,
+      "frameCount": 173,
+      "fps": 57.67,
+      "medianFrameMs": 17.6,
+      "p95FrameMs": 18.2,
+      "renderer": {
+        "calls": 205,
+        "triangles": 1870064,
+        "geometries": 192,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 500,
+        "squadZ": -25.57149999999998,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 15740908,
+        "totalJSHeapSize": 29302664,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "430x932",
+      "width": 430,
+      "height": 932,
+      "deviceScaleFactor": 1,
+      "squadCount": 1,
+      "loadMs": 24.1,
+      "frameSampleMs": 3011,
+      "frameCount": 172,
+      "fps": 57.12,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.2,
+      "renderer": {
+        "calls": 161,
+        "triangles": 17302,
+        "geometries": 186,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 1,
+        "squadZ": -25.628999999999966,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 16286556,
+        "totalJSHeapSize": 28516224,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "430x932",
+      "width": 430,
+      "height": 932,
+      "deviceScaleFactor": 1,
+      "squadCount": 12,
+      "loadMs": 27.6,
+      "frameSampleMs": 3001.9,
+      "frameCount": 175,
+      "fps": 58.3,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.3,
+      "renderer": {
+        "calls": 174,
+        "triangles": 154332,
+        "geometries": 186,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 12,
+        "squadZ": -25.525499999999973,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 16295303,
+        "totalJSHeapSize": 28516231,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "430x932",
+      "width": 430,
+      "height": 932,
+      "deviceScaleFactor": 1,
+      "squadCount": 31,
+      "loadMs": 36.9,
+      "frameSampleMs": 3010.3,
+      "frameCount": 172,
+      "fps": 57.14,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.2,
+      "renderer": {
+        "calls": 188,
+        "triangles": 391064,
+        "geometries": 186,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 31,
+        "squadZ": -25.504999999999985,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 19810667,
+        "totalJSHeapSize": 29564807,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "430x932",
+      "width": 430,
+      "height": 932,
+      "deviceScaleFactor": 1,
+      "squadCount": 100,
+      "loadMs": 38,
+      "frameSampleMs": 3009.4,
+      "frameCount": 172,
+      "fps": 57.15,
+      "medianFrameMs": 17.6,
+      "p95FrameMs": 18.2,
+      "renderer": {
+        "calls": 207,
+        "triangles": 1250438,
+        "geometries": 186,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 100,
+        "squadZ": -25.45699999999998,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 19399680,
+        "totalJSHeapSize": 29564808,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "430x932",
+      "width": 430,
+      "height": 932,
+      "deviceScaleFactor": 1,
+      "squadCount": 300,
+      "loadMs": 24.3,
+      "frameSampleMs": 3011.1,
+      "frameCount": 173,
+      "fps": 57.45,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.2,
+      "renderer": {
+        "calls": 214,
+        "triangles": 1124082,
+        "geometries": 192,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 300,
+        "squadZ": -25.59849999999999,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 16594948,
+        "totalJSHeapSize": 29040520,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "430x932",
+      "width": 430,
+      "height": 932,
+      "deviceScaleFactor": 1,
+      "squadCount": 500,
+      "loadMs": 25.7,
+      "frameSampleMs": 3017.4,
+      "frameCount": 175,
+      "fps": 58,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.2,
+      "renderer": {
+        "calls": 205,
+        "triangles": 1870064,
+        "geometries": 192,
+        "textures": 5
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 500,
+        "squadZ": -25.67649999999999,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 16136012,
+        "totalJSHeapSize": 29564808,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "1080x1920",
+      "width": 1080,
+      "height": 1920,
+      "deviceScaleFactor": 1,
+      "squadCount": 1,
+      "loadMs": 26.1,
+      "frameSampleMs": 3010.3,
+      "frameCount": 173,
+      "fps": 57.47,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.2,
+      "renderer": {
+        "calls": 170,
+        "triangles": 17558,
+        "geometries": 198,
+        "textures": 6
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 1,
+        "squadZ": -25.555999999999965,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 10678954,
+        "totalJSHeapSize": 26246186,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "1080x1920",
+      "width": 1080,
+      "height": 1920,
+      "deviceScaleFactor": 1,
+      "squadCount": 12,
+      "loadMs": 28.1,
+      "frameSampleMs": 3003.8,
+      "frameCount": 170,
+      "fps": 56.59,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.3,
+      "renderer": {
+        "calls": 179,
+        "triangles": 154570,
+        "geometries": 198,
+        "textures": 6
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 12,
+        "squadZ": -25.487999999999968,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 10393340,
+        "totalJSHeapSize": 19232512,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "1080x1920",
+      "width": 1080,
+      "height": 1920,
+      "deviceScaleFactor": 1,
+      "squadCount": 31,
+      "loadMs": 36.6,
+      "frameSampleMs": 3006.3,
+      "frameCount": 171,
+      "fps": 56.88,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.3,
+      "renderer": {
+        "calls": 197,
+        "triangles": 391232,
+        "geometries": 198,
+        "textures": 6
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 31,
+        "squadZ": -25.056499999999982,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 16895453,
+        "totalJSHeapSize": 27819873,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "1080x1920",
+      "width": 1080,
+      "height": 1920,
+      "deviceScaleFactor": 1,
+      "squadCount": 100,
+      "loadMs": 38.4,
+      "frameSampleMs": 3010.1,
+      "frameCount": 174,
+      "fps": 57.81,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.1,
+      "renderer": {
+        "calls": 213,
+        "triangles": 1250590,
+        "geometries": 198,
+        "textures": 6
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 100,
+        "squadZ": -25.459999999999994,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 15576907,
+        "totalJSHeapSize": 28343475,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "1080x1920",
+      "width": 1080,
+      "height": 1920,
+      "deviceScaleFactor": 1,
+      "squadCount": 300,
+      "loadMs": 41.2,
+      "frameSampleMs": 3015.6,
+      "frameCount": 172,
+      "fps": 57.04,
+      "medianFrameMs": 17.6,
+      "p95FrameMs": 18.2,
+      "renderer": {
+        "calls": 218,
+        "triangles": 1124130,
+        "geometries": 203,
+        "textures": 6
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 300,
+        "squadZ": -25.53599999999997,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 13307558,
+        "totalJSHeapSize": 28081354,
+        "jsHeapSizeLimit": 4395630592
+      }
+    },
+    {
+      "viewport": "1080x1920",
+      "width": 1080,
+      "height": 1920,
+      "deviceScaleFactor": 1,
+      "squadCount": 500,
+      "loadMs": 29.6,
+      "frameSampleMs": 3007.6,
+      "frameCount": 172,
+      "fps": 57.19,
+      "medianFrameMs": 17.7,
+      "p95FrameMs": 18.3,
+      "renderer": {
+        "calls": 216,
+        "triangles": 1870126,
+        "geometries": 203,
+        "textures": 6
+      },
+      "gameplay": {
+        "state": "playing",
+        "squadCount": 500,
+        "squadZ": -25.580999999999975,
+        "enemyCount": 0,
+        "gateCount": 0
+      },
+      "memory": {
+        "usedJSHeapSize": 12152129,
+        "totalJSHeapSize": 27819057,
+        "jsHeapSizeLimit": 4395630592
+      }
+    }
+  ],
+  "memoryCycles": {
+    "cycles": 10,
+    "scenario": "Both GLB banks and scene pools warmed; unrelated gameplay paused during repeated grow/reset render audit.",
+    "normal": [
+      {
+        "label": "start",
+        "usedJSHeapSize": 10791434,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-1-grown",
+        "usedJSHeapSize": 11624822,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-1-reset",
+        "usedJSHeapSize": 11873034,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-2-grown",
+        "usedJSHeapSize": 12524886,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-2-reset",
+        "usedJSHeapSize": 12771158,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-3-grown",
+        "usedJSHeapSize": 13372282,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-3-reset",
+        "usedJSHeapSize": 13621146,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-4-grown",
+        "usedJSHeapSize": 14165550,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-4-reset",
+        "usedJSHeapSize": 14411670,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-5-grown",
+        "usedJSHeapSize": 14931802,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-5-reset",
+        "usedJSHeapSize": 15162214,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-6-grown",
+        "usedJSHeapSize": 15660970,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-6-reset",
+        "usedJSHeapSize": 15884282,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-7-grown",
+        "usedJSHeapSize": 16382806,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-7-reset",
+        "usedJSHeapSize": 16612306,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-8-grown",
+        "usedJSHeapSize": 17064698,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-8-reset",
+        "usedJSHeapSize": 17287474,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-9-grown",
+        "usedJSHeapSize": 9901142,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-9-reset",
+        "usedJSHeapSize": 10123934,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-10-grown",
+        "usedJSHeapSize": 10576858,
+        "geometries": 182,
+        "textures": 5
+      },
+      {
+        "label": "cycle-10-reset",
+        "usedJSHeapSize": 10799850,
+        "geometries": 182,
+        "textures": 5
+      }
+    ],
+    "explicitGc": {
+      "available": true,
+      "baseline": {
+        "label": "warm-gc-baseline",
+        "usedJSHeapSize": 10791434,
+        "geometries": 182,
+        "textures": 5
+      },
+      "before": {
+        "label": "before-explicit-gc",
+        "usedJSHeapSize": 10799850,
+        "geometries": 182,
+        "textures": 5
+      },
+      "after": {
+        "label": "after-explicit-gc",
+        "usedJSHeapSize": 10799850,
+        "geometries": 182,
+        "textures": 5
+      },
+      "retainedGrowthBytes": 8416
+    },
+    "normalSummary": {
+      "heapMetricAvailable": true,
+      "resetHeapStartBytes": 10791434,
+      "resetHeapEndBytes": 10799850,
+      "resetHeapGrowthBytes": 8416,
+      "geometryGrowth": 0,
+      "textureGrowth": 0
+    }
+  }
+}

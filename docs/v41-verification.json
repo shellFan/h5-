@@ -1,0 +1,63 @@
+{
+  "generatedAt": "2026-11-12T13:34:50.863Z",
+  "revision": "20ee0034016b56207805c2a7caf04bc2053e2867",
+  "passed": true,
+  "results": [
+    {
+      "name": "unit",
+      "command": "node tests/unit/run.js",
+      "exitCode": 0,
+      "durationMs": 2167,
+      "output": "\n■ MemoryStorageAdapter\n  ✓ set/get 往返\n  ✓ get 不存在的键返回默认值\n  ✓ 损坏JSON返回默认值\n  ✓ remove/keys\n\n■ LocalStorageAdapter\n  ✓ Node无window时降级到内存存储\n\n■ GameStorage 前缀封装\n  ✓ 键自动加前缀且互不冲突\n  ✓ keys()返回去前缀列表\n\n■ RewardLedger 幂等账本\n  ✓ mark一次后has为真且二次mark被拒\n  ✓ 账本跨实例持久(模拟页面刷新)\n\n■ WebMockAdService 基础流程\n\n■ 可靠性防护\n\n■ GameAdCoordinator 场景限制\n\n■ 平台降级\n\n■ MovementMath 拖动映射\n  ✓ 灵敏度: 拖过65%屏幕宽度 = 横穿全可玩范围\n  ✓ 锚点相对映射: 起点世界坐标 + 像素位移×worldPerPx\n  ✓ 反向拖动为负位移\n  ✓ 目标钳制在±maxX内(超长拖动不越界)\n\n■ MovementMath 键盘\n  ✓ 单步移动距离=keyStep\n  ✓ 边界钳制\n\n■ MovementMath 中心边界(队伍宽度约束)\n  ✓ 小队伍全路自由移动\n  ✓ 大队伍: 人群边缘不出路(包络优先)\n  ✓ 大队伍边界不高于minCenterRange\n\n■ 帧率无关阻尼(damp)\n  ✓ 30FPS与120FPS同样总时长收敛结果一致\n  ✓ followLambda由配置推导\n\n■ 门触发窗口(队伍宽度补偿)\n  ✓ 窗口=门半宽+队伍半宽补偿(封顶0.7)\n  ✓ 左右门(间距4)触发区间永不重叠\n  ✓ 大队伍(中心±1.03)仍可达侧门(±2)\n  ✓ 加载失败(error场景) → failed 不发奖\n  ✓ 未初始化 → failed(NOT_INITIALIZED)\n  ✓ 不支持广告的平台(空实现) → failed(NOT_AVAILABLE)\n\n■ GamePacingController 波次构建\n  ✓ 从关卡segments生成波次计划\n  ✓ clear清空\n\n■ 波次激活与分批生成\n  ✓ 未到triggerZ不激活\n  ✓ 到达triggerZ激活, 首批延迟firstContactGrace后生成1-4只\n  ✓ 批次间隔≥spawnIntervalMin\n  ✓ 场上活敌达上限时暂停生成\n  ✓ 队列耗尽→clearing→alive归零→done+回调\n  ✓ 生成位置在队伍前方屏幕外(11~11+纵深)\n\n■ Boss节奏\n  ✓ bossTriggerAhead触发预警→bossWarningTime延迟→屏幕外出生\n\n■ 关卡缩放\n  ✓ maxAlive随关卡+1并封顶\n  ✓ 批次规模不超过有效上限\n  ✓ 时间驱动与帧率无关(0.5s×2步 == 1.0s×1步激活状态)\n  ✓ 提前关闭 → abandoned 不发奖\n  ✓ 完整观看 → completed + transactionId\n  ✓ 连点: 第二次立即BUSY不发起展示\n  ✓ grantReward 防重复发放(同事务ID只发一次)\n  ✓ 复活: 每局最多1次\n  ✓ 双倍结算: 每次通关最多1次\n  ✓ startRun 重置每局计数\n  ✓ 广告期间暂停游戏, 结束后恢复\n  ✓ 切后台中断 → failed(INTERRUPTED) 不发奖\n  ✓ 流程结束后状态机归位idle(可再次展示)\n  ✓ 刷门: 默认每局2次上限\n  ✓ 复活奖励人数=失败前最大人数×50%(至少5)\n\n======================\n通过 50 / 失败 0 / 共 50\n",
+      "error": null
+    },
+    {
+      "name": "GLB binary/material contract",
+      "command": "node tests/unit/soldier-asset.js",
+      "exitCode": 0,
+      "durationMs": 144,
+      "output": "PASS GLB structure, embedded PNGs, PBR, UVs, parts, shared material, triangles: { hero: 12454, lod: 3730 }\n",
+      "error": null
+    },
+    {
+      "name": "rigid animation contracts",
+      "command": "node tests/unit/soldier-runtime.js",
+      "exitCode": 0,
+      "durationMs": 170,
+      "output": "PASS soldier runtime: banks, aliases, muzzle, overlays, ghosts, victory\n",
+      "error": null
+    },
+    {
+      "name": "H5 build",
+      "command": "node tools/build-h5.js",
+      "exitCode": 0,
+      "durationMs": 195,
+      "output": "[build:h5] 清理旧产物...\n[build:h5] 复制资源...\n[build:h5] 完成 → dist/h5/ (2115 KB)\n",
+      "error": null
+    },
+    {
+      "name": "existing Playwright E2E",
+      "command": "node tests/e2e/run.js",
+      "exitCode": 0,
+      "durationMs": 42316,
+      "output": "  ✓ 页面标题正确\n  ✓ 无JS错误(error-display为空)\n  ✓ canvas/WebGL已创建\n  ✓ 点击开始游戏 → playing\n  ✓ HUD可见/开始界面隐藏\n  ✓ 暂停菜单打开/关闭\n  ✓ V4暂停冻结: 暂停时位置/敌人/节奏全部停止推进\n  ✓ 键盘方向键切道(lane 1→0)\n  ✓ 平滑移动收敛到目标X\n  ✓ V4拖动映射: 像素位移按灵敏度换算世界坐标\n  ✓ V4平滑跟随: 无单帧位置跳变\n  ✓ V4边界: 500人军团人群边缘不出路且侧门可达\n  ✓ 穿门人数增加(+5)\n  ✓ 门触发后移除(无残留碰撞)\n  ✓ 敌人触发生成\n  ✓ 子弹发射(弹道池回收正常)\n  ✓ 怪物可被击杀(killCount增加)\n  ✓ Boss生成+血条显示\n  ✓ Boss掉血联动血条\n  ✓ Boss死亡 → 通关结算\n  ✓ 人数归零 → 失败界面\n  ✓ 重新开始不继承错误状态(人数/进度/boss重置)\n  ✓ setCount超过500被钳制\n  ✓ InstancedMesh渲染500人不炸\n  ✓ 场景注入: auto_complete环境生效\n  ✓ 广告完整观看 → 复活成功(人数恢复+无敌)\n  ✓ 二次死亡: 复活按钮隐藏(每局1次)\n  ✓ 通关后广告领取双倍(限1次)\n  ✓ 提前关闭 → 不复活保持失败界面\n\n======================\nE2E 通过 29 / 失败 0\n",
+      "error": null
+    },
+    {
+      "name": "soldier Playwright E2E",
+      "command": "node tests/e2e/soldier.js",
+      "exitCode": 0,
+      "durationMs": 5500,
+      "output": "\n[soldier boot failure/retry]\n  ✓ aborted hero GLB shows a visible boot error and creates no Game\n  ✓ retry loads the GLB once and creates one game canvas\n\n[soldier loaded model/runtime]\n  ✓ real GLBs provide five indexed parts with shared material and no procedural soldier geometry\n  ✓ embedded base-color and ORM textures are decoded by the browser\n  ✓ loader promise/data cache is referentially stable and does not refetch\n  ✓ movement, count growth, gate effect, and combat still operate with GLB soldiers\n  ✓ shoot positions equal the transformed Arms/Muzzle attachment in x/y/z\n  ✓ all six animation states change real part transforms and death leaves a bounded ghost\n  ✓ real GLB banks switch at 100/101 and all requested formation sizes fit the road\n  ✓ win progression survives a real page reload\n  ✓ successful soldier boot is free of browser errors\n\nSoldier E2E: 11 passed / 0 failed\n",
+      "error": null
+    },
+    {
+      "name": "built deployment smoke",
+      "command": "node tests/e2e/h5-build.js",
+      "exitCode": 0,
+      "durationMs": 3144,
+      "output": "PASS built H5 deployment: every script exists, local GLBs loaded, game starts without external requests\n",
+      "error": null
+    }
+  ]
+}
