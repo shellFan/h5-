@@ -63,9 +63,13 @@ assert.equal(squad.mesh.count, 101);
 assert.equal(squad.renderer.banks.hero.meshes.Body.visible, false);
 assert.equal(squad.renderer.banks.lod.meshes.Body.visible, true);
 
+// Inspect a settled actor; newly spawned instances intentionally start near
+// zero scale and do not have the final muzzle reach during the pop-in.
+for (const s of squad.soldiers) s.spawnT = 1;
+squad.update(1 / 60, 1.15, null);
 const shot = squad.getShootPositions(1)[0];
 assert.equal(typeof shot.shooterIndex, 'number');
-assert(shot.z < squad.z - 0.4, 'muzzle must come from the forward attachment');
+assert(shot.z < squad.z + squad.soldiers[shot.shooterIndex].z - 0.25, 'muzzle must come from the forward attachment');
 assert(squad.renderer.pose(shot.shooterIndex).recoil > 0, 'shoot trigger must be observable');
 
 const before = squad.count;
