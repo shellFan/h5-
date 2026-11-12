@@ -14,7 +14,7 @@ random.seed(410)
 
 # Color, roughness, metallic. Atlas cell interiors avoid filtering bleed.
 PALETTE = [
- ('helmet',(0.035,.29,.72),.34,.12), ('edge',(.022,.105,.29),.48,.12),
+ ('helmet',(0.035,.29,.72),.44,.12), ('edge',(.022,.105,.29),.48,.12),
  ('cloth',(.07,.42,.88),.82,0), ('trousers',(.035,.21,.47),.85,0),
  ('skin',(.96,.65,.40),.72,0), ('cheek',(.94,.37,.29),.8,0),
  ('ivory',(.95,.96,.89),.5,0), ('ink',(.018,.026,.045),.7,0),
@@ -26,6 +26,7 @@ PALETTE = [
 def image_atlas(name, orm=False):
     w,h=256,256
     im=bpy.data.images.new(name,width=w,height=h,alpha=True)
+    if orm: im.colorspace_settings.name='Non-Color'
     pix=[]
     for yy in range(h):
         for xx in range(w):
@@ -40,7 +41,6 @@ def image_atlas(name, orm=False):
     im.pixels=pix
     im.filepath_raw=os.path.join(OUT,'textures',name+'.png')
     im.file_format='PNG'
-    if orm: im.colorspace_settings.name='Non-Color'
     im.save()
     return im
 color=image_atlas('soldier-basecolor')
@@ -135,16 +135,20 @@ for x in [-.232,.232]:
     ell('Ear',(x,.99,.004),(.044,.07,.045),'Head','skin')
     ell('Ear inset',(x*1.06,.99,-.024),(.020,.037,.013),'Head','cheek',12,6)
 for x in [-.088,.088]:
-    ell('Eye white',(x,1.024,-.187),(.065,.073,.032),'Head','ivory',20,12)
-    ell('Dark expressive eye',(x,1.025,-.216),(.036,.050,.016),'Head','ink',16,10)
-    ell('Eye sparkle',(x-.012,1.047,-.231),(.012,.016,.005),'Head','ivory',10,6)
-    tube('Resolute eyebrow',[(x-.052,1.104,-.188),(x,1.12,-.207),(x+.046,1.107,-.194)],.015,'Head','strap')
+    ell('Eye white',(x,.995,-.185),(.059,.060,.025),'Head','ivory',20,12)
+    ell('Dark expressive eye',(x,.996,-.207),(.032,.043,.012),'Head','ink',16,10)
+    ell('Eye sparkle',(x-.010,1.015,-.219),(.010,.013,.005),'Head','ivory',10,6)
+    tube('Resolute eyebrow',[(x-.048,1.067,-.191),(x,1.077,-.207),(x+.042,1.067,-.195)],.011,'Head','strap')
     ell('Warm cheek',(x*1.65,.932,-.166),(.040,.022,.012),'Head','cheek',12,7)
-ell('Button nose',(0,.981,-.218),(.040,.042,.046),'Head','skin',18,10)
+ell('Button nose',(0,.951,-.218),(.036,.036,.040),'Head','skin',18,10)
 tube('Smile',[(-.059,.904,-.180),(-.025,.891,-.196),(.015,.89,-.199),(.051,.907,-.187)],.009,'Head','strap')
 box('Tooth glint',(0,.897,-.205),(.047,.014,.008),'Head','ivory',.004)
 # Helmet profile with volume higher than face: readable shell and pronounced rim.
-surface('Helmet crown',[(1.085,.247,.222,.025),(1.12,.27,.238,.02),(1.23,.263,.233,.02),(1.33,.21,.19,.02),(1.397,.12,.11,.02),(1.42,.012,.012,.02)],'Head','helmet',32)
+helmet_profile=[]
+for i in range(13):
+    a=(i/12)*math.pi/2
+    helmet_profile.append((1.10+.32*math.sin(a),max(.006,.27*math.cos(a)),max(.006,.238*math.cos(a)),.02))
+surface('Helmet crown',helmet_profile,'Head','helmet',32)
 surface('Helmet rolled rim',[(1.078,.262,.25,.0),(1.092,.29,.277,-.008),(1.121,.289,.277,-.008),(1.137,.263,.24,.008)],'Head','edge',32)
 surface('Blue rim top',[(1.117,.289,.277,-.008),(1.135,.269,.247,.008)],'Head','helmet',32)
 # White raised five-point star placed on curved front-facing forehead, tip UP.
@@ -163,9 +167,9 @@ box('Rear helmet label',(0,1.23,.249),(.115,.052,.013),'Head','ivory',.012)
 # Both hands support rifle. Gun deliberately offset from torso for in-game readability.
 for x in [-.27,.27]:
     ell('Jacket sleeve',(x,.647,-.015),(.092,.12,.10),'Arms','cloth',16,10)
-ell('Left forearm',(-.23,.56,-.18),(.07,.075,.15),'Arms','cloth')
+tube('Left supporting sleeve',[(-.27,.62,-.05),(-.23,.53,-.18),(-.08,.50,-.34),(.10,.53,-.44)],.064,'Arms','cloth')
 ell('Right forearm',(.24,.55,-.13),(.07,.072,.13),'Arms','cloth')
-ell('Support glove',(-.105,.56,-.31),(.075,.062,.07),'Arms','ivory')
+ell('Support glove',(.12,.55,-.46),(.072,.060,.070),'Arms','ivory')
 ell('Trigger glove',(.19,.552,-.21),(.067,.064,.065),'Arms','ivory')
 gx=.16
 box('Rifle receiver',(gx,.622,-.31),(.15,.125,.31),'Arms','gun',.02)
