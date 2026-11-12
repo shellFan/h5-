@@ -4,13 +4,17 @@
   "description": "膨胀小队 - 竖屏3D卡通射击 H5 / 抖音小游戏",
   "private": true,
   "scripts": {
+    "build": "node tools/build-h5.js",
     "dev": "node tools/server.js",
     "dev:douyin": "node tools/server.js",
     "build:h5": "node tools/build-h5.js",
     "build:douyin": "node tools/build-douyin.js",
     "test:unit": "node tests/unit/run.js",
     "test:e2e": "node tests/e2e/run.js",
-    "test:visual": "node tests/e2e/visual.js"
+    "test:visual": "node tests/e2e/visual.js",
+    "test:v41": "node tools/v41-verify.js",
+    "test:soldier": "node tests/e2e/soldier.js",
+    "test:model": "node tests/unit/soldier-asset.js"
   },
   "dependencies": {
     "playwright-core": "^1.65.0"
