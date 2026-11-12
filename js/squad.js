@@ -20,40 +20,15 @@ class Squad {
         // 士兵数据数组
         this.soldiers = [];
 
-        // V3.7: 分体实例化 — 身体/左腿/右腿 3个InstancedMesh(共3次DrawCall)
-        // 腿独立渲染支持绕髋部摆动的跑步动画
-        const bodyGeo = createSoldierBodyGeometry();
-        const legGeoL = createSoldierLegGeometry(-1);
-        const legGeoR = createSoldierLegGeometry(1);
-        const mat = new THREE.MeshLambertMaterial({ vertexColors: true });
-        this.mesh = new THREE.InstancedMesh(bodyGeo, mat, CONFIG.SQUAD_MAX_COUNT);
-        this.mesh.castShadow = true;
-        this.mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this.mesh.count = 0;
-        scene.add(this.mesh);
-        this.mesh.userData.artSource = 'js/models.js:createSoldierBodyGeometry+createSoldierLegGeometry (InstancedMesh x3)';
-        this.legMeshL = new THREE.InstancedMesh(legGeoL, mat, CONFIG.SQUAD_MAX_COUNT);
-        this.legMeshL.castShadow = true;
-        this.legMeshL.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this.legMeshL.count = 0;
-        scene.add(this.legMeshL);
-        this.legMeshR = new THREE.InstancedMesh(legGeoR, mat, CONFIG.SQUAD_MAX_COUNT);
-        this.legMeshR.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        scene.add(this.legMeshR);
+        // V4.1: loaded rigid GLB parts, shared by hero/LOD instance banks.
+        this.renderer = new SoldierRenderer(scene);
+        this.mesh = this.renderer.mesh;       // compatibility aliases used by tests/debug UI
+        this.legMeshL = this.renderer.legMeshL;
+        this.legMeshR = this.renderer.legMeshR;
         this._legMeshes = [this.legMeshL, this.legMeshR];
-
-        // 临时变量避免GC
-        this._m = new THREE.Matrix4();
-        this._mBody = new THREE.Matrix4();     // V3.7: 身体基准矩阵(腿矩阵由此派生)
-        this._p = new THREE.Vector3();
-        this._q = new THREE.Quaternion();
-        this._s = new THREE.Vector3();
-        this._e = new THREE.Euler();  // V3.2: 姿态欧拉角
-        this._axisY = new THREE.Vector3(0, 1, 0);
-        // V3.7: 腿部摆动矩阵缓存
-        this._hipL = new THREE.Matrix4().makeTranslation(-0.095, 0.34, 0);
-        this._hipR = new THREE.Matrix4().makeTranslation(0.095, 0.34, 0);
-        this._rSwing = new THREE.Matrix4();
+        this._moving = false;
+        this._lean = 0;
+        this._tilt = 0;
     }
 
     /** 设置小队人数(自动处理增减与弹出动画) */
@@ -80,53 +55,67 @@ class Squad {
             this.soldiers.length = n;
         }
 
-        if (n === 0) this.alive = false;
+        this.alive = n > 0;
         this._updateFormation();
     }
 
-    /** 重新计算阵型目标位置 (V3.7分层阵型 + V4.0宽度约束)
-     *  1-10人: 单排全展(sx按人数自适应, 保证不出路)
-     *  11-30: 紧凑小队(8列) / 31-100: 自然军团(9列) / 101-300: 密集(11列) / 301-500: 军团纵深(13列)
-     *  V4.0约束: 队伍半宽≤2.3 — 边界钳制下保留±1.0中心移动范围, 侧门经触发窗口扩展可达
-     */
+    /** Balanced compact ranks. Adjacent rows differ by at most one soldier. */
     _updateFormation() {
         const n = this.count;
-        let cols, sx, sz;
-        if (n <= 1)        { cols = 1;  sx = 0.72; sz = 0.66; }
-        else if (n <= 10)  { cols = n;  sx = Math.min(0.72, 4.3 / (n - 1)); sz = 0.66; }
-        else if (n <= 30)  { cols = 8;  sx = 0.56; sz = 0.56; }
-        else if (n <= 100) { cols = 8;  sx = 0.58; sz = 0.56; }
-        else if (n <= 300) { cols = 11; sx = 0.40; sz = 0.47; }
-        else               { cols = 13; sx = 0.34; sz = 0.40; }
-        this._formationCols = cols;
-        this._formationSpacingX = sx;
+        let preferredCols, sx, sz, scale;
+        if (n <= 1)        { preferredCols = 1;  sx = 0.72; sz = 0.72; scale = 1; }
+        else if (n <= 12)  { preferredCols = Math.ceil(Math.sqrt(n)); sx = 0.70; sz = 0.72; scale = 1; }
+        else if (n <= 100) { preferredCols = 7;  sx = 0.63; sz = 0.66; scale = 0.86; }
+        else if (n <= 300) { preferredCols = 11; sx = 0.37; sz = 0.50; scale = 0.55; }
+        else               { preferredCols = 13; sx = 0.33; sz = 0.46; scale = 0.50; }
 
-        for (let i = 0; i < n; i++) {
-            const row = Math.floor(i / cols);
-            const col = i % cols;
-            const s = this.soldiers[i];
-            // 行交错: 奇数行右移半格(蜂窝感, 打破矩形队列)
-            const stagger = (row % 2 === 1) ? sx * 0.5 : 0;
-            s.fx = (col - (cols - 1) / 2) * sx + stagger + s.jx;
-            s.fz = -row * sz + s.jz;
+        const rows = n > 0 ? Math.ceil(n / preferredCols) : 0;
+        const shortRow = rows ? Math.floor(n / rows) : 0;
+        let longRows = rows ? n % rows : 0;
+        const rowLengths = [];
+        // Spread longer rows through the formation rather than leaving one
+        // visibly incomplete tail row.
+        for (let row = 0; row < rows; row++) {
+            const remainingRows = rows - row;
+            const makeLong = longRows > 0 && (row % 2 === 0 || longRows === remainingRows);
+            rowLengths.push(shortRow + (makeLong ? 1 : 0));
+            if (makeLong) longRows--;
         }
+        this._formationCols = rowLengths.length ? Math.max.apply(Math, rowLengths) : 1;
+        this._formationSpacingX = sx;
+        this._formationScale = scale;
+        let soldierIndex = 0;
+        let maxAbsX = 0;
+        for (let row = 0; row < rowLengths.length; row++) {
+            const rowCount = rowLengths[row];
+            for (let col = 0; col < rowCount; col++) {
+                const s = this.soldiers[soldierIndex++];
+                const stagger = row % 2 ? sx * 0.16 : -sx * 0.16;
+                s.fx = (col - (rowCount - 1) / 2) * sx + (n > 1 ? stagger : 0) + s.jx * 0.45;
+                s.fz = -row * sz + s.jz * 0.5 + Math.abs(col - (rowCount - 1) / 2) * 0.055;
+                maxAbsX = Math.max(maxAbsX, Math.abs(s.fx));
+            }
+        }
+        // Model shoulder envelope is ~0.72 wide at scale 1.
+        this._halfWidth = maxAbsX + 0.36 * scale;
     }
 
     /** 队伍半宽(含单兵半径+交错余量) — 移动边界钳制与门触发窗口共用 */
     getHalfWidth() {
-        var cols = this._formationCols || CONFIG.FORMATION_COLS;
-        var sx = this._formationSpacingX || CONFIG.FORMATION_SPACING_X;
-        return ((cols - 1) / 2) * sx + sx * 0.25 + 0.2;
+        return this._halfWidth || 0.36;
     }
 
     /** 僵尸击杀士兵 (V3.3: 复活无敌期间免疫) */
     killSoldiers(n, effects) {
         if (this.invulnT > 0) return; // 复活无敌
         const before = this.count;
+        var removed = Math.min(before, Math.max(0, Math.floor(n)));
+        var removedStart = before - removed;
+        if (removed > 0) this.renderer.captureDeaths(removedStart, before, this);
         // V2.2修复: 先保存被杀士兵位置，再截断数组(原代码先截断再读取导致undefined)
         var deathPos = [];
         if (effects && n > 0) {
-            var startIdx = Math.max(0, before - n);
+            var startIdx = removedStart;
             for (let i = startIdx; i < Math.min(before, startIdx + 3); i++) {
                 if (this.soldiers[i]) {
                     deathPos.push({ x: this.soldiers[i].x, z: this.soldiers[i].z });
@@ -134,6 +123,7 @@ class Squad {
             }
         }
         this.setCount(this.count - n);
+        if (this.count > 0 && removed > 0) this.renderer.triggerHit();
         // 在被杀士兵位置生成蓝色死亡粒子
         if (effects && deathPos.length > 0) {
             for (let i = 0; i < deathPos.length; i++) {
@@ -231,7 +221,10 @@ class Squad {
         const tilt = clamp((this.x - this.targetX) * 0.28, -0.28, 0.28);
         const lean = moving ? 0.1 : 0.02;
 
-        // 更新每个士兵
+        this._moving = moving;
+        this._lean = lean;
+        this._tilt = tilt;
+        // Logical positions remain independent from GLB rendering.
         for (let i = 0; i < this.count; i++) {
             const s = this.soldiers[i];
 
@@ -244,55 +237,21 @@ class Squad {
             s.x = damp(s.x, s.fx, 9, dt);
             s.z = damp(s.z, s.fz, 9, dt);
 
-            // V3.7: 跑动弹跳幅度降低(腿部摆动接管动感), 待机呼吸保留
-            const bob = moving ? Math.abs(Math.sin(time * 8 + s.phase)) * 0.05 : Math.sin(time * 2 + s.phase) * 0.02;
-
-            // 弹出缩放 (easeOutBack 有回弹效果)
-            const scale = easeOutBack(s.spawnT);
-
-            this._p.set(this.x + s.x, bob, this.z + s.z);
-            // V3.2: 组合旋转(前倾 + 换道侧倾 + 个体朝向)
-            this._e.set(lean, s.rotY, tilt, 'YXZ');
-            this._q.setFromEuler(this._e);
-            this._s.setScalar(Math.max(0.001, scale));
-            this._mBody.compose(this._p, this._q, this._s);
-            this.mesh.setMatrixAt(i, this._mBody);
-
-            // V3.7: 腿部绕髋部X轴交替摆动(跑步循环), 待机时静止
-            var swingL = 0, swingR = 0;
-            if (moving) {
-                const ph = time * 8 + s.phase;
-                swingL = Math.sin(ph) * 0.8;
-                swingR = Math.sin(ph + Math.PI) * 0.8;
-            }
-            // 左腿 = bodyM * hipL * Rx(swingL)
-            this._rSwing.makeRotationX(swingL);
-            this._m.copy(this._mBody).multiply(this._hipL).multiply(this._rSwing);
-            this.legMeshL.setMatrixAt(i, this._m);
-            // 右腿 = bodyM * hipR * Rx(swingR)
-            this._rSwing.makeRotationX(swingR);
-            this._m.copy(this._mBody).multiply(this._hipR).multiply(this._rSwing);
-            this.legMeshR.setMatrixAt(i, this._m);
         }
-
-        this.mesh.count = this.count;
-        this.mesh.instanceMatrix.needsUpdate = true;
-        this.legMeshL.count = this.count;
-        this.legMeshL.instanceMatrix.needsUpdate = true;
-        this.legMeshR.count = this.count;
-        this.legMeshR.instanceMatrix.needsUpdate = true;
+        this.renderer.update(dt, time, this, moving, lean, tilt);
+        this.mesh = this.renderer.mesh;
+        this.legMeshL = this.renderer.legMeshL;
+        this.legMeshR = this.renderer.legMeshR;
+        this._legMeshes[0] = this.legMeshL;
+        this._legMeshes[1] = this.legMeshR;
     }
 
     /** 获取随机士兵世界位置(射击出弹点) */
     getRandomSoldierPos() {
         if (this.count === 0) return null;
         const i = Math.floor(Math.random() * this.count);
-        const s = this.soldiers[i];
-        return {
-            x: this.x + s.x,
-            y: 0.52,
-            z: this.z + s.z - 0.25
-        };
+        const p = this.renderer.getMuzzlePosition(i, this);
+        return { x: p.x, y: p.y, z: p.z, shooterIndex: i };
     }
 
     /** 获取多个射击点(分散取) */
@@ -303,12 +262,9 @@ class Squad {
         const step = this.count / n;
         for (let i = 0; i < n; i++) {
             const idx = Math.floor(i * step + Math.random() * step) % this.count;
-            const s = this.soldiers[idx];
-            positions.push({
-                x: this.x + s.x,
-                y: 0.52,
-                z: this.z + s.z - 0.25
-            });
+            this.renderer.triggerShoot(idx);
+            const p = this.renderer.getMuzzlePosition(idx, this);
+            positions.push({ x: p.x, y: p.y, z: p.z, shooterIndex: idx });
         }
         return positions;
     }
@@ -323,7 +279,15 @@ class Squad {
         return Math.min(3.0, CONFIG.BULLET_FIRE_RATE_BASE * (1 + this.fireRateBuff));
     }
 
+    setAnimationState(name) {
+        this.renderer.setState(name);
+    }
+
     reset(startCount) {
+        this.renderer.clearGhosts();
+        this.renderer.setState(null);
+        this.renderer._shootT.fill(0);
+        this.renderer._hitT = 0;
         this.x = 0;
         this.z = 0;
         this.lane = 1;

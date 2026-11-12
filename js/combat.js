@@ -201,8 +201,9 @@ class CombatSystem {
         var mesh = this.pool.pop();
         if (!mesh) return;
         mesh.visible = true;
-        var spreadX = randRange(-0.15, 0.15);
-        mesh.position.set(pos.x + spreadX, pos.y + randRange(-0.05, 0.05), pos.z);
+        // GLB Muzzle is authoritative. Target convergence supplies trajectory
+        // variation after launch; random origin offsets detached shots from guns.
+        mesh.position.set(pos.x, pos.y, pos.z);
         // Sprite scale: 金黄发光弹道 (V3.6: 加大尺寸保证清晰可见; V3.3: 暴击弹更大)
         if (isCrit) mesh.scale.set(0.4, 1.15, 1);
         else mesh.scale.set(0.3, 0.9, 1);
@@ -215,7 +216,7 @@ class CombatSystem {
         });
 
         // 枪口闪光
-        this.effects.muzzleFlash(pos.x + spreadX, pos.y, pos.z - 0.05);
+        this.effects.muzzleFlash(pos.x, pos.y, pos.z);
     }
 
     clear() {

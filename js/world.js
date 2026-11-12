@@ -57,7 +57,7 @@ class World {
         this.sunLight = dir;
 
         // 补光 (淡蓝色, 从前方照射)
-        const fill = new THREE.DirectionalLight(0xC8E0FF, 0.15);
+        const fill = new THREE.DirectionalLight(0xC8E0FF, 0.30);
         fill.position.set(-3, 6, -8);
         this.scene.add(fill);
     }
