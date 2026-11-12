@@ -160,13 +160,9 @@
             div.textContent += (div.textContent ? '\n' : '') + '[错误] ' + e.message + (e.filename ? ' (' + e.filename.split('/').pop() + ':' + e.lineno + ')' : '');
         });
     </script>
-    <!-- V3.3: Three.js本地副本优先(抖音小游戏必需), CDN兜底 -->
+    <!-- Pinned local Three.js: deployment requires no CDN. -->
     <script src="js/vendor/three.min.js"></script>
     <script>
-        // 本地加载失败时回退CDN
-        if (typeof THREE === 'undefined') {
-            document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"><\/script>');
-        }
         // 检测Three.js是否加载成功
         if (typeof THREE === 'undefined') {
             document.addEventListener('DOMContentLoaded', function() {
@@ -177,7 +173,7 @@
                     div.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#CC0000;color:#fff;padding:8px 12px;font-size:13px;font-family:monospace;white-space:pre-wrap;pointer-events:none;';
                     document.body.appendChild(div);
                 }
-                div.textContent = '[错误] Three.js 加载失败(本地+CDN均失败)，请检查部署完整性';
+                div.textContent = '[错误] Three.js 本地文件缺失，请检查部署完整性';
             });
         }
     </script>

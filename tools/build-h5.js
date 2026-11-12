@@ -30,6 +30,7 @@ const COPY_LIST = [
     'js/enemies.js',
     'js/pacing.js',    // V4.0
     'js/combat.js',
+    'js/game.js',
     'js/platform/storage-adapter.js',
     'js/platform/lifecycle-adapter.js',
     'js/platform/audio-adapter.js',
@@ -46,8 +47,7 @@ function copyTo(srcRel) {
     const src = path.join(ROOT, srcRel);
     const dst = path.join(OUT, srcRel);
     if (!fs.existsSync(src)) {
-        console.warn('[build:h5] 跳过不存在的文件: ' + srcRel);
-        return;
+        throw new Error('[build:h5] 必需文件缺失: ' + srcRel);
     }
     fs.mkdirSync(path.dirname(dst), { recursive: true });
     const stat = fs.statSync(src);
@@ -85,6 +85,12 @@ function main() {
 
     // 校验: index.html 不应再引用外部CDN
     const html = fs.readFileSync(path.join(OUT, 'index.html'), 'utf8');
+    for (const match of html.matchAll(/<script[^>]*\bsrc=["']([^"']+)/g)) {
+        const script = match[1].split('?')[0];
+        if (/^https?:/.test(script) || !fs.existsSync(path.join(OUT, script))) {
+            throw new Error('[build:h5] 入口脚本未打包: ' + script);
+        }
+    }
     const cdnRefs = html.match(/https?:\/\/[^"']+\.js/g) || [];
     if (cdnRefs.length > 0) {
         console.warn('[build:h5] 警告: index.html 仍引用外部JS: ' + cdnRefs.join(', '));
