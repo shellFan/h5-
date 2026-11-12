@@ -552,7 +552,8 @@ class Game {
                 pos: this.world.camera.position.toArray().map(function(x) { return +x.toFixed(2); }),
                 fov: this.world.camera.fov
             },
-            modelPolicy: 'assets/art-v1/仅含4个SVG(bullet-glow/双头像/gate-panel) — 无GLB/无角色PNG; 角色按大纲优先级3程序化建模'
+            modelPolicy: 'V4.1: assets/models/soldier/soldier.glb + soldier-lod.glb / embedded PBR atlas / rigid-part instancing',
+            soldierModel: { status: SoldierModelLoader.status, loadMs: SoldierModelLoader.loadMs }
         };
     }
 
@@ -569,7 +570,7 @@ class Game {
             if (!self._debugPanel) return;
             var p = self.getPerf();
             var src = [
-                '士兵: ' + (self.squad.mesh && self.squad.mesh.userData.artSource ? 'createSoldierBodyGeometry+Leg(实例化x3)' : '?'),
+                '士兵: GLB / PBR / 分部件实例化 / ' + (self.squad.count > 100 ? 'LOD' : '完整模型'),
                 '僵尸: ' + (self.enemies.enemies.length ? (self.enemies.enemies[0].model.userData.artSource || '?') : '场景无僵尸'),
                 'Boss: ' + (self.enemies.boss ? (self.enemies.boss.model.userData.artSource || '?') : '未出现')
             ].join('\n');
@@ -662,7 +663,11 @@ class Game {
         } else if (this.state === 'idle') {
             // 待机: 相机轻微摆动展示场景
             this.time += dt;
+            this.squad.update(dt, this.time, this.squad.z);
             this.world.updateCamera(Math.sin(this.time * 0.4) * 0.6, 0, dt, 1);
+        } else if (this.state === 'won' || this.state === 'lost') {
+            this.time += dt;
+            this.squad.update(dt, this.time, this.squad.z);
         }
 
         this.world.renderer.render(this.world.scene, this.world.camera);
@@ -847,6 +852,7 @@ class Game {
 
     _win() {
         this.state = 'won';
+        this.squad.setAnimationState('Victory');
         if (this.ui.hud) this.ui.hud.classList.add('hidden');
         if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
         this._showBossWarning(false);
@@ -940,9 +946,32 @@ class Game {
         return;
     }
 
-    try {
-        window.__game = new Game(); // 暴露实例供调试/测试
-    } catch (err) {
-        showError('[启动错误] ' + err.message + '\n' + (err.stack || '无堆栈信息'));
+    var loading = document.createElement('div');
+    loading.id = 'soldier-loading';
+    loading.style.cssText = 'position:fixed;bottom:24px;left:10%;right:10%;z-index:99999;padding:14px;border-radius:16px;background:#153a67;color:white;text-align:center';
+    loading.textContent = '正在整备蓝色小队…';
+    document.body.appendChild(loading);
+    var starting = false;
+    function boot() {
+        if (starting || window.__game) return;
+        starting = true;
+        loading.hidden = false;
+        loading.textContent = '正在整备蓝色小队…';
+        var error = document.getElementById('error-display');
+        if (error) error.remove();
+        SoldierModelLoader.load().then(function() {
+            if (!window.__game) window.__game = new Game();
+            loading.remove();
+        }).catch(function(err) {
+            starting = false;
+            showError('士兵资源加载失败：' + err.message);
+            loading.textContent = '';
+            var retry = document.createElement('button');
+            retry.id = 'btn-retry-model';
+            retry.textContent = '重新加载小队';
+            retry.onclick = boot;
+            loading.appendChild(retry);
+        });
     }
+    boot();
 })();
