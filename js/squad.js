@@ -90,7 +90,8 @@ class Squad {
             const rowCount = rowLengths[row];
             for (let col = 0; col < rowCount; col++) {
                 const s = this.soldiers[soldierIndex++];
-                const stagger = row % 2 ? sx * 0.16 : -sx * 0.16;
+                const staggerAmount = sx * (n <= 100 ? 0.10 : 0.16);
+                const stagger = row % 2 ? staggerAmount : -staggerAmount;
                 s.fx = (col - (rowCount - 1) / 2) * sx + (n > 1 ? stagger : 0) + s.jx * 0.45;
                 s.fz = -row * sz + s.jz * 0.5 + Math.abs(col - (rowCount - 1) / 2) * 0.055;
                 maxAbsX = Math.max(maxAbsX, Math.abs(s.fx));
