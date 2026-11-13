@@ -1,0 +1,1758 @@
+{
+  "version": 42,
+  "generator": {
+    "script": "tools/create-enemies.py",
+    "helper": "tools/blender_art_common.py",
+    "blender": "4.2.15 LTS",
+    "provenance": "Original procedural profile sculpture; no downloaded or baseline soldier meshes"
+  },
+  "parts": [
+    "Body",
+    "Head",
+    "Arms",
+    "LegL",
+    "LegR"
+  ],
+  "enemies": [
+    {
+      "key": "normal",
+      "hero": "normal/normal.glb",
+      "lod": "normal/normal-lod.glb",
+      "textures": [
+        "normal/textures/normal-basecolor.png",
+        "normal/textures/normal-orm.png"
+      ],
+      "triangles": 3676,
+      "lodTriangles": 1054,
+      "budgets": {
+        "hero": 7000,
+        "lod": 2000
+      },
+      "palette": {
+        "skin": [
+          0.18,
+          0.48,
+          0.2
+        ],
+        "cloth": [
+          0.2,
+          0.32,
+          0.13
+        ],
+        "accent": [
+          0.48,
+          0.7,
+          0.32
+        ],
+        "dark": [
+          0.045,
+          0.055,
+          0.055
+        ],
+        "armor": [
+          0.28,
+          0.32,
+          0.34
+        ],
+        "metal": [
+          0.48,
+          0.53,
+          0.54
+        ],
+        "leather": [
+          0.22,
+          0.1,
+          0.045
+        ],
+        "ivory": [
+          0.94,
+          0.9,
+          0.72
+        ],
+        "ink": [
+          0.012,
+          0.018,
+          0.018
+        ],
+        "mouth": [
+          0.3,
+          0.035,
+          0.045
+        ],
+        "gum": [
+          0.72,
+          0.18,
+          0.28
+        ],
+        "glow": [
+          0.48,
+          0.7,
+          0.32
+        ],
+        "vein": [
+          0.18,
+          0.055,
+          0.24
+        ],
+        "sole": [
+          0.055,
+          0.045,
+          0.035
+        ],
+        "tooth": [
+          0.98,
+          0.96,
+          0.82
+        ],
+        "highlight": [
+          0.2904,
+          0.6743999999999999,
+          0.316
+        ]
+      },
+      "parts": [
+        "Body",
+        "Head",
+        "Arms",
+        "LegL",
+        "LegR"
+      ],
+      "origins": {
+        "Body": [
+          0,
+          0.48,
+          0
+        ],
+        "Head": [
+          0,
+          0.94,
+          0.02
+        ],
+        "Arms": [
+          0,
+          0.65,
+          0.02
+        ],
+        "LegL": [
+          -0.105,
+          0.34,
+          0
+        ],
+        "LegR": [
+          0.105,
+          0.34,
+          0
+        ]
+      },
+      "height": 1.2,
+      "up": "+Y",
+      "forward": "+Z",
+      "frontAnchor": [
+        0,
+        0.915,
+        0.205
+      ],
+      "muzzleMouth": null,
+      "glowCells": [],
+      "boss": false,
+      "phaseTint": null
+    },
+    {
+      "key": "fast",
+      "hero": "fast/fast.glb",
+      "lod": "fast/fast-lod.glb",
+      "textures": [
+        "fast/textures/fast-basecolor.png",
+        "fast/textures/fast-orm.png"
+      ],
+      "triangles": 3744,
+      "lodTriangles": 1076,
+      "budgets": {
+        "hero": 7000,
+        "lod": 2000
+      },
+      "palette": {
+        "skin": [
+          0.36,
+          0.62,
+          0.25
+        ],
+        "cloth": [
+          0.72,
+          0.08,
+          0.06
+        ],
+        "accent": [
+          0.96,
+          0.25,
+          0.12
+        ],
+        "dark": [
+          0.045,
+          0.055,
+          0.055
+        ],
+        "armor": [
+          0.28,
+          0.32,
+          0.34
+        ],
+        "metal": [
+          0.48,
+          0.53,
+          0.54
+        ],
+        "leather": [
+          0.22,
+          0.1,
+          0.045
+        ],
+        "ivory": [
+          0.94,
+          0.9,
+          0.72
+        ],
+        "ink": [
+          0.012,
+          0.018,
+          0.018
+        ],
+        "mouth": [
+          0.3,
+          0.035,
+          0.045
+        ],
+        "gum": [
+          0.72,
+          0.18,
+          0.28
+        ],
+        "glow": [
+          0.96,
+          0.25,
+          0.12
+        ],
+        "vein": [
+          0.18,
+          0.055,
+          0.24
+        ],
+        "sole": [
+          0.055,
+          0.045,
+          0.035
+        ],
+        "tooth": [
+          0.98,
+          0.96,
+          0.82
+        ],
+        "highlight": [
+          0.5207999999999999,
+          0.8535999999999999,
+          0.38
+        ]
+      },
+      "parts": [
+        "Body",
+        "Head",
+        "Arms",
+        "LegL",
+        "LegR"
+      ],
+      "origins": {
+        "Body": [
+          0,
+          0.48,
+          0
+        ],
+        "Head": [
+          0,
+          0.94,
+          0.02
+        ],
+        "Arms": [
+          0,
+          0.65,
+          0.02
+        ],
+        "LegL": [
+          -0.105,
+          0.34,
+          0
+        ],
+        "LegR": [
+          0.105,
+          0.34,
+          0
+        ]
+      },
+      "height": 1.19,
+      "up": "+Y",
+      "forward": "+Z",
+      "frontAnchor": [
+        0,
+        0.915,
+        0.205
+      ],
+      "muzzleMouth": null,
+      "glowCells": [],
+      "boss": false,
+      "phaseTint": null
+    },
+    {
+      "key": "shield",
+      "hero": "shield/shield.glb",
+      "lod": "shield/shield-lod.glb",
+      "textures": [
+        "shield/textures/shield-basecolor.png",
+        "shield/textures/shield-orm.png"
+      ],
+      "triangles": 4468,
+      "lodTriangles": 1285,
+      "budgets": {
+        "hero": 7000,
+        "lod": 2000
+      },
+      "palette": {
+        "skin": [
+          0.28,
+          0.46,
+          0.25
+        ],
+        "cloth": [
+          0.31,
+          0.35,
+          0.38
+        ],
+        "accent": [
+          0.64,
+          0.68,
+          0.7
+        ],
+        "dark": [
+          0.045,
+          0.055,
+          0.055
+        ],
+        "armor": [
+          0.28,
+          0.32,
+          0.34
+        ],
+        "metal": [
+          0.48,
+          0.53,
+          0.54
+        ],
+        "leather": [
+          0.22,
+          0.1,
+          0.045
+        ],
+        "ivory": [
+          0.94,
+          0.9,
+          0.72
+        ],
+        "ink": [
+          0.012,
+          0.018,
+          0.018
+        ],
+        "mouth": [
+          0.3,
+          0.035,
+          0.045
+        ],
+        "gum": [
+          0.72,
+          0.18,
+          0.28
+        ],
+        "glow": [
+          0.64,
+          0.68,
+          0.7
+        ],
+        "vein": [
+          0.18,
+          0.055,
+          0.24
+        ],
+        "sole": [
+          0.055,
+          0.045,
+          0.035
+        ],
+        "tooth": [
+          0.98,
+          0.96,
+          0.82
+        ],
+        "highlight": [
+          0.41840000000000005,
+          0.6488,
+          0.38
+        ]
+      },
+      "parts": [
+        "Body",
+        "Head",
+        "Arms",
+        "LegL",
+        "LegR"
+      ],
+      "origins": {
+        "Body": [
+          0,
+          0.48,
+          0
+        ],
+        "Head": [
+          0,
+          0.94,
+          0.02
+        ],
+        "Arms": [
+          0,
+          0.65,
+          0.02
+        ],
+        "LegL": [
+          -0.105,
+          0.34,
+          0
+        ],
+        "LegR": [
+          0.105,
+          0.34,
+          0
+        ]
+      },
+      "height": 1.22,
+      "up": "+Y",
+      "forward": "+Z",
+      "frontAnchor": [
+        0,
+        0.915,
+        0.205
+      ],
+      "muzzleMouth": null,
+      "glowCells": [],
+      "boss": false,
+      "phaseTint": null
+    },
+    {
+      "key": "split",
+      "hero": "split/split.glb",
+      "lod": "split/split-lod.glb",
+      "textures": [
+        "split/textures/split-basecolor.png",
+        "split/textures/split-orm.png"
+      ],
+      "triangles": 4184,
+      "lodTriangles": 1202,
+      "budgets": {
+        "hero": 7000,
+        "lod": 2000
+      },
+      "palette": {
+        "skin": [
+          0.42,
+          0.23,
+          0.52
+        ],
+        "cloth": [
+          0.29,
+          0.1,
+          0.39
+        ],
+        "accent": [
+          0.72,
+          0.32,
+          0.78
+        ],
+        "dark": [
+          0.045,
+          0.055,
+          0.055
+        ],
+        "armor": [
+          0.28,
+          0.32,
+          0.34
+        ],
+        "metal": [
+          0.48,
+          0.53,
+          0.54
+        ],
+        "leather": [
+          0.22,
+          0.1,
+          0.045
+        ],
+        "ivory": [
+          0.94,
+          0.9,
+          0.72
+        ],
+        "ink": [
+          0.012,
+          0.018,
+          0.018
+        ],
+        "mouth": [
+          0.3,
+          0.035,
+          0.045
+        ],
+        "gum": [
+          0.72,
+          0.18,
+          0.28
+        ],
+        "glow": [
+          0.72,
+          0.32,
+          0.78
+        ],
+        "vein": [
+          0.18,
+          0.055,
+          0.24
+        ],
+        "sole": [
+          0.055,
+          0.045,
+          0.035
+        ],
+        "tooth": [
+          0.98,
+          0.96,
+          0.82
+        ],
+        "highlight": [
+          0.5975999999999999,
+          0.3544,
+          0.7256
+        ]
+      },
+      "parts": [
+        "Body",
+        "Head",
+        "Arms",
+        "LegL",
+        "LegR"
+      ],
+      "origins": {
+        "Body": [
+          0,
+          0.48,
+          0
+        ],
+        "Head": [
+          0,
+          0.94,
+          0.02
+        ],
+        "Arms": [
+          0,
+          0.65,
+          0.02
+        ],
+        "LegL": [
+          -0.105,
+          0.34,
+          0
+        ],
+        "LegR": [
+          0.105,
+          0.34,
+          0
+        ]
+      },
+      "height": 1.16,
+      "up": "+Y",
+      "forward": "+Z",
+      "frontAnchor": [
+        0,
+        0.915,
+        0.205
+      ],
+      "muzzleMouth": null,
+      "glowCells": [],
+      "boss": false,
+      "phaseTint": null
+    },
+    {
+      "key": "spitter",
+      "hero": "spitter/spitter.glb",
+      "lod": "spitter/spitter-lod.glb",
+      "textures": [
+        "spitter/textures/spitter-basecolor.png",
+        "spitter/textures/spitter-orm.png"
+      ],
+      "triangles": 3920,
+      "lodTriangles": 1126,
+      "budgets": {
+        "hero": 7000,
+        "lod": 2000
+      },
+      "palette": {
+        "skin": [
+          0.38,
+          0.55,
+          0.18
+        ],
+        "cloth": [
+          0.27,
+          0.38,
+          0.12
+        ],
+        "accent": [
+          0.4,
+          0.98,
+          0.12
+        ],
+        "dark": [
+          0.045,
+          0.055,
+          0.055
+        ],
+        "armor": [
+          0.28,
+          0.32,
+          0.34
+        ],
+        "metal": [
+          0.48,
+          0.53,
+          0.54
+        ],
+        "leather": [
+          0.22,
+          0.1,
+          0.045
+        ],
+        "ivory": [
+          0.94,
+          0.9,
+          0.72
+        ],
+        "ink": [
+          0.012,
+          0.018,
+          0.018
+        ],
+        "mouth": [
+          0.3,
+          0.035,
+          0.045
+        ],
+        "gum": [
+          0.72,
+          0.18,
+          0.28
+        ],
+        "glow": [
+          0.4,
+          0.98,
+          0.12
+        ],
+        "vein": [
+          0.18,
+          0.055,
+          0.24
+        ],
+        "sole": [
+          0.055,
+          0.045,
+          0.035
+        ],
+        "tooth": [
+          0.98,
+          0.96,
+          0.82
+        ],
+        "highlight": [
+          0.5464,
+          0.764,
+          0.2904
+        ]
+      },
+      "parts": [
+        "Body",
+        "Head",
+        "Arms",
+        "LegL",
+        "LegR"
+      ],
+      "origins": {
+        "Body": [
+          0,
+          0.48,
+          0
+        ],
+        "Head": [
+          0,
+          0.94,
+          0.02
+        ],
+        "Arms": [
+          0,
+          0.65,
+          0.02
+        ],
+        "LegL": [
+          -0.105,
+          0.34,
+          0
+        ],
+        "LegR": [
+          0.105,
+          0.34,
+          0
+        ]
+      },
+      "height": 1.16,
+      "up": "+Y",
+      "forward": "+Z",
+      "frontAnchor": [
+        0,
+        0.87,
+        0.305
+      ],
+      "muzzleMouth": [
+        0,
+        0.87,
+        0.305
+      ],
+      "glowCells": [
+        11
+      ],
+      "boss": false,
+      "phaseTint": null
+    },
+    {
+      "key": "elite",
+      "hero": "elite/elite.glb",
+      "lod": "elite/elite-lod.glb",
+      "textures": [
+        "elite/textures/elite-basecolor.png",
+        "elite/textures/elite-orm.png"
+      ],
+      "triangles": 3652,
+      "lodTriangles": 1048,
+      "budgets": {
+        "hero": 7000,
+        "lod": 2000
+      },
+      "palette": {
+        "skin": [
+          0.25,
+          0.44,
+          0.22
+        ],
+        "cloth": [
+          0.42,
+          0.13,
+          0.1
+        ],
+        "accent": [
+          0.91,
+          0.38,
+          0.12
+        ],
+        "dark": [
+          0.045,
+          0.055,
+          0.055
+        ],
+        "armor": [
+          0.28,
+          0.32,
+          0.34
+        ],
+        "metal": [
+          0.48,
+          0.53,
+          0.54
+        ],
+        "leather": [
+          0.22,
+          0.1,
+          0.045
+        ],
+        "ivory": [
+          0.94,
+          0.9,
+          0.72
+        ],
+        "ink": [
+          0.012,
+          0.018,
+          0.018
+        ],
+        "mouth": [
+          0.3,
+          0.035,
+          0.045
+        ],
+        "gum": [
+          0.72,
+          0.18,
+          0.28
+        ],
+        "glow": [
+          0.91,
+          0.38,
+          0.12
+        ],
+        "vein": [
+          0.18,
+          0.055,
+          0.24
+        ],
+        "sole": [
+          0.055,
+          0.045,
+          0.035
+        ],
+        "tooth": [
+          0.98,
+          0.96,
+          0.82
+        ],
+        "highlight": [
+          0.38,
+          0.6232,
+          0.3416
+        ]
+      },
+      "parts": [
+        "Body",
+        "Head",
+        "Arms",
+        "LegL",
+        "LegR"
+      ],
+      "origins": {
+        "Body": [
+          0,
+          0.48,
+          0
+        ],
+        "Head": [
+          0,
+          0.94,
+          0.02
+        ],
+        "Arms": [
+          0,
+          0.65,
+          0.02
+        ],
+        "LegL": [
+          -0.105,
+          0.34,
+          0
+        ],
+        "LegR": [
+          0.105,
+          0.34,
+          0
+        ]
+      },
+      "height": 1.16,
+      "up": "+Y",
+      "forward": "+Z",
+      "frontAnchor": [
+        0,
+        0.915,
+        0.205
+      ],
+      "muzzleMouth": null,
+      "glowCells": [],
+      "boss": false,
+      "phaseTint": null
+    },
+    {
+      "key": "bruiser",
+      "hero": "bruiser/bruiser.glb",
+      "lod": "bruiser/bruiser-lod.glb",
+      "textures": [
+        "bruiser/textures/bruiser-basecolor.png",
+        "bruiser/textures/bruiser-orm.png"
+      ],
+      "triangles": 4532,
+      "lodTriangles": 1212,
+      "budgets": {
+        "hero": 15000,
+        "lod": 4500
+      },
+      "palette": {
+        "skin": [
+          0.3,
+          0.39,
+          0.25
+        ],
+        "cloth": [
+          0.48,
+          0.23,
+          0.09
+        ],
+        "accent": [
+          0.94,
+          0.55,
+          0.12
+        ],
+        "dark": [
+          0.045,
+          0.055,
+          0.055
+        ],
+        "armor": [
+          0.28,
+          0.32,
+          0.34
+        ],
+        "metal": [
+          0.48,
+          0.53,
+          0.54
+        ],
+        "leather": [
+          0.22,
+          0.1,
+          0.045
+        ],
+        "ivory": [
+          0.94,
+          0.9,
+          0.72
+        ],
+        "ink": [
+          0.012,
+          0.018,
+          0.018
+        ],
+        "mouth": [
+          0.3,
+          0.035,
+          0.045
+        ],
+        "gum": [
+          0.72,
+          0.18,
+          0.28
+        ],
+        "glow": [
+          0.94,
+          0.55,
+          0.12
+        ],
+        "vein": [
+          0.18,
+          0.055,
+          0.24
+        ],
+        "sole": [
+          0.055,
+          0.045,
+          0.035
+        ],
+        "tooth": [
+          0.98,
+          0.96,
+          0.82
+        ],
+        "highlight": [
+          0.444,
+          0.5592,
+          0.38
+        ]
+      },
+      "parts": [
+        "Body",
+        "Head",
+        "Arms",
+        "LegL",
+        "LegR"
+      ],
+      "origins": {
+        "Body": [
+          0,
+          0.48,
+          0
+        ],
+        "Head": [
+          0,
+          0.94,
+          0.02
+        ],
+        "Arms": [
+          0,
+          0.65,
+          0.02
+        ],
+        "LegL": [
+          -0.105,
+          0.34,
+          0
+        ],
+        "LegR": [
+          0.105,
+          0.34,
+          0
+        ]
+      },
+      "height": 1.16,
+      "up": "+Y",
+      "forward": "+Z",
+      "frontAnchor": [
+        0,
+        0.915,
+        0.205
+      ],
+      "muzzleMouth": null,
+      "glowCells": [],
+      "boss": true,
+      "phaseTint": null
+    },
+    {
+      "key": "bulwark",
+      "hero": "bulwark/bulwark.glb",
+      "lod": "bulwark/bulwark-lod.glb",
+      "textures": [
+        "bulwark/textures/bulwark-basecolor.png",
+        "bulwark/textures/bulwark-orm.png"
+      ],
+      "triangles": 4600,
+      "lodTriangles": 1232,
+      "budgets": {
+        "hero": 15000,
+        "lod": 4500
+      },
+      "palette": {
+        "skin": [
+          0.27,
+          0.39,
+          0.28
+        ],
+        "cloth": [
+          0.25,
+          0.31,
+          0.35
+        ],
+        "accent": [
+          0.8,
+          0.7,
+          0.24
+        ],
+        "dark": [
+          0.045,
+          0.055,
+          0.055
+        ],
+        "armor": [
+          0.28,
+          0.32,
+          0.34
+        ],
+        "metal": [
+          0.48,
+          0.53,
+          0.54
+        ],
+        "leather": [
+          0.22,
+          0.1,
+          0.045
+        ],
+        "ivory": [
+          0.94,
+          0.9,
+          0.72
+        ],
+        "ink": [
+          0.012,
+          0.018,
+          0.018
+        ],
+        "mouth": [
+          0.3,
+          0.035,
+          0.045
+        ],
+        "gum": [
+          0.72,
+          0.18,
+          0.28
+        ],
+        "glow": [
+          0.8,
+          0.7,
+          0.24
+        ],
+        "vein": [
+          0.18,
+          0.055,
+          0.24
+        ],
+        "sole": [
+          0.055,
+          0.045,
+          0.035
+        ],
+        "tooth": [
+          0.98,
+          0.96,
+          0.82
+        ],
+        "highlight": [
+          0.4056,
+          0.5592,
+          0.41840000000000005
+        ]
+      },
+      "parts": [
+        "Body",
+        "Head",
+        "Arms",
+        "LegL",
+        "LegR"
+      ],
+      "origins": {
+        "Body": [
+          0,
+          0.48,
+          0
+        ],
+        "Head": [
+          0,
+          0.94,
+          0.02
+        ],
+        "Arms": [
+          0,
+          0.65,
+          0.02
+        ],
+        "LegL": [
+          -0.105,
+          0.34,
+          0
+        ],
+        "LegR": [
+          0.105,
+          0.34,
+          0
+        ]
+      },
+      "height": 1.285,
+      "up": "+Y",
+      "forward": "+Z",
+      "frontAnchor": [
+        0,
+        0.915,
+        0.205
+      ],
+      "muzzleMouth": null,
+      "glowCells": [],
+      "boss": true,
+      "phaseTint": null
+    },
+    {
+      "key": "spitking",
+      "hero": "spitking/spitking.glb",
+      "lod": "spitking/spitking-lod.glb",
+      "textures": [
+        "spitking/textures/spitking-basecolor.png",
+        "spitking/textures/spitking-orm.png"
+      ],
+      "triangles": 4348,
+      "lodTriangles": 1160,
+      "budgets": {
+        "hero": 15000,
+        "lod": 4500
+      },
+      "palette": {
+        "skin": [
+          0.4,
+          0.5,
+          0.12
+        ],
+        "cloth": [
+          0.32,
+          0.23,
+          0.08
+        ],
+        "accent": [
+          0.54,
+          1.0,
+          0.08
+        ],
+        "dark": [
+          0.045,
+          0.055,
+          0.055
+        ],
+        "armor": [
+          0.28,
+          0.32,
+          0.34
+        ],
+        "metal": [
+          0.48,
+          0.53,
+          0.54
+        ],
+        "leather": [
+          0.22,
+          0.1,
+          0.045
+        ],
+        "ivory": [
+          0.94,
+          0.9,
+          0.72
+        ],
+        "ink": [
+          0.012,
+          0.018,
+          0.018
+        ],
+        "mouth": [
+          0.3,
+          0.035,
+          0.045
+        ],
+        "gum": [
+          0.72,
+          0.18,
+          0.28
+        ],
+        "glow": [
+          0.54,
+          1.0,
+          0.08
+        ],
+        "vein": [
+          0.18,
+          0.055,
+          0.24
+        ],
+        "sole": [
+          0.055,
+          0.045,
+          0.035
+        ],
+        "tooth": [
+          0.98,
+          0.96,
+          0.82
+        ],
+        "highlight": [
+          0.5720000000000001,
+          0.7,
+          0.21359999999999998
+        ]
+      },
+      "parts": [
+        "Body",
+        "Head",
+        "Arms",
+        "LegL",
+        "LegR"
+      ],
+      "origins": {
+        "Body": [
+          0,
+          0.48,
+          0
+        ],
+        "Head": [
+          0,
+          0.94,
+          0.02
+        ],
+        "Arms": [
+          0,
+          0.65,
+          0.02
+        ],
+        "LegL": [
+          -0.105,
+          0.34,
+          0
+        ],
+        "LegR": [
+          0.105,
+          0.34,
+          0
+        ]
+      },
+      "height": 1.16,
+      "up": "+Y",
+      "forward": "+Z",
+      "frontAnchor": [
+        0,
+        0.87,
+        0.305
+      ],
+      "muzzleMouth": [
+        0,
+        0.87,
+        0.305
+      ],
+      "glowCells": [
+        11
+      ],
+      "boss": true,
+      "phaseTint": null
+    },
+    {
+      "key": "hivelord",
+      "hero": "hivelord/hivelord.glb",
+      "lod": "hivelord/hivelord-lod.glb",
+      "textures": [
+        "hivelord/textures/hivelord-basecolor.png",
+        "hivelord/textures/hivelord-orm.png"
+      ],
+      "triangles": 4204,
+      "lodTriangles": 1125,
+      "budgets": {
+        "hero": 15000,
+        "lod": 4500
+      },
+      "palette": {
+        "skin": [
+          0.36,
+          0.2,
+          0.48
+        ],
+        "cloth": [
+          0.18,
+          0.08,
+          0.28
+        ],
+        "accent": [
+          0.82,
+          0.25,
+          0.91
+        ],
+        "dark": [
+          0.045,
+          0.055,
+          0.055
+        ],
+        "armor": [
+          0.28,
+          0.32,
+          0.34
+        ],
+        "metal": [
+          0.48,
+          0.53,
+          0.54
+        ],
+        "leather": [
+          0.22,
+          0.1,
+          0.045
+        ],
+        "ivory": [
+          0.94,
+          0.9,
+          0.72
+        ],
+        "ink": [
+          0.012,
+          0.018,
+          0.018
+        ],
+        "mouth": [
+          0.3,
+          0.035,
+          0.045
+        ],
+        "gum": [
+          0.72,
+          0.18,
+          0.28
+        ],
+        "glow": [
+          0.82,
+          0.25,
+          0.91
+        ],
+        "vein": [
+          0.18,
+          0.055,
+          0.24
+        ],
+        "sole": [
+          0.055,
+          0.045,
+          0.035
+        ],
+        "tooth": [
+          0.98,
+          0.96,
+          0.82
+        ],
+        "highlight": [
+          0.5207999999999999,
+          0.316,
+          0.6743999999999999
+        ]
+      },
+      "parts": [
+        "Body",
+        "Head",
+        "Arms",
+        "LegL",
+        "LegR"
+      ],
+      "origins": {
+        "Body": [
+          0,
+          0.48,
+          0
+        ],
+        "Head": [
+          0,
+          0.94,
+          0.02
+        ],
+        "Arms": [
+          0,
+          0.65,
+          0.02
+        ],
+        "LegL": [
+          -0.105,
+          0.34,
+          0
+        ],
+        "LegR": [
+          0.105,
+          0.34,
+          0
+        ]
+      },
+      "height": 1.2725,
+      "up": "+Y",
+      "forward": "+Z",
+      "frontAnchor": [
+        0,
+        0.915,
+        0.205
+      ],
+      "muzzleMouth": [
+        0,
+        0.915,
+        0.205
+      ],
+      "glowCells": [
+        11
+      ],
+      "boss": true,
+      "phaseTint": null
+    },
+    {
+      "key": "titan",
+      "hero": "titan/titan.glb",
+      "lod": "titan/titan-lod.glb",
+      "textures": [
+        "titan/textures/titan-basecolor.png",
+        "titan/textures/titan-orm.png"
+      ],
+      "triangles": 3816,
+      "lodTriangles": 1021,
+      "budgets": {
+        "hero": 15000,
+        "lod": 4500
+      },
+      "palette": {
+        "skin": [
+          0.29,
+          0.36,
+          0.25
+        ],
+        "cloth": [
+          0.3,
+          0.3,
+          0.29
+        ],
+        "accent": [
+          0.88,
+          0.43,
+          0.13
+        ],
+        "dark": [
+          0.045,
+          0.055,
+          0.055
+        ],
+        "armor": [
+          0.28,
+          0.32,
+          0.34
+        ],
+        "metal": [
+          0.48,
+          0.53,
+          0.54
+        ],
+        "leather": [
+          0.22,
+          0.1,
+          0.045
+        ],
+        "ivory": [
+          0.94,
+          0.9,
+          0.72
+        ],
+        "ink": [
+          0.012,
+          0.018,
+          0.018
+        ],
+        "mouth": [
+          0.3,
+          0.035,
+          0.045
+        ],
+        "gum": [
+          0.72,
+          0.18,
+          0.28
+        ],
+        "glow": [
+          0.88,
+          0.43,
+          0.13
+        ],
+        "vein": [
+          0.18,
+          0.055,
+          0.24
+        ],
+        "sole": [
+          0.055,
+          0.045,
+          0.035
+        ],
+        "tooth": [
+          0.98,
+          0.96,
+          0.82
+        ],
+        "highlight": [
+          0.43119999999999997,
+          0.5207999999999999,
+          0.38
+        ]
+      },
+      "parts": [
+        "Body",
+        "Head",
+        "Arms",
+        "LegL",
+        "LegR"
+      ],
+      "origins": {
+        "Body": [
+          0,
+          0.48,
+          0
+        ],
+        "Head": [
+          0,
+          0.94,
+          0.02
+        ],
+        "Arms": [
+          0,
+          0.65,
+          0.02
+        ],
+        "LegL": [
+          -0.105,
+          0.34,
+          0
+        ],
+        "LegR": [
+          0.105,
+          0.34,
+          0
+        ]
+      },
+      "height": 1.2593,
+      "up": "+Y",
+      "forward": "+Z",
+      "frontAnchor": [
+        0,
+        0.915,
+        0.205
+      ],
+      "muzzleMouth": null,
+      "glowCells": [],
+      "boss": true,
+      "phaseTint": null
+    },
+    {
+      "key": "overlord",
+      "hero": "overlord/overlord.glb",
+      "lod": "overlord/overlord-lod.glb",
+      "textures": [
+        "overlord/textures/overlord-basecolor.png",
+        "overlord/textures/overlord-orm.png"
+      ],
+      "triangles": 4276,
+      "lodTriangles": 1146,
+      "budgets": {
+        "hero": 15000,
+        "lod": 4500
+      },
+      "palette": {
+        "skin": [
+          0.22,
+          0.31,
+          0.27
+        ],
+        "cloth": [
+          0.13,
+          0.17,
+          0.2
+        ],
+        "accent": [
+          0.08,
+          0.92,
+          0.85
+        ],
+        "dark": [
+          0.045,
+          0.055,
+          0.055
+        ],
+        "armor": [
+          0.28,
+          0.32,
+          0.34
+        ],
+        "metal": [
+          0.48,
+          0.53,
+          0.54
+        ],
+        "leather": [
+          0.22,
+          0.1,
+          0.045
+        ],
+        "ivory": [
+          0.94,
+          0.9,
+          0.72
+        ],
+        "ink": [
+          0.012,
+          0.018,
+          0.018
+        ],
+        "mouth": [
+          0.3,
+          0.035,
+          0.045
+        ],
+        "gum": [
+          0.72,
+          0.18,
+          0.28
+        ],
+        "glow": [
+          0.08,
+          0.92,
+          0.85
+        ],
+        "vein": [
+          0.18,
+          0.055,
+          0.24
+        ],
+        "sole": [
+          0.055,
+          0.045,
+          0.035
+        ],
+        "tooth": [
+          0.98,
+          0.96,
+          0.82
+        ],
+        "highlight": [
+          0.3416,
+          0.4568,
+          0.4056
+        ]
+      },
+      "parts": [
+        "Body",
+        "Head",
+        "Arms",
+        "LegL",
+        "LegR"
+      ],
+      "origins": {
+        "Body": [
+          0,
+          0.48,
+          0
+        ],
+        "Head": [
+          0,
+          0.94,
+          0.02
+        ],
+        "Arms": [
+          0,
+          0.65,
+          0.02
+        ],
+        "LegL": [
+          -0.105,
+          0.34,
+          0
+        ],
+        "LegR": [
+          0.105,
+          0.34,
+          0
+        ]
+      },
+      "height": 1.2725,
+      "up": "+Y",
+      "forward": "+Z",
+      "frontAnchor": [
+        0,
+        0.915,
+        0.205
+      ],
+      "muzzleMouth": null,
+      "glowCells": [
+        11
+      ],
+      "boss": true,
+      "phaseTint": [
+        "teal",
+        "amber",
+        "magenta"
+      ]
+    }
+  ]
+}

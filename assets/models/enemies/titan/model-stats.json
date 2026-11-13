@@ -1,0 +1,52 @@
+{
+  "key": "titan",
+  "blender": "4.2.15 LTS",
+  "generator": "tools/create-enemies.py",
+  "triangles": 3816,
+  "lodTriangles": 1021,
+  "height": 1.2593,
+  "forward": "+Z",
+  "up": "+Y",
+  "parts": [
+    "Body",
+    "Head",
+    "Arms",
+    "LegL",
+    "LegR"
+  ],
+  "origins": {
+    "Body": [
+      0,
+      0.48,
+      0
+    ],
+    "Head": [
+      0,
+      0.94,
+      0.02
+    ],
+    "Arms": [
+      0,
+      0.65,
+      0.02
+    ],
+    "LegL": [
+      -0.105,
+      0.34,
+      0
+    ],
+    "LegR": [
+      0.105,
+      0.34,
+      0
+    ]
+  },
+  "frontAnchor": [
+    0,
+    0.915,
+    0.205
+  ],
+  "muzzleMouth": null,
+  "glowCells": [],
+  "originalReferenceAvailable": false
+}

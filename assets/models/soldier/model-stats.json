@@ -1,7 +1,7 @@
 {
   "blender": "4.2.15 LTS",
-  "triangles": 12454,
-  "lodTriangles": 3730,
+  "triangles": 13042,
+  "lodTriangles": 3908,
   "height": 1.42,
   "forward": "-Z",
   "up": "+Y",
@@ -13,7 +13,7 @@
     "LegR"
   ],
   "muzzle": [
-    0.16,
+    0.23,
     0.64,
     -0.78
   ],

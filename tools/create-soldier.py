@@ -128,6 +128,11 @@ for x in [-.10,.10]:
 tube('Pack seam',[(-.17,.77,.34),(-.17,.43,.34),(.17,.43,.34),(.17,.77,.34)],.007,'Body','flap')
 ell('Bedroll',(0,.87,.23),(.24,.065,.073),'Body','flap',20,8)
 for x in [-.14,.14]:box('Roll ties',(x,.87,.23),(.025,.137,.15),'Body','strap',.012)
+box('Pack woven panel',(0,.72,.345),(.105,.070,.018),'Body','trousers',.012)
+box('Pack stitched badge',(0,.72,.357),(.070,.018,.008),'Body','ivory',.004)
+for side in [-1,1]:
+    box('Tailored shoulder tab',(side*.28,.727,.018),(.12,.036,.14),'Body','lightblue',.014)
+    box('Shoulder rank',(side*.28,.747,.018),(.065,.008,.065),'Body','ivory',.005)
 
 # Pear-shaped cheeks / jaw and intentionally open face under a raised front brim.
 surface('Sculpted face',[(.76,.07,.08,-.015),(.80,.15,.13,-.025),(.88,.22,.187,-.015),(.99,.235,.205,0),(1.11,.224,.18,.015),(1.18,.16,.135,.02),(1.21,.04,.035,.02)],'Head','skin',32)
@@ -162,16 +167,17 @@ ob=bpy.data.objects.new('Raised white star',me);bpy.context.collection.objects.l
 for x in [-.245,.245]:
     box('Chin strap side',(x,.987,.026),(.025,.19,.035),'Head','strap',.009)
     ell('Helmet rivet',(x*1.10,1.123,.026),(.014,.018,.018),'Head','brass',10,6)
-box('Rear helmet label',(0,1.23,.249),(.115,.052,.013),'Head','ivory',.012)
+tube('Rear helmet chevron',[(-.065,1.23,.242),(0,1.20,.257),(.065,1.23,.242)],.010,'Head','ivory')
+tube('Rear helmet lower rank',[(-.05,1.187,.251),(0,1.165,.259),(.05,1.187,.251)],.008,'Head','ivory')
 
 # Both hands support rifle. Gun deliberately offset from torso for in-game readability.
 for x in [-.27,.27]:
     ell('Jacket sleeve',(x,.647,-.015),(.092,.12,.10),'Arms','cloth',16,10)
 tube('Left supporting sleeve',[(-.27,.62,-.05),(-.23,.53,-.18),(-.08,.50,-.34),(.10,.53,-.44)],.064,'Arms','cloth')
 ell('Right forearm',(.24,.55,-.13),(.07,.072,.13),'Arms','cloth')
-ell('Support glove',(.12,.55,-.46),(.072,.060,.070),'Arms','ivory')
+ell('Support glove',(.18,.55,-.46),(.072,.060,.070),'Arms','ivory')
 ell('Trigger glove',(.19,.552,-.21),(.067,.064,.065),'Arms','ivory')
-gx=.16
+gx=.23
 box('Rifle receiver',(gx,.622,-.31),(.15,.125,.31),'Arms','gun',.02)
 box('Stock',(gx,.61,-.065),(.12,.14,.22),'Arms','strap',.025)
 box('Stock butt',(gx,.61,.05),(.14,.16,.035),'Arms','rubber',.012)
