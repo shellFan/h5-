@@ -5,7 +5,9 @@ var V42BossController = {
         var phase=final?(fraction<=.33?3:fraction<=.66?2:1):(fraction<=.5?2:1);
         if(e.phaseIndex!==phase) {
             e.phaseIndex=phase;
-            effects.floatText(e.x,2.6,e.z,final?'核心阶段 '+phase:'强化阶段',phase===3?'#ff666c':'#cb95ff',true);
+            e.abilityTimer=.1;e.pendingAttack=null;e.chargeT=0;
+            if(final&&phase>1)e.shieldT=0;
+            effects.floatText(e.x,2.6,e.z,final?'核心阶段 '+phase:(phase===1?'领主出现':'强化阶段'),phase===3?'#ff666c':'#cb95ff',true);
             effects.shockwave(e.x,.04,e.z,phase===3?0xff5a65:0x9b78ff);
         }
         e.shieldT=Math.max(0,(e.shieldT||0)-dt);

@@ -55,6 +55,7 @@ async function startClean(page, count = 31) {
         game.state = 'playing';
         game.paused = true;
         for (let frame = 0; frame < 120; frame++) game.squad.update(1 / 60, frame / 60, 0);
+        game.squad.renderer.update(0,3,game.squad,true,.1,0);
         game.world.updateCamera(0, 0, 1, value);
         if (game._updateUI) game._updateUI();
         game.world.render();

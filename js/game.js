@@ -35,7 +35,7 @@ class Game {
             }
             return self.enemies.spawnEnemy(type, x, z, hp);
         };
-        this.pacing.aliveCountFn = function() { return self.enemies.aliveCount; };
+        this.pacing.aliveCountFn = function() { return self.enemies.encounterOutstanding; };
         this.pacing.onWaveStart = function(w) {
             self._waveNoticeT=CONFIG.PACING.firstContactGrace;
             var el=document.getElementById('v42-wave-banner');
@@ -743,7 +743,7 @@ class Game {
 
         // 场景跟随
         this.world.updateRoadScroll(this.squad.z);
-        this.world.updateCamera(this.squad.x, this.squad.z, dt, this.squad.count);
+        this.world.updateCamera(this.squad.x, this.squad.z, dt, this.squad.count,this.squad.getDepth());
 
         // UI刷新
         this._updateUI();
@@ -778,6 +778,7 @@ class Game {
     }
 
     _updateUI() {
+        document.getElementById('game-container').classList.toggle('boss-active',!!this.enemies.boss && this.state==='playing');
         var level = LEVELS[this.levelIndex];
         var progress = clamp(-this.squad.z / -level.totalZ, 0, 1);
         if (this.ui.progressFill) this.ui.progressFill.style.width = (progress * 100) + '%';
@@ -789,7 +790,7 @@ class Game {
         // 人数气泡: 跟随小队头顶(V3.6: 3D投影定位,随队伍移动不遮挡弹道)
         if (this.ui.countBadge && this.state === 'playing') {
             var cam = this.world.camera;
-            this._badgeV.set(this.squad.x, 2.0, this.squad.z - 0.3).project(cam);
+            this._badgeV.set(this.squad.x, 1.42 * (this.squad._formationScale || 1) + .2, this.squad.z - .1).project(cam);
             if (this._badgeV.z < 1) {
                 var cw = this.world.canvas.clientWidth || window.innerWidth;
                 var ch = this.world.canvas.clientHeight || window.innerHeight;
@@ -800,7 +801,7 @@ class Game {
                 sy = clamp(sy, 150, ch - 40);
                 if (sy < 200 && sx < 145) sx = 145; // 避让左上属性面板
                 this.ui.countBadge.style.left = sx + 'px';
-                this.ui.countBadge.style.top = (sy - 40) + 'px';
+                this.ui.countBadge.style.top = (sy - 18) + 'px';
                 this.ui.countBadge.style.display = 'flex';
             } else {
                 this.ui.countBadge.style.display = 'none';

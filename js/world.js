@@ -477,19 +477,22 @@ class World {
     /** 相机跟随小队 */
     // V4.0: 动态构图 — 相机随军团规模升高后移(sqrt曲线), 军团壮观但不拥挤
     // 12人: 6.1/7.8(清晰) | 100人: +1.2 | 300人: +2.0 | 500人: +2.6(全景)
-    updateCamera(squadX, squadZ, dt, squadCount) {
+    updateCamera(squadX, squadZ, dt, squadCount, formationDepth) {
         const cam = this.camera;
+        var n=squadCount||1,cols=n<=1?1:n<=12?Math.ceil(Math.sqrt(n)):n<=100?6:n<=300?11:13;
+        var spacing=n<=12?.72:n<=100?.74:n<=300?.50:.46;
+        var depth=formationDepth===undefined ? Math.max(0,Math.ceil(n/cols)-1)*spacing : formationDepth;
         var cf = clamp(Math.sqrt(clamp((squadCount || 1) / 500, 0, 1)) * 1.2, 0, 1);
         if (this._camScale === undefined) this._camScale = cf;
         this._camScale = damp(this._camScale, cf, 3, dt);   // 人数变化时平滑过渡
         // V4.3: 俯角下调(~36°, 背面人群更立体; 基线降低+距离拉开)
         var offY = 5.6 + this._camScale * 3.1;
-        var offZ = 8.4 + this._camScale * 2.0;
-        var lookAhead = CONFIG.CAMERA_LOOK_AHEAD - this._camScale * 2.0;
+        var offZ = 8.4 + this._camScale * 2.0 + depth;
+        var lookAhead = CONFIG.CAMERA_LOOK_AHEAD - this._camScale * 2.0 + depth;
 
         const targetX = squadX * CONFIG.CAMERA_FOLLOW_X;
         const targetPos = new THREE.Vector3(
-            targetX,
+            targetX + 0.6 * (1 - this._camScale * .65),
             squadZ * 0 + offY,
             squadZ + offZ
         );

@@ -46,7 +46,7 @@ class Squad {
                     z: randRange(-0.15, 0.15),
                     spawnT: 0,
                     phase: Math.random() * Math.PI * 2,
-                    rotY: randRange(-0.18, 0.18),
+                    rotY: randRange(-0.09, 0.09),
                     jx: randRange(-0.07, 0.07),
                     jz: randRange(-0.05, 0.05)
                 });
@@ -65,9 +65,9 @@ class Squad {
         let preferredCols, sx, sz, scale;
         if (n <= 1)        { preferredCols = 1;  sx = 0.72; sz = 0.72; scale = 1; }
         else if (n <= 12)  { preferredCols = Math.ceil(Math.sqrt(n)); sx = 0.70; sz = 0.72; scale = 1; }
-        else if (n <= 100) { preferredCols = 7;  sx = 0.63; sz = 0.66; scale = 0.86; }
+        else if (n <= 100) { preferredCols = 6;  sx = 0.70; sz = 0.74; scale = 0.86; }
         else if (n <= 300) { preferredCols = 11; sx = 0.37; sz = 0.50; scale = 0.55; }
-        else               { preferredCols = 13; sx = 0.33; sz = 0.46; scale = 0.50; }
+        else               { preferredCols = 13; sx = 0.328; sz = 0.46; scale = 0.50; }
 
         const rows = n > 0 ? Math.ceil(n / preferredCols) : 0;
         const shortRow = rows ? Math.floor(n / rows) : 0;
@@ -86,6 +86,7 @@ class Squad {
         this._formationScale = scale;
         let soldierIndex = 0;
         let maxAbsX = 0;
+        let maxZ = 0;
         for (let row = 0; row < rowLengths.length; row++) {
             const rowCount = rowLengths[row];
             for (let col = 0; col < rowCount; col++) {
@@ -93,18 +94,22 @@ class Squad {
                 const staggerAmount = sx * (n <= 100 ? 0.10 : 0.16);
                 const stagger = row % 2 ? staggerAmount : -staggerAmount;
                 s.fx = (col - (rowCount - 1) / 2) * sx + (n > 1 ? stagger : 0) + s.jx * 0.45;
-                s.fz = -row * sz + s.jz * 0.5 + Math.abs(col - (rowCount - 1) / 2) * 0.055;
+                s.fz = row * sz + s.jz * 0.5 + Math.abs(col - (rowCount - 1) / 2) * 0.055;
+                maxZ=Math.max(maxZ,s.fz);
                 maxAbsX = Math.max(maxAbsX, Math.abs(s.fx));
             }
         }
         // Model shoulder envelope is ~0.72 wide at scale 1.
-        this._halfWidth = maxAbsX + 0.36 * scale;
+        this._halfWidth = maxAbsX + 0.48 * scale;
+        this._formationDepth=maxZ;
     }
 
     /** 队伍半宽(含单兵半径+交错余量) — 移动边界钳制与门触发窗口共用 */
     getHalfWidth() {
         return this._halfWidth || 0.36;
     }
+
+    getDepth() { return this._formationDepth || 0; }
 
     /** 僵尸击杀士兵 (V3.3: 复活无敌期间免疫) */
     killSoldiers(n, effects) {

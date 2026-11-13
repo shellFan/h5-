@@ -1,0 +1,67 @@
+{
+  "round": 3,
+  "date": "2026-11-13",
+  "reviewer": "Codex root; actual screenshot read using view_image",
+  "image": "docs/screenshots/v42/round-03-combat-390x844.png",
+  "sha256": "0a15b1441afea5dcc9a84707045339487a3ceec27a6445957ae73c367225216d",
+  "method": "Vision-based qualitative assessment of actual image content; never inferred from code tests or pixel statistics",
+  "dimensions": [
+    {
+      "key": "soldiers",
+      "max": 20,
+      "score": 17,
+      "evidence": "步枪进一步外置，白手套和黑色枪管在右侧轮廓更醒目，但左翼有裁切。"
+    },
+    {
+      "key": "enemies",
+      "max": 20,
+      "score": 17,
+      "evidence": "Boss完整头盔和盾牌不再被HUD截挡，小怪的红帽、金属盾、紫色突变与绿色身体独立可辨。"
+    },
+    {
+      "key": "gatesRoad",
+      "max": 15,
+      "score": 12,
+      "evidence": "门与怪物分开深度，+12和×2完整；中心双行输出+1仍偏小，城市侧面窗带可见。"
+    },
+    {
+      "key": "ui",
+      "max": 15,
+      "score": 14,
+      "evidence": "Boss条移到进度条下方，属性条下移，保持完整顶部层级且不遮头。"
+    },
+    {
+      "key": "composition",
+      "max": 15,
+      "score": 11,
+      "evidence": "侧向跟随偏移过大，最近左翼士兵被屏幕边缘裁切，构图退步。"
+    },
+    {
+      "key": "effects",
+      "max": 10,
+      "score": 8,
+      "evidence": "更细长的金色弹道、实际枪口四角火光与命中数字能辨认，射击方向更明确。"
+    },
+    {
+      "key": "consistency",
+      "max": 5,
+      "score": 4,
+      "evidence": "统一sRGB显示转换后，城市和门的柔和PBR与角色更一致，整体仍有低多边形简化。"
+    }
+  ],
+  "total": 83,
+  "passed": false,
+  "issues": [
+    "nearest left soldier cropped by excessive follow-camera side offset"
+  ],
+  "nextChanges": [
+    "limit side offset according to army scale while retaining exposed rifles and trace shape"
+  ],
+  "changedFiles": [
+    "tools/create-soldier.py",
+    "js/squad.js",
+    "js/world.js",
+    "js/combat.js",
+    "tools/v42-main-capture.js"
+  ]
+}

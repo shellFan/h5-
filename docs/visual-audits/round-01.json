@@ -1,0 +1,66 @@
+{
+  "round": 1,
+  "date": "2026-11-13",
+  "reviewer": "Codex root; actual screenshot read using view_image",
+  "image": "docs/screenshots/v42/round-01-combat-390x844.png",
+  "sha256": "dc4ccca429e33c1e526626a3d012db7667f1d9d086d84ca365a7c7cf3067577b",
+  "method": "Vision-based qualitative assessment of actual image content; never inferred from code tests or pixel statistics",
+  "dimensions": [
+    {
+      "key": "soldiers",
+      "max": 20,
+      "score": 15,
+      "evidence": "最近排可辨背包、靴子与白色后盔军衔，但枪械被头盔/肩膀遮挡，多排蓝盔较密。"
+    },
+    {
+      "key": "enemies",
+      "max": 20,
+      "score": 15,
+      "evidence": "绿皮、红帽、金属盾和紫色变异体可区分；Boss头盔被血条压住，小怪身体被门框遮挡。"
+    },
+    {
+      "key": "gatesRoad",
+      "max": 15,
+      "score": 11,
+      "evidence": "蓝紫金门框和数值清楚，玻璃有层次；道路层次偏简单，门与敌人重叠。"
+    },
+    {
+      "key": "ui",
+      "max": 15,
+      "score": 12,
+      "evidence": "顶部关卡、三属性和暂停清楚；Boss血条占用137–190px并压住Boss头部。"
+    },
+    {
+      "key": "composition",
+      "max": 15,
+      "score": 10,
+      "evidence": "军团在下半部方向明确，但NPC、门与Boss在中部堆叠，Boss裁挡。"
+    },
+    {
+      "key": "effects",
+      "max": 10,
+      "score": 6,
+      "evidence": "真实金色弹道可见；捕获首个命中时只有8条弹道/3粒火花，火力与冲击感偏弱。"
+    },
+    {
+      "key": "consistency",
+      "max": 5,
+      "score": 4,
+      "evidence": "角色、门与HUD蓝金紫色系统一致，环境相对简单。"
+    }
+  ],
+  "total": 73,
+  "passed": false,
+  "issues": [
+    "Boss HUD obscures helmet",
+    "gate row obscures enemy bodies",
+    "guns lack rear-view silhouette",
+    "first-hit snapshot lacks sustained fire"
+  ],
+  "nextChanges": [
+    "compact/reorder active Boss HUD",
+    "separate gates/enemies/boss depth in production combat fixture",
+    "move rifle outward with matching grips and spread hero formation",
+    "capture sustained actual impact, not first impact"
+  ]
+}

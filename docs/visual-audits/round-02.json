@@ -1,0 +1,73 @@
+{
+  "round": 2,
+  "date": "2026-11-13",
+  "reviewer": "Codex root; actual screenshot read using view_image",
+  "image": "docs/screenshots/v42/round-02-combat-390x844.png",
+  "sha256": "819dfae10615bf6ee7617d83059ed6e955d36d0535fbddcbebec2f85c7972c41",
+  "method": "Vision-based qualitative assessment of actual image content; never inferred from code tests or pixel statistics",
+  "dimensions": [
+    {
+      "key": "soldiers",
+      "max": 20,
+      "score": 16,
+      "evidence": "六列错排和新白色军衔/肩章更清楚，最近排背包与靴子完整；部分步枪仍缩在肩部轮廓内。"
+    },
+    {
+      "key": "enemies",
+      "max": 20,
+      "score": 17,
+      "evidence": "Boss完整头盔和盾牌不再被HUD截挡，小怪的红帽、金属盾、紫色突变与绿色身体独立可辨。"
+    },
+    {
+      "key": "gatesRoad",
+      "max": 15,
+      "score": 12,
+      "evidence": "门与怪物分开深度，+12和×2完整；中心双行输出+1仍偏小，城市侧面窗带可见。"
+    },
+    {
+      "key": "ui",
+      "max": 15,
+      "score": 14,
+      "evidence": "Boss条移到进度条下方，属性条下移，保持完整顶部层级且不遮头。"
+    },
+    {
+      "key": "composition",
+      "max": 15,
+      "score": 13,
+      "evidence": "Boss、门、近战怪与军团分层，主方向清楚，无角色/门框裁切。"
+    },
+    {
+      "key": "effects",
+      "max": 10,
+      "score": 7,
+      "evidence": "持续交火时可见真实命中数字与金色火花，但弹道仍显圆胖，枪口与枪身不够醒目。"
+    },
+    {
+      "key": "consistency",
+      "max": 5,
+      "score": 4,
+      "evidence": "统一sRGB显示转换后，城市和门的柔和PBR与角色更一致，整体仍有低多边形简化。"
+    }
+  ],
+  "total": 83,
+  "passed": false,
+  "issues": [
+    "rear-view rifle silhouette remains weak",
+    "projectile streaks too round and muzzle flashes not prominent",
+    "small Chinese buff label"
+  ],
+  "nextChanges": [
+    "expose rifles outside shoulder silhouette with matching grips",
+    "slight side follow angle and controlled spacing",
+    "slimmer longer golden production tracers and choose real muzzle/impact moment"
+  ],
+  "changedFiles": [
+    "style-v42.css",
+    "js/game.js",
+    "js/art-v42.js",
+    "js/world.js",
+    "js/squad.js",
+    "tools/create-soldier.py",
+    "tools/v42-main-capture.js"
+  ]
+}

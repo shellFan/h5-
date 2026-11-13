@@ -63,19 +63,18 @@
         return merged;
     }
 
-    // r149 already injects colorspace_fragment. This hook only adds the legacy
-    // linear-output conversion when a host explicitly opts into it.
+    // This project pins r149, whose display chunk is encodings_fragment.
+    // Match the GLB display transform while preserving legacy scenery shading.
     function preparePbr(material) {
-        material.onBeforeCompile = function (shader) {
-            if (!global.V42_FORCE_SRGB_OUTPUT) return;
+        material.onBeforeCompile = function (shader, renderer) {
+            if (renderer.outputEncoding !== THREE.LinearEncoding) return;
             shader.fragmentShader = shader.fragmentShader.replace(
-                '#include <colorspace_fragment>',
-                '#include <colorspace_fragment>\n' +
-                'gl_FragColor.rgb = pow(max(gl_FragColor.rgb, vec3(0.0)), vec3(0.454545));'
+                '#include <encodings_fragment>',
+                'gl_FragColor = LinearTosRGB( gl_FragColor );'
             );
         };
         material.customProgramCacheKey = function () {
-            return 'v42-pbr-' + (global.V42_FORCE_SRGB_OUTPUT ? 'srgb' : 'managed');
+            return 'v42-pbr-r149-display';
         };
         material.userData.v42ColorManaged = true;
         return material;
@@ -136,6 +135,8 @@
             var words = label.trim().split(/\s+/);
             lines = [words.shift(), words.join(' ')];
         }
+        var buffMatch=label.match(/^([\u4e00-\u9fff]+)([+×]\d+%?)$/);
+        if(buffMatch)lines=[buffMatch[1],buffMatch[2]];
         var measuredWidth = 0;
         for (var li = 0; li < lines.length; li++) {
             measuredWidth = Math.max(measuredWidth, measure.measureText(lines[li]).width);
@@ -178,7 +179,8 @@
             ctx.fillText('◆  ' + style.title + '  ◆', canvas.width * 0.5, 62);
         }
 
-        var fontSize = lines.length > 1 ? 96 : 164;
+        ctx.letterSpacing='0px';
+        var fontSize = lines.length > 1 ? 128 : 164;
         var maxWidth = canvas.width - 112;
         do {
             ctx.font = '900 ' + fontSize + 'px "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
@@ -189,9 +191,9 @@
         } while (fontSize > 54);
         ctx.lineJoin = 'round';
         ctx.strokeStyle = frameCss;
-        ctx.lineWidth = Math.max(12, fontSize * 0.12);
+        ctx.lineWidth = Math.max(6, fontSize * 0.065);
         ctx.shadowColor = glowCss;
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 10;
         ctx.fillStyle = '#FFFFFF';
         if (lines.length > 1) {
             ctx.strokeText(lines[0], canvas.width * 0.5, 78);

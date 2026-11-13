@@ -1,0 +1,277 @@
+{
+  "seed": 420,
+  "dt": 0.03333333333333333,
+  "actualEngine": true,
+  "forcedWins": false,
+  "passed": false,
+  "results": [
+    {
+      "level": 7,
+      "name": "第 7 关 尸海",
+      "style": "hivelord",
+      "state": "won",
+      "won": true,
+      "duration": 259.03,
+      "count": 426,
+      "maxCount": 500,
+      "kills": 825,
+      "maxAlive": 5,
+      "bulletsPeak": 50,
+      "trace": [
+        {
+          "tick": 0,
+          "seconds": 0,
+          "z": -10,
+          "lane": 0,
+          "op": "add",
+          "value": 20,
+          "count": 1
+        },
+        {
+          "tick": 384,
+          "seconds": 12.8,
+          "z": -64,
+          "lane": 0,
+          "op": "mul",
+          "value": 3,
+          "count": 21
+        },
+        {
+          "tick": 1085,
+          "seconds": 36.167,
+          "z": -121,
+          "lane": 2,
+          "op": "mul",
+          "value": 2,
+          "count": 63
+        },
+        {
+          "tick": 1690,
+          "seconds": 56.333,
+          "z": -178,
+          "lane": 1,
+          "op": "buff",
+          "value": "vamp",
+          "count": 126
+        },
+        {
+          "tick": 2115,
+          "seconds": 70.5,
+          "z": -229,
+          "lane": 1,
+          "op": "buff",
+          "value": "damage",
+          "count": 131
+        },
+        {
+          "tick": 2656,
+          "seconds": 88.533,
+          "z": -283,
+          "lane": 0,
+          "op": "mul",
+          "value": 3,
+          "count": 135
+        },
+        {
+          "tick": 3260,
+          "seconds": 108.667,
+          "z": -340,
+          "lane": 0,
+          "op": "buff",
+          "value": "pierce",
+          "count": 425
+        },
+        {
+          "tick": 3897,
+          "seconds": 129.9,
+          "z": -397,
+          "lane": 1,
+          "op": "buff",
+          "value": "freeze",
+          "count": 433
+        },
+        {
+          "tick": 4322,
+          "seconds": 144.067,
+          "z": -448,
+          "lane": 1,
+          "op": "buff",
+          "value": "vamp",
+          "count": 437
+        },
+        {
+          "tick": 4942,
+          "seconds": 164.733,
+          "z": -502,
+          "lane": 1,
+          "op": "buff",
+          "value": "damage",
+          "count": 444
+        },
+        {
+          "tick": 5755,
+          "seconds": 191.833,
+          "z": -559,
+          "lane": 0,
+          "op": "buff",
+          "value": "pierce",
+          "count": 477
+        },
+        {
+          "tick": 6509,
+          "seconds": 216.967,
+          "z": -616,
+          "lane": 1,
+          "op": "buff",
+          "value": "pierce",
+          "count": 500
+        }
+      ],
+      "waves": [
+        {
+          "type": "wave",
+          "z": -46,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 24,
+          "startedAt": 8.899999999999979,
+          "spawnFinishedAt": 17.96666666666672,
+          "clearedAt": 18.266666666666733
+        },
+        {
+          "type": "wave",
+          "z": -94,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 36,
+          "startedAt": 26.86666666666716,
+          "spawnFinishedAt": 34.500000000000604,
+          "clearedAt": 34.766666666667255
+        },
+        {
+          "type": "wave",
+          "z": -151,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 46,
+          "startedAt": 45.866666666666625,
+          "spawnFinishedAt": 54.49999999999947,
+          "clearedAt": 54.933333333332776
+        },
+        {
+          "type": "wave",
+          "z": -208,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 46,
+          "startedAt": 65.7666666666655,
+          "spawnFinishedAt": 73.73333333333171,
+          "clearedAt": 73.79999999999838
+        },
+        {
+          "type": "wave",
+          "z": -265,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 41,
+          "startedAt": 84.6333333333311,
+          "spawnFinishedAt": 90.73333333333075,
+          "clearedAt": 90.93333333333074
+        },
+        {
+          "type": "wave",
+          "z": -313,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 61,
+          "startedAt": 99.53333333333025,
+          "spawnFinishedAt": 107.03333333332982,
+          "clearedAt": 107.26666666666314
+        },
+        {
+          "type": "wave",
+          "z": -370,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 78,
+          "startedAt": 118.09999999999586,
+          "spawnFinishedAt": 128.26666666666196,
+          "clearedAt": 128.49999999999528
+        },
+        {
+          "type": "wave",
+          "z": -427,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 78,
+          "startedAt": 139.333333333328,
+          "spawnFinishedAt": 149.6333333333274,
+          "clearedAt": 149.99999999999406
+        },
+        {
+          "type": "wave",
+          "z": -484,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 63,
+          "startedAt": 160.83333333332678,
+          "spawnFinishedAt": 169.6666666666596,
+          "clearedAt": 169.73333333332627
+        },
+        {
+          "type": "wave",
+          "z": -532,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 93,
+          "startedAt": 178.06666666665913,
+          "spawnFinishedAt": 190.39999999999176,
+          "clearedAt": 190.4333333333251
+        },
+        {
+          "type": "wave",
+          "z": -589,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 120,
+          "startedAt": 201.2666666666578,
+          "spawnFinishedAt": 215.366666666657,
+          "clearedAt": 215.566666666657
+        },
+        {
+          "type": "wave",
+          "z": -646,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 120,
+          "startedAt": 226.39999999998972,
+          "spawnFinishedAt": 240.6999999999889,
+          "clearedAt": 240.9999999999889
+        },
+        {
+          "type": "boss",
+          "z": -681,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 0,
+          "startedAt": 244.0999999999887
+        }
+      ],
+      "error": "",
+      "timingPass": false
+    }
+  ]
+}

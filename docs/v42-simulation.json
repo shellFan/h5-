@@ -11,11 +11,11 @@
       "style": "bruiser",
       "state": "won",
       "won": true,
-      "duration": 207.77,
-      "count": 422,
+      "duration": 182.93,
+      "count": 492,
       "maxCount": 500,
-      "kills": 133,
-      "maxAlive": 2,
+      "kills": 282,
+      "maxAlive": 4,
       "bulletsPeak": 50,
       "trace": [
         {
@@ -28,8 +28,8 @@
           "count": 1
         },
         {
-          "tick": 109,
-          "seconds": 3.633,
+          "tick": 119,
+          "seconds": 3.967,
           "z": -31,
           "lane": 0,
           "op": "add",
@@ -37,8 +37,8 @@
           "count": 6
         },
         {
-          "tick": 459,
-          "seconds": 15.3,
+          "tick": 501,
+          "seconds": 16.7,
           "z": -73,
           "lane": 2,
           "op": "buff",
@@ -46,8 +46,8 @@
           "count": 16
         },
         {
-          "tick": 857,
-          "seconds": 28.567,
+          "tick": 882,
+          "seconds": 29.4,
           "z": -115,
           "lane": 0,
           "op": "mul",
@@ -55,8 +55,8 @@
           "count": 16
         },
         {
-          "tick": 1238,
-          "seconds": 41.267,
+          "tick": 1271,
+          "seconds": 42.367,
           "z": -157,
           "lane": 2,
           "op": "mul",
@@ -64,8 +64,8 @@
           "count": 32
         },
         {
-          "tick": 1618,
-          "seconds": 53.933,
+          "tick": 1660,
+          "seconds": 55.333,
           "z": -199,
           "lane": 2,
           "op": "mul",
@@ -73,8 +73,8 @@
           "count": 64
         },
         {
-          "tick": 1830,
-          "seconds": 61,
+          "tick": 1858,
+          "seconds": 61.933,
           "z": -220,
           "lane": 2,
           "op": "mul",
@@ -82,8 +82,8 @@
           "count": 128
         },
         {
-          "tick": 2187,
-          "seconds": 72.9,
+          "tick": 2247,
+          "seconds": 74.9,
           "z": -262,
           "lane": 2,
           "op": "buff",
@@ -91,8 +91,8 @@
           "count": 256
         },
         {
-          "tick": 2627,
-          "seconds": 87.567,
+          "tick": 2629,
+          "seconds": 87.633,
           "z": -304,
           "lane": 0,
           "op": "mul",
@@ -100,8 +100,8 @@
           "count": 256
         },
         {
-          "tick": 3061,
-          "seconds": 102.033,
+          "tick": 3018,
+          "seconds": 100.6,
           "z": -346,
           "lane": 1,
           "op": "buff",
@@ -109,8 +109,8 @@
           "count": 500
         },
         {
-          "tick": 3523,
-          "seconds": 117.433,
+          "tick": 3400,
+          "seconds": 113.333,
           "z": -388,
           "lane": 1,
           "op": "buff",
@@ -118,8 +118,8 @@
           "count": 500
         },
         {
-          "tick": 3775,
-          "seconds": 125.833,
+          "tick": 3591,
+          "seconds": 119.7,
           "z": -409,
           "lane": 1,
           "op": "buff",
@@ -127,8 +127,8 @@
           "count": 500
         },
         {
-          "tick": 4125,
-          "seconds": 137.5,
+          "tick": 3973,
+          "seconds": 132.433,
           "z": -451,
           "lane": 1,
           "op": "buff",
@@ -136,8 +136,8 @@
           "count": 500
         },
         {
-          "tick": 4622,
-          "seconds": 154.067,
+          "tick": 4354,
+          "seconds": 145.133,
           "z": -493,
           "lane": 2,
           "op": "buff",
@@ -145,8 +145,8 @@
           "count": 500
         },
         {
-          "tick": 5082,
-          "seconds": 169.4,
+          "tick": 4736,
+          "seconds": 157.867,
           "z": -535,
           "lane": 1,
           "op": "buff",
@@ -160,91 +160,141 @@
           "z": -52,
           "state": "done",
           "queued": 0,
-          "spawned": 8
+          "pending": 0,
+          "spawned": 8,
+          "startedAt": 11.533333333333303,
+          "spawnFinishedAt": 16.733333333333324,
+          "clearedAt": 17.5666666666667
         },
         {
           "type": "wave",
           "z": -94,
           "state": "done",
           "queued": 0,
-          "spawned": 8
+          "pending": 0,
+          "spawned": 14,
+          "startedAt": 24.26666666666703,
+          "spawnFinishedAt": 31.766666666667405,
+          "clearedAt": 31.833333333334075
         },
         {
           "type": "wave",
           "z": -136,
           "state": "done",
           "queued": 0,
-          "spawned": 8
+          "pending": 0,
+          "spawned": 13,
+          "startedAt": 37.23333333333378,
+          "spawnFinishedAt": 45.06666666666667,
+          "clearedAt": 45.1
         },
         {
           "type": "wave",
           "z": -178,
           "state": "done",
           "queued": 0,
-          "spawned": 8
+          "pending": 0,
+          "spawned": 18,
+          "startedAt": 50.19999999999971,
+          "spawnFinishedAt": 57.4999999999993,
+          "clearedAt": 57.53333333333263
         },
         {
           "type": "wave",
           "z": -241,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 14,
+          "startedAt": 69.76666666666527,
+          "spawnFinishedAt": 77.36666666666484,
+          "clearedAt": 77.4333333333315
         },
         {
           "type": "wave",
           "z": -283,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 24,
+          "startedAt": 82.49999999999788,
+          "spawnFinishedAt": 92.76666666666397,
+          "clearedAt": 93.49999999999726
         },
         {
           "type": "wave",
           "z": -325,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 22,
+          "startedAt": 97.43333333333037,
+          "spawnFinishedAt": 103.59999999999668,
+          "clearedAt": 103.76666666666334
         },
         {
           "type": "wave",
           "z": -367,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 30,
+          "startedAt": 108.16666666666309,
+          "spawnFinishedAt": 116.53333333332928,
+          "clearedAt": 116.73333333332927
         },
         {
           "type": "wave",
           "z": -430,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 21,
+          "startedAt": 127.266666666662,
+          "spawnFinishedAt": 134.9999999999949,
+          "clearedAt": 135.03333333332824
         },
         {
           "type": "wave",
           "z": -472,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 36,
+          "startedAt": 139.99999999999463,
+          "spawnFinishedAt": 146.29999999999427,
+          "clearedAt": 146.83333333332757
         },
         {
           "type": "wave",
           "z": -514,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 34,
+          "startedAt": 152.73333333332724,
+          "spawnFinishedAt": 160.66666666666012,
+          "clearedAt": 160.89999999999344
         },
         {
           "type": "wave",
           "z": -556,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 47,
+          "startedAt": 165.46666666665985,
+          "spawnFinishedAt": 174.06666666665936,
+          "clearedAt": 174.333333333326
         },
         {
           "type": "boss",
           "z": -591,
           "state": "done",
           "queued": 0,
-          "spawned": 0
+          "pending": 0,
+          "spawned": 0,
+          "startedAt": 177.63333333332582
         }
       ],
       "error": "",
@@ -256,11 +306,11 @@
       "style": "bruiser",
       "state": "won",
       "won": true,
-      "duration": 205.93,
-      "count": 199,
+      "duration": 187.67,
+      "count": 232,
       "maxCount": 240,
-      "kills": 133,
-      "maxAlive": 2,
+      "kills": 441,
+      "maxAlive": 6,
       "bulletsPeak": 50,
       "trace": [
         {
@@ -273,8 +323,8 @@
           "count": 1
         },
         {
-          "tick": 385,
-          "seconds": 12.833,
+          "tick": 391,
+          "seconds": 13.033,
           "z": -61,
           "lane": 0,
           "op": "mul",
@@ -282,8 +332,8 @@
           "count": 9
         },
         {
-          "tick": 817,
-          "seconds": 27.233,
+          "tick": 862,
+          "seconds": 28.733,
           "z": -112,
           "lane": 2,
           "op": "add",
@@ -291,8 +341,8 @@
           "count": 18
         },
         {
-          "tick": 1251,
-          "seconds": 41.7,
+          "tick": 1299,
+          "seconds": 43.3,
           "z": -160,
           "lane": 0,
           "op": "mul",
@@ -300,8 +350,8 @@
           "count": 30
         },
         {
-          "tick": 1633,
-          "seconds": 54.433,
+          "tick": 1715,
+          "seconds": 57.167,
           "z": -205,
           "lane": 1,
           "op": "buff",
@@ -309,8 +359,8 @@
           "count": 60
         },
         {
-          "tick": 2181,
-          "seconds": 72.7,
+          "tick": 2178,
+          "seconds": 72.6,
           "z": -256,
           "lane": 0,
           "op": "mul",
@@ -318,8 +368,8 @@
           "count": 60
         },
         {
-          "tick": 2704,
-          "seconds": 90.133,
+          "tick": 2649,
+          "seconds": 88.3,
           "z": -307,
           "lane": 1,
           "op": "buff",
@@ -327,8 +377,8 @@
           "count": 120
         },
         {
-          "tick": 3192,
-          "seconds": 106.4,
+          "tick": 3086,
+          "seconds": 102.867,
           "z": -355,
           "lane": 0,
           "op": "mul",
@@ -336,8 +386,8 @@
           "count": 120
         },
         {
-          "tick": 3574,
-          "seconds": 119.133,
+          "tick": 3502,
+          "seconds": 116.733,
           "z": -400,
           "lane": 2,
           "op": "buff",
@@ -345,8 +395,8 @@
           "count": 240
         },
         {
-          "tick": 4233,
-          "seconds": 141.1,
+          "tick": 3965,
+          "seconds": 132.167,
           "z": -451,
           "lane": 1,
           "op": "buff",
@@ -354,8 +404,8 @@
           "count": 240
         },
         {
-          "tick": 4763,
-          "seconds": 158.767,
+          "tick": 4429,
+          "seconds": 147.633,
           "z": -502,
           "lane": 0,
           "op": "buff",
@@ -363,8 +413,8 @@
           "count": 240
         },
         {
-          "tick": 5305,
-          "seconds": 176.833,
+          "tick": 4865,
+          "seconds": 162.167,
           "z": -550,
           "lane": 1,
           "op": "buff",
@@ -378,91 +428,141 @@
           "z": -34,
           "state": "done",
           "queued": 0,
-          "spawned": 8
+          "pending": 0,
+          "spawned": 18,
+          "startedAt": 6.066666666666655,
+          "spawnFinishedAt": 14.09999999999996,
+          "clearedAt": 14.799999999999958
         },
         {
           "type": "wave",
           "z": -85,
           "state": "done",
           "queued": 0,
-          "spawned": 8
+          "pending": 0,
+          "spawned": 22,
+          "startedAt": 21.766666666666907,
+          "spawnFinishedAt": 28.46666666666724,
+          "clearedAt": 29.233333333333945
         },
         {
           "type": "wave",
           "z": -136,
           "state": "done",
           "queued": 0,
-          "spawned": 8
+          "pending": 0,
+          "spawned": 19,
+          "startedAt": 37.23333333333378,
+          "spawnFinishedAt": 44.86666666666668,
+          "clearedAt": 45.23333333333333
         },
         {
           "type": "wave",
           "z": -184,
           "state": "done",
           "queued": 0,
-          "spawned": 8
+          "pending": 0,
+          "spawned": 24,
+          "startedAt": 51.99999999999961,
+          "spawnFinishedAt": 58.96666666666588,
+          "clearedAt": 59.03333333333254
         },
         {
           "type": "wave",
           "z": -229,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 30,
+          "startedAt": 65.63333333333217,
+          "spawnFinishedAt": 74.63333333333166,
+          "clearedAt": 74.666666666665
         },
         {
           "type": "wave",
           "z": -280,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 38,
+          "startedAt": 81.33333333333128,
+          "spawnFinishedAt": 89.63333333333081,
+          "clearedAt": 89.69999999999747
         },
         {
           "type": "wave",
           "z": -331,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 32,
+          "startedAt": 96.79999999999707,
+          "spawnFinishedAt": 104.29999999999664,
+          "clearedAt": 104.39999999999664
         },
         {
           "type": "wave",
           "z": -379,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 41,
+          "startedAt": 111.5666666666629,
+          "spawnFinishedAt": 119.43333333332912,
+          "clearedAt": 120.43333333332906
         },
         {
           "type": "wave",
           "z": -424,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 47,
+          "startedAt": 125.19999999999546,
+          "spawnFinishedAt": 132.36666666666173,
+          "clearedAt": 132.46666666666172
         },
         {
           "type": "wave",
           "z": -475,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 57,
+          "startedAt": 140.66666666666126,
+          "spawnFinishedAt": 148.6666666666608,
+          "clearedAt": 148.69999999999413
         },
         {
           "type": "wave",
           "z": -526,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 50,
+          "startedAt": 156.13333333332704,
+          "spawnFinishedAt": 163.69999999999328,
+          "clearedAt": 163.79999999999328
         },
         {
           "type": "wave",
           "z": -574,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 62,
+          "startedAt": 170.66666666665955,
+          "spawnFinishedAt": 178.86666666665909,
+          "clearedAt": 178.93333333332575
         },
         {
           "type": "boss",
           "z": -609,
           "state": "done",
           "queued": 0,
-          "spawned": 0
+          "pending": 0,
+          "spawned": 0,
+          "startedAt": 182.66666666665887
         }
       ],
       "error": "",
@@ -474,228 +574,10 @@
       "style": "bulwark",
       "state": "won",
       "won": true,
-      "duration": 206.03,
-      "count": 102,
-      "maxCount": 117,
-      "kills": 145,
-      "maxAlive": 3,
-      "bulletsPeak": 48,
-      "trace": [
-        {
-          "tick": 0,
-          "seconds": 0,
-          "z": -10,
-          "lane": 0,
-          "op": "add",
-          "value": 10,
-          "count": 1
-        },
-        {
-          "tick": 384,
-          "seconds": 12.8,
-          "z": -64,
-          "lane": 2,
-          "op": "buff",
-          "value": "damage2",
-          "count": 11
-        },
-        {
-          "tick": 897,
-          "seconds": 29.9,
-          "z": -118,
-          "lane": 0,
-          "op": "mul",
-          "value": 2,
-          "count": 11
-        },
-        {
-          "tick": 1362,
-          "seconds": 45.4,
-          "z": -172,
-          "lane": 0,
-          "op": "add",
-          "value": 15,
-          "count": 22
-        },
-        {
-          "tick": 1737,
-          "seconds": 57.9,
-          "z": -217,
-          "lane": 0,
-          "op": "add",
-          "value": 10,
-          "count": 37
-        },
-        {
-          "tick": 2217,
-          "seconds": 73.9,
-          "z": -271,
-          "lane": 2,
-          "op": "buff",
-          "value": "damage2",
-          "count": 47
-        },
-        {
-          "tick": 2783,
-          "seconds": 92.767,
-          "z": -325,
-          "lane": 0,
-          "op": "mul",
-          "value": 2,
-          "count": 47
-        },
-        {
-          "tick": 3285,
-          "seconds": 109.5,
-          "z": -379,
-          "lane": 1,
-          "op": "buff",
-          "value": "vamp",
-          "count": 94
-        },
-        {
-          "tick": 3660,
-          "seconds": 122,
-          "z": -424,
-          "lane": 1,
-          "op": "buff",
-          "value": "damage",
-          "count": 94
-        },
-        {
-          "tick": 4182,
-          "seconds": 139.4,
-          "z": -478,
-          "lane": 2,
-          "op": "buff",
-          "value": "damage2",
-          "count": 95
-        },
-        {
-          "tick": 4846,
-          "seconds": 161.533,
-          "z": -532,
-          "lane": 1,
-          "op": "buff",
-          "value": "pierce",
-          "count": 97
-        },
-        {
-          "tick": 5404,
-          "seconds": 180.133,
-          "z": -586,
-          "lane": 0,
-          "op": "add",
-          "value": 15,
-          "count": 99
-        }
-      ],
-      "waves": [
-        {
-          "type": "wave",
-          "z": -43,
-          "state": "done",
-          "queued": 0,
-          "spawned": 9
-        },
-        {
-          "type": "wave",
-          "z": -91,
-          "state": "done",
-          "queued": 0,
-          "spawned": 9
-        },
-        {
-          "type": "wave",
-          "z": -145,
-          "state": "done",
-          "queued": 0,
-          "spawned": 9
-        },
-        {
-          "type": "wave",
-          "z": -196,
-          "state": "done",
-          "queued": 0,
-          "spawned": 9
-        },
-        {
-          "type": "wave",
-          "z": -250,
-          "state": "done",
-          "queued": 0,
-          "spawned": 12
-        },
-        {
-          "type": "wave",
-          "z": -298,
-          "state": "done",
-          "queued": 0,
-          "spawned": 12
-        },
-        {
-          "type": "wave",
-          "z": -352,
-          "state": "done",
-          "queued": 0,
-          "spawned": 12
-        },
-        {
-          "type": "wave",
-          "z": -403,
-          "state": "done",
-          "queued": 0,
-          "spawned": 12
-        },
-        {
-          "type": "wave",
-          "z": -457,
-          "state": "done",
-          "queued": 0,
-          "spawned": 15
-        },
-        {
-          "type": "wave",
-          "z": -505,
-          "state": "done",
-          "queued": 0,
-          "spawned": 15
-        },
-        {
-          "type": "wave",
-          "z": -559,
-          "state": "done",
-          "queued": 0,
-          "spawned": 15
-        },
-        {
-          "type": "wave",
-          "z": -610,
-          "state": "done",
-          "queued": 0,
-          "spawned": 15
-        },
-        {
-          "type": "boss",
-          "z": -645,
-          "state": "done",
-          "queued": 0,
-          "spawned": 0
-        }
-      ],
-      "error": "",
-      "timingPass": true
-    },
-    {
-      "level": 4,
-      "name": "第 4 关 分裂潮",
-      "style": "hivelord",
-      "state": "won",
-      "won": true,
-      "duration": 208.33,
-      "count": 195,
-      "maxCount": 242,
-      "kills": 339,
+      "duration": 199,
+      "count": 100,
+      "maxCount": 125,
+      "kills": 326,
       "maxAlive": 4,
       "bulletsPeak": 50,
       "trace": [
@@ -709,8 +591,276 @@
           "count": 1
         },
         {
-          "tick": 384,
-          "seconds": 12.8,
+          "tick": 419,
+          "seconds": 13.967,
+          "z": -64,
+          "lane": 2,
+          "op": "buff",
+          "value": "damage2",
+          "count": 11
+        },
+        {
+          "tick": 910,
+          "seconds": 30.333,
+          "z": -118,
+          "lane": 0,
+          "op": "mul",
+          "value": 2,
+          "count": 11
+        },
+        {
+          "tick": 1408,
+          "seconds": 46.933,
+          "z": -172,
+          "lane": 0,
+          "op": "add",
+          "value": 15,
+          "count": 22
+        },
+        {
+          "tick": 1817,
+          "seconds": 60.567,
+          "z": -217,
+          "lane": 0,
+          "op": "add",
+          "value": 10,
+          "count": 37
+        },
+        {
+          "tick": 2308,
+          "seconds": 76.933,
+          "z": -271,
+          "lane": 2,
+          "op": "buff",
+          "value": "damage2",
+          "count": 47
+        },
+        {
+          "tick": 2799,
+          "seconds": 93.3,
+          "z": -325,
+          "lane": 0,
+          "op": "mul",
+          "value": 2,
+          "count": 47
+        },
+        {
+          "tick": 3297,
+          "seconds": 109.9,
+          "z": -379,
+          "lane": 1,
+          "op": "buff",
+          "value": "vamp",
+          "count": 94
+        },
+        {
+          "tick": 3706,
+          "seconds": 123.533,
+          "z": -424,
+          "lane": 1,
+          "op": "buff",
+          "value": "damage",
+          "count": 96
+        },
+        {
+          "tick": 4197,
+          "seconds": 139.9,
+          "z": -478,
+          "lane": 2,
+          "op": "buff",
+          "value": "damage2",
+          "count": 98
+        },
+        {
+          "tick": 4688,
+          "seconds": 156.267,
+          "z": -532,
+          "lane": 1,
+          "op": "buff",
+          "value": "pierce",
+          "count": 101
+        },
+        {
+          "tick": 5178,
+          "seconds": 172.6,
+          "z": -586,
+          "lane": 0,
+          "op": "add",
+          "value": 15,
+          "count": 105
+        }
+      ],
+      "waves": [
+        {
+          "type": "wave",
+          "z": -43,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 13,
+          "startedAt": 8.79999999999998,
+          "spawnFinishedAt": 16.799999999999994,
+          "clearedAt": 17.400000000000023
+        },
+        {
+          "type": "wave",
+          "z": -91,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 14,
+          "startedAt": 23.366666666666987,
+          "spawnFinishedAt": 31.60000000000073,
+          "clearedAt": 32.13333333333407
+        },
+        {
+          "type": "wave",
+          "z": -145,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 22,
+          "startedAt": 39.96666666666696,
+          "spawnFinishedAt": 46.69999999999991,
+          "clearedAt": 47.066666666666556
+        },
+        {
+          "type": "wave",
+          "z": -196,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 12,
+          "startedAt": 55.399999999999416,
+          "spawnFinishedAt": 61.833333333332384,
+          "clearedAt": 62.43333333333235
+        },
+        {
+          "type": "wave",
+          "z": -250,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 23,
+          "startedAt": 71.76666666666516,
+          "spawnFinishedAt": 79.49999999999805,
+          "clearedAt": 79.56666666666472
+        },
+        {
+          "type": "wave",
+          "z": -298,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 24,
+          "startedAt": 86.29999999999767,
+          "spawnFinishedAt": 93.9666666666639,
+          "clearedAt": 94.13333333333055
+        },
+        {
+          "type": "wave",
+          "z": -352,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 37,
+          "startedAt": 102.93333333333005,
+          "spawnFinishedAt": 111.06666666666293,
+          "clearedAt": 111.13333333332959
+        },
+        {
+          "type": "wave",
+          "z": -403,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 21,
+          "startedAt": 118.36666666666251,
+          "spawnFinishedAt": 124.86666666666214,
+          "clearedAt": 124.9333333333288
+        },
+        {
+          "type": "wave",
+          "z": -457,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 34,
+          "startedAt": 134.73333333332826,
+          "spawnFinishedAt": 144.06666666666106,
+          "clearedAt": 144.33333333332772
+        },
+        {
+          "type": "wave",
+          "z": -505,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 37,
+          "startedAt": 149.26666666666077,
+          "spawnFinishedAt": 157.63333333332696,
+          "clearedAt": 157.6666666666603
+        },
+        {
+          "type": "wave",
+          "z": -559,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 57,
+          "startedAt": 165.6333333333265,
+          "spawnFinishedAt": 172.96666666665942,
+          "clearedAt": 173.06666666665942
+        },
+        {
+          "type": "wave",
+          "z": -610,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 31,
+          "startedAt": 181.0999999999923,
+          "spawnFinishedAt": 187.7999999999919,
+          "clearedAt": 187.93333333332524
+        },
+        {
+          "type": "boss",
+          "z": -645,
+          "state": "done",
+          "queued": 0,
+          "pending": 0,
+          "spawned": 0,
+          "startedAt": 191.73333333332502
+        }
+      ],
+      "error": "",
+      "timingPass": true
+    },
+    {
+      "level": 4,
+      "name": "第 4 关 分裂潮",
+      "style": "hivelord",
+      "state": "won",
+      "won": true,
+      "duration": 197.83,
+      "count": 247,
+      "maxCount": 252,
+      "kills": 707,
+      "maxAlive": 7,
+      "bulletsPeak": 50,
+      "trace": [
+        {
+          "tick": 0,
+          "seconds": 0,
+          "z": -10,
+          "lane": 0,
+          "op": "add",
+          "value": 10,
+          "count": 1
+        },
+        {
+          "tick": 419,
+          "seconds": 13.967,
           "z": -64,
           "lane": 0,
           "op": "mul",
@@ -718,8 +868,8 @@
           "count": 11
         },
         {
-          "tick": 860,
-          "seconds": 28.667,
+          "tick": 917,
+          "seconds": 30.567,
           "z": -118,
           "lane": 0,
           "op": "mul",
@@ -727,8 +877,8 @@
           "count": 22
         },
         {
-          "tick": 1327,
-          "seconds": 44.233,
+          "tick": 1415,
+          "seconds": 47.167,
           "z": -172,
           "lane": 0,
           "op": "add",
@@ -736,8 +886,8 @@
           "count": 44
         },
         {
-          "tick": 1702,
-          "seconds": 56.733,
+          "tick": 1824,
+          "seconds": 60.8,
           "z": -217,
           "lane": 1,
           "op": "buff",
@@ -745,8 +895,8 @@
           "count": 59
         },
         {
-          "tick": 2172,
-          "seconds": 72.4,
+          "tick": 2315,
+          "seconds": 77.167,
           "z": -271,
           "lane": 0,
           "op": "mul",
@@ -754,8 +904,8 @@
           "count": 59
         },
         {
-          "tick": 2752,
-          "seconds": 91.733,
+          "tick": 2813,
+          "seconds": 93.767,
           "z": -325,
           "lane": 0,
           "op": "mul",
@@ -763,8 +913,8 @@
           "count": 118
         },
         {
-          "tick": 3257,
-          "seconds": 108.567,
+          "tick": 3311,
+          "seconds": 110.367,
           "z": -379,
           "lane": 1,
           "op": "buff",
@@ -772,8 +922,8 @@
           "count": 236
         },
         {
-          "tick": 3632,
-          "seconds": 121.067,
+          "tick": 3720,
+          "seconds": 124,
           "z": -424,
           "lane": 2,
           "op": "buff",
@@ -781,8 +931,8 @@
           "count": 236
         },
         {
-          "tick": 4163,
-          "seconds": 138.767,
+          "tick": 4211,
+          "seconds": 140.367,
           "z": -478,
           "lane": 1,
           "op": "buff",
@@ -790,8 +940,8 @@
           "count": 236
         },
         {
-          "tick": 4799,
-          "seconds": 159.967,
+          "tick": 4702,
+          "seconds": 156.733,
           "z": -532,
           "lane": 2,
           "op": "buff",
@@ -799,8 +949,8 @@
           "count": 236
         },
         {
-          "tick": 5349,
-          "seconds": 178.3,
+          "tick": 5193,
+          "seconds": 173.1,
           "z": -586,
           "lane": 1,
           "op": "buff",
@@ -814,91 +964,141 @@
           "z": -46,
           "state": "done",
           "queued": 0,
-          "spawned": 9
+          "pending": 0,
+          "spawned": 10,
+          "startedAt": 9.699999999999976,
+          "spawnFinishedAt": 16.09999999999996,
+          "clearedAt": 16.533333333333314
         },
         {
           "type": "wave",
           "z": -94,
           "state": "done",
           "queued": 0,
-          "spawned": 9
+          "pending": 0,
+          "spawned": 14,
+          "startedAt": 24.500000000000377,
+          "spawnFinishedAt": 32.933333333334026,
+          "clearedAt": 33.133333333334015
         },
         {
           "type": "wave",
           "z": -145,
           "state": "done",
           "queued": 0,
-          "spawned": 9
+          "pending": 0,
+          "spawned": 16,
+          "startedAt": 40.20000000000028,
+          "spawnFinishedAt": 47.16666666666655,
+          "clearedAt": 47.966666666666505
         },
         {
           "type": "wave",
           "z": -196,
           "state": "done",
           "queued": 0,
-          "spawned": 9
+          "pending": 0,
+          "spawned": 18,
+          "startedAt": 55.633333333332736,
+          "spawnFinishedAt": 63.733333333332276,
+          "clearedAt": 63.83333333333227
         },
         {
           "type": "wave",
           "z": -253,
           "state": "done",
           "queued": 0,
-          "spawned": 12
+          "pending": 0,
+          "spawned": 17,
+          "startedAt": 72.93333333333176,
+          "spawnFinishedAt": 80.99999999999797,
+          "clearedAt": 81.0333333333313
         },
         {
           "type": "wave",
           "z": -301,
           "state": "done",
           "queued": 0,
-          "spawned": 12
+          "pending": 0,
+          "spawned": 24,
+          "startedAt": 87.69999999999759,
+          "spawnFinishedAt": 95.7666666666638,
+          "clearedAt": 96.49999999999709
         },
         {
           "type": "wave",
           "z": -352,
           "state": "done",
           "queued": 0,
-          "spawned": 12
+          "pending": 0,
+          "spawned": 27,
+          "startedAt": 103.3999999999967,
+          "spawnFinishedAt": 111.33333333332958,
+          "clearedAt": 111.4666666666629
         },
         {
           "type": "wave",
           "z": -403,
           "state": "done",
           "queued": 0,
-          "spawned": 12
+          "pending": 0,
+          "spawned": 31,
+          "startedAt": 118.83333333332915,
+          "spawnFinishedAt": 125.93333333332875,
+          "clearedAt": 126.53333333332871
         },
         {
           "type": "wave",
           "z": -460,
           "state": "done",
           "queued": 0,
-          "spawned": 15
+          "pending": 0,
+          "spawned": 26,
+          "startedAt": 136.13333333332818,
+          "spawnFinishedAt": 142.3999999999945,
+          "clearedAt": 142.59999999999448
         },
         {
           "type": "wave",
           "z": -508,
           "state": "done",
           "queued": 0,
-          "spawned": 15
+          "pending": 0,
+          "spawned": 37,
+          "startedAt": 150.6666666666607,
+          "spawnFinishedAt": 158.76666666666023,
+          "clearedAt": 158.8333333333269
         },
         {
           "type": "wave",
           "z": -559,
           "state": "done",
           "queued": 0,
-          "spawned": 15
+          "pending": 0,
+          "spawned": 41,
+          "startedAt": 166.13333333332648,
+          "spawnFinishedAt": 173.83333333332604,
+          "clearedAt": 173.86666666665937
         },
         {
           "type": "wave",
           "z": -610,
           "state": "done",
           "queued": 0,
-          "spawned": 15
+          "pending": 0,
+          "spawned": 47,
+          "startedAt": 181.56666666665893,
+          "spawnFinishedAt": 187.9999999999919,
+          "clearedAt": 188.46666666665854
         },
         {
           "type": "boss",
           "z": -645,
           "state": "done",
           "queued": 0,
-          "spawned": 0
+          "pending": 0,
+          "spawned": 0,
+          "startedAt": 192.49999999999164
         }
       ],
       "error": "",
@@ -910,12 +1110,12 @@
       "style": "spitking",
       "state": "won",
       "won": true,
-      "duration": 196.33,
-      "count": 119,
-      "maxCount": 152,
-      "kills": 145,
-      "maxAlive": 3,
-      "bulletsPeak": 49,
+      "duration": 201.6,
+      "count": 165,
+      "maxCount": 176,
+      "kills": 359,
+      "maxAlive": 6,
+      "bulletsPeak": 50,
       "trace": [
         {
           "tick": 0,
@@ -927,8 +1127,8 @@
           "count": 1
         },
         {
-          "tick": 384,
-          "seconds": 12.8,
+          "tick": 419,
+          "seconds": 13.967,
           "z": -64,
           "lane": 1,
           "op": "buff",
@@ -936,8 +1136,8 @@
           "count": 13
         },
         {
-          "tick": 854,
-          "seconds": 28.467,
+          "tick": 910,
+          "seconds": 30.333,
           "z": -118,
           "lane": 0,
           "op": "mul",
@@ -945,8 +1145,8 @@
           "count": 13
         },
         {
-          "tick": 1311,
-          "seconds": 43.7,
+          "tick": 1408,
+          "seconds": 46.933,
           "z": -172,
           "lane": 0,
           "op": "add",
@@ -954,8 +1154,8 @@
           "count": 26
         },
         {
-          "tick": 1711,
-          "seconds": 57.033,
+          "tick": 1844,
+          "seconds": 61.467,
           "z": -220,
           "lane": 0,
           "op": "add",
@@ -963,8 +1163,8 @@
           "count": 41
         },
         {
-          "tick": 2161,
-          "seconds": 72.033,
+          "tick": 2335,
+          "seconds": 77.833,
           "z": -274,
           "lane": 0,
           "op": "buff",
@@ -972,58 +1172,58 @@
           "count": 53
         },
         {
-          "tick": 2664,
-          "seconds": 88.8,
+          "tick": 2826,
+          "seconds": 94.2,
           "z": -328,
           "lane": 0,
           "op": "mul",
           "value": 2,
-          "count": 56
+          "count": 54
         },
         {
-          "tick": 3149,
-          "seconds": 104.967,
+          "tick": 3324,
+          "seconds": 110.8,
           "z": -382,
           "lane": 2,
           "op": "buff",
           "value": "damage2",
-          "count": 114
+          "count": 111
         },
         {
-          "tick": 3549,
-          "seconds": 118.3,
+          "tick": 3760,
+          "seconds": 125.333,
           "z": -430,
           "lane": 1,
           "op": "buff",
           "value": "pierce",
-          "count": 114
+          "count": 113
         },
         {
-          "tick": 4027,
-          "seconds": 134.233,
+          "tick": 4251,
+          "seconds": 141.7,
           "z": -484,
           "lane": 0,
           "op": "buff",
           "value": "vamp",
-          "count": 118
+          "count": 116
         },
         {
-          "tick": 4613,
-          "seconds": 153.767,
+          "tick": 4742,
+          "seconds": 158.067,
           "z": -538,
           "lane": 0,
           "op": "add",
           "value": 23,
-          "count": 122
+          "count": 128
         },
         {
-          "tick": 5111,
-          "seconds": 170.367,
+          "tick": 5233,
+          "seconds": 174.433,
           "z": -592,
           "lane": 2,
           "op": "buff",
           "value": "damage2",
-          "count": 148
+          "count": 163
         }
       ],
       "waves": [
@@ -1032,91 +1232,141 @@
           "z": -46,
           "state": "done",
           "queued": 0,
-          "spawned": 9
+          "pending": 0,
+          "spawned": 12,
+          "startedAt": 9.699999999999976,
+          "spawnFinishedAt": 16.466666666666644,
+          "clearedAt": 16.83333333333333
         },
         {
           "type": "wave",
           "z": -91,
           "state": "done",
           "queued": 0,
-          "spawned": 9
+          "pending": 0,
+          "spawned": 15,
+          "startedAt": 23.366666666666987,
+          "spawnFinishedAt": 30.80000000000069,
+          "clearedAt": 30.900000000000695
         },
         {
           "type": "wave",
           "z": -145,
           "state": "done",
           "queued": 0,
-          "spawned": 9
+          "pending": 0,
+          "spawned": 22,
+          "startedAt": 39.96666666666696,
+          "spawnFinishedAt": 47.533333333333196,
+          "clearedAt": 48.0666666666665
         },
         {
           "type": "wave",
           "z": -199,
           "state": "done",
           "queued": 0,
-          "spawned": 9
+          "pending": 0,
+          "spawned": 18,
+          "startedAt": 56.299999999999365,
+          "spawnFinishedAt": 65.16666666666553,
+          "clearedAt": 65.46666666666552
         },
         {
           "type": "wave",
           "z": -256,
           "state": "done",
           "queued": 0,
-          "spawned": 12
+          "pending": 0,
+          "spawned": 21,
+          "startedAt": 73.59999999999839,
+          "spawnFinishedAt": 81.83333333333125,
+          "clearedAt": 82.36666666666456
         },
         {
           "type": "wave",
           "z": -301,
           "state": "done",
           "queued": 0,
-          "spawned": 12
+          "pending": 0,
+          "spawned": 26,
+          "startedAt": 87.23333333333095,
+          "spawnFinishedAt": 94.83333333333051,
+          "clearedAt": 94.96666666666384
         },
         {
           "type": "wave",
           "z": -355,
           "state": "done",
           "queued": 0,
-          "spawned": 12
+          "pending": 0,
+          "spawned": 38,
+          "startedAt": 103.83333333333,
+          "spawnFinishedAt": 111.66666666666289,
+          "clearedAt": 112.0999999999962
         },
         {
           "type": "wave",
           "z": -409,
           "state": "done",
           "queued": 0,
-          "spawned": 12
+          "pending": 0,
+          "spawned": 31,
+          "startedAt": 120.19999999999574,
+          "spawnFinishedAt": 127.56666666666199,
+          "clearedAt": 127.59999999999532
         },
         {
           "type": "wave",
           "z": -466,
           "state": "done",
           "queued": 0,
-          "spawned": 15
+          "pending": 0,
+          "spawned": 31,
+          "startedAt": 137.46666666666144,
+          "spawnFinishedAt": 144.49999999999437,
+          "clearedAt": 144.5333333333277
         },
         {
           "type": "wave",
           "z": -511,
           "state": "done",
           "queued": 0,
-          "spawned": 15
+          "pending": 0,
+          "spawned": 39,
+          "startedAt": 151.099999999994,
+          "spawnFinishedAt": 159.56666666666018,
+          "clearedAt": 159.6999999999935
         },
         {
           "type": "wave",
           "z": -565,
           "state": "done",
           "queued": 0,
-          "spawned": 15
+          "pending": 0,
+          "spawned": 58,
+          "startedAt": 167.46666666665973,
+          "spawnFinishedAt": 175.43333333332595,
+          "clearedAt": 175.4999999999926
         },
         {
           "type": "wave",
           "z": -619,
           "state": "done",
           "queued": 0,
-          "spawned": 15
+          "pending": 0,
+          "spawned": 47,
+          "startedAt": 183.83333333332547,
+          "spawnFinishedAt": 192.033333333325,
+          "clearedAt": 192.8666666666583
         },
         {
           "type": "boss",
           "z": -654,
           "state": "done",
           "queued": 0,
-          "spawned": 0
+          "pending": 0,
+          "spawned": 0,
+          "startedAt": 196.43333333332475
         }
       ],
       "error": "",
@@ -1128,12 +1378,12 @@
       "style": "twinelite",
       "state": "won",
       "won": true,
-      "duration": 209.9,
-      "count": 169,
+      "duration": 205.4,
+      "count": 233,
       "maxCount": 233,
-      "kills": 158,
-      "maxAlive": 4,
-      "bulletsPeak": 48,
+      "kills": 501,
+      "maxAlive": 6,
+      "bulletsPeak": 50,
       "trace": [
         {
           "tick": 0,
@@ -1145,8 +1395,8 @@
           "count": 1
         },
         {
-          "tick": 384,
-          "seconds": 12.8,
+          "tick": 419,
+          "seconds": 13.967,
           "z": -64,
           "lane": 0,
           "op": "buff",
@@ -1154,8 +1404,8 @@
           "count": 13
         },
         {
-          "tick": 886,
-          "seconds": 29.533,
+          "tick": 910,
+          "seconds": 30.333,
           "z": -118,
           "lane": 0,
           "op": "mul",
@@ -1163,8 +1413,8 @@
           "count": 13
         },
         {
-          "tick": 1377,
-          "seconds": 45.9,
+          "tick": 1408,
+          "seconds": 46.933,
           "z": -172,
           "lane": 2,
           "op": "mul",
@@ -1172,8 +1422,8 @@
           "count": 26
         },
         {
-          "tick": 1809,
-          "seconds": 60.3,
+          "tick": 1878,
+          "seconds": 62.6,
           "z": -223,
           "lane": 2,
           "op": "buff",
@@ -1181,8 +1431,8 @@
           "count": 52
         },
         {
-          "tick": 2296,
-          "seconds": 76.533,
+          "tick": 2369,
+          "seconds": 78.967,
           "z": -277,
           "lane": 1,
           "op": "buff",
@@ -1190,8 +1440,8 @@
           "count": 52
         },
         {
-          "tick": 2817,
-          "seconds": 93.9,
+          "tick": 2860,
+          "seconds": 95.333,
           "z": -331,
           "lane": 0,
           "op": "mul",
@@ -1199,8 +1449,8 @@
           "count": 52
         },
         {
-          "tick": 3336,
-          "seconds": 111.2,
+          "tick": 3358,
+          "seconds": 111.933,
           "z": -385,
           "lane": 2,
           "op": "mul",
@@ -1208,8 +1458,8 @@
           "count": 104
         },
         {
-          "tick": 3768,
-          "seconds": 125.6,
+          "tick": 3829,
+          "seconds": 127.633,
           "z": -436,
           "lane": 2,
           "op": "buff",
@@ -1217,8 +1467,8 @@
           "count": 208
         },
         {
-          "tick": 4273,
-          "seconds": 142.433,
+          "tick": 4320,
+          "seconds": 144,
           "z": -490,
           "lane": 0,
           "op": "buff",
@@ -1226,8 +1476,8 @@
           "count": 208
         },
         {
-          "tick": 4912,
-          "seconds": 163.733,
+          "tick": 4811,
+          "seconds": 160.367,
           "z": -544,
           "lane": 1,
           "op": "buff",
@@ -1235,8 +1485,8 @@
           "count": 208
         },
         {
-          "tick": 5406,
-          "seconds": 180.2,
+          "tick": 5302,
+          "seconds": 176.733,
           "z": -598,
           "lane": 2,
           "op": "add",
@@ -1250,91 +1500,141 @@
           "z": -46,
           "state": "done",
           "queued": 0,
-          "spawned": 10
+          "pending": 0,
+          "spawned": 12,
+          "startedAt": 9.699999999999976,
+          "spawnFinishedAt": 16.2333333333333,
+          "clearedAt": 16.599999999999984
         },
         {
           "type": "wave",
           "z": -91,
           "state": "done",
           "queued": 0,
-          "spawned": 10
+          "pending": 0,
+          "spawned": 22,
+          "startedAt": 23.366666666666987,
+          "spawnFinishedAt": 31.6666666666674,
+          "clearedAt": 32.13333333333407
         },
         {
           "type": "wave",
           "z": -145,
           "state": "done",
           "queued": 0,
-          "spawned": 10
+          "pending": 0,
+          "spawned": 32,
+          "startedAt": 39.96666666666696,
+          "spawnFinishedAt": 48.29999999999982,
+          "clearedAt": 48.93333333333312
         },
         {
           "type": "wave",
           "z": -202,
           "state": "done",
           "queued": 0,
-          "spawned": 10
+          "pending": 0,
+          "spawned": 28,
+          "startedAt": 57.466666666665965,
+          "spawnFinishedAt": 65.26666666666553,
+          "clearedAt": 66.06666666666548
         },
         {
           "type": "wave",
           "z": -259,
           "state": "done",
           "queued": 0,
-          "spawned": 13
+          "pending": 0,
+          "spawned": 21,
+          "startedAt": 74.73333333333166,
+          "spawnFinishedAt": 82.33333333333123,
+          "clearedAt": 82.43333333333122
         },
         {
           "type": "wave",
           "z": -304,
           "state": "done",
           "queued": 0,
-          "spawned": 13
+          "pending": 0,
+          "spawned": 37,
+          "startedAt": 88.36666666666422,
+          "spawnFinishedAt": 96.63333333333041,
+          "clearedAt": 96.66666666666374
         },
         {
           "type": "wave",
           "z": -358,
           "state": "done",
           "queued": 0,
-          "spawned": 13
+          "pending": 0,
+          "spawned": 55,
+          "startedAt": 104.96666666666327,
+          "spawnFinishedAt": 113.73333333332944,
+          "clearedAt": 114.16666666666275
         },
         {
           "type": "wave",
           "z": -415,
           "state": "done",
           "queued": 0,
-          "spawned": 13
+          "pending": 0,
+          "spawned": 48,
+          "startedAt": 122.49999999999561,
+          "spawnFinishedAt": 130.16666666666185,
+          "clearedAt": 130.19999999999519
         },
         {
           "type": "wave",
           "z": -472,
           "state": "done",
           "queued": 0,
-          "spawned": 16
+          "pending": 0,
+          "spawned": 31,
+          "startedAt": 139.7666666666613,
+          "spawnFinishedAt": 147.3999999999942,
+          "clearedAt": 147.5999999999942
         },
         {
           "type": "wave",
           "z": -517,
           "state": "done",
           "queued": 0,
-          "spawned": 16
+          "pending": 0,
+          "spawned": 57,
+          "startedAt": 153.39999999999387,
+          "spawnFinishedAt": 159.86666666666017,
+          "clearedAt": 160.09999999999349
         },
         {
           "type": "wave",
           "z": -571,
           "state": "done",
           "queued": 0,
-          "spawned": 16
+          "pending": 0,
+          "spawned": 83,
+          "startedAt": 169.7666666666596,
+          "spawnFinishedAt": 179.99999999999235,
+          "clearedAt": 180.49999999999233
         },
         {
           "type": "wave",
           "z": -628,
           "state": "done",
           "queued": 0,
-          "spawned": 16
+          "pending": 0,
+          "spawned": 73,
+          "startedAt": 187.0333333333253,
+          "spawnFinishedAt": 196.8999999999914,
+          "clearedAt": 196.96666666665806
         },
         {
           "type": "boss",
           "z": -663,
           "state": "done",
           "queued": 0,
-          "spawned": 0
+          "pending": 0,
+          "spawned": 0,
+          "startedAt": 200.7333333333245
         }
       ],
       "error": "",
@@ -1346,11 +1646,11 @@
       "style": "hivelord",
       "state": "won",
       "won": true,
-      "duration": 213.33,
-      "count": 352,
-      "maxCount": 414,
-      "kills": 173,
-      "maxAlive": 4,
+      "duration": 222.97,
+      "count": 490,
+      "maxCount": 500,
+      "kills": 823,
+      "maxAlive": 7,
       "bulletsPeak": 50,
       "trace": [
         {
@@ -1363,8 +1663,8 @@
           "count": 1
         },
         {
-          "tick": 384,
-          "seconds": 12.8,
+          "tick": 419,
+          "seconds": 13.967,
           "z": -64,
           "lane": 0,
           "op": "mul",
@@ -1372,8 +1672,8 @@
           "count": 21
         },
         {
-          "tick": 866,
-          "seconds": 28.867,
+          "tick": 944,
+          "seconds": 31.467,
           "z": -121,
           "lane": 2,
           "op": "mul",
@@ -1381,8 +1681,8 @@
           "count": 63
         },
         {
-          "tick": 1348,
-          "seconds": 44.933,
+          "tick": 1469,
+          "seconds": 48.967,
           "z": -178,
           "lane": 1,
           "op": "buff",
@@ -1390,8 +1690,8 @@
           "count": 126
         },
         {
-          "tick": 1773,
-          "seconds": 59.1,
+          "tick": 1933,
+          "seconds": 64.433,
           "z": -229,
           "lane": 1,
           "op": "buff",
@@ -1399,67 +1699,67 @@
           "count": 128
         },
         {
-          "tick": 2223,
-          "seconds": 74.1,
+          "tick": 2424,
+          "seconds": 80.8,
           "z": -283,
           "lane": 0,
           "op": "mul",
           "value": 3,
-          "count": 129
+          "count": 131
         },
         {
-          "tick": 2787,
-          "seconds": 92.9,
+          "tick": 2949,
+          "seconds": 98.3,
           "z": -340,
           "lane": 0,
           "op": "buff",
           "value": "pierce",
-          "count": 390
+          "count": 406
         },
         {
-          "tick": 3278,
-          "seconds": 109.267,
+          "tick": 3467,
+          "seconds": 115.567,
           "z": -397,
           "lane": 1,
           "op": "buff",
           "value": "freeze",
-          "count": 392
+          "count": 416
         },
         {
-          "tick": 3703,
-          "seconds": 123.433,
+          "tick": 3931,
+          "seconds": 131.033,
           "z": -448,
           "lane": 1,
           "op": "buff",
           "value": "vamp",
-          "count": 392
+          "count": 423
         },
         {
-          "tick": 4219,
-          "seconds": 140.633,
+          "tick": 4422,
+          "seconds": 147.4,
           "z": -502,
           "lane": 1,
           "op": "buff",
           "value": "damage",
-          "count": 396
+          "count": 433
         },
         {
-          "tick": 4838,
-          "seconds": 161.267,
+          "tick": 4940,
+          "seconds": 164.667,
           "z": -559,
           "lane": 0,
           "op": "buff",
           "value": "pierce",
-          "count": 408
+          "count": 455
         },
         {
-          "tick": 5359,
-          "seconds": 178.633,
+          "tick": 5505,
+          "seconds": 183.5,
           "z": -616,
           "lane": 1,
           "op": "buff",
           "value": "pierce",
-          "count": 411
+          "count": 483
         }
       ],
       "waves": [
@@ -1468,91 +1768,141 @@
           "z": -46,
           "state": "done",
           "queued": 0,
-          "spawned": 10
+          "pending": 0,
+          "spawned": 24,
+          "startedAt": 9.699999999999976,
+          "spawnFinishedAt": 17.866666666666713,
+          "clearedAt": 18.10000000000006
         },
         {
           "type": "wave",
           "z": -94,
           "state": "done",
           "queued": 0,
-          "spawned": 10
+          "pending": 0,
+          "spawned": 36,
+          "startedAt": 24.500000000000377,
+          "spawnFinishedAt": 32.83333333333403,
+          "clearedAt": 32.933333333334026
         },
         {
           "type": "wave",
           "z": -151,
           "state": "done",
           "queued": 0,
-          "spawned": 10
+          "pending": 0,
+          "spawned": 46,
+          "startedAt": 42.00000000000018,
+          "spawnFinishedAt": 49.099999999999774,
+          "clearedAt": 49.66666666666641
         },
         {
           "type": "wave",
           "z": -208,
           "state": "done",
           "queued": 0,
-          "spawned": 10
+          "pending": 0,
+          "spawned": 46,
+          "startedAt": 59.26666666666586,
+          "spawnFinishedAt": 67.16666666666542,
+          "clearedAt": 67.23333333333208
         },
         {
           "type": "wave",
           "z": -265,
           "state": "done",
           "queued": 0,
-          "spawned": 13
+          "pending": 0,
+          "spawned": 41,
+          "startedAt": 76.56666666666489,
+          "spawnFinishedAt": 83.59999999999782,
+          "clearedAt": 84.29999999999778
         },
         {
           "type": "wave",
           "z": -313,
           "state": "done",
           "queued": 0,
-          "spawned": 13
+          "pending": 0,
+          "spawned": 61,
+          "startedAt": 91.33333333333071,
+          "spawnFinishedAt": 99.19999999999693,
+          "clearedAt": 99.33333333333026
         },
         {
           "type": "wave",
           "z": -370,
           "state": "done",
           "queued": 0,
-          "spawned": 13
+          "pending": 0,
+          "spawned": 78,
+          "startedAt": 108.5999999999964,
+          "spawnFinishedAt": 119.6333333333291,
+          "clearedAt": 119.66666666666244
         },
         {
           "type": "wave",
           "z": -427,
           "state": "done",
           "queued": 0,
-          "spawned": 13
+          "pending": 0,
+          "spawned": 78,
+          "startedAt": 125.86666666666208,
+          "spawnFinishedAt": 135.76666666666154,
+          "clearedAt": 135.9333333333282
         },
         {
           "type": "wave",
           "z": -484,
           "state": "done",
           "queued": 0,
-          "spawned": 16
+          "pending": 0,
+          "spawned": 63,
+          "startedAt": 143.16666666666111,
+          "spawnFinishedAt": 150.999999999994,
+          "clearedAt": 151.23333333332732
         },
         {
           "type": "wave",
           "z": -532,
           "state": "done",
           "queued": 0,
-          "spawned": 16
+          "pending": 0,
+          "spawned": 93,
+          "startedAt": 157.69999999999362,
+          "spawnFinishedAt": 170.53333333332623,
+          "clearedAt": 171.06666666665953
         },
         {
           "type": "wave",
           "z": -589,
           "state": "done",
           "queued": 0,
-          "spawned": 16
+          "pending": 0,
+          "spawned": 120,
+          "startedAt": 176.53333333332588,
+          "spawnFinishedAt": 191.5999999999917,
+          "clearedAt": 192.36666666665832
         },
         {
           "type": "wave",
           "z": -646,
           "state": "done",
           "queued": 0,
-          "spawned": 16
+          "pending": 0,
+          "spawned": 120,
+          "startedAt": 197.83333333332467,
+          "spawnFinishedAt": 213.09999999999047,
+          "clearedAt": 213.1333333333238
         },
         {
           "type": "boss",
           "z": -681,
           "state": "done",
           "queued": 0,
-          "spawned": 0
+          "pending": 0,
+          "spawned": 0,
+          "startedAt": 217.13333333332358
         }
       ],
       "error": "",
@@ -1564,11 +1914,11 @@
       "style": "titan",
       "state": "won",
       "won": true,
-      "duration": 221.53,
-      "count": 193,
-      "maxCount": 266,
-      "kills": 181,
-      "maxAlive": 4,
+      "duration": 211.83,
+      "count": 255,
+      "maxCount": 268,
+      "kills": 411,
+      "maxAlive": 8,
       "bulletsPeak": 50,
       "trace": [
         {
@@ -1581,8 +1931,8 @@
           "count": 1
         },
         {
-          "tick": 409,
-          "seconds": 13.633,
+          "tick": 446,
+          "seconds": 14.867,
           "z": -67,
           "lane": 2,
           "op": "buff",
@@ -1590,8 +1940,8 @@
           "count": 16
         },
         {
-          "tick": 907,
-          "seconds": 30.233,
+          "tick": 964,
+          "seconds": 32.133,
           "z": -124,
           "lane": 0,
           "op": "mul",
@@ -1599,8 +1949,8 @@
           "count": 16
         },
         {
-          "tick": 1398,
-          "seconds": 46.6,
+          "tick": 1489,
+          "seconds": 49.633,
           "z": -181,
           "lane": 2,
           "op": "mul",
@@ -1608,8 +1958,8 @@
           "count": 32
         },
         {
-          "tick": 1830,
-          "seconds": 61,
+          "tick": 1960,
+          "seconds": 65.333,
           "z": -232,
           "lane": 2,
           "op": "buff",
@@ -1617,8 +1967,8 @@
           "count": 64
         },
         {
-          "tick": 2342,
-          "seconds": 78.067,
+          "tick": 2478,
+          "seconds": 82.6,
           "z": -289,
           "lane": 1,
           "op": "buff",
@@ -1626,8 +1976,8 @@
           "count": 64
         },
         {
-          "tick": 2928,
-          "seconds": 97.6,
+          "tick": 2997,
+          "seconds": 99.9,
           "z": -346,
           "lane": 0,
           "op": "mul",
@@ -1635,8 +1985,8 @@
           "count": 64
         },
         {
-          "tick": 3457,
-          "seconds": 115.233,
+          "tick": 3522,
+          "seconds": 117.4,
           "z": -403,
           "lane": 2,
           "op": "mul",
@@ -1644,8 +1994,8 @@
           "count": 128
         },
         {
-          "tick": 3889,
-          "seconds": 129.633,
+          "tick": 3993,
+          "seconds": 133.1,
           "z": -454,
           "lane": 2,
           "op": "buff",
@@ -1653,8 +2003,8 @@
           "count": 256
         },
         {
-          "tick": 4392,
-          "seconds": 146.4,
+          "tick": 4511,
+          "seconds": 150.367,
           "z": -511,
           "lane": 2,
           "op": "buff",
@@ -1662,8 +2012,8 @@
           "count": 256
         },
         {
-          "tick": 5024,
-          "seconds": 167.467,
+          "tick": 5029,
+          "seconds": 167.633,
           "z": -568,
           "lane": 2,
           "op": "buff",
@@ -1671,13 +2021,13 @@
           "count": 256
         },
         {
-          "tick": 5617,
-          "seconds": 187.233,
+          "tick": 5547,
+          "seconds": 184.9,
           "z": -625,
           "lane": 1,
           "op": "buff",
           "value": "freeze",
-          "count": 262
+          "count": 264
         }
       ],
       "waves": [
@@ -1686,91 +2036,141 @@
           "z": -49,
           "state": "done",
           "queued": 0,
-          "spawned": 10
+          "pending": 0,
+          "spawned": 12,
+          "startedAt": 10.633333333333306,
+          "spawnFinishedAt": 18.500000000000078,
+          "clearedAt": 18.666666666666753
         },
         {
           "type": "wave",
           "z": -97,
           "state": "done",
           "queued": 0,
-          "spawned": 10
+          "pending": 0,
+          "spawned": 14,
+          "startedAt": 25.166666666667076,
+          "spawnFinishedAt": 33.50000000000066,
+          "clearedAt": 34.00000000000063
         },
         {
           "type": "wave",
           "z": -154,
           "state": "done",
           "queued": 0,
-          "spawned": 10
+          "pending": 0,
+          "spawned": 21,
+          "startedAt": 42.666666666666806,
+          "spawnFinishedAt": 49.19999999999977,
+          "clearedAt": 49.29999999999976
         },
         {
           "type": "wave",
           "z": -211,
           "state": "done",
           "queued": 0,
-          "spawned": 10
+          "pending": 0,
+          "spawned": 19,
+          "startedAt": 60.19999999999914,
+          "spawnFinishedAt": 68.43333333333202,
+          "clearedAt": 68.46666666666535
         },
         {
           "type": "wave",
           "z": -271,
           "state": "done",
           "queued": 0,
-          "spawned": 13
+          "pending": 0,
+          "spawned": 19,
+          "startedAt": 78.36666666666478,
+          "spawnFinishedAt": 86.06666666666435,
+          "clearedAt": 86.09999999999768
         },
         {
           "type": "wave",
           "z": -319,
           "state": "done",
           "queued": 0,
-          "spawned": 13
+          "pending": 0,
+          "spawned": 23,
+          "startedAt": 92.93333333333062,
+          "spawnFinishedAt": 101.23333333333015,
+          "clearedAt": 101.56666666666347
         },
         {
           "type": "wave",
           "z": -376,
           "state": "done",
           "queued": 0,
-          "spawned": 13
+          "pending": 0,
+          "spawned": 35,
+          "startedAt": 110.43333333332963,
+          "spawnFinishedAt": 118.16666666666252,
+          "clearedAt": 118.19999999999585
         },
         {
           "type": "wave",
           "z": -433,
           "state": "done",
           "queued": 0,
-          "spawned": 13
+          "pending": 0,
+          "spawned": 32,
+          "startedAt": 127.93333333332863,
+          "spawnFinishedAt": 134.2333333333283,
+          "clearedAt": 134.5666666666616
         },
         {
           "type": "wave",
           "z": -493,
           "state": "done",
           "queued": 0,
-          "spawned": 16
+          "pending": 0,
+          "spawned": 29,
+          "startedAt": 146.1333333333276,
+          "spawnFinishedAt": 155.7666666666604,
+          "clearedAt": 155.83333333332706
         },
         {
           "type": "wave",
           "z": -541,
           "state": "done",
           "queued": 0,
-          "spawned": 16
+          "pending": 0,
+          "spawned": 37,
+          "startedAt": 160.66666666666012,
+          "spawnFinishedAt": 168.73333333332633,
+          "clearedAt": 169.29999999999296
         },
         {
           "type": "wave",
           "z": -598,
           "state": "done",
           "queued": 0,
-          "spawned": 16
+          "pending": 0,
+          "spawned": 55,
+          "startedAt": 177.9333333333258,
+          "spawnFinishedAt": 185.33333333332538,
+          "clearedAt": 185.79999999999202
         },
         {
           "type": "wave",
           "z": -655,
           "state": "done",
           "queued": 0,
-          "spawned": 16
+          "pending": 0,
+          "spawned": 50,
+          "startedAt": 195.1999999999915,
+          "spawnFinishedAt": 202.66666666665773,
+          "clearedAt": 202.7333333333244
         },
         {
           "type": "boss",
           "z": -690,
           "state": "done",
           "queued": 0,
-          "spawned": 0
+          "pending": 0,
+          "spawned": 0,
+          "startedAt": 205.89999999999088
         }
       ],
       "error": "",
@@ -1782,11 +2182,11 @@
       "style": "titan",
       "state": "won",
       "won": true,
-      "duration": 230.17,
-      "count": 400,
+      "duration": 215.43,
+      "count": 482,
       "maxCount": 500,
-      "kills": 193,
-      "maxAlive": 4,
+      "kills": 624,
+      "maxAlive": 6,
       "bulletsPeak": 50,
       "trace": [
         {
@@ -1799,8 +2199,8 @@
           "count": 1
         },
         {
-          "tick": 409,
-          "seconds": 13.633,
+          "tick": 446,
+          "seconds": 14.867,
           "z": -67,
           "lane": 0,
           "op": "buff",
@@ -1808,8 +2208,8 @@
           "count": 21
         },
         {
-          "tick": 941,
-          "seconds": 31.367,
+          "tick": 964,
+          "seconds": 32.133,
           "z": -124,
           "lane": 0,
           "op": "mul",
@@ -1817,8 +2217,8 @@
           "count": 21
         },
         {
-          "tick": 1423,
-          "seconds": 47.433,
+          "tick": 1489,
+          "seconds": 49.633,
           "z": -181,
           "lane": 2,
           "op": "mul",
@@ -1826,8 +2226,8 @@
           "count": 42
         },
         {
-          "tick": 1880,
-          "seconds": 62.667,
+          "tick": 1988,
+          "seconds": 66.267,
           "z": -235,
           "lane": 1,
           "op": "buff",
@@ -1835,8 +2235,8 @@
           "count": 126
         },
         {
-          "tick": 2386,
-          "seconds": 79.533,
+          "tick": 2506,
+          "seconds": 83.533,
           "z": -292,
           "lane": 0,
           "op": "buff",
@@ -1844,8 +2244,8 @@
           "count": 126
         },
         {
-          "tick": 2994,
-          "seconds": 99.8,
+          "tick": 3024,
+          "seconds": 100.8,
           "z": -349,
           "lane": 0,
           "op": "mul",
@@ -1853,8 +2253,8 @@
           "count": 126
         },
         {
-          "tick": 3536,
-          "seconds": 117.867,
+          "tick": 3549,
+          "seconds": 118.3,
           "z": -406,
           "lane": 2,
           "op": "mul",
@@ -1862,8 +2262,8 @@
           "count": 252
         },
         {
-          "tick": 3993,
-          "seconds": 133.1,
+          "tick": 4047,
+          "seconds": 134.9,
           "z": -460,
           "lane": 2,
           "op": "buff",
@@ -1871,8 +2271,8 @@
           "count": 500
         },
         {
-          "tick": 4533,
-          "seconds": 151.1,
+          "tick": 4565,
+          "seconds": 152.167,
           "z": -517,
           "lane": 0,
           "op": "buff",
@@ -1880,8 +2280,8 @@
           "count": 500
         },
         {
-          "tick": 5142,
-          "seconds": 171.4,
+          "tick": 5084,
+          "seconds": 169.467,
           "z": -574,
           "lane": 2,
           "op": "buff",
@@ -1889,8 +2289,8 @@
           "count": 500
         },
         {
-          "tick": 5688,
-          "seconds": 189.6,
+          "tick": 5602,
+          "seconds": 186.733,
           "z": -631,
           "lane": 1,
           "op": "buff",
@@ -1904,91 +2304,141 @@
           "z": -49,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 26,
+          "startedAt": 10.633333333333306,
+          "spawnFinishedAt": 18.966666666666768,
+          "clearedAt": 19.066666666666773
         },
         {
           "type": "wave",
           "z": -97,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 26,
+          "startedAt": 25.166666666667076,
+          "spawnFinishedAt": 33.86666666666731,
+          "clearedAt": 34.23333333333395
         },
         {
           "type": "wave",
           "z": -154,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 26,
+          "startedAt": 42.666666666666806,
+          "spawnFinishedAt": 49.49999999999975,
+          "clearedAt": 50.033333333333054
         },
         {
           "type": "wave",
           "z": -214,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 23,
+          "startedAt": 61.09999999999909,
+          "spawnFinishedAt": 68.79999999999866,
+          "clearedAt": 68.89999999999866
         },
         {
           "type": "wave",
           "z": -274,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 44,
+          "startedAt": 79.26666666666473,
+          "spawnFinishedAt": 87.13333333333095,
+          "clearedAt": 87.23333333333095
         },
         {
           "type": "wave",
           "z": -322,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 45,
+          "startedAt": 93.83333333333057,
+          "spawnFinishedAt": 102.43333333333008,
+          "clearedAt": 102.6666666666634
         },
         {
           "type": "wave",
           "z": -379,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 44,
+          "startedAt": 111.33333333332958,
+          "spawnFinishedAt": 119.03333333332914,
+          "clearedAt": 119.16666666666246
         },
         {
           "type": "wave",
           "z": -439,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 39,
+          "startedAt": 129.76666666666188,
+          "spawnFinishedAt": 137.16666666666146,
+          "clearedAt": 137.29999999999478
         },
         {
           "type": "wave",
           "z": -499,
           "state": "done",
           "queued": 0,
-          "spawned": 17
+          "pending": 0,
+          "spawned": 68,
+          "startedAt": 147.9333333333275,
+          "spawnFinishedAt": 157.29999999999364,
+          "clearedAt": 157.79999999999362
         },
         {
           "type": "wave",
           "z": -547,
           "state": "done",
           "queued": 0,
-          "spawned": 17
+          "pending": 0,
+          "spawned": 68,
+          "startedAt": 162.49999999999335,
+          "spawnFinishedAt": 171.2333333333262,
+          "clearedAt": 171.7666666666595
         },
         {
           "type": "wave",
           "z": -604,
           "state": "done",
           "queued": 0,
-          "spawned": 17
+          "pending": 0,
+          "spawned": 68,
+          "startedAt": 179.76666666665903,
+          "spawnFinishedAt": 188.5333333333252,
+          "clearedAt": 188.56666666665853
         },
         {
           "type": "wave",
           "z": -664,
           "state": "done",
           "queued": 0,
-          "spawned": 17
+          "pending": 0,
+          "spawned": 60,
+          "startedAt": 197.93333333332467,
+          "spawnFinishedAt": 205.19999999999092,
+          "clearedAt": 205.23333333332425
         },
         {
           "type": "boss",
           "z": -699,
           "state": "done",
           "queued": 0,
-          "spawned": 0
+          "pending": 0,
+          "spawned": 0,
+          "startedAt": 209.23333333332403
         }
       ],
       "error": "",
@@ -2000,12 +2450,12 @@
       "style": "overlord",
       "state": "won",
       "won": true,
-      "duration": 234.53,
-      "count": 412,
+      "duration": 225.3,
+      "count": 485,
       "maxCount": 500,
-      "kills": 211,
-      "maxAlive": 4,
-      "bulletsPeak": 47,
+      "kills": 746,
+      "maxAlive": 6,
+      "bulletsPeak": 50,
       "trace": [
         {
           "tick": 0,
@@ -2017,8 +2467,8 @@
           "count": 1
         },
         {
-          "tick": 409,
-          "seconds": 13.633,
+          "tick": 446,
+          "seconds": 14.867,
           "z": -67,
           "lane": 0,
           "op": "mul",
@@ -2026,8 +2476,8 @@
           "count": 26
         },
         {
-          "tick": 956,
-          "seconds": 31.867,
+          "tick": 999,
+          "seconds": 33.3,
           "z": -127,
           "lane": 0,
           "op": "buff",
@@ -2035,8 +2485,8 @@
           "count": 78
         },
         {
-          "tick": 1479,
-          "seconds": 49.3,
+          "tick": 1517,
+          "seconds": 50.567,
           "z": -184,
           "lane": 2,
           "op": "mul",
@@ -2044,8 +2494,8 @@
           "count": 78
         },
         {
-          "tick": 1936,
-          "seconds": 64.533,
+          "tick": 2015,
+          "seconds": 67.167,
           "z": -238,
           "lane": 2,
           "op": "mul",
@@ -2053,8 +2503,8 @@
           "count": 234
         },
         {
-          "tick": 2442,
-          "seconds": 81.4,
+          "tick": 2540,
+          "seconds": 84.667,
           "z": -295,
           "lane": 2,
           "op": "risk",
@@ -2062,8 +2512,8 @@
           "count": 500
         },
         {
-          "tick": 3053,
-          "seconds": 101.767,
+          "tick": 3086,
+          "seconds": 102.867,
           "z": -355,
           "lane": 0,
           "op": "buff",
@@ -2071,8 +2521,8 @@
           "count": 350
         },
         {
-          "tick": 3625,
-          "seconds": 120.833,
+          "tick": 3604,
+          "seconds": 120.133,
           "z": -412,
           "lane": 2,
           "op": "mul",
@@ -2080,8 +2530,8 @@
           "count": 350
         },
         {
-          "tick": 4082,
-          "seconds": 136.067,
+          "tick": 4102,
+          "seconds": 136.733,
           "z": -466,
           "lane": 1,
           "op": "buff",
@@ -2089,8 +2539,8 @@
           "count": 500
         },
         {
-          "tick": 4606,
-          "seconds": 153.533,
+          "tick": 4620,
+          "seconds": 154,
           "z": -523,
           "lane": 1,
           "op": "buff",
@@ -2098,8 +2548,8 @@
           "count": 500
         },
         {
-          "tick": 5285,
-          "seconds": 176.167,
+          "tick": 5165,
+          "seconds": 172.167,
           "z": -583,
           "lane": 0,
           "op": "buff",
@@ -2107,8 +2557,8 @@
           "count": 500
         },
         {
-          "tick": 5873,
-          "seconds": 195.767,
+          "tick": 5684,
+          "seconds": 189.467,
           "z": -640,
           "lane": 1,
           "op": "buff",
@@ -2122,91 +2572,141 @@
           "z": -49,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 26,
+          "startedAt": 10.633333333333306,
+          "spawnFinishedAt": 19.633333333333468,
+          "clearedAt": 19.700000000000138
         },
         {
           "type": "wave",
           "z": -100,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 25,
+          "startedAt": 26.300000000000466,
+          "spawnFinishedAt": 33.70000000000065,
+          "clearedAt": 33.73333333333398
         },
         {
           "type": "wave",
           "z": -157,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 22,
+          "startedAt": 43.60000000000009,
+          "spawnFinishedAt": 51.99999999999961,
+          "clearedAt": 52.89999999999956
         },
         {
           "type": "wave",
           "z": -217,
           "state": "done",
           "queued": 0,
-          "spawned": 11
+          "pending": 0,
+          "spawned": 46,
+          "startedAt": 61.99999999999904,
+          "spawnFinishedAt": 70.29999999999858,
+          "clearedAt": 70.79999999999855
         },
         {
           "type": "wave",
           "z": -277,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 44,
+          "startedAt": 80.43333333333133,
+          "spawnFinishedAt": 88.36666666666422,
+          "clearedAt": 88.43333333333088
         },
         {
           "type": "wave",
           "z": -328,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 42,
+          "startedAt": 95.86666666666379,
+          "spawnFinishedAt": 103.76666666666334,
+          "clearedAt": 103.83333333333
         },
         {
           "type": "wave",
           "z": -385,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 38,
+          "startedAt": 113.1666666666628,
+          "spawnFinishedAt": 120.69999999999571,
+          "clearedAt": 121.06666666666236
         },
         {
           "type": "wave",
           "z": -445,
           "state": "done",
           "queued": 0,
-          "spawned": 14
+          "pending": 0,
+          "spawned": 79,
+          "startedAt": 131.56666666666177,
+          "spawnFinishedAt": 141.6666666666612,
+          "clearedAt": 142.16666666666117
         },
         {
           "type": "wave",
           "z": -505,
           "state": "done",
           "queued": 0,
-          "spawned": 17
+          "pending": 0,
+          "spawned": 68,
+          "startedAt": 149.76666666666074,
+          "spawnFinishedAt": 157.69999999999362,
+          "clearedAt": 157.73333333332695
         },
         {
           "type": "wave",
           "z": -556,
           "state": "done",
           "queued": 0,
-          "spawned": 17
+          "pending": 0,
+          "spawned": 65,
+          "startedAt": 165.1999999999932,
+          "spawnFinishedAt": 173.09999999999275,
+          "clearedAt": 173.23333333332607
         },
         {
           "type": "wave",
           "z": -613,
           "state": "done",
           "queued": 0,
-          "spawned": 17
+          "pending": 0,
+          "spawned": 57,
+          "startedAt": 182.4999999999922,
+          "spawnFinishedAt": 190.49999999999176,
+          "clearedAt": 190.5333333333251
         },
         {
           "type": "wave",
           "z": -673,
           "state": "done",
           "queued": 0,
-          "spawned": 17
+          "pending": 0,
+          "spawned": 119,
+          "startedAt": 200.66666666665785,
+          "spawnFinishedAt": 215.0333333333237,
+          "clearedAt": 215.09999999999036
         },
         {
           "type": "boss",
           "z": -708,
           "state": "done",
           "queued": 0,
-          "spawned": 0
+          "pending": 0,
+          "spawned": 0,
+          "startedAt": 218.59999999999016
         }
       ],
       "error": "",

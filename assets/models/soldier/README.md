@@ -13,6 +13,8 @@ node tests/unit/soldier-asset.js
 
 The generator creates custom elliptical loft profiles for the face, helmet and clothing, bevelled equipment and hand-authored facial details. Texture cell colors encode cloth, painted metal, skin, leather and steel with distinct roughness/metallicity. This is an actual 3D surface model, not a billboard.
 
-Coordinates: metres/game units, Y up, -Z forward, ground at Y=0. Model height 1.42. Rigid part origins: Body at ground; Head at `(0,.78,0)`; Arms at `(0,.67,0)`; LegL/R at `(±.12,.38,0)`. Rifle/hands are joined into Arms; rucksack into Body. `Muzzle` is parented to Arms, world rest position `(.16,.64,-.78)`.
+Coordinates: metres/game units, Y up, -Z forward, ground at Y=0. Model height 1.42. Rigid part origins: Body at ground; Head at `(0,.78,0)`; Arms at `(0,.67,0)`; LegL/R at `(±.12,.38,0)`. Rifle/hands are joined into Arms; rucksack into Body. `Muzzle` is parented to Arms, world rest position `(.40,.64,-.78)` after V4.2 rear-view silhouette refinement.
+
+V4.2 keeps the original mesh pipeline while refining rear helmet chevrons, shoulder tabs, backpack stitching and outward rifle/grips. Current hero/LOD: 13,042 / 3,908 triangles. Formation now trails the logical combat front; the follow camera moves by army depth so enemies stay ahead instead of inside forward ranks.
 
 Six procedural animation states are provided in `js/soldier-renderer.js`, rather than exported skeletal clips. Runtime uses shared geometry/material instancing. See `model-stats.json` for generated triangle counts. No original user reference image was present in the workspace: stylistic comparison to that specific image needs the original and user review.

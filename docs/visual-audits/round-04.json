@@ -1,0 +1,73 @@
+{
+  "round": 4,
+  "date": "2026-11-13",
+  "reviewer": "Codex root; actual screenshot read using view_image",
+  "image": "docs/screenshots/v42/round-04-combat-390x844.png",
+  "sha256": "667eca7f813c89578cd59cc9d6bb82f7d0a5b1f6007857ab884fe098b4aa065c",
+  "method": "Vision-based qualitative assessment of actual image content; never inferred from code tests or pixel statistics",
+  "dimensions": [
+    {
+      "key": "soldiers",
+      "max": 20,
+      "score": 17,
+      "evidence": "枪管、手套、背包及靴子更清晰；主图军团无裁切。"
+    },
+    {
+      "key": "enemies",
+      "max": 20,
+      "score": 17,
+      "evidence": "Boss头盔、盾牌、阶段与护盾反馈可辨；绿色和紫色/盾装备区分明确。"
+    },
+    {
+      "key": "gatesRoad",
+      "max": 15,
+      "score": 13,
+      "evidence": "伤害数字降低起点和上升速度后不再盖住主图门值，门框和路边窗带完整。"
+    },
+    {
+      "key": "ui",
+      "max": 15,
+      "score": 14,
+      "evidence": "顶部关卡、Boss条和属性没有遮挡，暂停/刷新保持可点。"
+    },
+    {
+      "key": "composition",
+      "max": 15,
+      "score": 11,
+      "evidence": "主图裁切已修复，但100人真实战斗图发现怪物脚部混入前排：阵型向-Z展开超过了碰撞中心。"
+    },
+    {
+      "key": "effects",
+      "max": 10,
+      "score": 8,
+      "evidence": "细长金色弹道、可见枪口火焰、暴击数值与火花均由实际交火产生。"
+    },
+    {
+      "key": "consistency",
+      "max": 5,
+      "score": 4,
+      "evidence": "软PBR、圆润框体与蓝金紫色系统一致。"
+    }
+  ],
+  "total": 84,
+  "passed": false,
+  "issues": [
+    "large-army formation expands ahead of its logical collision centre, mixing enemy feet into the forward ranks"
+  ],
+  "nextChanges": [
+    "anchor front rank at squad centre and expand tail behind",
+    "move camera and lookAt together by formation depth",
+    "rerun real ten-level replay and full-combat screenshots"
+  ],
+  "changedFiles": [
+    "js/world.js",
+    "js/effects.js",
+    "js/boss-v42.js"
+  ],
+  "reviewImages": [
+    {
+      "path": "docs/screenshots/v42/round-04-battle-100.png",
+      "sha256": "de2f69d44cbafff64d4ca9adf8e148aaedc3d2fff148300b6ed2d4e3533d3916"
+    }
+  ]
+}

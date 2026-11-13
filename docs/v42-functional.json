@@ -34,6 +34,10 @@
       "passed": true
     },
     {
+      "name": "a dying split parent keeps its wave active until offspring resolve",
+      "passed": true
+    },
+    {
       "name": "no browser shader/runtime errors",
       "passed": true
     },

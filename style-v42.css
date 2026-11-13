@@ -178,10 +178,10 @@
 }
 
 #game-container.v42-ui #boss-bar-container {
-    top: calc(137px + env(safe-area-inset-top));
+    top: calc(70px + env(safe-area-inset-top));
     width: calc(100% - 32px);
     gap: 0;
-    padding: 7px 10px;
+    padding: 5px 10px;
     border: 1px solid rgba(255, 174, 165, .38);
     border-radius: 18px;
     background: linear-gradient(135deg, rgba(60, 17, 32, .9), rgba(25, 19, 50, .86));
@@ -190,10 +190,15 @@
 }
 
 #game-container.v42-ui #boss-head {
-    width: 38px;
-    height: 38px;
+    width: 28px;
+    height: 28px;
     margin-right: 8px;
     border-color: #ff9b83;
+}
+
+#game-container.v42-ui.boss-active #stats-panel,
+#game-container.v42-ui.boss-active #combo-box {
+    top: calc(122px + env(safe-area-inset-top));
 }
 
 #game-container.v42-ui #boss-name {

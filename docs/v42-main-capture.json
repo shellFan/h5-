@@ -1,0 +1,63 @@
+{
+  "generatedAt": "2026-11-13T16:09:16.202Z",
+  "seed": 420,
+  "deviceScaleFactor": 1,
+  "captures": [
+    {
+      "width": 390,
+      "height": 844,
+      "file": "final-combat-390x844.png",
+      "time": 0.9303799999999998,
+      "state": "playing",
+      "soldiers": 31,
+      "enemyTypes": [
+        "normal",
+        "fast",
+        "shield",
+        "split",
+        "spitter",
+        "boss"
+      ],
+      "bossStyle": "bulwark",
+      "gateValues": [
+        "+12",
+        "输出+1",
+        "×2"
+      ],
+      "bullets": 9,
+      "hitParticles": 27,
+      "muzzleFlashes": 3,
+      "drawCalls": 119,
+      "renderer": "actual Game scene/camera/renderer + HTML HUD",
+      "fixture": "production GateSystem/EnemyManager/Combat/Effects; live bullet impact; seed420; no compositing"
+    },
+    {
+      "width": 430,
+      "height": 932,
+      "file": "final-combat-430x932.png",
+      "time": 0.9388999999999997,
+      "state": "playing",
+      "soldiers": 31,
+      "enemyTypes": [
+        "normal",
+        "fast",
+        "shield",
+        "split",
+        "spitter",
+        "boss"
+      ],
+      "bossStyle": "bulwark",
+      "gateValues": [
+        "+12",
+        "输出+1",
+        "×2"
+      ],
+      "bullets": 10,
+      "hitParticles": 20,
+      "muzzleFlashes": 3,
+      "drawCalls": 116,
+      "renderer": "actual Game scene/camera/renderer + HTML HUD",
+      "fixture": "production GateSystem/EnemyManager/Combat/Effects; live bullet impact; seed420; no compositing"
+    }
+  ]
+}

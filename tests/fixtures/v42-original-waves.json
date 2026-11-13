@@ -1,0 +1,1816 @@
+[
+  {
+    "totalZ": -603,
+    "waves": [
+      {
+        "z": -52,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 8
+          }
+        ]
+      },
+      {
+        "z": -94,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 10
+          },
+          {
+            "type": "fast",
+            "count": 4
+          }
+        ]
+      },
+      {
+        "z": -136,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 10
+          },
+          {
+            "type": "shield",
+            "count": 3
+          }
+        ]
+      },
+      {
+        "z": -178,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 10
+          },
+          {
+            "type": "fast",
+            "count": 6
+          },
+          {
+            "type": "spitter",
+            "count": 2
+          }
+        ]
+      },
+      {
+        "z": -241,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 14
+          }
+        ]
+      },
+      {
+        "z": -283,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 17
+          },
+          {
+            "type": "fast",
+            "count": 7
+          }
+        ]
+      },
+      {
+        "z": -325,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 17
+          },
+          {
+            "type": "shield",
+            "count": 5
+          }
+        ]
+      },
+      {
+        "z": -367,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 17
+          },
+          {
+            "type": "fast",
+            "count": 10
+          },
+          {
+            "type": "spitter",
+            "count": 3
+          }
+        ]
+      },
+      {
+        "z": -430,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 21
+          }
+        ]
+      },
+      {
+        "z": -472,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 26
+          },
+          {
+            "type": "fast",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -514,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 26
+          },
+          {
+            "type": "shield",
+            "count": 8
+          }
+        ]
+      },
+      {
+        "z": -556,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 26
+          },
+          {
+            "type": "fast",
+            "count": 16
+          },
+          {
+            "type": "spitter",
+            "count": 5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "totalZ": -621,
+    "waves": [
+      {
+        "z": -34,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 12
+          },
+          {
+            "type": "normal",
+            "count": 6
+          }
+        ]
+      },
+      {
+        "z": -85,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 14
+          },
+          {
+            "type": "normal",
+            "count": 8
+          }
+        ]
+      },
+      {
+        "z": -136,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 16
+          },
+          {
+            "type": "spitter",
+            "count": 3
+          }
+        ]
+      },
+      {
+        "z": -184,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 14
+          },
+          {
+            "type": "normal",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -229,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 20
+          },
+          {
+            "type": "normal",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -280,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 24
+          },
+          {
+            "type": "normal",
+            "count": 14
+          }
+        ]
+      },
+      {
+        "z": -331,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 27
+          },
+          {
+            "type": "spitter",
+            "count": 5
+          }
+        ]
+      },
+      {
+        "z": -379,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 24
+          },
+          {
+            "type": "normal",
+            "count": 17
+          }
+        ]
+      },
+      {
+        "z": -424,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 31
+          },
+          {
+            "type": "normal",
+            "count": 16
+          }
+        ]
+      },
+      {
+        "z": -475,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 36
+          },
+          {
+            "type": "normal",
+            "count": 21
+          }
+        ]
+      },
+      {
+        "z": -526,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 42
+          },
+          {
+            "type": "spitter",
+            "count": 8
+          }
+        ]
+      },
+      {
+        "z": -574,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 36
+          },
+          {
+            "type": "normal",
+            "count": 26
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "totalZ": -657,
+    "waves": [
+      {
+        "z": -43,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 8
+          },
+          {
+            "type": "shield",
+            "count": 5
+          }
+        ]
+      },
+      {
+        "z": -91,
+        "enemies": [
+          {
+            "type": "shield",
+            "count": 8
+          },
+          {
+            "type": "fast",
+            "count": 6
+          }
+        ]
+      },
+      {
+        "z": -145,
+        "enemies": [
+          {
+            "type": "shield",
+            "count": 10
+          },
+          {
+            "type": "normal",
+            "count": 12
+          }
+        ]
+      },
+      {
+        "z": -196,
+        "enemies": [
+          {
+            "type": "shield",
+            "count": 8
+          },
+          {
+            "type": "spitter",
+            "count": 4
+          }
+        ]
+      },
+      {
+        "z": -250,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 14
+          },
+          {
+            "type": "shield",
+            "count": 9
+          }
+        ]
+      },
+      {
+        "z": -298,
+        "enemies": [
+          {
+            "type": "shield",
+            "count": 14
+          },
+          {
+            "type": "fast",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -352,
+        "enemies": [
+          {
+            "type": "shield",
+            "count": 17
+          },
+          {
+            "type": "normal",
+            "count": 20
+          }
+        ]
+      },
+      {
+        "z": -403,
+        "enemies": [
+          {
+            "type": "shield",
+            "count": 14
+          },
+          {
+            "type": "spitter",
+            "count": 7
+          }
+        ]
+      },
+      {
+        "z": -457,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 21
+          },
+          {
+            "type": "shield",
+            "count": 13
+          }
+        ]
+      },
+      {
+        "z": -505,
+        "enemies": [
+          {
+            "type": "shield",
+            "count": 21
+          },
+          {
+            "type": "fast",
+            "count": 16
+          }
+        ]
+      },
+      {
+        "z": -559,
+        "enemies": [
+          {
+            "type": "shield",
+            "count": 26
+          },
+          {
+            "type": "normal",
+            "count": 31
+          }
+        ]
+      },
+      {
+        "z": -610,
+        "enemies": [
+          {
+            "type": "shield",
+            "count": 21
+          },
+          {
+            "type": "spitter",
+            "count": 10
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "totalZ": -657,
+    "waves": [
+      {
+        "z": -46,
+        "enemies": [
+          {
+            "type": "split",
+            "count": 6
+          },
+          {
+            "type": "normal",
+            "count": 4
+          }
+        ]
+      },
+      {
+        "z": -94,
+        "enemies": [
+          {
+            "type": "split",
+            "count": 8
+          },
+          {
+            "type": "fast",
+            "count": 6
+          }
+        ]
+      },
+      {
+        "z": -145,
+        "enemies": [
+          {
+            "type": "split",
+            "count": 12
+          },
+          {
+            "type": "shield",
+            "count": 4
+          }
+        ]
+      },
+      {
+        "z": -196,
+        "enemies": [
+          {
+            "type": "split",
+            "count": 10
+          },
+          {
+            "type": "fast",
+            "count": 8
+          }
+        ]
+      },
+      {
+        "z": -253,
+        "enemies": [
+          {
+            "type": "split",
+            "count": 10
+          },
+          {
+            "type": "normal",
+            "count": 7
+          }
+        ]
+      },
+      {
+        "z": -301,
+        "enemies": [
+          {
+            "type": "split",
+            "count": 14
+          },
+          {
+            "type": "fast",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -352,
+        "enemies": [
+          {
+            "type": "split",
+            "count": 20
+          },
+          {
+            "type": "shield",
+            "count": 7
+          }
+        ]
+      },
+      {
+        "z": -403,
+        "enemies": [
+          {
+            "type": "split",
+            "count": 17
+          },
+          {
+            "type": "fast",
+            "count": 14
+          }
+        ]
+      },
+      {
+        "z": -460,
+        "enemies": [
+          {
+            "type": "split",
+            "count": 16
+          },
+          {
+            "type": "normal",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -508,
+        "enemies": [
+          {
+            "type": "split",
+            "count": 21
+          },
+          {
+            "type": "fast",
+            "count": 16
+          }
+        ]
+      },
+      {
+        "z": -559,
+        "enemies": [
+          {
+            "type": "split",
+            "count": 31
+          },
+          {
+            "type": "shield",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -610,
+        "enemies": [
+          {
+            "type": "split",
+            "count": 26
+          },
+          {
+            "type": "fast",
+            "count": 21
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "totalZ": -666,
+    "waves": [
+      {
+        "z": -46,
+        "enemies": [
+          {
+            "type": "spitter",
+            "count": 4
+          },
+          {
+            "type": "normal",
+            "count": 8
+          }
+        ]
+      },
+      {
+        "z": -91,
+        "enemies": [
+          {
+            "type": "spitter",
+            "count": 7
+          },
+          {
+            "type": "fast",
+            "count": 8
+          }
+        ]
+      },
+      {
+        "z": -145,
+        "enemies": [
+          {
+            "type": "spitter",
+            "count": 8
+          },
+          {
+            "type": "shield",
+            "count": 6
+          },
+          {
+            "type": "normal",
+            "count": 8
+          }
+        ]
+      },
+      {
+        "z": -199,
+        "enemies": [
+          {
+            "type": "spitter",
+            "count": 8
+          },
+          {
+            "type": "fast",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -256,
+        "enemies": [
+          {
+            "type": "spitter",
+            "count": 7
+          },
+          {
+            "type": "normal",
+            "count": 14
+          }
+        ]
+      },
+      {
+        "z": -301,
+        "enemies": [
+          {
+            "type": "spitter",
+            "count": 12
+          },
+          {
+            "type": "fast",
+            "count": 14
+          }
+        ]
+      },
+      {
+        "z": -355,
+        "enemies": [
+          {
+            "type": "spitter",
+            "count": 14
+          },
+          {
+            "type": "shield",
+            "count": 10
+          },
+          {
+            "type": "normal",
+            "count": 14
+          }
+        ]
+      },
+      {
+        "z": -409,
+        "enemies": [
+          {
+            "type": "spitter",
+            "count": 14
+          },
+          {
+            "type": "fast",
+            "count": 17
+          }
+        ]
+      },
+      {
+        "z": -466,
+        "enemies": [
+          {
+            "type": "spitter",
+            "count": 10
+          },
+          {
+            "type": "normal",
+            "count": 21
+          }
+        ]
+      },
+      {
+        "z": -511,
+        "enemies": [
+          {
+            "type": "spitter",
+            "count": 18
+          },
+          {
+            "type": "fast",
+            "count": 21
+          }
+        ]
+      },
+      {
+        "z": -565,
+        "enemies": [
+          {
+            "type": "spitter",
+            "count": 21
+          },
+          {
+            "type": "shield",
+            "count": 16
+          },
+          {
+            "type": "normal",
+            "count": 21
+          }
+        ]
+      },
+      {
+        "z": -619,
+        "enemies": [
+          {
+            "type": "spitter",
+            "count": 21
+          },
+          {
+            "type": "fast",
+            "count": 26
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "totalZ": -675,
+    "waves": [
+      {
+        "z": -46,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 8
+          },
+          {
+            "type": "spitter",
+            "count": 4
+          }
+        ]
+      },
+      {
+        "z": -91,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 12
+          },
+          {
+            "type": "spitter",
+            "count": 7
+          },
+          {
+            "type": "shield",
+            "count": 3
+          }
+        ]
+      },
+      {
+        "z": -145,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 14
+          },
+          {
+            "type": "spitter",
+            "count": 8
+          },
+          {
+            "type": "normal",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -202,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 14
+          },
+          {
+            "type": "spitter",
+            "count": 8
+          },
+          {
+            "type": "shield",
+            "count": 6
+          }
+        ]
+      },
+      {
+        "z": -259,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 14
+          },
+          {
+            "type": "spitter",
+            "count": 7
+          }
+        ]
+      },
+      {
+        "z": -304,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 20
+          },
+          {
+            "type": "spitter",
+            "count": 12
+          },
+          {
+            "type": "shield",
+            "count": 5
+          }
+        ]
+      },
+      {
+        "z": -358,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 24
+          },
+          {
+            "type": "spitter",
+            "count": 14
+          },
+          {
+            "type": "normal",
+            "count": 17
+          }
+        ]
+      },
+      {
+        "z": -415,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 24
+          },
+          {
+            "type": "spitter",
+            "count": 14
+          },
+          {
+            "type": "shield",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -472,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 21
+          },
+          {
+            "type": "spitter",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -517,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 31
+          },
+          {
+            "type": "spitter",
+            "count": 18
+          },
+          {
+            "type": "shield",
+            "count": 8
+          }
+        ]
+      },
+      {
+        "z": -571,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 36
+          },
+          {
+            "type": "spitter",
+            "count": 21
+          },
+          {
+            "type": "normal",
+            "count": 26
+          }
+        ]
+      },
+      {
+        "z": -628,
+        "enemies": [
+          {
+            "type": "fast",
+            "count": 36
+          },
+          {
+            "type": "spitter",
+            "count": 21
+          },
+          {
+            "type": "shield",
+            "count": 16
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "totalZ": -693,
+    "waves": [
+      {
+        "z": -46,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 16
+          },
+          {
+            "type": "fast",
+            "count": 8
+          }
+        ]
+      },
+      {
+        "z": -94,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 24
+          },
+          {
+            "type": "fast",
+            "count": 12
+          }
+        ]
+      },
+      {
+        "z": -151,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 26
+          },
+          {
+            "type": "fast",
+            "count": 14
+          },
+          {
+            "type": "spitter",
+            "count": 6
+          }
+        ]
+      },
+      {
+        "z": -208,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 24
+          },
+          {
+            "type": "fast",
+            "count": 16
+          },
+          {
+            "type": "shield",
+            "count": 6
+          }
+        ]
+      },
+      {
+        "z": -265,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 27
+          },
+          {
+            "type": "fast",
+            "count": 14
+          }
+        ]
+      },
+      {
+        "z": -313,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 41
+          },
+          {
+            "type": "fast",
+            "count": 20
+          }
+        ]
+      },
+      {
+        "z": -370,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 44
+          },
+          {
+            "type": "fast",
+            "count": 24
+          },
+          {
+            "type": "spitter",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -427,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 41
+          },
+          {
+            "type": "fast",
+            "count": 27
+          },
+          {
+            "type": "shield",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -484,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 42
+          },
+          {
+            "type": "fast",
+            "count": 21
+          }
+        ]
+      },
+      {
+        "z": -532,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 62
+          },
+          {
+            "type": "fast",
+            "count": 31
+          }
+        ]
+      },
+      {
+        "z": -589,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 68
+          },
+          {
+            "type": "fast",
+            "count": 36
+          },
+          {
+            "type": "spitter",
+            "count": 16
+          }
+        ]
+      },
+      {
+        "z": -646,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 62
+          },
+          {
+            "type": "fast",
+            "count": 42
+          },
+          {
+            "type": "shield",
+            "count": 16
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "totalZ": -702,
+    "waves": [
+      {
+        "z": -49,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 2
+          },
+          {
+            "type": "normal",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -97,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 2
+          },
+          {
+            "type": "shield",
+            "count": 6
+          },
+          {
+            "type": "fast",
+            "count": 6
+          }
+        ]
+      },
+      {
+        "z": -154,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 3
+          },
+          {
+            "type": "split",
+            "count": 6
+          },
+          {
+            "type": "normal",
+            "count": 12
+          }
+        ]
+      },
+      {
+        "z": -211,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 3
+          },
+          {
+            "type": "spitter",
+            "count": 6
+          },
+          {
+            "type": "fast",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -271,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 2
+          },
+          {
+            "type": "normal",
+            "count": 17
+          }
+        ]
+      },
+      {
+        "z": -319,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 3
+          },
+          {
+            "type": "shield",
+            "count": 10
+          },
+          {
+            "type": "fast",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -376,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 5
+          },
+          {
+            "type": "split",
+            "count": 10
+          },
+          {
+            "type": "normal",
+            "count": 20
+          }
+        ]
+      },
+      {
+        "z": -433,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 5
+          },
+          {
+            "type": "spitter",
+            "count": 10
+          },
+          {
+            "type": "fast",
+            "count": 17
+          }
+        ]
+      },
+      {
+        "z": -493,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 3
+          },
+          {
+            "type": "normal",
+            "count": 26
+          }
+        ]
+      },
+      {
+        "z": -541,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 5
+          },
+          {
+            "type": "shield",
+            "count": 16
+          },
+          {
+            "type": "fast",
+            "count": 16
+          }
+        ]
+      },
+      {
+        "z": -598,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 8
+          },
+          {
+            "type": "split",
+            "count": 16
+          },
+          {
+            "type": "normal",
+            "count": 31
+          }
+        ]
+      },
+      {
+        "z": -655,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 8
+          },
+          {
+            "type": "spitter",
+            "count": 16
+          },
+          {
+            "type": "fast",
+            "count": 26
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "totalZ": -711,
+    "waves": [
+      {
+        "z": -49,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 12
+          },
+          {
+            "type": "fast",
+            "count": 8
+          },
+          {
+            "type": "spitter",
+            "count": 6
+          }
+        ]
+      },
+      {
+        "z": -97,
+        "enemies": [
+          {
+            "type": "shield",
+            "count": 8
+          },
+          {
+            "type": "split",
+            "count": 8
+          },
+          {
+            "type": "fast",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -154,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 2
+          },
+          {
+            "type": "spitter",
+            "count": 8
+          },
+          {
+            "type": "normal",
+            "count": 16
+          }
+        ]
+      },
+      {
+        "z": -214,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 3
+          },
+          {
+            "type": "shield",
+            "count": 8
+          },
+          {
+            "type": "fast",
+            "count": 12
+          }
+        ]
+      },
+      {
+        "z": -274,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 20
+          },
+          {
+            "type": "fast",
+            "count": 14
+          },
+          {
+            "type": "spitter",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -322,
+        "enemies": [
+          {
+            "type": "shield",
+            "count": 14
+          },
+          {
+            "type": "split",
+            "count": 14
+          },
+          {
+            "type": "fast",
+            "count": 17
+          }
+        ]
+      },
+      {
+        "z": -379,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 3
+          },
+          {
+            "type": "spitter",
+            "count": 14
+          },
+          {
+            "type": "normal",
+            "count": 27
+          }
+        ]
+      },
+      {
+        "z": -439,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 5
+          },
+          {
+            "type": "shield",
+            "count": 14
+          },
+          {
+            "type": "fast",
+            "count": 20
+          }
+        ]
+      },
+      {
+        "z": -499,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 31
+          },
+          {
+            "type": "fast",
+            "count": 21
+          },
+          {
+            "type": "spitter",
+            "count": 16
+          }
+        ]
+      },
+      {
+        "z": -547,
+        "enemies": [
+          {
+            "type": "shield",
+            "count": 21
+          },
+          {
+            "type": "split",
+            "count": 21
+          },
+          {
+            "type": "fast",
+            "count": 26
+          }
+        ]
+      },
+      {
+        "z": -604,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 5
+          },
+          {
+            "type": "spitter",
+            "count": 21
+          },
+          {
+            "type": "normal",
+            "count": 42
+          }
+        ]
+      },
+      {
+        "z": -664,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 8
+          },
+          {
+            "type": "shield",
+            "count": 21
+          },
+          {
+            "type": "fast",
+            "count": 31
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "totalZ": -720,
+    "waves": [
+      {
+        "z": -49,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 16
+          },
+          {
+            "type": "fast",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "z": -100,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 3
+          },
+          {
+            "type": "split",
+            "count": 10
+          },
+          {
+            "type": "fast",
+            "count": 12
+          }
+        ]
+      },
+      {
+        "z": -157,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 4
+          },
+          {
+            "type": "shield",
+            "count": 10
+          },
+          {
+            "type": "spitter",
+            "count": 8
+          }
+        ]
+      },
+      {
+        "z": -217,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 4
+          },
+          {
+            "type": "normal",
+            "count": 20
+          },
+          {
+            "type": "fast",
+            "count": 14
+          },
+          {
+            "type": "spitter",
+            "count": 8
+          }
+        ]
+      },
+      {
+        "z": -277,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 27
+          },
+          {
+            "type": "fast",
+            "count": 17
+          }
+        ]
+      },
+      {
+        "z": -328,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 5
+          },
+          {
+            "type": "split",
+            "count": 17
+          },
+          {
+            "type": "fast",
+            "count": 20
+          }
+        ]
+      },
+      {
+        "z": -385,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 7
+          },
+          {
+            "type": "shield",
+            "count": 17
+          },
+          {
+            "type": "spitter",
+            "count": 14
+          }
+        ]
+      },
+      {
+        "z": -445,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 7
+          },
+          {
+            "type": "normal",
+            "count": 34
+          },
+          {
+            "type": "fast",
+            "count": 24
+          },
+          {
+            "type": "spitter",
+            "count": 14
+          }
+        ]
+      },
+      {
+        "z": -505,
+        "enemies": [
+          {
+            "type": "normal",
+            "count": 42
+          },
+          {
+            "type": "fast",
+            "count": 26
+          }
+        ]
+      },
+      {
+        "z": -556,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 8
+          },
+          {
+            "type": "split",
+            "count": 26
+          },
+          {
+            "type": "fast",
+            "count": 31
+          }
+        ]
+      },
+      {
+        "z": -613,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 10
+          },
+          {
+            "type": "shield",
+            "count": 26
+          },
+          {
+            "type": "spitter",
+            "count": 21
+          }
+        ]
+      },
+      {
+        "z": -673,
+        "enemies": [
+          {
+            "type": "elite",
+            "count": 10
+          },
+          {
+            "type": "normal",
+            "count": 52
+          },
+          {
+            "type": "fast",
+            "count": 36
+          },
+          {
+            "type": "spitter",
+            "count": 21
+          }
+        ]
+      }
+    ]
+  }
+]

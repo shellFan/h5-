@@ -7,7 +7,8 @@ async function main(){
  try{
   const context=await seededContext(h.browser,{width:390,height:844},1,420);
   const page=await context.newPage();await page.goto(h.baseUrl+'/?quality=0');await waitForGameReady(page,30000);
-  for(let level=0;level<10;level++){
+  const levels=process.env.V42_SIM_LEVELS?process.env.V42_SIM_LEVELS.split(',').map(Number).map(x=>x-1):Array.from({length:10},(_,i)=>i);
+  for(const level of levels){
    const r=await page.evaluate(async index=>{
     const g=window.__game;g.levelIndex=index;g.start();g.paused=true;
     const DT=1/30,trace=[],decided=new Set();let tick=0,maxAlive=0,shots=0;
@@ -39,7 +40,7 @@ async function main(){
     return {level:index+1,name:LEVELS[index].name,style:LEVELS[index].bossStyle,state:g.state,won:g.state==='won',duration:+(tick*DT).toFixed(2),count:g.squad.count,maxCount:g.maxCount,kills:g.enemies.killCount,maxAlive,bulletsPeak:shots,trace,waves:g.pacing.summary(),error:document.getElementById('error-display')?.textContent||'',timingPass:tick*DT>=180&&tick*DT<=240};
    },level);
    results.push(r);console.log('L'+r.level,r.state,r.duration+'s','count='+r.count,'kills='+r.kills,'timing='+r.timingPass);
-   fs.writeFileSync(path.join(ROOT,'docs/v42-simulation.json'),JSON.stringify({seed:420,dt:1/30,actualEngine:true,forcedWins:false,passed:results.length===10&&results.every(x=>x.won&&x.timingPass&&!x.error),results},null,2));
+   fs.writeFileSync(path.join(ROOT,process.env.V42_SIM_OUTPUT||'docs/v42-simulation.json'),JSON.stringify({seed:420,dt:1/30,actualEngine:true,forcedWins:false,passed:results.length===10&&results.every(x=>x.won&&x.timingPass&&!x.error),results},null,2));
   }
  }finally{await h.close();}
  if(!results.every(r=>r.won&&r.timingPass&&!r.error)||results.length!==10)process.exitCode=1;

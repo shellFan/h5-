@@ -16,11 +16,11 @@
   "enemies": [
     {
       "key": "normal",
-      "hero": "normal/normal.glb",
-      "lod": "normal/normal-lod.glb",
+      "hero": "../zombies/normal/normal.glb",
+      "lod": "../zombies/normal/normal-lod.glb",
       "textures": [
-        "normal/textures/normal-basecolor.png",
-        "normal/textures/normal-orm.png"
+        "../zombies/normal/textures/normal-basecolor.png",
+        "../zombies/normal/textures/normal-orm.png"
       ],
       "triangles": 3676,
       "lodTriangles": 1054,
@@ -159,11 +159,11 @@
     },
     {
       "key": "fast",
-      "hero": "fast/fast.glb",
-      "lod": "fast/fast-lod.glb",
+      "hero": "../zombies/fast/fast.glb",
+      "lod": "../zombies/fast/fast-lod.glb",
       "textures": [
-        "fast/textures/fast-basecolor.png",
-        "fast/textures/fast-orm.png"
+        "../zombies/fast/textures/fast-basecolor.png",
+        "../zombies/fast/textures/fast-orm.png"
       ],
       "triangles": 3744,
       "lodTriangles": 1076,
@@ -302,11 +302,11 @@
     },
     {
       "key": "shield",
-      "hero": "shield/shield.glb",
-      "lod": "shield/shield-lod.glb",
+      "hero": "../zombies/shield/shield.glb",
+      "lod": "../zombies/shield/shield-lod.glb",
       "textures": [
-        "shield/textures/shield-basecolor.png",
-        "shield/textures/shield-orm.png"
+        "../zombies/shield/textures/shield-basecolor.png",
+        "../zombies/shield/textures/shield-orm.png"
       ],
       "triangles": 4468,
       "lodTriangles": 1285,
@@ -445,11 +445,11 @@
     },
     {
       "key": "split",
-      "hero": "split/split.glb",
-      "lod": "split/split-lod.glb",
+      "hero": "../zombies/split/split.glb",
+      "lod": "../zombies/split/split-lod.glb",
       "textures": [
-        "split/textures/split-basecolor.png",
-        "split/textures/split-orm.png"
+        "../zombies/split/textures/split-basecolor.png",
+        "../zombies/split/textures/split-orm.png"
       ],
       "triangles": 4184,
       "lodTriangles": 1202,
@@ -588,11 +588,11 @@
     },
     {
       "key": "spitter",
-      "hero": "spitter/spitter.glb",
-      "lod": "spitter/spitter-lod.glb",
+      "hero": "../zombies/spitter/spitter.glb",
+      "lod": "../zombies/spitter/spitter-lod.glb",
       "textures": [
-        "spitter/textures/spitter-basecolor.png",
-        "spitter/textures/spitter-orm.png"
+        "../zombies/spitter/textures/spitter-basecolor.png",
+        "../zombies/spitter/textures/spitter-orm.png"
       ],
       "triangles": 3920,
       "lodTriangles": 1126,
@@ -737,11 +737,11 @@
     },
     {
       "key": "elite",
-      "hero": "elite/elite.glb",
-      "lod": "elite/elite-lod.glb",
+      "hero": "../zombies/elite/elite.glb",
+      "lod": "../zombies/elite/elite-lod.glb",
       "textures": [
-        "elite/textures/elite-basecolor.png",
-        "elite/textures/elite-orm.png"
+        "../zombies/elite/textures/elite-basecolor.png",
+        "../zombies/elite/textures/elite-orm.png"
       ],
       "triangles": 3652,
       "lodTriangles": 1048,
@@ -880,11 +880,11 @@
     },
     {
       "key": "bruiser",
-      "hero": "bruiser/bruiser.glb",
-      "lod": "bruiser/bruiser-lod.glb",
+      "hero": "../bosses/bruiser/bruiser.glb",
+      "lod": "../bosses/bruiser/bruiser-lod.glb",
       "textures": [
-        "bruiser/textures/bruiser-basecolor.png",
-        "bruiser/textures/bruiser-orm.png"
+        "../bosses/bruiser/textures/bruiser-basecolor.png",
+        "../bosses/bruiser/textures/bruiser-orm.png"
       ],
       "triangles": 4532,
       "lodTriangles": 1212,
@@ -1023,11 +1023,11 @@
     },
     {
       "key": "bulwark",
-      "hero": "bulwark/bulwark.glb",
-      "lod": "bulwark/bulwark-lod.glb",
+      "hero": "../bosses/bulwark/bulwark.glb",
+      "lod": "../bosses/bulwark/bulwark-lod.glb",
       "textures": [
-        "bulwark/textures/bulwark-basecolor.png",
-        "bulwark/textures/bulwark-orm.png"
+        "../bosses/bulwark/textures/bulwark-basecolor.png",
+        "../bosses/bulwark/textures/bulwark-orm.png"
       ],
       "triangles": 4600,
       "lodTriangles": 1232,
@@ -1166,11 +1166,11 @@
     },
     {
       "key": "spitking",
-      "hero": "spitking/spitking.glb",
-      "lod": "spitking/spitking-lod.glb",
+      "hero": "../bosses/spitking/spitking.glb",
+      "lod": "../bosses/spitking/spitking-lod.glb",
       "textures": [
-        "spitking/textures/spitking-basecolor.png",
-        "spitking/textures/spitking-orm.png"
+        "../bosses/spitking/textures/spitking-basecolor.png",
+        "../bosses/spitking/textures/spitking-orm.png"
       ],
       "triangles": 4348,
       "lodTriangles": 1160,
@@ -1315,11 +1315,11 @@
     },
     {
       "key": "hivelord",
-      "hero": "hivelord/hivelord.glb",
-      "lod": "hivelord/hivelord-lod.glb",
+      "hero": "../bosses/hivelord/hivelord.glb",
+      "lod": "../bosses/hivelord/hivelord-lod.glb",
       "textures": [
-        "hivelord/textures/hivelord-basecolor.png",
-        "hivelord/textures/hivelord-orm.png"
+        "../bosses/hivelord/textures/hivelord-basecolor.png",
+        "../bosses/hivelord/textures/hivelord-orm.png"
       ],
       "triangles": 4204,
       "lodTriangles": 1125,
@@ -1464,11 +1464,11 @@
     },
     {
       "key": "titan",
-      "hero": "titan/titan.glb",
-      "lod": "titan/titan-lod.glb",
+      "hero": "../bosses/titan/titan.glb",
+      "lod": "../bosses/titan/titan-lod.glb",
       "textures": [
-        "titan/textures/titan-basecolor.png",
-        "titan/textures/titan-orm.png"
+        "../bosses/titan/textures/titan-basecolor.png",
+        "../bosses/titan/textures/titan-orm.png"
       ],
       "triangles": 3816,
       "lodTriangles": 1021,
@@ -1607,11 +1607,11 @@
     },
     {
       "key": "overlord",
-      "hero": "overlord/overlord.glb",
-      "lod": "overlord/overlord-lod.glb",
+      "hero": "../bosses/overlord/overlord.glb",
+      "lod": "../bosses/overlord/overlord-lod.glb",
       "textures": [
-        "overlord/textures/overlord-basecolor.png",
-        "overlord/textures/overlord-orm.png"
+        "../bosses/overlord/textures/overlord-basecolor.png",
+        "../bosses/overlord/textures/overlord-orm.png"
       ],
       "triangles": 4276,
       "lodTriangles": 1146,

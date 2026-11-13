@@ -5,7 +5,8 @@ var EnemyModelLoader = class EnemyModelLoader {
         var start=performance.now(), loaded=[], loader=new THREE.GLTFLoader();
         this.status='loading';
         this._promise=Promise.allSettled(this.KEYS.flatMap(key=>['hero','lod'].map(lod=>new Promise((resolve,reject)=>{
-            var url='assets/models/enemies/'+key+'/'+key+(lod==='lod'?'-lod':'')+'.glb';
+            var category=['normal','fast','shield','split','spitter','elite'].includes(key)?'zombies':'bosses';
+            var url='assets/models/'+category+'/'+key+'/'+key+(lod==='lod'?'-lod':'')+'.glb';
             loader.load(url,g=>{
                 try {
                     g.scene.updateMatrixWorld(true);
@@ -90,7 +91,7 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
         for(var e of enemies) {
             if(e.removeReady || e.model.scale.x<.005)continue;
             var style=e.artStyle||e.type;
-            var lod=(!e.isBoss && enemies.length>40)||Math.abs(e.z-squadZ)>22?'lod':'hero';
+            var lod=e.isBoss?(Math.abs(e.z-squadZ)>42?'lod':'hero'):((enemies.length>40||Math.abs(e.z-squadZ)>22)?'lod':'hero');
             var bank=this._bank(style,lod),slot=bank.count++;
             if(slot>=160){bank.count=160;continue;}
             e.model.updateMatrix();this._root.copy(e.model.matrix);

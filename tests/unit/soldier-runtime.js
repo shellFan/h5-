@@ -84,3 +84,8 @@ squad.update(1 / 60, 2, null);
 assert.equal(squad.renderer.pose(0).state, 'Victory');
 
 console.log('PASS soldier runtime: banks, aliases, muzzle, overlays, ghosts, victory');
+for(const n of [31,100,300,500]) {
+    squad.reset(n);
+    assert(squad.soldiers.every(s=>s.fz>=-.03),'Army must trail its logical combat front, never wrap around approaching enemies');
+    assert(squad.getDepth()>0,'Camera must know army depth');
+}

@@ -59,6 +59,7 @@ class Effects {
 
     /** 生成浮动文字(伤害/暴击) */
     floatText(x, y, z, text, color, big) {
+        const damageNumber=/^\d+$/.test(String(text));
         // 限制同时显示数量
         if (this._floatTextCount > 20) return;
         this._floatTextCount++;
@@ -86,16 +87,16 @@ class Effects {
         // V3.2: 分散出生点, 避免连续暴击文字完全重叠
         sprite.position.set(
             x + randRange(-0.5, 0.5),
-            y + randRange(0, 0.35),
+            (damageNumber ? y * .55 : y) + randRange(0, damageNumber ? .08 : .35),
             z + randRange(-0.4, 0.4)
         );
-        const sc = big ? 0.9 : 0.55;
+        const sc = big ? (damageNumber ? .70 : .9) : .55;
         sprite.scale.set(sc, sc * 0.5, 1);
         sprite.renderOrder = 999;
         this.scene.add(sprite);
         this.floatTexts.push({
             sprite: sprite, life: 0.7, maxLife: 0.7,
-            vy: big ? 3.2 : 2.5, vx: randRange(-0.5, 0.5)
+            vy: damageNumber ? (big ? 1.35 : 1.1) : (big ? 3.2 : 2.5), vx: randRange(-0.5, 0.5)
         });
     }
 

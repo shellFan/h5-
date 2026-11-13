@@ -173,11 +173,11 @@ tube('Rear helmet lower rank',[(-.05,1.187,.251),(0,1.165,.259),(.05,1.187,.251)
 # Both hands support rifle. Gun deliberately offset from torso for in-game readability.
 for x in [-.27,.27]:
     ell('Jacket sleeve',(x,.647,-.015),(.092,.12,.10),'Arms','cloth',16,10)
-tube('Left supporting sleeve',[(-.27,.62,-.05),(-.23,.53,-.18),(-.08,.50,-.34),(.10,.53,-.44)],.064,'Arms','cloth')
-ell('Right forearm',(.24,.55,-.13),(.07,.072,.13),'Arms','cloth')
-ell('Support glove',(.18,.55,-.46),(.072,.060,.070),'Arms','ivory')
-ell('Trigger glove',(.19,.552,-.21),(.067,.064,.065),'Arms','ivory')
-gx=.23
+tube('Left supporting sleeve',[(-.27,.62,-.05),(-.23,.53,-.18),(0,.50,-.34),(.30,.53,-.44)],.064,'Arms','cloth')
+ell('Right forearm',(.33,.55,-.13),(.07,.072,.13),'Arms','cloth')
+ell('Support glove',(.35,.55,-.46),(.072,.060,.070),'Arms','ivory')
+ell('Trigger glove',(.38,.552,-.21),(.067,.064,.065),'Arms','ivory')
+gx=.40
 box('Rifle receiver',(gx,.622,-.31),(.15,.125,.31),'Arms','gun',.02)
 box('Stock',(gx,.61,-.065),(.12,.14,.22),'Arms','strap',.025)
 box('Stock butt',(gx,.61,.05),(.14,.16,.035),'Arms','rubber',.012)

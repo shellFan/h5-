@@ -38,3 +38,13 @@ V4.1士兵背部/枪械精修；V4.2六种敌人、六种Boss GLB/LOD已接入�
 `node tests/e2e/v42.js`；`node tests/unit/v42-assets.js`；`node tests/unit/v42-effects.js`；`node tests/unit/v42-gameplay.js`。
 
 Blender：`D:/tools/blender-v41/blender-4.2.15-windows-x64/blender.exe`。脚本tools/create-soldier.py、create-enemies.py、blender_art_common.py。
+
+## 2026-11-14 全量提交检查点
+
+按用户“代码都提交一下”保存全部当前代码、模型目录迁移、截图与测试记录。该检查点是开发快照，不代表最终视觉或发布验收。
+
+本次重新执行：基础单元测试50/50通过；V42十二套/24个GLB二进制资源校验通过；H5构建通过；git diff --check无空白错误。
+
+已知失败：node tests/unit/v42-stream.js 报 Preparation/backpressure must not bank catch-up credit for an instant stream。准备期/人口上限等待期间emitTimer累计负值，需修复后重跑节奏测试与十关回放。完整性能矩阵与最终视觉验收仍待完成。本次不推送，避免将未通过测试的开发快照标记为发布结果。
+
+此前进度条目属于历史记录：原始波次人数已恢复，并增加tests/fixtures/v42-original-waves.json；敌人资源已迁移至assets/models/zombies和assets/models/bosses，catalog保留在assets/models/enemies；最终主战斗截图已生成，但最终评分仍待图像审查确认。

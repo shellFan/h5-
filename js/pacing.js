@@ -36,6 +36,9 @@ class GamePacingController {
                     queue: queue,
                     state: 'idle',          // idle|spawning|clearing|done
                     batchTimer: P.firstContactGrace,
+                    total: queue.length,
+                    pending: [],
+                    emitTimer: 0,
                     spawned: 0
                 });
             } else if (seg.type === 'boss') {
@@ -63,8 +66,13 @@ class GamePacingController {
     }
 
     /** 批次规模: 随关卡推进逐渐提高(1-4只) */
-    _batchSize() {
+    _batchSize(wave) {
         var P = CONFIG.PACING;
+        if(wave) {
+            var ceiling=Math.min(P.batchSizeMax,Math.max(2,Math.ceil(wave.total/5)));
+            var floor=Math.max(P.batchSizeBase,ceiling-2);
+            return floor+Math.floor(Math.random()*(ceiling-floor+1));
+        }
         var effMax = Math.min(P.batchSizeMax, 2 + Math.floor((this.levelIndex || 0) / 2));
         return P.batchSizeBase + Math.floor(Math.random() * (effMax - P.batchSizeBase + 1));
     }
@@ -75,6 +83,7 @@ class GamePacingController {
 
         if (w.state === 'idle') {
             if (squad.z <= w.triggerZ) {
+                w.startedAt=this.game ? this.game.elapsedTime : null;
                 if (w.type === 'boss') {
                     w.state = 'warning';
                     if (this.onBossWarning) this.onBossWarning(w);
@@ -92,7 +101,7 @@ class GamePacingController {
             w.warnTimer -= dt;
             if (w.warnTimer <= 0) {
                 // Boss从波点再向屏幕外后退出生(禁止贴脸刷新), 出场后自行走近
-                var bz = w.z + P.bossSpawnSetback;
+                var bz = Math.min(w.z + P.bossSpawnSetback, squad.z - 11);
                 if (this.spawnFn) this.spawnFn('boss', 0, bz, w.hp);
                 w.state = 'done';
                 if (this._onBossSpawnFx) this._onBossSpawnFx(); // V4.0: 入场震屏
@@ -104,26 +113,26 @@ class GamePacingController {
 
         if (w.state === 'spawning') {
             w.batchTimer -= dt;
-            if (w.batchTimer <= 0 && w.queue.length > 0) {
-                var alive = this.aliveCountFn ? this.aliveCountFn() : 0;
-                var cap = this._maxAlive();
-                if (alive < cap) {
-                    var batch = Math.min(this._batchSize(), w.queue.length, cap - alive);
-                    for (var i = 0; i < batch; i++) {
-                        var type = w.queue.shift();
-                        var lane = Math.floor(Math.random() * 3);
-                        var x = CONFIG.LANE_X[lane] + randRange(-0.4, 0.4);
-                        // V4.0: 屏幕外预生成 — 相对队伍前方11~(11+纵深)单位, 无论队伍速度如何怪永远迎面涌入
-                        var z = squad.z - randRange(11, 11 + P.spawnDepth);
-                        if (this.spawnFn) this.spawnFn(type, x, z, null);
-                        w.spawned++;
-                    }
-                }
+            w.emitTimer -= dt;
+            if(!w.pending.length && w.batchTimer<=0 && w.queue.length) {
+                // Atomic ownership transfer: backpressure never discards a
+                // queued actor; it remains in pending until it really spawns.
+                w.pending=w.queue.splice(0,Math.min(this._batchSize(w),w.queue.length));
                 w.batchTimer = randRange(P.spawnIntervalMin, P.spawnIntervalMax);
-                return true;
             }
-            if (w.queue.length === 0) {
+            var alive = this.aliveCountFn ? this.aliveCountFn() : 0;
+            if(w.pending.length && w.emitTimer<=0 && alive<this._maxAlive()) {
+                var type=w.pending[0],lane=Math.floor(Math.random()*3);
+                var x=CONFIG.LANE_X[lane]+randRange(-.4,.4);
+                var z=squad.z-randRange(11,11+P.spawnDepth);
+                if(this.spawnFn)this.spawnFn(type,x,z,null);
+                w.pending.shift();w.spawned++;
+                // Explicit one-actor-per-frame cap, including catch-up frames.
+                w.emitTimer=dt>.1?P.streamInterval:w.emitTimer+P.streamInterval;
+            }
+            if (w.queue.length === 0 && w.pending.length === 0) {
                 w.state = 'clearing';
+                w.spawnFinishedAt=this.game ? this.game.elapsedTime : null;
                 return true;
             }
             return false;
@@ -133,6 +142,7 @@ class GamePacingController {
             var remain = this.aliveCountFn ? this.aliveCountFn() : 0;
             if (remain === 0) {
                 w.state = 'done';
+                w.clearedAt=this.game ? this.game.elapsedTime : null;
                 if (this.onWaveClear) this.onWaveClear(w);
                 return true;
             }
@@ -162,13 +172,14 @@ class GamePacingController {
 
     frontierStopZ() {
         var w = this.activeWave;
-        return w && w.type === 'wave' && (w.state === 'spawning' || w.state === 'clearing') ? w.z - 4 : null;
+        if(w && w.type==='boss' && w.state==='warning')return w.triggerZ-1;
+        return w && w.type === 'wave' && (w.state === 'spawning' || w.state === 'clearing') ? w.z - CONFIG.PACING.combatAdvance : null;
     }
 
     /** 调试/测试: 当前波次状态摘要 */
     summary() {
         return this.waves.map(function(w) {
-            return { type: w.type, z: w.z, state: w.state, queued: w.queue ? w.queue.length : 0, spawned: w.spawned || 0 };
+            return { type: w.type, z: w.z, state: w.state, queued: w.queue ? w.queue.length : 0, pending:w.pending?w.pending.length:0, spawned: w.spawned || 0,startedAt:w.startedAt,spawnFinishedAt:w.spawnFinishedAt,clearedAt:w.clearedAt };
         });
     }
 }

@@ -220,8 +220,8 @@ class CombatSystem {
         // variation after launch; random origin offsets detached shots from guns.
         mesh.position.set(pos.x, pos.y, pos.z);
         // Sprite scale: 金黄发光弹道 (V3.6: 加大尺寸保证清晰可见; V3.3: 暴击弹更大)
-        if (isCrit) mesh.scale.set(0.4, 1.15, 1);
-        else mesh.scale.set(0.3, 0.9, 1);
+        if (isCrit) mesh.scale.set(0.28, 1.45, 1);
+        else mesh.scale.set(0.20, 1.25, 1);
         this.bullets.push({
             mesh: mesh, damage: damage, life: 1.2,
             target: target || null,

@@ -235,7 +235,8 @@ async function suiteGameplay(page) {
         await gameApi(page, '(g) => { g.start(); g.squad.setCount(12); }');
         // V4: 动态定位第一波触发点(关卡扩容后坐标不再固定)
         await gameApi(page, '(g) => { const w = LEVELS[0].segments.find(s => s.type === "wave"); g.squad.z = w.z + CONFIG.PACING.waveTriggerAhead; }');
-        await page.waitForTimeout(800);
+        // V4.2 has an intentional two-second preparation telegraph.
+        await page.waitForFunction(() => window.__game.enemies.enemies.length > 0, null, {timeout:6000});
         const n = await gameApi(page, '(g) => g.enemies.enemies.length');
         assert(n > 0, '应有敌人生成, 实际' + n);
     });
@@ -255,12 +256,14 @@ async function suiteGameplay(page) {
 
     _current = 'Boss战';
     await step('Boss生成+血条显示', async () => {
-        await gameApi(page, '(g) => { const b = LEVELS[0].segments.find(s => s.type === "boss"); g.squad.z = b.z + 16; g.squad.setCount(40); }');
+        // Isolate this boss fixture from earlier wave queues. The full ten-level
+        // replay separately covers natural progression without teleport/skip.
+        await gameApi(page, '(g) => { g.enemies.clear(); g.pacing.waves.filter(w=>w.type==="wave").forEach(w=>w.state="done"); g.pacing.restTimer=0; g.pacing.activeWave=null; const b = LEVELS[0].segments.find(s => s.type === "boss"); g.squad.z = b.z + 16; g.squad.setCount(40); }');
         // 等待Boss生成(轮询代替固定等待, 消除时序不稳定)
         await page.waitForFunction(() => {
             const g = window.__game;
             return !!(g && g.enemies && g.enemies.boss);
-        }, { timeout: 5000 }).catch(() => {});
+        }, null, { timeout: 8000 });
         const boss = await gameApi(page, '(g) => g.enemies.boss ? { hp: g.enemies.boss.hp, max: g.enemies.boss.maxHp } : null');
         assert(boss, 'Boss应已生成');
         const barVisible = await page.evaluate(() => !document.getElementById('boss-bar-container').classList.contains('hidden'));
@@ -352,7 +355,7 @@ async function suiteAdMock(page) {
     _current = '双倍结算E2E';
     await step('通关后广告领取双倍(限1次)', async () => {
         await gotoGame(page, '?adtest=auto_complete');
-        await gameApi(page, "(g) => { g.start(); const b = LEVELS[0].segments.find(s => s.type === 'boss'); g.squad.setCount(150); g.squad.z = b.z + 16; }");
+        await gameApi(page, "(g) => { g.start(); g.pacing.waves.filter(w=>w.type==='wave').forEach(w=>w.state='done'); g.pacing.restTimer=0; g.pacing.activeWave=null; const b = LEVELS[0].segments.find(s => s.type === 'boss'); g.squad.setCount(150); g.squad.z = b.z + 16; }");
         // 等待Boss被击杀→won
         await page.waitForFunction(() => { const g = window.__game; return g && g.state === 'won'; }, { timeout: 12000 }).catch(() => {});
         assert(await gameApi(page, '(g) => g.state') === 'won', '应进入胜利状态');

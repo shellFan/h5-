@@ -62,9 +62,14 @@ module.exports.run = function(ctx) {
             p.update(0.1, squad);                                    // 激活帧
             p.update(CONFIG.PACING.firstContactGrace + 0.01, squad); // 首批
             var afterFirst = spawned.length;
+            var queuedAfterFirst = p.waves[0].queue.length;
+            var pendingAfterFirst = p.waves[0].pending.length;
             assert(afterFirst >= 1, '首批已生成');
             p.update(CONFIG.PACING.spawnIntervalMin - 0.05, squad); // 不足间隔
-            assertEq(spawned.length, afterFirst, '间隔内不生成新批');
+            // V4.2 members of the admitted batch stream over time. The main
+            // queue must not admit another batch before the configured gap.
+            assertEq(p.waves[0].queue.length, queuedAfterFirst, '间隔内不能从主队列生成新批');
+            assert(spawned.length <= afterFirst + pendingAfterFirst, '只能释放上一批待出场成员');
         });
         test('场上活敌达上限时暂停生成', () => {
             var { p, spawned } = makeCtl(0);

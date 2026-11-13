@@ -9,7 +9,7 @@ const CONFIG = {
     // 小队
     SQUAD_START_COUNT: 1,
     SQUAD_MAX_COUNT: 500,
-    SQUAD_SPEED: 3.6,           // V4.2: 比旧版降低28%，十关实际回放校准
+    SQUAD_SPEED: 3.3,           // V4.2: 比旧版降低34%，保留全部怪物后按真实十关回放校准
     FORMATION_COLS: 7,          // 阵型基础列数(V4: 大人数自适应扩列, 见squad._updateFormation)
     FORMATION_SPACING_X: 0.52,
     FORMATION_SPACING_Z: 0.46,
@@ -32,7 +32,9 @@ const CONFIG = {
         spawnIntervalMin: 0.8,      // 批次生成间隔下限(秒)
         spawnIntervalMax: 1.5,      // 批次生成间隔上限(秒)
         batchSizeBase: 2,           // 两只起步，单波排队，避免多波同时涌入
-        batchSizeMax: 4,            // 批次规模上限
+        batchSizeMax: 12,           // 后期批次逐个出场，不允许一帧整批弹出
+        streamInterval: 0.10,      // 同批角色间距(秒)，每帧最多生成一只
+        combatAdvance: 25,         // 允许移动中持续交火；仅长波尾部设置战斗前沿
         maxAliveBase: 10,           // 场上活敌上限基准(L1), 每关+1
         maxAliveCap: 20,            // 场上活敌上限封顶
         spawnDepth: 9,              // 生成纵深(z向散布, 屏幕外逐步涌入)
@@ -606,13 +608,8 @@ LEVELS.forEach(function(level, li) {
     level.bossStyle = CONFIG.BOSS_STYLES[li];
     level.segments.forEach(function(seg) {
         if (seg.type === 'wave') {
-            var budget = Math.round(8 + Math.floor(waveIndex / 4) * 3 + li * .35);
-            var total = seg.enemies.reduce(function(n,e) { return n + e.count; }, 0);
-            var left = budget;
-            seg.enemies.forEach(function(e,i) {
-                e.count = i === seg.enemies.length - 1 ? Math.max(1,left) : Math.max(1,Math.round(e.count / total * budget));
-                left -= e.count;
-            });
+            // Preserve every original monster/type. Control arrival with the
+            // stream scheduler rather than deleting a large part of a wave.
             waveIndex++;
         } else if (seg.type === 'boss') {
             seg.boss.style = level.bossStyle;

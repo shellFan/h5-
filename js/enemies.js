@@ -30,7 +30,7 @@ class Enemy {
         this.artStyle = styleOverride || (this.isBoss ? 'bruiser' : type);
         this.model = new THREE.Group();
         this.model.userData.merged = true;
-        this.model.userData.artSource = 'assets/models/enemies/'+this.artStyle+'/'+this.artStyle+'.glb (instanced anchor)';
+        this.model.userData.artSource = 'assets/models/'+(['normal','fast','shield','split','spitter','elite'].includes(this.artStyle)?'zombies':'bosses')+'/'+this.artStyle+'/'+this.artStyle+'.glb (instanced anchor)';
         this.model.position.set(x, 0, z);
         this.model.scale.setScalar(this.cfg.scale); // V2.2修复: 存活时应用类型scale
         this.visScale = this.cfg.scale; // 实际视觉scale(分裂僵尸会缩小)
@@ -121,7 +121,7 @@ class Enemy {
         const attackDist = CONFIG.ZOMBIE_ATTACK_DIST * (this.isBoss ? 2.5 : 1);
 
         // V3.2: Boss狂暴阶段 — 血量50%触发, 移速/攻击提升 + 红色氛围
-        if (this.isBoss && !this.enraged && this.hp <= this.maxHp * 0.5) {
+        if (this.isBoss && !this.enraged && this.hp <= this.maxHp * (this.artStyle==='overlord'?.33:.5)) {
             this.enraged = true;
             this.speedMul = 1.5;
             this.attackMul = 0.65; // 攻击间隔缩短
@@ -369,5 +369,9 @@ class EnemyManager {
         let n = 0;
         for (const e of this.enemies) if (e.alive) n++;
         return n;
+    }
+
+    get encounterOutstanding() {
+        return this.aliveCount + this.splitQueue.length + this.enemies.filter(e=>e.type==='split' && !e.alive && !e.deathHandled).length*2;
     }
 }

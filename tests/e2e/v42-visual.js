@@ -116,7 +116,7 @@ async function exerciseViewport(browser, baseUrl, viewport) {
         });
 
         await test(`${tag} pause, menu, and ad controls retain usable layout`, async () => {
-            await page.locator('#btn-pause').evaluate(element => element.click());
+            await page.locator('#btn-pause').click();
             await page.waitForFunction(() => window.__game.paused === true);
             const pauseLayout = await page.evaluate(() => {
                 function box(id) {
@@ -127,6 +127,7 @@ async function exerciseViewport(browser, baseUrl, viewport) {
                         id, left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom,
                         width: rect.width, height: rect.height,
                         display: getComputedStyle(element).display,
+                        visible: element.getClientRects().length > 0,
                         pointerEvents: getComputedStyle(element).pointerEvents
                     };
                 }
@@ -134,20 +135,32 @@ async function exerciseViewport(browser, baseUrl, viewport) {
                     'btn-refresh-gates', 'btn-revive', 'btn-double-reward'].map(box);
             });
             for (const box of pauseLayout.filter(Boolean)) {
-                if (box.display === 'none') continue;
+                if (box.display === 'none' || !box.visible) continue;
                 assert(box.left >= -1 && box.top >= -1 && box.right <= viewport.width + 1 && box.bottom <= viewport.height + 1,
                     `${tag} ${box.id} leaves viewport: ${JSON.stringify(box)}`);
                 assert(box.width > 0 && box.height > 0 && box.pointerEvents !== 'none',
                     `${tag} ${box.id} is not interactable: ${JSON.stringify(box)}`);
             }
-            await page.locator('#btn-resume').evaluate(element => element.click());
+            await page.locator('#btn-resume').click();
             await page.waitForFunction(() => window.__game.paused === false);
-            await page.locator('#btn-pause').evaluate(element => element.click());
-            await page.locator('#btn-pause-menu').evaluate(element => element.click());
+            await page.locator('#btn-pause').click();
+            await page.locator('#btn-pause-menu').click();
             await page.waitForFunction(() => window.__game.state === 'idle');
             const menuVisible = await page.locator('#start-screen').evaluate(element => !element.classList.contains('hidden'));
             assert(menuVisible, `${tag} pause menu did not return to the start screen`);
-            await page.locator('#btn-start').evaluate(element => element.click());
+            await page.locator('#btn-start').click();
+        });
+
+        await test(`${tag} victory and defeat reward controls fit when their screens are actually visible`, async () => {
+            for(const state of ['win','lose']) {
+                await page.evaluate(s=>{const g=__game;g.start();g.paused=true;if(s==='win')g._win();else g._lose('测试结算布局');},state);
+                await page.waitForTimeout(400);
+                const boxes=await page.evaluate(s=>(s==='win'?['btn-next-level','btn-double-reward','btn-restart-win']:['btn-restart-lose','btn-revive']).map(id=>{
+                    const e=document.getElementById(id),r=e.getBoundingClientRect();return{id,visible:e.getClientRects().length>0,left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};
+                }),state);
+                for(const b of boxes){assert(b.visible,`${tag} reward control should be visible: ${b.id}`);assert(b.width>=44&&b.height>=44&&b.left>=0&&b.right<=viewport.width+1&&b.top>=0&&b.bottom<=viewport.height+1,`${tag} reward control clipped or too small: ${JSON.stringify(b)}`);}
+            }
+            await page.evaluate(()=>{__game.start();__game.paused=true;});
         });
 
         await test(`${tag} three real gates have finite, non-cropped projected bounds`, async () => {
