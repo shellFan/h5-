@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "name": "all twelve GLBs cached; hero/LOD material shared without legacy enemy geometry",
+      "passed": true
+    },
+    {
+      "name": "one gate reward per row even when a 500-soldier footprint touches three panes",
+      "passed": true
+    },
+    {
+      "name": "actual enemy instances animate and hit tint does not mutate another actor material",
+      "passed": true
+    },
+    {
+      "name": "final boss has shield, summons and third phase; shield reduces real damage",
+      "passed": true
+    },
+    {
+      "name": "both twin elites must die before the encounter wins",
+      "passed": true
+    },
+    {
+      "name": "acid projectiles move toward the player and the pool is bounded",
+      "passed": true
+    },
+    {
+      "name": "decoration visibility has no effect on movement, road bounds or gate logic",
+      "passed": true
+    },
+    {
+      "name": "particles and golden projectiles are bounded instance batches",
+      "passed": true
+    },
+    {
+      "name": "no browser shader/runtime errors",
+      "passed": true
+    },
+    {
+      "name": "failed enemy GLB is visible and retry boots exactly one Game",
+      "passed": true
+    }
+  ]
+}
