@@ -29,10 +29,18 @@ class Game {
                 var dpsNow = self.squad.count * self.squad.getDamage() * self.squad.getFireRate();
                 hp = Math.round((base + dpsNow * 8) / 50) * 50;
             }
+            if(type==='boss' && self.enemies.bossStyle==='twinelite') {
+                self.enemies.spawnEnemy(type,-1.1,z,hp/2,'elite');
+                return self.enemies.spawnEnemy(type,1.1,z,hp/2,'elite');
+            }
             return self.enemies.spawnEnemy(type, x, z, hp);
         };
         this.pacing.aliveCountFn = function() { return self.enemies.aliveCount; };
-        this.pacing.onWaveStart = function(w) { /* 波次激活(怪物尚在屏幕外涌入) */ };
+        this.pacing.onWaveStart = function(w) {
+            self._waveNoticeT=CONFIG.PACING.firstContactGrace;
+            var el=document.getElementById('v42-wave-banner');
+            if(el){el.textContent='怪潮接近 · 准备射击';el.classList.remove('hidden');}
+        };
         this.pacing.onWaveClear = function(w) {
             if (self.effects && self.state === 'playing') {
                 self.effects.floatText(self.squad.x, 2.2, self.squad.z - 1.5, '波次清除!', '#66D68F', false);
@@ -96,6 +104,7 @@ class Game {
         this._setupInput();
         this._setupUI();
         this._setupDebugPanel(); // V3.7: ?debug=1 显示运行时美术/性能面板
+        V42Art.installUI(this);
 
         this._loop = this._loop.bind(this);
         requestAnimationFrame(this._loop);
@@ -250,6 +259,7 @@ class Game {
         this.progressNodes = [];
         for (var i = 0; i < level.segments.length; i++) {
             var seg = level.segments[i];
+            if(seg.type!=='boss' && (seg.type!=='wave' || level.segments.filter((s,index)=>index<=i&&s.type==='wave').length%2===0))continue;
             var nodePos = clamp(seg.z / level.totalZ, 0, 1) * 100;
             var el = document.createElement('div');
             el.className = 'pnode';
@@ -586,10 +596,12 @@ class Game {
             this.squad.reset(level.startCount);
             this.gates.loadFromLevel(level);
             this.enemies.loadFromLevel(level);
+            this.enemies.bossStyle=level.bossStyle;
             // V4.0: 波次计划移交节奏控制器(分批生成)
             this.pacing.loadFromLevel(level, this.levelIndex);
             this._showBossWarning(false);
             this.combat.clear();
+            this.effects.clear();
             // V3.4: 每局重置广告次数 + 音频手势初始化
             if (this.adCoord) this.adCoord.startRun();
             this._doubleTaken = false;
@@ -599,6 +611,8 @@ class Game {
             this.paused = false;
             this.time = 0;
             this.elapsedTime = 0;
+            this._waveNoticeT=0;
+            var notice=document.getElementById('v42-wave-banner');if(notice)notice.classList.add('hidden');
             this.kills = 0;
             this.maxCount = level.startCount;
             this.bossSpawned = false;
@@ -668,6 +682,8 @@ class Game {
         } else if (this.state === 'won' || this.state === 'lost') {
             this.time += dt;
             this.squad.update(dt, this.time, this.squad.z);
+            this.enemies.finishDeaths(dt,this.time,this.squad);
+            this.effects.update(dt);
         }
 
         this.world.renderer.render(this.world.scene, this.world.camera);
@@ -686,15 +702,19 @@ class Game {
     }
 
     _updateInner(dt) {
+        if(this._waveNoticeT>0){this._waveNoticeT=Math.max(0,this._waveNoticeT-dt);if(!this._waveNoticeT)document.getElementById('v42-wave-banner')?.classList.add('hidden');}
         // 核心系统更新
         // Boss存活时小队在Boss前方停下，击败Boss才能继续
         var stopZ = this.enemies.boss ? this.enemies.boss.z + 4.5 : null;
+        var frontier = this.pacing.frontierStopZ();
+        if (frontier !== null) stopZ = stopZ === null ? frontier : Math.max(stopZ, frontier);
         this.squad.update(dt, this.time, stopZ);
         this.gates.update(this.squad, this.effects, this.time, dt);
         // V4.0: 节奏控制器驱动分批刷怪/Boss预警
         this.pacing.update(dt, this.squad);
         this.enemies.update(dt, this.time, this.squad);
         this.combat.update(dt, this.squad, this.enemies);
+        this.combat._syncInstances();
         this.effects.update(dt);
 
         // V3.3: 连杀系统 — 击杀数增长时combo+1, 2秒无击杀清零
@@ -732,7 +752,12 @@ class Game {
         if (this.enemies.boss) {
             this.bossSpawned = true;
             if (this.ui.bossBar) this.ui.bossBar.classList.remove('hidden');
-            var ratio = Math.max(0, this.enemies.boss.hp / this.enemies.boss.maxHp);
+            var bosses=this.enemies.enemies.filter(e=>e.isBoss&&e.alive);
+            var ratio = Math.max(0,bosses.reduce((n,e)=>n+e.hp,0)/bosses.reduce((n,e)=>n+e.maxHp,0));
+            var bossNameNode=document.getElementById('boss-name');
+            if(bossNameNode.firstChild && bossNameNode.firstChild.nodeType===3)bossNameNode.firstChild.nodeValue=CONFIG.BOSS_NAMES[this.levelIndex];
+            var phaseLabel=document.getElementById('boss-phase');
+            if(phaseLabel)phaseLabel.textContent='阶段 '+(this.enemies.boss.phaseIndex||1)+(this.enemies.boss.shieldT>0?' · 护盾':'');
             if (this.ui.bossFill) this.ui.bossFill.style.width = (ratio * 100) + '%';
         } else if (this.bossSpawned && !this.bossDefeated) {
             this.bossDefeated = true;
@@ -959,12 +984,12 @@ class Game {
         loading.textContent = '正在整备蓝色小队…';
         var error = document.getElementById('error-display');
         if (error) error.remove();
-        SoldierModelLoader.load().then(function() {
+        Promise.all([SoldierModelLoader.load(),EnemyModelLoader.load()]).then(function() {
             if (!window.__game) window.__game = new Game();
             loading.remove();
         }).catch(function(err) {
             starting = false;
-            showError('士兵资源加载失败：' + err.message);
+            showError('角色资源加载失败：' + err.message);
             loading.textContent = '';
             var retry = document.createElement('button');
             retry.id = 'btn-retry-model';

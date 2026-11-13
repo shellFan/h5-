@@ -11,14 +11,18 @@ class Effects {
         // 粒子池 (共享几何体, 独立材质)
         this.pool = [];
         const geo = new THREE.SphereGeometry(0.06, 6, 4);
+        this.particleMesh=new THREE.InstancedMesh(geo,new THREE.MeshBasicMaterial({color:0xffffff}),CONFIG.PARTICLE_MAX);
+        this.particleMesh.count=0;this.particleMesh.frustumCulled=false;
+        this.particleMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        this.particleMesh.userData.artSource='V42 instanced pooled sparks';scene.add(this.particleMesh);
+        this._particleColor=new THREE.Color();
+        this._flashPool=[];
+        this._ringPool=[];
         for (let i = 0; i < CONFIG.PARTICLE_MAX; i++) {
-            const mat = new THREE.MeshBasicMaterial({
-                color: 0xFFFFFF, transparent: true, opacity: 1
-            });
-            const m = new THREE.Mesh(geo, mat);
+            const m = new THREE.Object3D();
+            m.material={color:new THREE.Color(),opacity:1};
             m.visible = false;
             m.userData.artSource = 'js/effects.js 程序化粒子池(共享SphereGeometry)';
-            scene.add(m);
             this.pool.push(m);
         }
 
@@ -62,6 +66,11 @@ class Effects {
         const key = text + '_' + color + (big ? '_b' : '');
         let tex = this._textCache[key];
         if (!tex) {
+            var keys=Object.keys(this._textCache);
+            if(keys.length>=128) {
+                var free=keys.find(k=>!this.floatTexts.some(ft=>ft.sprite.material.map===this._textCache[k]));
+                if(free){this._textCache[free].dispose();delete this._textCache[free];}
+            }
             tex = createTextTexture(text, {
                 fontSize: big ? 110 : 80,
                 fill: color,
@@ -92,7 +101,7 @@ class Effects {
 
     /** 生成穿门冲击波(扩散圆环) */
     shockwave(x, y, z, color) {
-        const ring = new THREE.Mesh(
+        const ring = this._ringPool.pop() || new THREE.Mesh(
             new THREE.RingGeometry(0.3, 0.45, 24),
             new THREE.MeshBasicMaterial({
                 color: color || 0x6EE7B7,
@@ -101,6 +110,7 @@ class Effects {
             })
         );
         ring.rotation.x = -Math.PI / 2;
+        ring.visible=true;ring.scale.setScalar(1);ring.material.color.setHex(color || 0x6ee7b7);ring.material.opacity=.8;
         ring.position.set(x, y, z);
         this.scene.add(ring);
         this.shockwaves.push({ mesh: ring, life: 0.5, maxLife: 0.5 });
@@ -133,16 +143,26 @@ class Effects {
             ctx.fillRect(0, 0, 64, 64);
             this._muzzleTex = new THREE.CanvasTexture(c);
         }
-        var flash = new THREE.Sprite(new THREE.SpriteMaterial({
+        if(this.flashes.length>=24)return;
+        var flash = this._flashPool.pop() || new THREE.Sprite(new THREE.SpriteMaterial({
             map: this._muzzleTex,
             transparent: true,
             opacity: 0.95,
             depthWrite: false
         }));
         flash.position.set(x, y, z);
+        flash.visible=true;flash.material.opacity=.95;
         flash.scale.set(0.48, 0.48, 1); // V3.7: 枪口火焰更醒目
         this.scene.add(flash);
         this.flashes.push({ mesh: flash, life: 0.07, maxLife: 0.07 });
+    }
+
+    clear() {
+        for(var p of this.particles){p.visible=false;this.pool.push(p);}this.particles.length=0;
+        for(var f of this.flashes){this.scene.remove(f.mesh);f.mesh.visible=false;this._flashPool.push(f.mesh);}this.flashes.length=0;
+        for(var r of this.shockwaves){this.scene.remove(r.mesh);r.mesh.visible=false;this._ringPool.push(r.mesh);}this.shockwaves.length=0;
+        for(var ft of this.floatTexts){this.scene.remove(ft.sprite);ft.sprite.material.dispose();}this.floatTexts.length=0;this._floatTextCount=0;
+        this.particleMesh.count=0;
     }
 
     update(dt) {
@@ -199,8 +219,8 @@ class Effects {
             sw.life -= dt;
             if (sw.life <= 0) {
                 this.scene.remove(sw.mesh);
-                sw.mesh.geometry.dispose();
-                sw.mesh.material.dispose();
+                sw.mesh.visible=false;
+                this._ringPool.push(sw.mesh);
                 this.shockwaves.splice(i, 1);
                 continue;
             }
@@ -217,8 +237,8 @@ class Effects {
             if (f.life <= 0) {
                 this.scene.remove(f.mesh);
                 // Sprite共享内部几何体不可dispose; Mesh需dispose
-                if (f.mesh.isMesh && f.mesh.geometry) f.mesh.geometry.dispose();
-                if (f.mesh.material) f.mesh.material.dispose();
+                f.mesh.visible=false;
+                this._flashPool.push(f.mesh);
                 this.flashes.splice(i, 1);
                 continue;
             }
@@ -227,5 +247,14 @@ class Effects {
             var sc = 0.48 + (1 - t) * 0.55; // V3.7
             f.mesh.scale.set(sc, sc, 1);
         }
+        this.particleMesh.count=this.particles.length;
+        for(var pi=0;pi<this.particles.length;pi++) {
+            var particle=this.particles[pi];particle.updateMatrix();
+            this.particleMesh.setMatrixAt(pi,particle.matrix);
+            this._particleColor.copy(particle.material.color).multiplyScalar(.4+.6*particle.material.opacity);
+            this.particleMesh.setColorAt(pi,this._particleColor);
+        }
+        this.particleMesh.instanceMatrix.needsUpdate=true;
+        if(this.particleMesh.instanceColor)this.particleMesh.instanceColor.needsUpdate=true;
     }
 }

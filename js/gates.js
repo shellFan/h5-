@@ -14,7 +14,7 @@ class GateSystem {
             // V2.2: 每扇门宽度=单车道宽(1.8)，不再用两门间距(4.0导致门超出路面)
             var gateWidth = CONFIG.LANE_WIDTH * 0.9;
             for (const gd of seg.gates) {
-                const model = createGateModel(gd, gateWidth);
+                const model = V42Art.createGateModel(gd, gateWidth);
                 model.userData.artSource = 'js/models.js:createGateModel(' + gd.op + '/' + (gd.label || '') + ') 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)';
                 model.position.set(CONFIG.LANE_X[gd.lane], 0, seg.z);
                 this.scene.add(model);
@@ -48,6 +48,14 @@ class GateSystem {
         var gateHalf = (CONFIG.LANE_WIDTH * 0.9) / 2;
         var triggerWin = MovementMath.gateTriggerWindow(gateHalf, squad.getHalfWidth ? squad.getHalfWidth() : 0);
         var stepDt = dt || 0.016;
+        // A row is one decision even when the crowd envelope touches multiple
+        // glass panels. Choose the nearest gate centre, never stack rewards.
+        var rows = {};
+        for (const candidate of this.gates) {
+            if (candidate.triggered || candidate.passed || squad.z > candidate.z + .2 || squad.z < candidate.z - .8) continue;
+            var distance = Math.abs(squad.x - candidate.x);
+            if (distance < triggerWin && (!rows[candidate.z] || distance < rows[candidate.z].distance)) rows[candidate.z] = {gate:candidate,distance:distance};
+        }
 
         for (let i = this.gates.length - 1; i >= 0; i--) {
             const g = this.gates[i];
@@ -55,7 +63,7 @@ class GateSystem {
             // 远处的门: 标签轻微浮动
             if (!g.triggered && g.model.userData.label) {
                 g.model.userData.label.position.y =
-                    2.46 + Math.sin(time * 2 + g.x) * 0.06;
+                    (g.model.userData.labelBaseY || 2.46) + Math.sin(time * 2 + g.x) * 0.025;
             }
 
             // 接近发光
@@ -78,9 +86,10 @@ class GateSystem {
             }
 
             // 穿门检测(V4.0: 窗口=门半宽+队伍半宽补偿, 与视觉区域一致)
-            if (!g.triggered && squad.z <= g.z + 0.2 && squad.z >= g.z - 0.8) {
-                if (Math.abs(squad.x - g.x) < triggerWin) {
+            if (!g.triggered && !g.passed && squad.z <= g.z + 0.2 && squad.z >= g.z - 0.8) {
+                if (rows[g.z] && rows[g.z].gate === g) {
                     g.triggered = true;
+                    for (const sibling of this.gates) if (sibling !== g && sibling.z === g.z) sibling.passed = true;
                     squad.applyGate(g.data, effects);
                     this._highlight(g, effects);
                     if (g.data.op === 'mul' && this.onMul) this.onMul(g); // V4.0: 翻倍慢动作+震屏
@@ -88,7 +97,7 @@ class GateSystem {
             }
 
             // 已触发且已远离: 淡出移除
-            if (g.triggered && squad.z < g.z - 6) {
+            if ((g.triggered || g.passed) && squad.z < g.z - 6) {
                 this._fadeRemove(g, i);
             }
         }
@@ -104,7 +113,7 @@ class GateSystem {
         // 数值放大弹出
         const label = g.model.userData.label;
         if (label) {
-            label.scale.set(2.4, 1.2, 1);
+            label.scale.multiplyScalar(1.04);
         }
         // 冲击波
         if (effects) {
@@ -115,6 +124,14 @@ class GateSystem {
     _fadeRemove(g, index) {
         // 直接移除(冲击波和膨胀动画已经提供了足够反馈)
         this.scene.remove(g.model);
+        var geos = new Set(), mats = new Set(), textures = new Set();
+        g.model.traverse(function(o) {
+            if (o.geometry) geos.add(o.geometry);
+            if (o.material) for (const m of (Array.isArray(o.material) ? o.material : [o.material])) mats.add(m);
+        });
+        mats.forEach(function(m) { for(const k in m) if(m[k] && m[k].isTexture) textures.add(m[k]); m.dispose(); });
+        textures.forEach(function(t) { t.dispose(); });
+        geos.forEach(function(g) { g.dispose(); });
         this.gates.splice(index, 1);
     }
 
@@ -148,7 +165,7 @@ class GateSystem {
                 if (obj.material && obj.material.map) obj.material.map.dispose();
                 if (obj.material) obj.material.dispose();
             });
-            var model = createGateModel(nd, gateWidth);
+            var model = V42Art.createGateModel(nd, gateWidth);
             model.position.set(CONFIG.LANE_X[nd.lane], 0, g.z);
             this.scene.add(model);
             g.data = nd;

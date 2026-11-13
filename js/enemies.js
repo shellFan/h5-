@@ -1,7 +1,7 @@
 // ===== 僵尸/Boss 系统 =====
 
 class Enemy {
-    constructor(type, x, z, scene, hpOverride) {
+    constructor(type, x, z, scene, hpOverride, styleOverride) {
         this.type = type;
         this.cfg = CONFIG.ZOMBIE[type] || CONFIG.ZOMBIE.normal;
         this.hp = hpOverride || this.cfg.hp;   // V3.3: 关卡可覆盖Boss血量
@@ -27,14 +27,14 @@ class Enemy {
         this.spawnT = this.isBoss ? 0 : 1; // V4.0: Boss弹性入场动画
 
         // V3.5: 大众僵尸使用合并批处理模型(2 mesh/只), Boss/精英保留Group模型(细节动画+独立材质)
-        var useMerged = (type !== 'boss' && type !== 'elite' && typeof createZombieMerged === 'function');
-        this.model = useMerged ? createZombieMerged(type) : createZombieModel(type);
-        this.model.userData.artSource = useMerged
-            ? ('js/models.js:createZombieMerged(' + type + ') [20mesh->2mesh批处理]')
-            : ('js/models.js:createZombieModel(' + type + ') [Group细节模型]');
+        this.artStyle = styleOverride || (this.isBoss ? 'bruiser' : type);
+        this.model = new THREE.Group();
+        this.model.userData.merged = true;
+        this.model.userData.artSource = 'assets/models/enemies/'+this.artStyle+'/'+this.artStyle+'.glb (instanced anchor)';
         this.model.position.set(x, 0, z);
         this.model.scale.setScalar(this.cfg.scale); // V2.2修复: 存活时应用类型scale
         this.visScale = this.cfg.scale; // 实际视觉scale(分裂僵尸会缩小)
+        if(this.isBoss && this.artStyle==='elite') {this.visScale=2.25;this.model.scale.setScalar(this.visScale);}
         scene.add(this.model);
         this._baseRotY = this.model.rotation.y; // V3.7: 行走摇摆基准朝向(合并模型0 / Group模型PI)
 
@@ -49,7 +49,9 @@ class Enemy {
 
     takeDamage(dmg, effects, fromX, isCrit) {
         if (!this.alive) return false;
-        this.hp -= dmg;
+        var actualDamage = this.shieldT > 0 ? dmg * .3 : dmg;
+        if(this.artStyle==='titan')actualDamage*=.85;
+        this.hp -= actualDamage;
         this.hitFlash = 0.08;
         // 击退(非Boss)
         if (!this.isBoss) this.knockback = Math.min(this.knockback + 1.5, 3);
@@ -100,6 +102,7 @@ class Enemy {
             return;
         }
         if (!this.alive) return;
+        this.attackT=Math.max(0,(this.attackT||0)-dt*3);
 
         // V4.0: Boss入场弹性缩放(0.5s, 期间不移动不攻击)
         if (this.spawnT < 1) {
@@ -107,6 +110,7 @@ class Enemy {
             this.model.scale.setScalar(this.visScale * Math.max(0.05, easeOutBack(this.spawnT)));
             if (this.spawnT < 1) return;
         }
+        if(this.isBoss)V42BossController.update(this,dt,squad,manager,effects);
 
         // V3.3: 冰冻减速
         if (this.frozenT > 0) this.frozenT -= dt;
@@ -152,6 +156,7 @@ class Enemy {
             this.attackTimer -= dt;
             if (this.attackTimer <= 0) {
                 this.attackTimer = CONFIG.ZOMBIE_ATTACK_INTERVAL * (this.attackMul || 1) * (frozen ? 2 : 1);
+                this.attackT=1;
                 const kill = this.isBoss ? (this.enraged ? 5 : 3) : CONFIG.ZOMBIE_ATTACK_KILL;
                 squad.killSoldiers(kill, effects);
                 if (effects) {
@@ -162,7 +167,7 @@ class Enemy {
 
         // 击退衰减
         if (this.knockback > 0.01) {
-            this.z += this.knockback * dt * 3;
+            this.z -= this.knockback * dt * 3;
             this.knockback *= Math.pow(0.05, dt);
         }
 
@@ -217,6 +222,12 @@ class EnemyManager {
         this.boss = null;
         this.splitQueue = [];
         this.killCount = 0;
+        this.bossStyle='bruiser';
+        this.renderer=new EnemyArmyRenderer(scene);
+        this._spitPool=Array.from({length:64},()=>({mesh:new THREE.Object3D(),life:0,vx:0,vz:0}));
+        this._spitInstances=new THREE.InstancedMesh(new THREE.SphereGeometry(.11,8,6),new THREE.MeshBasicMaterial({color:0x9dff67}),64);
+        this._spitInstances.count=0;this._spitInstances.frustumCulled=false;
+        this._spitInstances.userData.artSource='V42 pooled acid projectiles';scene.add(this._spitInstances);
     }
 
     /** V4.0: loadFromLevel 只负责清场; 波次计划移交 GamePacingController 分批驱动 */
@@ -225,8 +236,8 @@ class EnemyManager {
     }
 
     /** V4.0: 统一出生入口(供节奏控制器/分裂/E2E注入调用) */
-    spawnEnemy(type, x, z, hp) {
-        const e = new Enemy(type, x, z, this.scene, hp || null);
+    spawnEnemy(type, x, z, hp, style) {
+        const e = new Enemy(type, x, z, this.scene, hp || null, style || (type==='boss' ? this.bossStyle : null));
         this.enemies.push(e);
         if (type === 'boss') this.boss = e;
         return e;
@@ -235,27 +246,20 @@ class EnemyManager {
     clear() {
         for (const e of this.enemies) e.destroy(this.scene);
         this.enemies = [];
-        for (const s of this.spits) this.scene.remove(s.mesh);
+        for (const s of this.spits) this._spitPool.push(s);
         this.spits = [];
         this.pendingSpawns = [];
         this.boss = null;
         this.splitQueue = [];
         this.killCount = 0;
+        this.renderer.clear();this._spitInstances.count=0;
     }
 
     spawnSpit(x, y, z, squad) {
-        const mesh = new THREE.Mesh(
-            new THREE.SphereGeometry(0.1, 8, 6),
-            new THREE.MeshBasicMaterial({ color: 0x44FF44 })
-        );
-        mesh.position.set(x, y, z);
-        this.scene.add(mesh);
-        this.spits.push({
-            mesh: mesh,
-            vx: (squad.x - x) * 0.8,
-            vz: -8, // 向小队方向(-Z)
-            life: 2.5
-        });
+        var s=this._spitPool.pop();if(!s)return;
+        s.mesh.position.set(x,y,z);
+        var dx=squad.x-x,dz=squad.z-z, inv=8/Math.max(.01,Math.hypot(dx,dz));
+        s.vx=dx*inv;s.vz=dz*inv;s.life=2.5;this.spits.push(s);
     }
 
     update(dt, time, squad) {
@@ -289,7 +293,7 @@ class EnemyManager {
                     this.splitQueue.push({ x: e.x, z: e.z, delay: 0.35 });
                 }
                 if (e === this.boss) {
-                    this.boss = null;
+                    this.boss = this.enemies.find(other=>other!==e && other.isBoss && other.alive) || null;
                     // Boss死亡大爆炸 + 金色粒子
                     this.effects.burst(e.x, 1, e.z, 0xFF4444, 30, 5, 1);
                     this.effects.burst(e.x, 1, e.z, 0xFFD700, 20, 4, 0.8);
@@ -317,14 +321,32 @@ class EnemyManager {
                 squad.killSoldiers(1, this.effects);
                 this.effects.burst(s.mesh.position.x, 0.5, s.mesh.position.z, 0x44FF44, 5, 2, 0.3);
                 this.scene.remove(s.mesh);
+                this._spitPool.push(s);
                 this.spits.splice(i, 1);
                 continue;
             }
             if (s.life <= 0) {
                 this.scene.remove(s.mesh);
+                this._spitPool.push(s);
                 this.spits.splice(i, 1);
             }
         }
+        this._spitInstances.count=this.spits.length;
+        for(var si=0;si<this.spits.length;si++) {
+            this.spits[si].mesh.updateMatrix();
+            this._spitInstances.setMatrixAt(si,this.spits[si].mesh.matrix);
+        }
+        this._spitInstances.instanceMatrix.needsUpdate=true;
+        this.renderer.update(dt,time,this.enemies,squad.z);
+    }
+
+    finishDeaths(dt,time,squad) {
+        for(var i=this.enemies.length-1;i>=0;i--) {
+            var e=this.enemies[i];if(!e.dying)continue;
+            e.update(dt,time,squad,this,this.effects);
+            if(e.removeReady){e.destroy(this.scene);this.enemies.splice(i,1);}
+        }
+        this.renderer.update(dt,time,this.enemies,squad.z);
     }
 
     /** 获取最近的活僵尸(子弹追踪用) V3.1: 只瞄准前方(e.z更小)的敌人 */

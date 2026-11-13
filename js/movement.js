@@ -49,7 +49,7 @@ var MovementMath = {
     /** 跟随阻尼λ: 3/λ秒后到达目标的~95% (指数阻尼帧率无关) */
     followLambda: function() {
         var t = Math.max(0.02, CONFIG.MOVE.followSmoothTime || 0.15);
-        return 3 / t;
+        return 1 / t;
     },
 
     /** 门触发窗口: 门半宽 + 队伍半宽的一半(封顶0.7) — 大人数时允许人群边缘触发,

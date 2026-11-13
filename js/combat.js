@@ -13,21 +13,25 @@ class CombatSystem {
 
         // 共享Sprite材质(所有子弹共用，减少DrawCall)
         // V3.6修复: 改用Normal混合(Additive在浅色路面上会加成纯白,弹道完全不可见)
-        this._bulletMat = new THREE.SpriteMaterial({
+        this._bulletMat = new THREE.MeshBasicMaterial({
             color: 0xFFD700,
             transparent: true,
             opacity: 1,
             depthWrite: false
         });
+        this._bulletInstances=new THREE.InstancedMesh(new THREE.PlaneGeometry(1,1),this._bulletMat,CONFIG.BULLET_MAX_VISIBLE);
+        this._bulletInstances.count=0;this._bulletInstances.frustumCulled=false;
+        this._bulletInstances.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        this._bulletInstances.userData.artSource='V42 instanced golden trails / pooled bullet anchors';
+        scene.add(this._bulletInstances);
         this._bulletMat.userData = { artSource: 'assets/art-v1/effects/bullet-glow.svg (CanvasTexture)' };
 
         // 弹道对象池 (Sprite + bullet-glow纹理)
         this.pool = [];
         for (var i = 0; i < CONFIG.BULLET_MAX_VISIBLE; i++) {
-            var sprite = new THREE.Sprite(this._bulletMat);
+            var sprite = new THREE.Object3D();
             sprite.visible = false;
             sprite.scale.set(0.3, 0.9, 1);
-            scene.add(sprite);
             this.pool.push(sprite);
         }
     }
@@ -197,6 +201,17 @@ class CombatSystem {
         }
     }
 
+    _syncInstances() {
+        this._bulletInstances.count=this.bullets.length;
+        var camera=this.scene.userData.camera;
+        for(var i=0;i<this.bullets.length;i++) {
+            var anchor=this.bullets[i].mesh;
+            if(camera)anchor.quaternion.copy(camera.quaternion);
+            anchor.updateMatrix();this._bulletInstances.setMatrixAt(i,anchor.matrix);
+        }
+        this._bulletInstances.instanceMatrix.needsUpdate=true;
+    }
+
     _fire(pos, damage, target, isCrit) {
         var mesh = this.pool.pop();
         if (!mesh) return;
@@ -217,6 +232,7 @@ class CombatSystem {
 
         // 枪口闪光
         this.effects.muzzleFlash(pos.x, pos.y, pos.z);
+        this._syncInstances();
     }
 
     clear() {
@@ -226,5 +242,6 @@ class CombatSystem {
         }
         this.bullets = [];
         this.fireTimer = 0;
+        this._bulletInstances.count=0;
     }
 }

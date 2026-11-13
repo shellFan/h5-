@@ -72,7 +72,9 @@ module.exports.run = function(ctx) {
             assert(x30 > 1.8, '1秒后应接近目标(95%): ' + x30.toFixed(3));
         });
         test('followLambda由配置推导', () => {
-            assertEq(Math.round(MovementMath.followLambda() * 100) / 100, Math.round((3 / CONFIG.MOVE.followSmoothTime) * 100) / 100);
+            // V4.2 corrects the documented time-constant semantics: tau=.15,
+            // 95% settle ~=3*tau=.45s rather than the old .15s snap.
+            assertEq(Math.round(MovementMath.followLambda() * 100) / 100, Math.round((1 / CONFIG.MOVE.followSmoothTime) * 100) / 100);
         });
     });
 

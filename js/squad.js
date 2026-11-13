@@ -210,6 +210,7 @@ class Squad {
         var moving = (stopZ === undefined || stopZ === null || this.z > stopZ);
         if (moving) {
             this.z -= CONFIG.SQUAD_SPEED * dt;
+            if (stopZ !== undefined && stopZ !== null) this.z = Math.max(this.z, stopZ);
         }
 
         // V4.0: 连续目标位置 + 帧率无关平滑跟随(替代旧跳道急吸附)

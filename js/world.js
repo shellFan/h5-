@@ -24,10 +24,11 @@ class World {
 
         // 相机 (V2.2: FOV 55° 竖屏构图)
         this.camera = new THREE.PerspectiveCamera(CONFIG.CAMERA_FOV || 55, 1, 0.1, 120);
+        this.scene.userData.camera=this.camera;
 
         this._setupLights();
         this._buildRoad();
-        this._buildEnvironment();
+        V42Art.buildEnvironment(this);
 
         this.resize();
         window.addEventListener('resize', () => this.resize());
@@ -439,6 +440,7 @@ class World {
      * 重开/复活/传送自动正确。
      */
     updateRoadScroll(squadZ) {
+        if(this._v42Environment)this._v42Environment.update(squadZ);
         const SEG_LEN = 12;
         // 路段: 覆盖 [squadZ+18, squadZ-114], 共12段
         const base = Math.ceil((squadZ + SEG_LEN * 1.5) / SEG_LEN) * SEG_LEN;
@@ -516,6 +518,8 @@ class World {
     }
 
     _detectQuality() {
+        var requested = new URLSearchParams(window.location.search).get('quality');
+        if (requested !== null && /^[012]$/.test(requested)) return Number(requested);
         var dpr = window.devicePixelRatio || 1;
         var area = window.innerWidth * window.innerHeight;
         // 移动端小屏 + 低DPR → 低画质

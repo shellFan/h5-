@@ -12,6 +12,7 @@ const OUT = path.join(ROOT, 'dist', 'h5');
 const COPY_LIST = [
     'index.html',
     'style.css',
+    'style-v42.css',
     'libs/three.min.js',
     'js/vendor/three.min.js',
     'js/vendor/GLTFLoader.js',
@@ -23,6 +24,9 @@ const COPY_LIST = [
     'js/models.js',
     'js/soldier-loader.js',
     'js/soldier-renderer.js',
+    'js/enemy-models.js',
+    'js/boss-v42.js',
+    'js/art-v42.js',
     'js/world.js',
     'js/effects.js',
     'js/squad.js',

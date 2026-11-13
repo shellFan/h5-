@@ -9,7 +9,7 @@ const CONFIG = {
     // 小队
     SQUAD_START_COUNT: 1,
     SQUAD_MAX_COUNT: 500,
-    SQUAD_SPEED: 5.0,           // 前进速度 单位/秒
+    SQUAD_SPEED: 3.6,           // V4.2: 比旧版降低28%，十关实际回放校准
     FORMATION_COLS: 7,          // 阵型基础列数(V4: 大人数自适应扩列, 见squad._updateFormation)
     FORMATION_SPACING_X: 0.52,
     FORMATION_SPACING_Z: 0.46,
@@ -31,15 +31,17 @@ const CONFIG = {
         waveTriggerAhead: 14,       // 波次激活提前量(队伍距波点z, 世界单位)
         spawnIntervalMin: 0.8,      // 批次生成间隔下限(秒)
         spawnIntervalMax: 1.5,      // 批次生成间隔上限(秒)
-        batchSizeBase: 1,           // 批次规模下限(只/批)
+        batchSizeBase: 2,           // 两只起步，单波排队，避免多波同时涌入
         batchSizeMax: 4,            // 批次规模上限
         maxAliveBase: 10,           // 场上活敌上限基准(L1), 每关+1
         maxAliveCap: 20,            // 场上活敌上限封顶
         spawnDepth: 9,              // 生成纵深(z向散布, 屏幕外逐步涌入)
         bossTriggerAhead: 24,       // Boss预警提前量(世界单位)
-        bossWarningTime: 1.6,       // Boss预警展示时长(秒)
+        bossWarningTime: 2.0,       // Boss预警展示时长(秒)
         bossSpawnSetback: 4,        // Boss出生点向屏幕外后退量(禁止贴脸刷新)
-        firstContactGrace: 0.5      // 波激活后首批生成延迟(观察窗口, 秒)
+        firstContactGrace: 2.0,     // 波激活后首批生成延迟(观察窗口, 秒)
+        waveRestMin: 3.0,
+        waveRestMax: 4.0
     },
 
     // 射击
@@ -594,3 +596,34 @@ const LEVELS = [
         level.totalZ = boss.z - 12;
     });
 })();
+
+// V4.2: preserve the audited road/segment coordinates; replace overlapping
+// runaway queues with readable, differentiated encounters and three choices.
+CONFIG.BOSS_STYLES = ['bruiser','bruiser','bulwark','hivelord','spitking','twinelite','hivelord','titan','titan','overlord'];
+CONFIG.BOSS_NAMES = ['铁拳队长','赤拳突击者','钢盾领主','裂变母巢','毒雾之王','双生精英','尸海统领','重装巨尸','巨尸王','终焉核心'];
+LEVELS.forEach(function(level, li) {
+    var waveIndex = 0, gateIndex = 0;
+    level.bossStyle = CONFIG.BOSS_STYLES[li];
+    level.segments.forEach(function(seg) {
+        if (seg.type === 'wave') {
+            var budget = Math.round(8 + Math.floor(waveIndex / 4) * 3 + li * .35);
+            var total = seg.enemies.reduce(function(n,e) { return n + e.count; }, 0);
+            var left = budget;
+            seg.enemies.forEach(function(e,i) {
+                e.count = i === seg.enemies.length - 1 ? Math.max(1,left) : Math.max(1,Math.round(e.count / total * budget));
+                left -= e.count;
+            });
+            waveIndex++;
+        } else if (seg.type === 'boss') {
+            seg.boss.style = level.bossStyle;
+        } else if (seg.type === 'gates') {
+            if (!seg.gates.some(function(g) { return g.lane === 1; })) {
+                var choices = [ ['damage','输出+1'], ['crit','暴击+10%'], ['pierce','穿透+1'], ['freeze','冰冻弹'], ['vamp','吸血'] ];
+                var choice = choices[(gateIndex + li) % choices.length];
+                seg.gates.push({lane:1,op:'buff',value:choice[0],label:choice[1]});
+                seg.gates.sort(function(a,b) { return a.lane-b.lane; });
+            }
+            gateIndex++;
+        }
+    });
+});

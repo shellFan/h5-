@@ -1,45 +1,40 @@
-# AGENT_PROGRESS — V4 通宵自主开发进度
+# 当前开发进度
 
-> 新会话恢复: 先读本文件 + `git log --oneline -8`, 再继续"下一步"。
+更新时间：2026-11-13（Asia/Shanghai）。用户要求先提交当前全部代码，然后继续自主开发。
 
-## 当前状态
+## 当前阶段
 
-- **阶段**: Phase 0-9, 11 全部完成 → Phase 13 交付文档完成 → 待最终推送/收尾
-- **HEAD**: 9b24d6f + 文档提交
-- **测试**: 单测 50/50 | E2E 29/29 | 视觉 32/32 | 模拟 greedy/left 10/10 | 浸泡 PASS(内存0增长)
-- **环境要点**: Node 在 `D:\hclaw\node`(需 `export PATH="/d/hclaw/node:$PATH"`); 服务器 8080 常驻; Playwright 用系统 Edge; E2E 在 SwiftShader 下偶发超时重跑即绿
+V4.1士兵背部/枪械精修；V4.2六种敌人、六种Boss GLB/LOD已接入实际实例渲染。状态门、15批次城市环境、响应式HUD已接通。Boss阶段、护盾、召唤、双精英、酸液投射物和死亡表现已实现。粒子、金色弹道实例化，枪口/冲击波复用池。
 
-## 并发会话协作记录
+基线提交bca3e62；本次阶段提交SHA请查看`git log -3 --oneline`。当前提交属于开发快照，不等同于最终发布或美术验收。
 
-- 一个 V3.7 会话与本研究并行工作过(01:52-02:13 活跃): 其成果以 9e3800a/e4e9890 提交保全; 它还主动把本研究新建的 movement.js/pacing.js 接线进 index.html。此后未再检测到其活动。所有工作在 master 线性提交, 无冲突丢失。
+## 已验证
 
-## 阶段完成索引
+- 基线50单元+29旧E2E+11士兵专项+构建启动，修改前全部通过。
+- 新增12套模型/24个GLB二进制校验通过；新粒子池与移动/节奏单测通过。
+- 10项V42实际浏览器功能测试通过，含缓存、行内唯一门奖励、实例受击隔离、最终Boss三阶段/护盾/召唤、双精英全部死亡、酸液朝向、装饰不影响移动、批处理和失败重试。
+- 真实十关回放全部通关，最后一次时长约196–235秒；初轮超时记录保留在v42-simulation-initial/second.json。
+- 390px中画质五负载完整战斗初测已记录，但不是最终四分辨率×三画质矩阵。
 
-| Phase | 提交 | 报告 |
-|---|---|---|
-| 0 审计+基线 | 9e3800a | V4_BASELINE_AUDIT.md |
-| 1 移动手感 | 97a6dec | V4_MOVEMENT_TUNING.md |
-| 2 节奏 | 97a6dec | V4_GAME_PACING.md |
-| 3/5 美术+相机 | 129fe3f | V4_ART_INTEGRATION.md |
-| 4 UI | (增量) | V4_UI_REDESIGN.md |
-| 6 爽感 | 0286e35 | V4_GAMEPLAY_BALANCE.md |
-| 6.5 数值/关卡 | dffde14 | V4_GAMEPLAY_BALANCE.md + V4_SIM_RESULTS.json |
-| 7/8 测试+泄漏修复 | 9b24d6f | V4_TEST_REPORT.md + V4_SOAK_RESULT.json + V4_PERF_SAMPLES.json |
-| 9 抖音/广告 | (审查+构建修复) | V4_RELEASE_CHECKLIST.md |
-| 13 交付 | (本次) | V4_*.md ×8 |
+## 当前截图与评分
 
-## 关键成果摘要
+`docs/screenshots/v42/390-start.png`、`390-enemies.png`、`390-gates.png`、`boss-overlord.png`已由根代理读取图像审看。新指令要求的同时包含军团、混合怪物、精英/Boss、状态门、城市和弹道的`final-combat-390x844.png`正在准备。
 
-1. 移动: 30px跳道→连续目标+阻尼跟随(0.65灵敏度/0.15s/门磁吸不代选), 帧率无关(单测证明)
-2. 节奏: 整波同帧→GamePacingController分批+上限+屏幕外预生成+Boss预警; 僵尸速度重校准(快速=1.5×普通)
-3. 美术: "蓝色球阵"根治(头盔0.248/头0.225/背条纹/背包加大+动态相机sqrt曲线+自适应阵型)
-4. 数值: 关卡扩容至2-4分钟, Boss血量按战力动态缩放, 5策略模拟验证
-5. 质量: 50+29+32 全绿; 内存泄漏修复(9.8MB→0.0); 构建清单补缺(douyin/h5)
-6. 爽感: 乘法门慢动作+震屏+Boss弹性入场+预警横幅
+视觉评分：尚未对最终主截图评分，不编造85分通过结论；当前视觉验收未通过。
 
-## 下一步(若有后续会话)
+## 必须继续的工作
 
-1. 真机验证清单执行(V4_RELEASE_CHECKLIST 第二节 P0/P1)
-2. balanced 策略 L2-L4 失败路线的选门 AI 可优化(非阻塞)
-3. 可选: Blender GLB 管线(程序化模型的天花板)
-4. 若用户反馈"还不够": 士兵表情/受击表情、僵尸攻击前扑已有、Boss技能(冲撞/召唤)是下一层内容
+1. 生成并实际读取390×844、430×932完整混合战斗主截图；按用户100分表记录证据、分项和修复轮次。
+2. 新指令强调不能靠大量删除怪物降难度：重新审查此前波次预算收缩，改用生成/距离/速度/结构调优并重新完成十关回放。
+3. 完整运行原有和新增测试；旧测试的固定800ms生成等待应依2秒准备期更新测试夹具，不能删除测试。独立Boss测试需要隔离前序波次。
+4. 完整60负载性能矩阵和内存趋势；清楚报告50ms补充压力怪物的机制和实际在场均值，不能冒充手机成绩。
+5. 补齐用户最新指定的视觉审计/交付/最终报告和原要求七份文档。模型目录当前为assets/models/enemies；评估按新指令整理为zombies/bosses并同步加载路径、目录、验证。
+6. 完成代码审查、剩余质量问题修复，再非强制推送origin/master并核对SHA。
+
+## 实用命令
+
+`node tools/v42-sim.js`：真实Game固定步长十关回放，无强制胜利/无敌/传送。
+
+`node tests/e2e/v42.js`；`node tests/unit/v42-assets.js`；`node tests/unit/v42-effects.js`；`node tests/unit/v42-gameplay.js`。
+
+Blender：`D:/tools/blender-v41/blender-4.2.15-windows-x64/blender.exe`。脚本tools/create-soldier.py、create-enemies.py、blender_art_common.py。

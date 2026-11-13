@@ -52,6 +52,8 @@ class GamePacingController {
 
     clear() {
         this.waves = [];
+        this.restTimer = 0;
+        this.activeWave = null;
     }
 
     /** 当前关卡允许的场上活敌上限(随关卡推进+1, 封顶) */
@@ -139,12 +141,28 @@ class GamePacingController {
     }
 
     update(dt, squad) {
-        // 波次按各自位置触发独立激活(允许重叠, maxAlive上限兜底压力)
+        if (this.restTimer > 0) {
+            this.restTimer = Math.max(0, this.restTimer - dt);
+            return;
+        }
+        // Admit exactly one encounter. Boss summons belong to the encounter,
+        // not another pacing wave; all timers use game seconds and reset.
         for (var i = 0; i < this.waves.length; i++) {
             var w = this.waves[i];
             if (w.state === 'done') continue;
+            this.activeWave = w;
             this._updateWave(w, dt, squad);
+            if (w.state === 'done') {
+                this.activeWave = null;
+                if (w.type === 'wave') this.restTimer = randRange(CONFIG.PACING.waveRestMin, CONFIG.PACING.waveRestMax);
+            }
+            break;
         }
+    }
+
+    frontierStopZ() {
+        var w = this.activeWave;
+        return w && w.type === 'wave' && (w.state === 'spawning' || w.state === 'clearing') ? w.z - 4 : null;
     }
 
     /** 调试/测试: 当前波次状态摘要 */
