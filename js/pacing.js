@@ -59,10 +59,13 @@ class GamePacingController {
         this.activeWave = null;
     }
 
-    /** 当前关卡允许的场上活敌上限(随关卡推进+1, 封顶) */
+    /** V5.1: 当前关卡场上活敌上限(尸潮矩阵 CONFIG.MAX_ALIVE) */
     _maxAlive() {
+        var matrix = CONFIG.MAX_ALIVE;
+        var li = this.levelIndex || 0;
+        if (matrix && matrix.length) return matrix[Math.min(li, matrix.length - 1)];
         var P = CONFIG.PACING;
-        return Math.min(P.maxAliveCap, P.maxAliveBase + (this.levelIndex || 0));
+        return Math.min(20, 10 + li);
     }
 
     /** 批次规模: 随关卡推进逐渐提高(1-4只) */
@@ -172,10 +175,25 @@ class GamePacingController {
         }
     }
 
+    /** V5.1: 当前防线停止锚点(阵地防守模式)
+     *  波次 spawning/clearing → 停在波点前方 defenseStandoff 处列阵迎敌(不再跑过波点深入怪区)
+     *  Boss warning → 预警线前停住
+     *  返回 null 表示行军段(无战斗) */
     frontierStopZ() {
         var w = this.activeWave;
-        if(w && w.type==='boss' && w.state==='warning')return w.triggerZ-1;
-        return w && w.type === 'wave' && (w.state === 'spawning' || w.state === 'clearing') ? w.z - CONFIG.PACING.combatAdvance : null;
+        if (w && w.type === 'boss' && w.state === 'warning') return w.triggerZ - 1;
+        if (w && w.type === 'wave' && (w.state === 'spawning' || w.state === 'clearing')) {
+            return w.z + CONFIG.PACING.defenseStandoff;
+        }
+        return null;
+    }
+
+    /** V5.1: 全部波次(含Boss)是否都已排空完成 */
+    isComplete() {
+        for (var i = 0; i < this.waves.length; i++) {
+            if (this.waves[i].state !== 'done') return false;
+        }
+        return this.waves.length > 0;
     }
 
     /** 调试/测试: 当前波次状态摘要 */

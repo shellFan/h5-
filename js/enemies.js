@@ -146,9 +146,9 @@ class Enemy {
         }
 
         if (dist > attackDist) {
-            // 向小队移动 (V3.3: 冰冻时减速70%)
+            // V5.1: 怪物向防线追击方向统一走 BattleKinematics(ENEMY_ADVANCE_SIGN=+Z); 冻结减速70%
             const spd = this.cfg.speed * (this.speedMul || 1) * (frozen ? 0.3 : 1);
-            this.z += Math.sign(dz) * spd * dt;
+            this.z = BattleKinematics.enemyApproachZ(this.z, Math.abs(Math.sign(dz)) * spd, dt);
             const dx = squad.x - this.x;
             this.x += clamp(dx, -1, 1) * spd * 0.4 * dt;
         } else {

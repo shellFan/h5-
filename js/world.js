@@ -485,10 +485,15 @@ class World {
         var cf = clamp(Math.sqrt(clamp((squadCount || 1) / 500, 0, 1)) * 1.2, 0, 1);
         if (this._camScale === undefined) this._camScale = cf;
         this._camScale = damp(this._camScale, cf, 3, dt);   // 人数变化时平滑过渡
+        // V5.1修复: formationDepth 未平滑直接进相机 — 人数每次增减(被杀/吸血/穿门)相机前后跳,
+        // 是"人物向后移动的视觉效果"的主因之一。改为阻尼平滑。
+        if (this._depthSmooth === undefined) this._depthSmooth = depth;
+        this._depthSmooth = damp(this._depthSmooth, depth, 2.5, dt);
+        var sDepth = this._depthSmooth;
         // V4.3: 俯角下调(~36°, 背面人群更立体; 基线降低+距离拉开)
         var offY = 5.6 + this._camScale * 3.1;
-        var offZ = 8.4 + this._camScale * 2.0 + depth;
-        var lookAhead = CONFIG.CAMERA_LOOK_AHEAD - this._camScale * 2.0 + depth;
+        var offZ = 8.4 + this._camScale * 2.0 + sDepth;
+        var lookAhead = CONFIG.CAMERA_LOOK_AHEAD - this._camScale * 2.0 + sDepth;
 
         const targetX = squadX * CONFIG.CAMERA_FOLLOW_X;
         const targetPos = new THREE.Vector3(

@@ -33,6 +33,29 @@ function randRange(min, max) {
 }
 
 /**
+ * V5.1 战斗运动学辅助: 方向符号统一取自 CONFIG.DIRS, 任何文件不得散写正负号。
+ * 约定(见 config.js DIRS): 玩家面朝-Z推进; 怪物朝+Z追击防线; 子弹朝-Z飞行。
+ */
+var BattleKinematics = {
+    /** 玩家前进: 返回新 z */
+    advanceZ: function(z, speed, dt) {
+        return z + CONFIG.DIRS.FORWARD_SIGN * speed * dt;
+    },
+    /** 怪物向防线追击: 返回新 z */
+    enemyApproachZ: function(z, speed, dt) {
+        return z + CONFIG.DIRS.ENEMY_ADVANCE_SIGN * speed * dt;
+    },
+    /** 子弹飞行: 返回新 z */
+    bulletZ: function(z, speed, dt) {
+        return z + CONFIG.DIRS.SHOOT_SIGN * speed * dt;
+    },
+    /** 玩家是否已抵达防线锚点(锚点在波点前方 defenseStandoff 处) */
+    atDefenseLine: function(squadZ, anchorZ, standoff) {
+        return squadZ <= anchorZ + (standoff || 0);
+    }
+};
+
+/**
  * 将多个 BufferGeometry 合并为一个，支持顶点色。
  * 所有几何体必须具有 position、normal、uv 属性。
  */

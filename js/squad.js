@@ -1,8 +1,9 @@
 // ===== 小队系统: 实例化渲染/阵型/膨胀动画 =====
 
 class Squad {
-    constructor(scene) {
+    constructor(scene, profile) {
         this.scene = scene;
+        this.profile = profile || null; // V5.1: 永久档案(升级属性)
         this.x = 0;
         this.z = 0;
         this.lane = 1;
@@ -147,6 +148,13 @@ class Squad {
         if (gate.op === 'add') {
             added = gate.value;
             this.setCount(this.count + gate.value);
+        } else if (gate.op === 'addpct') {
+            // V5.1: 百分比人数门(+20%/+50%), 至少+1
+            added = Math.max(1, Math.floor(this.count * gate.value / 100));
+            this.setCount(this.count + added);
+        } else if (gate.op === 'nuke') {
+            // V5.1: 史诗门 全屏爆炸 — 由 Game 在下帧对所有场上怪结算(this.nukePending)
+            this.nukePending = true;
         } else if (gate.op === 'mul') {
             added = this.count * (gate.value - 1);
             this.setCount(this.count * gate.value);
@@ -159,12 +167,21 @@ class Squad {
         } else if (gate.op === 'buff') {
             switch (gate.value) {
                 case 'damage':  this.damageBuff = Math.min(99, this.damageBuff + 1); break;
-                case 'damage2': this.damageBuff = Math.min(99, Math.max(2, this.damageBuff * 2)); break;
-                case 'firerate': this.fireRateBuff = Math.min(0.5, this.fireRateBuff + 0.2); break; // 上限3.0射速
+                case 'damage2': this.damageBuff = Math.min(99, this.damageBuff + 2); break; // V5.1: 固定+2(旧×2易数值失控)
+                case 'firerate10': this.fireRateBuff = Math.min(0.5, this.fireRateBuff + 0.1); break; // V5.1: +10%档
+                case 'firerate': this.fireRateBuff = Math.min(0.5, this.fireRateBuff + 0.2); break;
                 case 'pierce':  this.pierce = Math.min(3, this.pierce + 1); break;
-                case 'crit':    this.critChance = Math.min(0.5, this.critChance + 0.1); break;
+                case 'crit':    this.critChance = Math.min(0.5, this.critChance + 0.05); break; // V5.1: +5%档
+                case 'crit2':   this.critChance = Math.min(0.5, this.critChance + 0.1); break;
                 case 'freeze':  this.freezeStacks = Math.min(2, this.freezeStacks + 1); break;
                 case 'vamp':    this.vampStacks = Math.min(2, this.vampStacks + 1); break;
+                case 'explosive': this.explosive = Math.min(2, (this.explosive || 0) + 1); break; // V5.1: 命中溅射
+                case 'chain':   this.chain = Math.min(2, (this.chain || 0) + 1); break;           // V5.1: 连锁闪电
+                case 'arsenal': // V5.1 史诗: 本局军备强化包
+                    this.damageBuff = Math.min(99, this.damageBuff + 2);
+                    this.fireRateBuff = Math.min(0.5, this.fireRateBuff + 0.2);
+                    this.critChance = Math.min(0.5, this.critChance + 0.1);
+                    break;
             }
         }
         // V5.0: 穿门音效(人数增长用grow, 其余用gate)
@@ -218,7 +235,8 @@ class Squad {
         // 前进 (Boss战时在Boss前方停下，击败Boss后继续)
         var moving = (stopZ === undefined || stopZ === null || this.z > stopZ);
         if (moving) {
-            this.z -= CONFIG.SQUAD_SPEED * dt;
+            // V5.1: 前进方向统一走 BattleKinematics(CONFIG.DIRS.FORWARD_SIGN = -Z)
+            this.z = BattleKinematics.advanceZ(this.z, CONFIG.SQUAD_SPEED, dt);
             if (stopZ !== undefined && stopZ !== null) this.z = Math.max(this.z, stopZ);
         }
 
@@ -230,7 +248,8 @@ class Squad {
             damp(this.x, this.targetX, MovementMath.followLambda(), dt), bound);
         // V3.2: 换道倾斜(速度感) + 跑动前倾
         const tilt = clamp((this.x - this.targetX) * 0.28, -0.28, 0.28);
-        const lean = moving ? 0.1 : 0.02;
+        // V5.1: 防守阵地时完全站立(无残余前倾漂移感)
+        const lean = moving ? 0.1 : 0;
 
         this._moving = moving;
         this._lean = lean;
@@ -280,14 +299,16 @@ class Squad {
         return positions;
     }
 
-    /** 获取伤害值(含buff) V3.3: 上限99 */
+    /** 获取伤害值(永久枪械升级 + 门buff) V5.1: 上限99 */
     getDamage() {
-        return Math.min(99, CONFIG.BULLET_DAMAGE_BASE + this.damageBuff);
+        var gun = this.profile && typeof UpgradeShop !== 'undefined' ? UpgradeShop.damageBonus(this.profile) : 0;
+        return Math.min(99, CONFIG.BULLET_DAMAGE_BASE + gun + this.damageBuff);
     }
 
-    /** 获取射速(含buff) V3.3: 上限3.0 */
+    /** 获取射速(永久快速射击升级 + 门buff) V5.1: 全局上限3.0 */
     getFireRate() {
-        return Math.min(3.0, CONFIG.BULLET_FIRE_RATE_BASE * (1 + this.fireRateBuff));
+        var mul = this.profile && typeof UpgradeShop !== 'undefined' ? UpgradeShop.fireRateMul(this.profile) : 1;
+        return Math.min(3.0, CONFIG.BULLET_FIRE_RATE_BASE * mul * (1 + this.fireRateBuff));
     }
 
     setAnimationState(name) {
@@ -309,6 +330,9 @@ class Squad {
         this.critChance = 0;
         this.freezeStacks = 0;
         this.vampStacks = 0;
+        this.explosive = 0;
+        this.chain = 0;
+        this.nukePending = false;
         this.alive = true;
         this.soldiers = [];
         this.count = 0; // 必须重置count, 否则setCount认为人数未变不补充士兵
