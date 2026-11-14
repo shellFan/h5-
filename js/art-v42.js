@@ -616,8 +616,23 @@
             var soundBtn = makeElement('button', 'v42-home-sound', '🔊');
             soundBtn.id = 'btn-home-sound';
             soundBtn.setAttribute('aria-label', '音效开关');
-            homeTop.appendChild(best);
-            homeTop.appendChild(soundBtn);
+            // V5.1: 金币 + 升级商店 + 免费补给
+            var left = makeElement('div', 'v42-home-left');
+            left.appendChild(best);
+            var supplyBtn = makeElement('button', 'v51-supply-btn', '🎁 免费补给');
+            supplyBtn.id = 'btn-free-supply';
+            supplyBtn.setAttribute('aria-label', '每日免费补给(广告)');
+            left.appendChild(supplyBtn);
+            homeTop.appendChild(left);
+            var right = makeElement('div', 'v42-home-right');
+            var coinPill = makeElement('span', 'v51-coin-pill');
+            coinPill.innerHTML = '🪙 <b data-coin-display>0</b>';
+            right.appendChild(coinPill);
+            var shopBtn = makeElement('button', 'v51-shop-btn', '⬆ 升级');
+            shopBtn.id = 'btn-open-shop';
+            right.appendChild(shopBtn);
+            right.appendChild(soundBtn);
+            homeTop.appendChild(right);
             startPanel.insertBefore(homeTop, startPanel.firstChild.nextSibling);
         }
         var title = document.querySelector('.game-title');

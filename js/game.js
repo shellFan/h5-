@@ -15,7 +15,11 @@ class Game {
             CONFIG.PARTICLE_MAX = 220;
         }
         this.effects = new Effects(this.world.scene);
-        this.squad = new Squad(this.world.scene);
+        // V5.1: 永久档案(金币/升级/解锁) — Squad 构造时注入以读取永久属性
+        this.profile = (typeof GameProfile !== 'undefined' && Platform.storage)
+            ? new GameProfile(Platform.storage, Platform.storageAdapter) : null;
+        this.shop = (typeof UpgradeShop !== 'undefined') ? UpgradeShop : null;
+        this.squad = new Squad(this.world.scene, this.profile);
         this.gates = new GateSystem(this.world.scene);
         this.enemies = new EnemyManager(this.world.scene, this.effects);
         this.combat = new CombatSystem(this.world.scene, this.effects);
@@ -27,7 +31,7 @@ class Game {
             if (type === 'boss') {
                 var base = hp || CONFIG.ZOMBIE.boss.hp;
                 var dpsNow = self.squad.count * self.squad.getDamage() * self.squad.getFireRate();
-                hp = Math.round((base + dpsNow * 7) / 50) * 50; // V5.0: 8→7s, 中规模小队Boss竞速余量(平衡模拟L3)
+                hp = Math.round((base + Math.min(dpsNow * 7, base * 3)) / 50) * 50; // V5.0: 8→7s; V5.1: 封顶base*3, 禁止随DPS无限膨胀
             }
             if(type==='boss' && self.enemies.bossStyle==='twinelite') {
                 self.enemies.spawnEnemy(type,-1.1,z,hp/2,'elite');
@@ -241,6 +245,19 @@ class Game {
         if (this.ui.btnSound) this.ui.btnSound.addEventListener('click', function() { self._toggleSound(); });
         // V5.0: 首页音效开关(与暂停菜单开关同一逻辑)
         if (this.ui.homeSound) this.ui.homeSound.addEventListener('click', function() { self._toggleSound(); });
+        // V5.1: 首页每日免费补给(广告)
+        var btnSupply = document.getElementById('btn-free-supply');
+        if (btnSupply) btnSupply.addEventListener('click', function() { self._freeSupplyViaAd(); });
+        // V5.1: 商店UI装配
+        this._setupShopUI();
+        this._refreshCoinDisplays();
+        // V5.1: 免费补给今日状态标签
+        if (this.profile) {
+            var d = new Date();
+            var key = 'supply:' + d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+            var btnSupplyEl = document.getElementById('btn-free-supply');
+            if (btnSupplyEl && this.profile.hasClaimed(key)) btnSupplyEl.classList.add('claimed');
+        }
         // V3.3: 下一关按钮
         if (this.ui.btnNextLevel) {
             this.ui.btnNextLevel.addEventListener('click', function() {
@@ -416,15 +433,179 @@ class Game {
         });
     }
 
-    /** 双倍奖励发放回调 */
+    /** 双倍奖励发放回调(V5.1: 对本次结算的关卡奖励补发一次, 幂等) */
     _onDoubleReward() {
         this._doubleTaken = true;
+        if (this._settlement && this._settlement.levelReward > 0 && !this._doubleApplied) {
+            this._doubleApplied = true;
+            this._settlement.doubled = true;
+            this._settlement.total += this._settlement.levelReward;
+            if (this.profile) this.profile.addCoins(this._settlement.levelReward);
+        }
         if (this.ui.btnDouble) {
             this.ui.btnDouble.textContent = '✓ 已领取双倍';
             this.ui.btnDouble.disabled = true;
         }
+        this._fillSettlementUI();
         if (this.effects) {
             this.effects.floatText(this.squad.x, 2.0, this.squad.z, '奖励×2!', '#FFC247', true);
+        }
+    }
+
+    /** V5.1: 结算面板金币明细(金币飞入动画在CSS) */
+    _fillSettlementUI() {
+        var box = document.getElementById('win-coins');
+        var st = this._settlement;
+        if (box && st) {
+            document.getElementById('wc-level').textContent = '+' + st.levelReward;
+            document.getElementById('wc-kills').textContent = '+' + st.killReward;
+            var dbl = document.getElementById('wc-double-row');
+            if (dbl) dbl.classList.toggle('hidden', !st.doubled);
+            if (st.doubled) document.getElementById('wc-double').textContent = '+' + st.levelReward;
+            document.getElementById('wc-total').textContent = st.total;
+            box.classList.remove('hidden');
+            box.classList.remove('coin-in'); void box.offsetWidth; box.classList.add('coin-in');
+        }
+        var loseBox = document.getElementById('lose-coins');
+        if (loseBox && st && this.state === 'lost') {
+            document.getElementById('lc-kills-coin').textContent = '+' + st.killReward;
+            loseBox.classList.remove('hidden');
+        }
+        this._refreshCoinDisplays();
+    }
+
+    /** V5.1: 每日免费补给(首页按钮 → 激励视频 → 下局生效) */
+    _freeSupplyViaAd() {
+        if (!this.adCoord || !this.adCoord.canShowAds() || !this.profile) return;
+        var d = new Date();
+        var key = 'supply:' + d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+        if (this.profile.hasClaimed(key)) { this._showSupplyTip('今日已领取补给, 明天再来!'); return; }
+        var self = this;
+        this.adCoord.requestFreeSupply().then(function(granted) {
+            if (!granted) return;
+            if (!self.profile.claimReward(key, 0)) return; // 幂等(防并发)
+            var kinds = ['people', 'damage', 'firerate'];
+            var kind = kinds[Math.floor(Math.random() * kinds.length)];
+            self.profile.data.pendingSupply = kind;
+            self.profile.save();
+            var names = { people: '+15 补给兵(下局生效)', damage: '输出+2(下局生效)', firerate: '射速+20%(下局生效)' };
+            self._showSupplyTip('🎁 ' + (names[kind] || '补给!'));
+            self._refreshCoinDisplays();
+        });
+    }
+
+    _showSupplyTip(text) {
+        var tip = document.getElementById('supply-tip');
+        if (!tip) return;
+        tip.textContent = text;
+        tip.classList.remove('hidden');
+        clearTimeout(this._supplyTipT);
+        this._supplyTipT = setTimeout(function() { tip.classList.add('hidden'); }, 2600);
+    }
+
+    /** V5.1: 升级商店UI(渲染/购买/刷新) */
+    _setupShopUI() {
+        var self = this;
+        this.ui.shopCoins = document.getElementById('shop-coins-num');
+        var listEl = document.getElementById('shop-list');
+        var btnOpen = document.getElementById('btn-open-shop');
+        var btnClose = document.getElementById('btn-close-shop');
+        if (btnOpen) btnOpen.addEventListener('click', function() { self._sfx('click'); self._openShop(); });
+        if (btnClose) btnClose.addEventListener('click', function() { self._sfx('click'); self._closeShop(); });
+        this._shopRows = {};
+        if (listEl) {
+            Object.keys(UPGRADE_DEFS).forEach(function(id) {
+                var def = UPGRADE_DEFS[id];
+                var row = document.createElement('div');
+                row.className = 'shop-row';
+                row.innerHTML =
+                    '<div class="shop-icon">' + def.icon + '</div>' +
+                    '<div class="shop-info"><div class="shop-name">' + def.name + '</div>' +
+                    '<div class="shop-desc">' + def.desc + '</div>' +
+                    '<div class="shop-effect" id="shop-effect-' + id + '"></div></div>' +
+                    '<button class="shop-buy" id="shop-buy-' + id + '"></button>';
+                listEl.appendChild(row);
+                self._shopRows[id] = row;
+                row.querySelector('.shop-buy').addEventListener('click', function() { self._buyUpgrade(id); });
+            });
+        }
+        this._refreshShop();
+    }
+
+    _openShop() {
+        var el = document.getElementById('shop-screen');
+        if (el) {
+            el.classList.remove('hidden');
+            this._refreshShop();
+        }
+    }
+
+    _closeShop() {
+        var el = document.getElementById('shop-screen');
+        if (el) el.classList.add('hidden');
+        this._refreshLevelSelect(); // 解锁状态可能因属性变化展示不同
+    }
+
+    _refreshShop() {
+        if (!this.profile || !this._shopRows) return;
+        var self = this;
+        Object.keys(UPGRADE_DEFS).forEach(function(id) {
+            var lv = UpgradeShop.levelOf(self.profile, id);
+            var price = UpgradeShop.priceOf(id, lv);
+            var row = self._shopRows[id];
+            if (!row) return;
+            row.querySelector('.shop-effect').textContent = UPGRADE_DEFS[id].effect(lv) +
+                (price !== null ? '' : ' · 已满级');
+            var btn = row.querySelector('.shop-buy');
+            if (price === null) {
+                btn.textContent = 'MAX';
+                btn.disabled = true;
+                btn.classList.add('maxed');
+            } else {
+                btn.innerHTML = '🪙 ' + price;
+                btn.disabled = self.profile.coins < price;
+                btn.classList.toggle('affordable', self.profile.coins >= price);
+            }
+            row.querySelector('.shop-effect');
+        });
+        if (this.ui.shopCoins) this.ui.shopCoins.textContent = this.profile.coins;
+    }
+
+    _buyUpgrade(id) {
+        var res = UpgradeShop.purchase(this.profile, id);
+        if (res.ok) {
+            this._sfx('gate');
+            this._refreshShop();
+            this._refreshCoinDisplays();
+            this._showSupplyTip('✅ ' + UPGRADE_DEFS[id].name + ' Lv.' + res.level);
+        } else if (res.reason === 'insufficient') {
+            this._sfx('hit');
+            this._showSupplyTip('🪙 金币不足, 需要 ' + res.need);
+        } else {
+            this._showSupplyTip('已达到最高等级');
+        }
+    }
+
+    /** V5.1: 刷新所有金币显示(首页/商店/结算) */
+    _refreshCoinDisplays() {
+        var coins = this.profile ? this.profile.coins : 0;
+        var els = document.querySelectorAll('[data-coin-display]');
+        for (var i = 0; i < els.length; i++) els[i].textContent = coins;
+        if (this.ui && this.ui.shopCoins) this.ui.shopCoins.textContent = coins;
+    }
+
+    /** V5.1: 消耗免费补给(广告每日奖励 → 本局生效) */
+    _consumePendingSupply() {
+        if (!this.profile || !this.profile.data.pendingSupply) return;
+        var kind = this.profile.data.pendingSupply;
+        this.profile.data.pendingSupply = null;
+        this.profile.save();
+        if (kind === 'people') this.squad.setCount(this.squad.count + 15);
+        else if (kind === 'damage') this.squad.damageBuff = Math.min(99, this.squad.damageBuff + 2);
+        else if (kind === 'firerate') this.squad.fireRateBuff = Math.min(0.5, this.squad.fireRateBuff + 0.2);
+        if (this.effects) {
+            var names = { people: '+15 补给兵!', damage: '补给: 输出+2!', firerate: '补给: 射速+20%!' };
+            this.effects.floatText(this.squad.x, 2.0, this.squad.z, names[kind] || '补给!', '#75DFFF', true);
         }
     }
 
@@ -632,7 +813,12 @@ class Game {
     start() {
         try {
             var level = LEVELS[this.levelIndex];
-            this.squad.reset(level.startCount);
+            // V5.1: 永久升级应用 — 初始人数 = 关卡基础 + 新兵招募等级; 穿透初始等级
+            var startCount = this.shop ? this.shop.startCount(this.profile, level.startCount) : level.startCount;
+            this.squad.reset(Math.min(startCount, CONFIG.SQUAD_MAX_COUNT));
+            if (this.shop && this.profile) {
+                this.squad.pierce = Math.min(3, this.shop.pierceBonus(this.profile));
+            }
             this.gates.loadFromLevel(level);
             this.enemies.loadFromLevel(level);
             this.enemies.bossStyle=level.bossStyle;
@@ -644,6 +830,8 @@ class Game {
             // V3.4: 每局重置广告次数 + 音频手势初始化
             if (this.adCoord) this.adCoord.startRun();
             this._doubleTaken = false;
+            // V5.1: 消耗免费补给(首页广告获得, 本局生效)
+            this._consumePendingSupply();
             if (typeof Platform !== 'undefined') Platform.audio.init();
 
             this.state = 'playing';
@@ -711,8 +899,7 @@ class Game {
             }
             var ts = this._timeScale;
             this.time += dt * ts;
-            this.elapsedTime += dt;
-            this._update(dt * ts);
+            this._update(dt * ts); // V5.1: elapsedTime 移入 _update(手动步进与真实循环一致)
         } else if (this.state === 'idle') {
             // 待机: 相机轻微摆动展示场景
             this.time += dt;
@@ -733,6 +920,7 @@ class Game {
 
     _update(dt) {
         try {
+            if (this.state === 'playing' && !this.paused) this.elapsedTime += dt; // V5.1
             this._updateInner(dt);
         } catch (err) {
             this._showError('[update错误] ' + err.message + '\n' + (err.stack || ''));
@@ -748,6 +936,20 @@ class Game {
         var frontier = this.pacing.frontierStopZ();
         if (frontier !== null) stopZ = stopZ === null ? frontier : Math.max(stopZ, frontier);
         this.squad.update(dt, this.time, stopZ);
+        // V5.1: 全屏爆炸门 — 对场上所有活敌 50%maxHp 结算
+        if (this.squad.nukePending) {
+            this.squad.nukePending = false;
+            var nuked = 0;
+            for (var ni = 0; ni < this.enemies.enemies.length; ni++) {
+                var ne = this.enemies.enemies[ni];
+                if (!ne.alive) continue;
+                ne.takeDamage(Math.max(20, ne.maxHp * 0.5), this.effects, ne.x, false);
+                nuked++;
+            }
+            this.effects.shockwave(this.squad.x, 0.05, this.squad.z - 6, 0xFFC247);
+            this.world.shake(0.5);
+            this.effects.floatText(this.squad.x, 2.4, this.squad.z, '全屏爆炸!', '#FFC247', true);
+        }
         this.gates.update(this.squad, this.effects, this.time, dt);
         // V4.0: 节奏控制器驱动分批刷怪/Boss预警
         this.pacing.update(dt, this.squad);
@@ -798,13 +1000,15 @@ class Game {
             var phaseLabel=document.getElementById('boss-phase');
             if(phaseLabel)phaseLabel.textContent='阶段 '+(this.enemies.boss.phaseIndex||1)+(this.enemies.boss.shieldT>0?' · 护盾':'');
             if (this.ui.bossFill) this.ui.bossFill.style.width = (ratio * 100) + '%';
-        } else if (this.bossSpawned && !this.bossDefeated) {
-            this.bossDefeated = true;
-            if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
         }
 
-        // 胜负判定
-        if (this.bossDefeated) { this._win(); return; }
+        // V5.1 胜利判定(阵地防守): 全部波次排空 + 场上无敌(含Boss已亡+召唤清完) → 通关
+        if (this.pacing.isComplete() && this.enemies.encounterOutstanding === 0 && !this.enemies.boss) {
+            this.bossDefeated = true; // 兼容旧标志(E2E引用)
+            if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
+            this._win();
+            return;
+        }
         if (!this.squad.alive || this.squad.count <= 0) {
             // V3.3: 失败原因追踪
             var reason = '小队全灭';
@@ -919,6 +1123,13 @@ class Game {
         this.state = 'won';
         this._sfx('win'); // V5.0
         this.squad.setAnimationState('Victory');
+        // V5.1: 金币结算(幂等入账) + 档案统计
+        this._doubleApplied = false;
+        this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, true, false) : null;
+        if (this.profile) {
+            this._newUnlocked = this.profile.recordRun(this.levelIndex, this.enemies.killCount, this.maxCount, true, LEVELS.length);
+        }
+        this._fillSettlementUI();
         if (this.ui.hud) this.ui.hud.classList.add('hidden');
         if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
         this._showBossWarning(false);
@@ -945,6 +1156,10 @@ class Game {
         this.state = 'lost';
         this.lastLoseReason = reason; // V5.0: 供平衡模拟分析失败原因
         this._sfx('lose'); // V5.0
+        // V5.1: 失败只给少量击杀金币(防故意失败刷钱)
+        this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, false, false) : null;
+        if (this.profile) this.profile.recordRun(this.levelIndex, this.enemies.killCount, this.maxCount, false, LEVELS.length);
+        this._fillSettlementUI();
         if (this.ui.hud) this.ui.hud.classList.add('hidden');
         if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
         this._showBossWarning(false);
@@ -960,7 +1175,9 @@ class Game {
     }
 
     // ===== V3.3: 存档系统(关卡解锁进度) =====
+    /** V5.1: 解锁进度迁移至 GameProfile 持久档(旧 pz_progress 已在建档时迁移) */
     _loadProgress() {
+        if (this.profile) return clamp(this.profile.data.unlockedLevel, 1, LEVELS.length);
         try {
             var v = parseInt(window.localStorage.getItem('pz_progress')) || 1;
             return clamp(v, 1, LEVELS.length);
@@ -968,6 +1185,13 @@ class Game {
     }
 
     _saveProgress(unlocked) {
+        if (this.profile) {
+            if (unlocked > this.profile.data.unlockedLevel) {
+                this.profile.data.unlockedLevel = unlocked;
+                this.profile.save();
+            }
+            return;
+        }
         try {
             var cur = this._loadProgress();
             if (unlocked > cur) {

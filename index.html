@@ -6,6 +6,7 @@
     <title>膨胀小队</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="style-v42.css">
+    <link rel="stylesheet" href="style-v51.css">
 </head>
 <body>
     <div id="game-container">
@@ -127,11 +128,30 @@
                     <div class="win-stat"><span class="ws-label">最大连杀</span><span class="ws-val" id="win-combo">0</span></div>
                     <div class="win-stat"><span class="ws-label">通关时间</span><span class="ws-val" id="win-time">0s</span></div>
                 </div>
+                <div id="win-coins" class="hidden">
+                    <div class="wc-row"><span>关卡奖励</span><b id="wc-level">+0</b></div>
+                    <div class="wc-row"><span>击杀奖励</span><b id="wc-kills">+0</b></div>
+                    <div class="wc-row hidden" id="wc-double-row"><span>📺 双倍广告</span><b id="wc-double">+0</b></div>
+                    <div class="wc-row wc-total"><span>入账金币</span><b id="wc-total" class="coin-pop">+0</b></div>
+                </div>
                 <button id="btn-next-level" class="btn-primary">下一关 →</button>
                 <button id="btn-double-reward" class="btn-gold">📺 双倍奖励</button>
                 <button id="btn-restart-win" class="btn-secondary">再来一次</button>
             </div>
         </div>
+
+        <!-- ===== V5.1 升级商店 ===== -->
+        <div id="shop-screen" class="hidden">
+            <div class="title-panel shop-panel">
+                <div class="v42-panel-kicker gold">武器库 · 永久强化</div>
+                <h2 class="shop-title">升级商店</h2>
+                <div class="shop-coins">🪙 <b id="shop-coins-num" data-coin-display>0</b></div>
+                <div id="shop-list"></div>
+                <button id="btn-close-shop" class="btn-primary">返回</button>
+            </div>
+        </div>
+
+        <div id="supply-tip" class="hidden"></div>
 
         <!-- ===== 失败界面 ===== -->
         <div id="lose-screen" class="hidden">
@@ -141,6 +161,9 @@
                 <div id="lose-stats">
                     <div class="win-stat"><span class="ws-label">击杀数量</span><span class="ws-val" id="lose-kills">0</span></div>
                     <div class="win-stat"><span class="ws-label">最大连杀</span><span class="ws-val" id="lose-combo">0</span></div>
+                </div>
+                <div id="lose-coins" class="hidden">
+                    <div class="wc-row"><span>击杀金币(保留)</span><b id="lc-kills-coin">+0</b></div>
                 </div>
                 <button id="btn-restart-lose" class="btn-primary">重新挑战</button>
                 <button id="btn-revive" class="btn-ad">📺 观看广告复活</button>
@@ -179,8 +202,10 @@
             });
         }
     </script>
-    <script src="js/config.js?v=50"></script>
+    <script src="js/config.js?v=51"></script>
     <script src="js/utils.js?v=50"></script>
+    <script src="js/economy.js?v=51"></script>
+    <script src="js/upgrades.js?v=51"></script>
     <script src="js/movement.js"></script>
     <script src="js/vendor/GLTFLoader.js"></script>
     <script src="js/soldier-loader.js?v=50"></script>
@@ -214,6 +239,6 @@
         Platform.initialize();
         window.__adService = setupAdService();
     </script>
-    <script src="js/game.js?v=50"></script>
+    <script src="js/game.js?v=51"></script>
 </body>
 </html>

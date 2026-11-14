@@ -24,7 +24,8 @@ var AdError = {
 var AdPlacement = {
     REVIVE:        'revive',         // 4.1 复活
     DOUBLE_REWARD: 'double_reward',  // 4.2 双倍结算
-    REFRESH_GATES: 'refresh_gates'   // 4.3 状态门刷新
+    REFRESH_GATES: 'refresh_gates',  // 4.3 状态门刷新
+    FREE_SUPPLY:    'free_supply'    // V5.1 每日免费补给
 };
 
 /**

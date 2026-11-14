@@ -14,6 +14,9 @@ class GateSystem {
             // V2.2: 每扇门宽度=单车道宽(1.8)，不再用两门间距(4.0导致门超出路面)
             var gateWidth = CONFIG.LANE_WIDTH * 0.9;
             for (const gd of seg.gates) {
+                // V5.1: 史诗门(×2/人数%大额)用金色
+                if (!gd.style) gd.style = (gd.op === 'mul' || gd.op === 'nuke') ? 'mul' : (gd.op === 'addpct' ? 'buff' : (gd.op === 'risk' ? 'risk' : (gd.op === 'buff' ? 'buff' : 'add')));
+                gd.tier = gd.tier || (gd.op === 'mul' ? 'rare' : 'common');
                 const model = V42Art.createGateModel(gd, gateWidth);
                 model.userData.artSource = 'js/models.js:createGateModel(' + gd.op + '/' + (gd.label || '') + ') 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)';
                 model.position.set(CONFIG.LANE_X[gd.lane], 0, seg.z);
@@ -157,7 +160,7 @@ class GateSystem {
             if (g.triggered) continue;
             if (g.z >= squadZ) continue; // 已越过/脚下的门不重随
 
-            var nd = GateSystem._rerollGateData(g.data, CONFIG.SQUAD_MAX_COUNT);
+            var nd = GateSystem._rerollGateData(g.data, CONFIG.SQUAD_MAX_COUNT); // V5.1: 走 GateRewardPool(状态感知)
             // 重建模型
             this.scene.remove(g.model);
             g.model.traverse(function(obj) {
@@ -179,22 +182,80 @@ class GateSystem {
 
     /** 门数据重随: op/value/label 全部重新生成 */
     static _rerollGateData(oldData, maxCount) {
-        var r = Math.random();
-        var op, value, label;
-        // 概率分布: add 45% / mul 25% / buff 30% (mul封顶25%防刷稀有)
-        if (r < 0.45) {
-            op = 'add';
-            value = Math.max(5, Math.min(50, Math.floor(maxCount * 0.15) + Math.floor(Math.random() * 8)));
-            label = '+' + value;
-        } else if (r < 0.70) {
-            op = 'mul';
-            value = (Math.random() < 0.2) ? 3 : 2;
-            label = '×' + value;
-        } else {
-            op = 'buff';
-            value = (Math.random() < 0.5) ? 'damage' : 'firerate';
-            label = (value === 'damage') ? '输出+1' : '射速+20%';
-        }
-        return { lane: oldData.lane, op: op, value: value, label: label };
+        return GateRewardPool.roll(oldData.lane, (typeof window !== 'undefined' && window.__game && window.__game.squad) ? window.__game.squad : null, false);
     }
 }
+
+// ===== V5.1 门奖励池 (普通~75% / 稀有~20% / 史诗~5%; ×2 仅属稀有池且受抑制) =====
+var GATE_REWARD_POOL = {
+    common: [
+        { op: 'add',    value: 3,  label: '+3',      w: 6 },
+        { op: 'add',    value: 5,  label: '+5',      w: 6 },
+        { op: 'add',    value: 8,  label: '+8',      w: 5 },
+        { op: 'add',    value: 12, label: '+12',     w: 4 },
+        { op: 'buff',   value: 'damage',   label: '输出+1',   w: 4, style: 'buff' },
+        { op: 'buff',   value: 'firerate10', label: '射速+10%', w: 4, style: 'buff' },
+        { op: 'buff',   value: 'crit',     label: '暴击+5%',  w: 3, style: 'buff' },
+        { op: 'buff',   value: 'pierce',   label: '穿透+1',   w: 2, style: 'buff' }
+    ],
+    rare: [
+        { op: 'addpct', value: 20, label: '人数+20%', w: 3, style: 'buff' },
+        { op: 'buff',   value: 'damage2', label: '输出+2',  w: 3, style: 'buff' },
+        { op: 'buff',   value: 'crit2',   label: '暴击+10%', w: 3, style: 'buff' },
+        { op: 'buff',   value: 'freeze',  label: '冰冻弹',   w: 2, style: 'buff' },
+        { op: 'buff',   value: 'vamp',    label: '吸血',     w: 2, style: 'buff' },
+        { op: 'buff',   value: 'explosive', label: '爆炸弹', w: 2, style: 'buff' },
+        { op: 'buff',   value: 'chain',   label: '连锁闪电', w: 2, style: 'buff' },
+        { op: 'mul',    value: 2,  label: '×2', w: 2, style: 'mul' }
+    ],
+    epic: [
+        { op: 'addpct', value: 50, label: '人数+50%', w: 1.5, style: 'mul' },
+        { op: 'nuke',   value: 0,  label: '全屏爆炸', w: 1.5, style: 'mul' },
+        { op: 'buff',   value: 'arsenal', label: '军备强化', w: 1.5, style: 'mul' }
+    ]
+};
+
+var GateRewardPool = {
+    lastWasMul: false, // ×2连续抑制
+    /** 按稀有度概率(75/20/5)选池, 再按权重+队伍状态选具体奖励 */
+    roll: function(lane, squad, forceNoMul) {
+        // 稀有度概率: 普通75% 稀有20% 史诗5%
+        var r = Math.random();
+        var tier = r < 0.75 ? 'common' : (r < 0.95 ? 'rare' : 'epic');
+        var pool = GATE_REWARD_POOL[tier].slice();
+        var count = squad ? squad.count : 10;
+        var weights = [];
+        for (var i = 0; i < pool.length; i++) {
+            var item = pool[i];
+            var w = item.w;
+            // ×2 连续抑制
+            if (item.op === 'mul' && (this.lastWasMul || forceNoMul)) w = 0;
+            // 队伍状态感知: 人数少抬人数门, 人数多压人数门
+            if (item.op === 'add' || item.op === 'addpct') {
+                w *= count < 8 ? 1.6 : (count > 120 ? 0.6 : 1);
+            }
+            // 满级属性不再出现(无效奖励)
+            if (squad) {
+                if (item.value === 'pierce' && squad.pierce >= 3) w = 0;
+                if (item.value === 'crit' && squad.critChance >= 0.5) w = 0;
+                if (item.value === 'crit2' && squad.critChance >= 0.5) w = 0;
+                if (item.value === 'firerate10' && squad.fireRateBuff >= 0.5) w = 0;
+            }
+            weights.push(w);
+        }
+        var total = 0;
+        for (var k = 0; k < weights.length; k++) total += weights[k];
+        // 该池全被抑制: 回退普通池的加人门
+        if (total <= 0) return { lane: lane, op: 'add', value: 5, label: '+5', tier: 'common' };
+        var pick = Math.random() * total;
+        var chosen = pool[pool.length - 1];
+        for (var j = 0; j < pool.length; j++) {
+            pick -= weights[j];
+            if (pick <= 0) { chosen = pool[j]; break; }
+        }
+        this.lastWasMul = (chosen.op === 'mul');
+        var out = { lane: lane, op: chosen.op, value: chosen.value, label: chosen.label, tier: tier };
+        if (chosen.style) out.style = chosen.style;
+        return out;
+    }
+};

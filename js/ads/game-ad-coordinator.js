@@ -86,6 +86,11 @@ class GameAdCoordinator {
         });
     }
 
+    /** V5.1 每日免费补给(首页按钮): 随机人数/伤害/射速补给 → 下一局生效 */
+    requestFreeSupply() {
+        return this._showAndGrant(AdPlacement.FREE_SUPPLY, function() {});
+    }
+
     /** 4.3 状态门刷新(战斗中按钮) */
     requestGateRefresh() {
         var self = this;

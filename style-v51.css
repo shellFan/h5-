@@ -1,0 +1,213 @@
+/* ===== V5.1 经济与商店 UI ===== */
+
+/* 首页顶栏布局(金币/商店/补给/音效) */
+#game-container.v42-ui .v42-home-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 2px 0 8px;
+}
+
+#game-container.v42-ui .v42-home-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+#game-container.v42-ui .v42-home-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+/* 金币胶囊(金黄色) */
+#game-container.v42-ui .v51-coin-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    font-weight: 900;
+    color: #8a5b12;
+    background: linear-gradient(180deg, #FFF3D6, #FFE9A8);
+    border: 1px solid rgba(233, 168, 37, .45);
+    border-radius: 999px;
+    padding: 5px 12px;
+    box-shadow: 0 1px 4px rgba(160, 110, 20, .18);
+}
+
+#game-container.v42-ui .v51-coin-pill b { font-size: 14px; color: #6d4708; }
+
+/* 升级商店入口(科技蓝) */
+#game-container.v42-ui .v51-shop-btn {
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid rgba(64, 140, 220, .5);
+    border-radius: 12px;
+    background: linear-gradient(180deg, #4DA8FF, #1A6FD4);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    letter-spacing: .5px;
+}
+#game-container.v42-ui .v51-shop-btn:active { transform: scale(.95); }
+
+/* 每日免费补给 */
+#game-container.v42-ui .v51-supply-btn {
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid rgba(233, 168, 37, .5);
+    border-radius: 12px;
+    background: linear-gradient(180deg, #FFD871, #F0A93A);
+    color: #5b3c07;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+#game-container.v42-ui .v51-supply-btn:active { transform: scale(.95); }
+#game-container.v42-ui .v51-supply-btn.claimed {
+    background: #e8eef2;
+    color: #8aa0ae;
+    border-color: #cfdce4;
+}
+
+/* 补给提示条 */
+#supply-tip {
+    position: absolute;
+    top: 96px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 40;
+    background: rgba(13, 34, 62, .92);
+    color: #FFE9A8;
+    font-size: 14px;
+    font-weight: 800;
+    padding: 9px 18px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 201, 71, .4);
+    pointer-events: none;
+    animation: supplyPop .3s cubic-bezier(.34, 1.56, .64, 1);
+    max-width: 86%;
+    text-align: center;
+}
+@keyframes supplyPop { from { transform: translateX(-50%) scale(.8); opacity: 0; } }
+
+/* ===== 升级商店 ===== */
+#shop-screen {
+    position: absolute;
+    inset: 0;
+    z-index: 45;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 22, 40, .55);
+    padding: 12px;
+}
+#shop-screen.hidden { display: none; }
+
+#game-container.v42-ui #shop-screen .shop-panel {
+    width: min(100%, 390px);
+    max-height: 92%;
+    overflow-y: auto;
+    padding: 22px 18px 18px;
+}
+
+.shop-title {
+    text-align: center;
+    color: #1E40AF;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+}
+
+.shop-coins {
+    text-align: center;
+    font-size: 17px;
+    font-weight: 900;
+    color: #8a5b12;
+    background: rgba(255, 196, 71, .15);
+    border: 1px solid rgba(233, 168, 37, .3);
+    border-radius: 999px;
+    padding: 6px 0;
+    margin-bottom: 12px;
+}
+
+#shop-list { display: flex; flex-direction: column; gap: 8px; }
+
+.shop-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(240, 248, 252, .9);
+    border: 1px solid rgba(28, 100, 124, .14);
+    border-radius: 16px;
+    padding: 10px 12px;
+}
+
+.shop-icon { font-size: 26px; width: 34px; text-align: center; flex-shrink: 0; }
+
+.shop-info { flex: 1; min-width: 0; }
+.shop-name { font-size: 15px; font-weight: 900; color: #173B79; }
+.shop-desc { font-size: 11px; color: #5b7a92; margin-top: 1px; }
+.shop-effect { font-size: 12px; font-weight: 800; color: #1A6FD4; margin-top: 3px; }
+
+.shop-buy {
+    flex-shrink: 0;
+    min-width: 76px;
+    height: 38px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #4DA8FF, #1A6FD4);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(26, 111, 212, .3);
+}
+.shop-buy.affordable { background: linear-gradient(180deg, #FFD871, #F0A93A); color: #5b3c07; box-shadow: 0 2px 6px rgba(200, 140, 30, .3); }
+.shop-buy:disabled { background: #d7e0e8; color: #93a7b5; box-shadow: none; cursor: default; }
+.shop-buy.maxed { background: #cfe6d8; color: #3e7d54; }
+.shop-buy:not(:disabled):active { transform: scale(.94); }
+
+/* ===== 结算金币明细 ===== */
+#win-coins, #lose-coins {
+    width: 100%;
+    background: rgba(255, 243, 214, .55);
+    border: 1px solid rgba(233, 168, 37, .3);
+    border-radius: 16px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+#win-coins.hidden, #lose-coins.hidden { display: none; }
+
+.wc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #6d5b32;
+    font-weight: 700;
+}
+.wc-row b { font-size: 15px; color: #B07A12; font-weight: 900; }
+.wc-row.wc-total {
+    border-top: 1px dashed rgba(233, 168, 37, .5);
+    padding-top: 7px;
+    font-size: 14px;
+    color: #173B79;
+}
+.wc-row.wc-total b { font-size: 22px; color: #E9A825; }
+
+/* 金币入账飞入动画 */
+#win-coins.coin-in .wc-total b { animation: coinFly .7s cubic-bezier(.34, 1.56, .64, 1) .1s backwards; }
+@keyframes coinFly {
+    from { transform: translateY(14px) scale(.5); opacity: 0; filter: drop-shadow(0 0 8px rgba(255, 200, 60, .9)); }
+    60% { transform: translateY(-4px) scale(1.15); }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}

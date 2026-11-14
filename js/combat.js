@@ -135,7 +135,7 @@ class CombatSystem {
         for (var i = this.bullets.length - 1; i >= 0; i--) {
             var b = this.bullets[i];
             var oldZ = b.mesh.position.z;
-            var newZ = oldZ - CONFIG.BULLET_SPEED * dt;
+            var newZ = BattleKinematics.bulletZ(oldZ, CONFIG.BULLET_SPEED, dt); // V5.1: SHOOT_SIGN=-Z
             b.mesh.position.z = newZ;
             b.life -= dt;
 
@@ -166,6 +166,39 @@ class CombatSystem {
                             }
                         }
                         var died = e.takeDamage(b.damage, this.effects, b.mesh.position.x, b.crit);
+                        // V5.1: 爆炸弹 — 命中溅射(半径1.7, 50%伤害, 最多4个邻近目标)
+                        if (squad.explosive > 0) {
+                            var splashR = 1.2 + 0.5 * squad.explosive;
+                            var splashN = 0;
+                            for (var si = 0; si < enemies.length && splashN < 4; si++) {
+                                var se = enemies[si];
+                                if (se === e || !se.alive) continue;
+                                var sdx = se.x - e.x, sdz = se.z - e.z;
+                                if (sdx * sdx + sdz * sdz < splashR * splashR) {
+                                    se.takeDamage(Math.max(1, Math.round(b.damage * 0.5)), this.effects, se.x, false);
+                                    splashN++;
+                                }
+                            }
+                            this.effects.burst(e.x, 0.6, e.z, 0xFF8833, 6, 2.5, 0.3);
+                        }
+                        // V5.1: 连锁闪电 — 跳至最近(最多1+chain层)邻敌, 各受40%伤害
+                        if (squad.chain > 0) {
+                            var hops = squad.chain, last = e;
+                            for (var hi = 0; hi < hops; hi++) {
+                                var best = null, bestD = 9;
+                                for (var ci = 0; ci < enemies.length; ci++) {
+                                    var ce = enemies[ci];
+                                    if (!ce.alive || ce === last || ce === e) continue;
+                                    var cdx = ce.x - last.x, cdz = ce.z - last.z;
+                                    var cd = Math.sqrt(cdx * cdx + cdz * cdz);
+                                    if (cd < bestD) { bestD = cd; best = ce; }
+                                }
+                                if (!best) break;
+                                best.takeDamage(Math.max(1, Math.round(b.damage * 0.4)), this.effects, best.x, false);
+                                this.effects.burst(best.x, 1.0, best.z, 0x66D9FF, 4, 2, 0.25);
+                                last = best;
+                            }
+                        }
                         // 暴击/击杀反馈
                         if (died) {
                             if (b.crit) {
