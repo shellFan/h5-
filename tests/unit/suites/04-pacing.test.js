@@ -73,7 +73,7 @@ module.exports.run = function(ctx) {
         });
         test('场上活敌达上限时暂停生成', () => {
             var { p, spawned } = makeCtl(0);
-            p._aliveOverride = CONFIG.PACING.maxAliveBase; // 10只活敌(L1上限)
+            p._aliveOverride = CONFIG.MAX_ALIVE[0]; // V5.1: 25只活敌(L1上限)
             var squad = { z: -24 };
             p.update(CONFIG.PACING.firstContactGrace + 0.5, squad);
             p.update(CONFIG.PACING.spawnIntervalMax + 0.1, squad);
@@ -130,13 +130,18 @@ module.exports.run = function(ctx) {
     });
 
     describe('关卡缩放', () => {
-        test('maxAlive随关卡+1并封顶', () => {
+        test('maxAlive按V5.1尸潮矩阵逐关取值(越界取末档)', () => {
             var { p } = makeCtl(0);
-            assertEq(p._maxAlive(), CONFIG.PACING.maxAliveBase);
-            var p10 = makeCtl(9).p;
-            assertEq(p10._maxAlive(), CONFIG.PACING.maxAliveBase + 9, 'L10=19');
-            var p15 = makeCtl(14).p;
-            assertEq(p15._maxAlive(), CONFIG.PACING.maxAliveCap, '超限封顶20');
+            assertEq(p._maxAlive(), CONFIG.MAX_ALIVE[0], 'L1=25');
+            var p5 = makeCtl(4).p;
+            assertEq(p5._maxAlive(), CONFIG.MAX_ALIVE[4], 'L5=60');
+            var p9 = makeCtl(8).p;
+            assertEq(p9._maxAlive(), CONFIG.MAX_ALIVE[CONFIG.MAX_ALIVE.length - 1], '越界取末档60');
+        });
+        test('V5.1防线锚点: 激活波次后stopZ=波点+defenseStandoff', () => {
+            var { p } = makeCtl(0);
+            p.update(0.05, { z: -25 }); // 越过triggerZ(-24)激活首波
+            assertEq(p.frontierStopZ(), p.waves[0].z + CONFIG.PACING.defenseStandoff, '防线在波点前方9单位');
         });
         test('批次规模不超过有效上限', () => {
             var { p } = makeCtl(9);

@@ -216,17 +216,18 @@ async function suiteGameplay(page) {
     await step('穿门人数增加(+5)', async () => {
         await gotoGame(page);
         await gameApi(page, '(g) => g.start()');
-        // 传送到门前(V3.3关卡: 第一组门 z=-10, lane0 为 +5 门, 队伍停在门前1单位)
-        await gameApi(page, '(g) => { g.squad.z = -9; g.squad.x = -2; g.squad.lane = 0; g.squad.targetX = -2; }');
+        // 传送到门前(V5.1: 第一排门 z=-8, lane0 为 +8 门, 队伍停在门前0.5单位)
+        await gameApi(page, '(g) => { const gz = LEVELS[0].segments.find(s => s.type === "gates").z; g.squad.z = gz + 0.5; g.squad.x = -2; g.squad.lane = 0; g.squad.targetX = -2; }');
         await page.waitForTimeout(500);
         const count = await gameApi(page, '(g) => g.squad.count');
         assert(count >= 6, '穿门后人数应≥6, 实际' + count);
     });
     await step('门触发后移除(无残留碰撞)', async () => {
         // 越过门后等待淡出
-        await gameApi(page, '(g) => { g.squad.z = -18; }');
+        await gameApi(page, '(g) => { g.squad.z = LEVELS[0].segments.find(s => s.type === "gates").z - 7; }');
         await page.waitForTimeout(400);
-        const left = await gameApi(page, '(g) => g.gates.gates.filter(x => x.triggered && x.z === -10).length');
+        const gz = await gameApi(page, '(g) => LEVELS[0].segments.find(s => s.type === "gates").z');
+        const left = await gameApi(page, '(g) => g.gates.gates.filter(x => x.triggered && x.z === ' + gz + ').length');
         assert(left === 0, '触发的门应被移除');
     });
 
@@ -259,7 +260,8 @@ async function suiteGameplay(page) {
     await step('Boss生成+血条显示', async () => {
         // Isolate this boss fixture from earlier wave queues. The full ten-level
         // replay separately covers natural progression without teleport/skip.
-        await gameApi(page, '(g) => { g.enemies.clear(); g.pacing.waves.filter(w=>w.type==="wave").forEach(w=>w.state="done"); g.pacing.restTimer=0; g.pacing.activeWave=null; const b = LEVELS[0].segments.find(s => s.type === "boss"); g.squad.z = b.z + 16; g.squad.setCount(40); }');
+        // V5.1: 仅第5关含Boss段 — 切到L5重建波次计划, 排空普通波, 传送到Boss预警线内
+        await gameApi(page, '(g) => { g.levelIndex = 4; g.start(); g.enemies.clear(); g.pacing.waves.filter(w=>w.type==="wave").forEach(w=>w.state="done"); g.pacing.restTimer=0; g.pacing.activeWave=null; const b = LEVELS[4].segments.find(s => s.type === "boss"); g.squad.z = b.z + 16; g.squad.setCount(40); }');
         // 等待Boss生成(轮询代替固定等待, 消除时序不稳定)
         await page.waitForFunction(() => {
             const g = window.__game;
@@ -356,7 +358,7 @@ async function suiteAdMock(page) {
     _current = '双倍结算E2E';
     await step('通关后广告领取双倍(限1次)', async () => {
         await gotoGame(page, '?adtest=auto_complete');
-        await gameApi(page, "(g) => { g.start(); g.pacing.waves.filter(w=>w.type==='wave').forEach(w=>w.state='done'); g.pacing.restTimer=0; g.pacing.activeWave=null; const b = LEVELS[0].segments.find(s => s.type === 'boss'); g.squad.setCount(150); g.squad.z = b.z + 16; }");
+        await gameApi(page, "(g) => { g.levelIndex = 4; g.start(); g.pacing.waves.filter(w=>w.type==='wave').forEach(w=>w.state='done'); g.pacing.restTimer=0; g.pacing.activeWave=null; const b = LEVELS[4].segments.find(s => s.type === 'boss'); g.squad.setCount(150); g.squad.z = b.z + 16; }");
         // 等待Boss被击杀→won
         await page.waitForFunction(() => { const g = window.__game; return g && g.state === 'won'; }, { timeout: 12000 }).catch(() => {});
         assert(await gameApi(page, '(g) => g.state') === 'won', '应进入胜利状态');

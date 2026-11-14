@@ -128,7 +128,7 @@
         strategies.forEach(function(s) {
             var rs = results.filter(function(r) { return r.strategy === s; });
             summary[s] = {
-                wins: rs.filter(function(r) { return r.win; }).length + '/10',
+                wins: rs.filter(function(r) { return r.win; }).length + '/' + rs.length,
                 avgTime: +(rs.reduce(function(a, r) { return a + r.time; }, 0) / rs.length).toFixed(0),
                 failAt: rs.filter(function(r) { return !r.win; }).map(function(r) { return 'L' + r.level; }).join(',')
             };

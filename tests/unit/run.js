@@ -15,6 +15,11 @@ const SOURCE_FILES = [
     'js/utils.js',          // V4.0: damp/lerp/clamp/randRange(纯函数)
     'js/movement.js',       // V4.0: 移动手感数学
     'js/pacing.js',         // V4.0: 节奏控制器(纯逻辑)
+    'js/economy.js',        // V5.1: 金币经济
+    'js/upgrades.js',       // V5.1: 升级商店
+    'js/squad.js',          // V5.1: 小队(类定义, 单测不实例化渲染器)
+    'js/gates.js',          // V5.1: 门系统+奖励池
+    'js/combat.js',         // V5.1: 战斗(类定义)
     'js/platform/storage-adapter.js',
     'js/platform/lifecycle-adapter.js',
     'js/platform/audio-adapter.js',
