@@ -128,7 +128,9 @@ class GamePacingController {
                 if(this.spawnFn)this.spawnFn(type,x,z,null);
                 w.pending.shift();w.spawned++;
                 // Explicit one-actor-per-frame cap, including catch-up frames.
-                w.emitTimer=dt>.1?P.streamInterval:w.emitTimer+P.streamInterval;
+                // V5.0修复: 准备期/背压等待期间emitTimer累计负值 — 负信用不得结转,
+                // 否则生成一帧后仍为负导致下一帧瞬发(测试v42-stream"bank catch-up credit")。
+                w.emitTimer=dt>.1?P.streamInterval:Math.max(0,w.emitTimer)+P.streamInterval;
             }
             if (w.queue.length === 0 && w.pending.length === 0) {
                 w.state = 'clearing';
