@@ -1,14 +1,17 @@
-// ===== 抖音小游戏构建脚本 (Phase 5/8) =====
-// 产物: dist/douyin/ — 可直接导入抖音开发者工具
-// 运行: npm run build:douyin  (node tools/build-douyin.js)
+// ===== 抖音小游戏构建脚本 V5.0（重写） =====
+// 产物: dist/douyin/ — 可导入抖音开发者工具
+// 运行: npm run build:douyin
 //
-// 抖音小游戏与H5的差异(构建时处理):
-// 1. 入口 game.js: 创建唯一 canvas + 模拟 window/document 最小子集 → 三方库与游戏代码零改动
-// 2. 资源路径: 相对路径在 tt 环境需通过 tt.getFileSystemManager 读取? — 本项目全部为程序化生成
-//    (Canvas纹理/SVG avatar), SVG avatar 在小游戏环境降级为程序化绘制
-// 3. 广告: DouyinAdService(tt.createRewardedVideoAd) — 广告位ID在 game-config.js 配置
-// 4. 存储: TtStorageAdapter
-// 5. 物理/输入: 触控 tt.onTouchStart 等 → InputAdapter桥接
+// V5.0 架构变更（修复 V4.x 产物不可运行的 P0）:
+// 抖音小游戏 CommonJS 每个文件独立模块作用域, H5 顶层 var/class 无法跨文件共享。
+// 方案: 把全部游戏脚本按 index.html 加载顺序拼接为单一 IIFE 作用域文件 game-bundle.js
+//（与 tests/unit/run.js 的 vm 拼接方案同构, 输出为真实文件）, 入口 game.js 只做:
+//   环境模拟 → require three.js/GLTFLoader 接线 → require bundle → 启动
+//
+// 已知待真机验证项(无开发者工具/AppID 无法在本环境执行, 见 docs/V50_DOUYIN_RELEASE.md):
+//   - GLB 贴图解码路径(tt.createImage 对 data URI 的支持)
+//   - 激励视频真实回调时序
+//   - tt 音频播放音量/时延
 
 const fs = require('fs');
 const path = require('path');
@@ -16,19 +19,25 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist', 'douyin');
 
-// 游戏逻辑(H5与抖音共用, 原样复制)
+// 与 index.html 加载顺序一致(除 vendor/three 与 vendor/GLTFLoader — 由 bundle 头部接线)
 const GAME_SCRIPTS = [
     'js/config.js',
     'js/utils.js',
-    'js/movement.js',   // V4.0
+    'js/movement.js',
+    'js/vendor/GLTFLoader.js',
+    'js/soldier-loader.js',
+    'js/soldier-renderer.js',
+    'js/enemy-models.js',
+    'js/boss-v42.js',
+    'js/art-v42.js',
     'js/models.js',
     'js/world.js',
     'js/effects.js',
     'js/squad.js',
     'js/gates.js',
     'js/enemies.js',
-    'js/pacing.js',    // V4.0
     'js/combat.js',
+    'js/pacing.js',
     'js/platform/storage-adapter.js',
     'js/platform/lifecycle-adapter.js',
     'js/platform/audio-adapter.js',
@@ -41,146 +50,310 @@ const GAME_SCRIPTS = [
     'js/ads/game-ad-coordinator.js'
 ];
 
-// game.json — 抖音小游戏配置(按官方默认字段, 未配置的能力由平台降级)
+// index.html 内联引导脚本(平台初始化+广告装配, 必须在 game.js 之前执行)
+const BOOTSTRAP_SNIPPET = `
+/* ---- index.html 内联引导(等价移植) ---- */
+window.__AD_TEST_SCENARIO = null; /* 小游戏无 location 注入, 生产恒为 null */
+Platform.initialize();
+window.__adService = setupAdService();
+`;
+
+// game.json — 抖音小游戏配置(竖屏, 无状态栏)
+// V5.0: assets(4.2MB, 全部GLB模型)置于分包, 主包<4MB满足平台上限;
+//       MiniGLTFLoader 读包内文件失败时自动 loadSubpackage 后重试
 const GAME_JSON = {
     deviceOrientation: 'portrait',
     showStatusBar: false,
     networkTimeout: {
         request: 10000,
         downloadFile: 10000
-    }
+    },
+    subpackages: [
+        { root: 'assets/', name: 'assets' }
+    ]
 };
 
-// game-config.js — 平台相关可配置项(上线前必查)
-const GAME_CONFIG_JS = `// ===== 抖音小游戏平台配置 =====
-// 广告位ID: 抖音开放平台流量主后台分配(上线必填, 留空则广告功能降级不可用)
-var DOUYIN_AD_UNITS = {
-    rewardVideo: ''  // TODO(上线): 填入激励视频广告位ID
+// game-config.js — 上线前必填(广告位ID由抖音流量主后台分配; 留空则广告如实降级不可用)
+const GAME_CONFIG_JS = `// ===== 抖音小游戏平台配置 (构建生成, 上线前必查) =====
+// 广告位ID获取: 抖音开放平台 → 流量主 → 广告位管理 → 激励视频
+window.__GAME_SETTINGS = {
+    ads: {
+        douyin: {
+            rewardVideo: ''  // TODO(上线): 填入激励视频广告位ID, 留空则广告功能不可用
+        }
+    }
 };
 `;
 
-// game.js — 小游戏入口: 组装DOM模拟层 + 启动游戏
-const ENTRY_JS = `// ===== 抖音小游戏入口 (构建产物, 源于 tools/build-douyin.js) =====
+// 入口 game.js: 环境模拟 + THREE/GLTFLoader 接线 + bundle 加载
+const ENTRY_JS = `// ===== 抖音小游戏入口 (V5.0 构建产物, 源于 tools/build-douyin.js) =====
 'use strict';
+/* eslint-disable */
 
-/* ------------------------------------------------------------------
- * DOM/Canvas 模拟层: 抖音小游戏无DOM, 提供游戏代码所需的最小子集:
- *   - document.getElementById / createElement('canvas')
- *   - window.innerWidth/Height/devicePixelRatio/addEventListener
- *   - window.localStorage 由 StorageAdapter 直接走 tt, 不需要模拟
- * 注意: 仅模拟游戏实际用到的API, 不做通用polyfill
- * ------------------------------------------------------------------ */
+/* ==================================================================
+ * 1. 小游戏环境模拟层(游戏代码所需的最小子集, 不做通用 polyfill)
+ * ================================================================== */
 (function setupMiniGameEnv() {
+    var G = typeof GameGlobal !== 'undefined' ? GameGlobal
+        : (typeof global !== 'undefined' ? global : this);
+    G.__mgGlobal = G;
+
     var sysInfo = tt.getSystemInfoSync();
+    G.__sysInfo = sysInfo;
     var mainCanvas = tt.createCanvas();
-    // 抖音首屏canvas即主画布: 尺寸由系统给出
     mainCanvas.width = sysInfo.windowWidth * sysInfo.pixelRatio;
     mainCanvas.height = sysInfo.windowHeight * sysInfo.pixelRatio;
-    // world.resize 依赖 canvas.parentElement.clientWidth
-    mainCanvas.parentElement = { clientWidth: sysInfo.windowWidth, clientHeight: sysInfo.windowHeight };
     mainCanvas.clientWidth = sysInfo.windowWidth;
     mainCanvas.clientHeight = sysInfo.windowHeight;
+    // world.resize 依赖 canvas.parentElement.clientWidth
+    mainCanvas.parentElement = { clientWidth: sysInfo.windowWidth, clientHeight: sysInfo.windowHeight };
 
-    var createdCanvases = [];
+    /* ---- 图片对象: tt.createImage 外观层(拦截 blob: URL → data URI) ---- */
+    var BLOB_REGISTRY = {};
+    G.__blobRegistry = BLOB_REGISTRY;
+    function makeImage() {
+        var impl = tt.createImage();
+        var facade = {};
+        facade._impl = impl;
+        facade.onload = null; facade.onerror = null;
+        impl.onload = function() {
+            facade.width = impl.width; facade.height = impl.height;
+            if (facade.onload) facade.onload();
+        };
+        impl.onerror = function() { if (facade.onerror) facade.onerror(); };
+        Object.defineProperty(facade, 'src', {
+            get: function() { return impl.src; },
+            set: function(v) {
+                if (v && v.indexOf && v.indexOf('blob:') === 0 && BLOB_REGISTRY[v]) v = BLOB_REGISTRY[v];
+                try { impl.src = v; } catch (e) { if (facade.onerror) facade.onerror(e); }
+            }
+        });
+        facade.crossOrigin = null;
+        return facade;
+    }
+    G.__makeImage = makeImage;
 
-    // --- document 模拟 ---
-    global.document = {
+    /* ---- Blob / URL.createObjectURL: GLTFLoader 内嵌贴图走 Blob→objectURL 路径 ---- */
+    function Blob(parts, opts) {
+        var total = 0, i;
+        var views = [];
+        for (i = 0; parts && i < parts.length; i++) {
+            var p = parts[i];
+            if (p instanceof ArrayBuffer) { views.push(new Uint8Array(p)); total += p.byteLength; }
+            else if (p && p.buffer) { views.push(new Uint8Array(p.buffer, p.byteOffset, p.byteLength)); total += p.byteLength; }
+        }
+        var bytes = new Uint8Array(total);
+        var off = 0;
+        for (i = 0; i < views.length; i++) { bytes.set(views[i], off); off += views[i].length; }
+        this._bytes = bytes;
+        this.type = (opts && opts.type) || '';
+    }
+    G.Blob = Blob;
+
+    var blobSeq = 0;
+    function bytesToBase64(bytes) {
+        var CHUNK = 0x8000, bin = '';
+        for (var i = 0; i < bytes.length; i += CHUNK) {
+            bin += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i + CHUNK, bytes.length)));
+        }
+        return btoa(bin);
+    }
+    var URLShim = {
+        createObjectURL: function(blob) {
+            var id = 'blob:mg-' + (++blobSeq);
+            var mime = blob.type || 'image/png';
+            BLOB_REGISTRY[id] = 'data:' + mime + ';base64,' + bytesToBase64(blob._bytes);
+            return id;
+        },
+        revokeObjectURL: function(id) { delete BLOB_REGISTRY[id]; }
+    };
+    G.URL = G.URL || URLShim;
+    if (!G.URL.createObjectURL) G.URL.createObjectURL = URLShim.createObjectURL;
+    if (!G.URL.revokeObjectURL) G.URL.revokeObjectURL = URLShim.revokeObjectURL;
+
+    /* ---- document 模拟 ---- */
+    G.document = {
         createElement: function(tag) {
-            if (tag === 'canvas') {
-                var c = tt.createCanvas();
-                createdCanvases.push(c);
-                return c;
-            }
-            if (tag === 'img') {
-                // 游戏内SVG avatar加载在小游戏环境返回失败对象(走onerror降级)
-                return {
-                    set src(v) { var self = this; setTimeout(function() { if (self.onerror) self.onerror(); }, 0); },
-                    set onerror(fn) { this._onerror = fn; },
-                    get onerror() { return this._onerror; },
-                    onload: null
-                };
-            }
-            // div等DOM元素: 返回空壳(游戏在错误兜底时会appendChild, 不应崩溃)
-            return { style: {}, appendChild: function() {}, set textContent(v) {}, get textContent() { return ''; } };
+            if (tag === 'canvas') return tt.createCanvas();
+            if (tag === 'img') return makeImage();
+            // div 等UI元素: 空壳(游戏对UI引用均判空, 仅error兜底会appendChild)
+            return {
+                style: {}, children: [],
+                appendChild: function() {}, remove: function() {}, removeChild: function() {},
+                set textContent(v) {}, get textContent() { return ''; },
+                set innerHTML(v) {}, get innerHTML() { return ''; },
+                addEventListener: function() {}, classList: { add: function(){}, remove: function(){}, toggle: function(){} }
+            };
         },
-        getElementById: function(id) {
-            if (id === 'game-canvas') return mainCanvas;
-            // UI层DOM在小游戏环境不存在: 返回null, game.js对所有UI引用均做了防御性判空
-            return null;
-        },
+        createElementNS: function(ns, tag) { return this.createElement(tag); },
+        getElementById: function() { return null; },
         addEventListener: function() {},
-        body: { appendChild: function() {} }
+        removeEventListener: function() {},
+        body: {
+            appendChild: function(node) { if (node && node.remove) node.remove(); return node; },
+            removeChild: function() {}
+        },
+        images: [],
+        hidden: false,
+        visibilityState: 'visible'
     };
 
-    // --- window 模拟 ---
-    global.window = {
+    /* ---- window 模拟 ---- */
+    G.window = {
         innerWidth: sysInfo.windowWidth,
         innerHeight: sysInfo.windowHeight,
         devicePixelRatio: sysInfo.pixelRatio,
         addEventListener: function() {},
-        requestAnimationFrame: function(cb) { return setTimeout(function() { cb(Date.now()); }, 16); },
-        performance: { now: function() { return Date.now(); } },
-        localStorage: null // 明确置空: 平台层走TtStorageAdapter
+        removeEventListener: function() {},
+        location: { search: '', href: 'game://douyin/', hostname: '', protocol: 'game:' },
+        localStorage: null, // 明确置空: 平台层走 TtStorageAdapter
+        navigator: { userAgent: 'douyin-minigame' }
     };
-    // 游戏代码混用 global.window 与裸 window
-    global.navigator = {};
-    // 裸全局(游戏代码直接调用 requestAnimationFrame / new Image)
-    global.requestAnimationFrame = global.window.requestAnimationFrame;
-    global.Image = function() { return global.document.createElement('img'); };
-    global.performance = global.window.performance;
+    G.navigator = G.window.navigator;
+    G.location = G.window.location;
+    if (!G.performance) G.performance = { now: function() { return Date.now(); } };
+    G.window.performance = G.performance;
+    G.requestAnimationFrame = G.requestAnimationFrame || function(cb) { return setTimeout(function() { cb(Date.now()); }, 16); };
+    G.window.requestAnimationFrame = G.requestAnimationFrame;
+    G.cancelAnimationFrame = G.cancelAnimationFrame || function(id) { clearTimeout(id); };
+    if (typeof G.URLSearchParams === 'undefined') {
+        G.URLSearchParams = function(search) {
+            this.get = function() { return null; };
+        };
+    }
 
-    // --- 触控桥接: canvas事件 → tt全局触控 ---
-    var touchHandlers = {
-        touchstart: [], touchmove: [], touchend: [], touchcancel: []
-    };
+    /* ---- 触控桥接: canvas.addEventListener → tt 全局触控 ---- */
+    var touchHandlers = { touchstart: [], touchmove: [], touchend: [], touchcancel: [] };
     mainCanvas.addEventListener = function(type, fn) {
         if (touchHandlers[type]) touchHandlers[type].push(fn);
+    };
+    mainCanvas.removeEventListener = function(type, fn) {
+        var list = touchHandlers[type];
+        if (!list) return;
+        var i = list.indexOf(fn);
+        if (i >= 0) list.splice(i, 1);
     };
     function dispatch(type, e) {
         var list = touchHandlers[type] || [];
         var evt = {
             preventDefault: function() {},
-            touches: e.touches && e.touches.length ? e.touches.map(function(t) {
+            touches: (e.touches || []).map(function(t) {
                 return { clientX: t.clientX, clientY: t.clientY, identifier: t.id };
-            }) : [],
-            changedTouches: e.changedTouches && e.changedTouches.length ? e.changedTouches.map(function(t) {
+            }),
+            changedTouches: (e.changedTouches || []).map(function(t) {
                 return { clientX: t.clientX, clientY: t.clientY, identifier: t.id };
-            }) : []
+            })
         };
-        for (var i = 0; i < list.length; i++) list[i](evt);
+        for (var i = 0; i < list.length; i++) {
+            try { list[i](evt); } catch (err) { console.error('[touch]', type, err); }
+        }
     }
     tt.onTouchStart(function(e) { dispatch('touchstart', e); });
     tt.onTouchMove(function(e) { dispatch('touchmove', e); });
     tt.onTouchEnd(function(e) { dispatch('touchend', e); });
     tt.onTouchCancel(function(e) { dispatch('touchcancel', e); });
+
+    /* ---- GLTFLoader 小游戏适配: GLB 包内文件走 FileSystemManager 读取 + parse ----
+     * H5 的 THREE.FileLoader 依赖 XHR/fetch, 小游戏不存在。
+     * 包内资产用 tt.getFileSystemManager().readFile 读为 ArrayBuffer 后调 GLTFLoader.parse。
+     * V5.0: assets 为分包 — readFile 失败时自动 loadSubpackage('assets') 后重试一次。 */
+    var assetsPkgPromise = null;
+    function ensureAssetsSubpackage() {
+        if (!assetsPkgPromise) {
+            assetsPkgPromise = new Promise(function(resolve) {
+                tt.loadSubpackage({
+                    name: 'assets',
+                    success: function() { resolve(true); },
+                    fail: function(err) { console.warn('[分包] assets 加载失败', err); resolve(false); }
+                });
+            });
+        }
+        return assetsPkgPromise;
+    }
+    G.__ensureAssetsSubpackage = ensureAssetsSubpackage;
+    G.__installMiniGLTFLoader = function() {
+        if (!THREE || !THREE.GLTFLoader) return;
+        var RealGLTFLoader = THREE.GLTFLoader;
+        function MiniGLTFLoader() {
+            this._impl = new RealGLTFLoader();
+        }
+        MiniGLTFLoader.prototype._readFile = function(filePath, onLoad, onError, retried) {
+            var self = this;
+            var fsm = tt.getFileSystemManager();
+            fsm.readFile({
+                filePath: filePath,
+                success: function(res) {
+                    try {
+                        self._impl.parse(res.data, '', onLoad, onError);
+                    } catch (err) { if (onError) onError(err); }
+                },
+                fail: function(err) {
+                    if (!retried && filePath.indexOf('assets/') === 0) {
+                        // 分包未就绪: 等待 assets 分包加载完成后重试一次
+                        ensureAssetsSubpackage().then(function(ok) {
+                            if (ok) self._readFile(filePath, onLoad, onError, true);
+                            else if (onError) onError(err);
+                        });
+                        return;
+                    }
+                    console.error('[GLB] 读取失败:', filePath, err);
+                    if (onError) onError(err);
+                }
+            });
+        };
+        MiniGLTFLoader.prototype.load = function(url, onLoad, onProgress, onError) {
+            var filePath = String(url)
+                .replace(/^https?:\\/\\/[^\\/]+\\//, '')
+                .replace(/^\\.\\//, '')
+                .split('?')[0];
+            this._readFile(filePath, onLoad, onError, false);
+        };
+        MiniGLTFLoader.prototype.parse = function(data, path, onLoad, onError) {
+            return this._impl.parse(data, path, onLoad, onError);
+        };
+        THREE.GLTFLoader = MiniGLTFLoader;
+    };
 })();
 
-/* ------------------------------------------------------------------
- * 加载游戏脚本(按H5相同顺序)
- * ------------------------------------------------------------------ */
-${GAME_SCRIPTS.map(function(rel) {
-    return "require('./" + rel.replace('js/', '') + "');";
-}).join('\n')}
+/* ==================================================================
+ * 2. three.js + GLTFLoader 接线(UMD → CJS require, 挂到全局)
+ * ================================================================== */
+var THREE = require('./libs/three.min.js');
+if (typeof GameGlobal !== 'undefined') GameGlobal.THREE = THREE;
+if (typeof global !== 'undefined') global.THREE = THREE;
+window.THREE = THREE;
 
-/* ------------------------------------------------------------------
- * 启动
- * ------------------------------------------------------------------ */
+/* ==================================================================
+ * 3. 游戏代码 bundle(单一模块作用域, 全部脚本共享顶层声明)
+ * ================================================================== */
+require('./game-bundle.js');
+
+/* ==================================================================
+ * 4. 启动
+ * ================================================================== */
 try {
-    Platform.initialize();       // 生命周期绑定(tt.onAppHide/onAppShow)
-    window.__adService = setupAdService(); // 广告服务(H5=测试模拟器, 抖音=真实SDK)
-    window.__game = new Game();
+    __installMiniGLTFLoader();
+    window.__game = typeof Game !== 'undefined' ? new Game() : null;
+    if (!window.__game) throw new Error('Game 类未定义 — bundle 加载不完整');
 } catch (err) {
     console.error('[启动错误]', err && err.stack || err);
 }
 `;
 
+function mustRead(rel) {
+    const src = path.join(ROOT, rel);
+    if (!fs.existsSync(src)) {
+        throw new Error('[build:douyin] 必需文件缺失: ' + rel + '（V5.0起缺失直接报错, 不再静默跳过）');
+    }
+    return fs.readFileSync(src, 'utf8');
+}
+
 function copyTo(srcRel) {
     const src = path.join(ROOT, srcRel);
-    const dst = path.join(OUT, srcRel);
     if (!fs.existsSync(src)) {
-        console.warn('[build:douyin] 跳过不存在的文件: ' + srcRel);
-        return;
+        throw new Error('[build:douyin] 必需文件缺失: ' + srcRel);
     }
+    const dst = path.join(OUT, srcRel);
     fs.mkdirSync(path.dirname(dst), { recursive: true });
     const stat = fs.statSync(src);
     if (stat.isDirectory()) copyDir(src, dst);
@@ -197,35 +370,96 @@ function copyDir(src, dst) {
     }
 }
 
+/** 构建单一作用域 bundle: 头部THREE接线 + 按序拼接全部脚本 + 引导 + game.js */
+function buildBundle() {
+    const parts = [];
+    parts.push(`// ===== game-bundle.js (V5.0 构建产物: 单一模块作用域, 源脚本按 index.html 顺序拼接) =====
+// 生成: tools/build-douyin.js @ ${new Date().toISOString()}
+var THREE = (function() {
+    var m = require('./libs/three.min.js');
+    return (m && m.WebGLRenderer) ? m : (m && m.default ? m.default : m);
+})();
+this.THREE = THREE;
+`);
+
+    for (const rel of GAME_SCRIPTS) {
+        const code = mustRead(rel);
+        parts.push(`/* ===== [[ ${rel} ]] ===== */\n` + code + '\n');
+        if (rel === 'js/vendor/GLTFLoader.js') {
+            // vendor 包装以 THREE 为参数执行完毕后, 接入小游戏 GLB 读取包装
+            parts.push(`/* 小游戏GLB文件读取适配(GLTFLoader.load → FileSystemManager.readFile + parse) */
+if (typeof __installMiniGLTFLoader === 'function') __installMiniGLTFLoader();
+`);
+        }
+        // index.html 中引导脚本位于 ads 装配之后、game.js 之前
+        if (rel === 'js/ads/game-ad-coordinator.js') {
+            parts.push(BOOTSTRAP_SNIPPET);
+        }
+    }
+    return parts.join('\n');
+}
+
 function main() {
     console.log('[build:douyin] 清理旧产物...');
     fs.rmSync(OUT, { recursive: true, force: true });
     fs.mkdirSync(OUT, { recursive: true });
 
-    console.log('[build:douyin] 复制游戏脚本与资源...');
-    for (const rel of GAME_SCRIPTS) copyTo(rel);
-    // three.js(本地化, 与H5一致)
+    console.log('[build:douyin] 构建 bundle...');
+    const bundle = buildBundle();
+    fs.writeFileSync(path.join(OUT, 'game-bundle.js'), bundle);
+
+    // 产物自检: 关键类必须出现在 bundle 中
+    const requiredSymbols = ['class Game', 'class Squad', 'class EnemyManager', 'class World',
+        'class PlatformAdapter', 'var Platform', 'class DouyinAdService', 'setupAdService',
+        'THREE.GLTFLoader=GLTFLoader', 'SoldierModelLoader', 'EnemyModelLoader', 'V42Art'];
+    const missing = requiredSymbols.filter(s => bundle.indexOf(s) === -1);
+    if (missing.length) {
+        throw new Error('[build:douyin] bundle 自检失败, 缺少符号: ' + missing.join(', '));
+    }
+
+    console.log('[build:douyin] 复制 three.js 与资源...');
     copyTo('libs/three.min.js');
-    // SVG素材: 小游戏无Image加载SVG → avatar降级, 但保留文件供后续扩展
     copyTo('assets');
 
-    console.log('[build:douyin] 生成小游戏入口与配置...');
+    console.log('[build:douyin] 生成入口与配置...');
     fs.writeFileSync(path.join(OUT, 'game.js'), ENTRY_JS);
     fs.writeFileSync(path.join(OUT, 'game.json'), JSON.stringify(GAME_JSON, null, 2));
     fs.writeFileSync(path.join(OUT, 'game-config.js'), GAME_CONFIG_JS);
 
-    // 生成 projection.js? 不需要。
-    // game-config.js 需在 douyin-ad.js 之前加载 → 调整入口加载顺序: 把配置放在脚本列表最前
-    // (douyin-ad.js 读取全局 DOUYIN_AD_UNITS, build时 game-config 先 require)
-    const entry = fs.readFileSync(path.join(OUT, 'game.js'), 'utf8');
-    fs.writeFileSync(path.join(OUT, 'game.js'), entry.replace(
-        "require('./config.js');",
-        "require('./game-config.js');\nrequire('./config.js');"
-    ));
+    // 产物完整性自检: 入口引用的文件必须存在
+    const entryRefs = ['game-bundle.js', 'libs/three.min.js', 'game-config.js', 'game.json'];
+    for (const ref of entryRefs) {
+        if (!fs.existsSync(path.join(OUT, ref))) {
+            throw new Error('[build:douyin] 产物自检失败: ' + ref + ' 缺失');
+        }
+    }
 
-    console.log('[build:douyin] 完成 → dist/douyin/');
-    console.log('  导入方式: 抖音开发者工具 → 打开 dist/douyin 目录');
-    console.log('  上线前必查: game-config.js 广告位ID / 真机验证(见 docs/V3_DOUYIN_ADAPTER.md)');
+    // 包体统计: 主包(不含分包)受抖音 4MB 上限约束, 整包上限 20MB
+    const SUBPKG_ROOTS = (GAME_JSON.subpackages || []).map(s => s.root);
+    let mainSize = 0, totalSize = 0;
+    (function walk(dir, inSub) {
+        for (const entry of fs.readdirSync(dir)) {
+            const p = path.join(dir, entry);
+            const st = fs.statSync(p);
+            if (st.isDirectory()) {
+                walk(p, inSub || SUBPKG_ROOTS.some(r => p === path.join(OUT, r.replace(/\/$/, ''))));
+            } else {
+                totalSize += st.size;
+                if (!inSub) mainSize += st.size;
+            }
+        }
+    })(OUT, false);
+    const mbMain = (mainSize / 1024 / 1024).toFixed(2);
+    const mbTotal = (totalSize / 1024 / 1024).toFixed(2);
+    console.log('[build:douyin] 完成 → dist/douyin/  (主包 ' + mbMain + ' MB / 整包 ' + mbTotal + ' MB)');
+    if (mainSize > 4 * 1024 * 1024) {
+        throw new Error('[build:douyin] 主包 ' + mbMain + ' MB 超过抖音 4MB 上限 — 需扩大分包或精简资产');
+    }
+    if (totalSize > 20 * 1024 * 1024) {
+        throw new Error('[build:douyin] 整包 ' + mbTotal + ' MB 超过抖音 20MB 上限');
+    }
+    console.log('  导入: 抖音开发者工具 → 打开 dist/douyin 目录');
+    console.log('  上线前必查: game-config.js 广告位ID / 真机预览(见 docs/V50_DOUYIN_RELEASE.md)');
 }
 
 main();

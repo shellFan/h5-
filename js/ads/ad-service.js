@@ -16,7 +16,8 @@ var AdError = {
     SHOW_FAILED:     'show_failed',       // 展示失败
     ABANDONED:       'abandoned',         // 用户提前关闭(不发奖)
     INTERRUPTED:     'interrupted',       // 切后台/来电中断(不发奖)
-    BUSY:            'busy'               // 已有广告流程进行中(防连点)
+    BUSY:            'busy',              // 已有广告流程进行中(防连点)
+    TIMEOUT:         'timeout'            // V5.0: 展示超时兜底(平台回调丢失时不软锁死)
 };
 
 /** 广告场景(激励视频) */
@@ -128,6 +129,13 @@ class AdService {
         return new Promise(function(resolve) {
             self._pendingShow = { resolve: resolve, placement: placement, requestId: self._requestId };
             self._state = 'showing';
+            // V5.0: 超时兜底 — 平台onClose丢失(进程异常/系统弹窗遮挡)时游戏不得永久暂停。
+            // 30s远超正常激励视频时长; 超时结算为failed(不发奖), 由调用方恢复游戏。
+            self._showTimer = setTimeout(function() {
+                if (self._state === 'showing' || self._state === 'requesting') {
+                    self._settle('failed', AdError.TIMEOUT);
+                }
+            }, 30000);
             try {
                 self._doShow({
                     placement: placement,
@@ -157,6 +165,7 @@ class AdService {
         var pending = this._pendingShow;
         this._state = 'idle';
         this._pendingShow = null;
+        if (this._showTimer) { clearTimeout(this._showTimer); this._showTimer = null; } // V5.0: 清理超时兜底
 
         var result = { status: status, reason: reason || null };
         if (status === 'completed') {

@@ -30,8 +30,8 @@ class PlatformAdapter {
 
         // 生命周期
         this.lifecycle = new LifecycleAdapter();
-        // 音频
-        this.audio = new AudioAdapter(this.storage);
+        // 音频(V5.0: 传入平台ID, 抖音端走 tt.createInnerAudioContext 分支)
+        this.audio = new AudioAdapter(this.storage, this.id);
         // 分享
         this.share = new ShareAdapter(this.id);
         // 广告服务(Phase 4): 由 ads/ad-service.js 装配
@@ -70,9 +70,10 @@ class PlatformAdapter {
         } else {
             this.lifecycle.bind();
         }
-        // 显示/隐藏时暂停/恢复音频上下文
+        // 显示/隐藏时暂停/恢复音频上下文(V5.0: hide侧补齐挂起)
         var self = this;
         this.lifecycle.on('show', function() { self.audio.resume(); });
+        this.lifecycle.on('hide', function() { self.audio.suspend(); });
     }
 
     /** 是否小游戏环境(无完整DOM) */

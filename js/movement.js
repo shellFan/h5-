@@ -4,7 +4,8 @@
 
 var MovementMath = {
 
-    /** 拖动映射: 世界可玩范围横穿 = 拖过屏幕宽度 × touchSensitivity
+    /** 拖动映射: touchSensitivity = 1.0 表示"拖过整个屏幕宽度 = 横穿全部可玩范围"。
+     *  V5.0 语义修正: touchSensitivity 越大 → 移动越快(越灵敏), 越小 → 移动越慢。
      *  @param anchorWX   按下时小队targetX(锚点, 相对拖动不跳变)
      *  @param dxPx       本次拖动像素位移(cur - start)
      *  @param canvasWidth 画布CSS宽度(px)
@@ -14,8 +15,8 @@ var MovementMath = {
     dragTarget: function(anchorWX, dxPx, canvasWidth, maxX) {
         var M = CONFIG.MOVE;
         var w = Math.max(1, canvasWidth || 1);
-        // 每像素世界位移 = 全可玩范围 / (屏幕宽 × 灵敏度)
-        var worldPerPx = (maxX * 2) / (w * M.touchSensitivity);
+        // 每像素世界位移 = 全可玩范围 × 灵敏度 / 屏幕宽
+        var worldPerPx = (maxX * 2) * M.touchSensitivity / w;
         var x = anchorWX + dxPx * worldPerPx;
         return this.clampCenter(x, maxX);
     },

@@ -1,26 +1,33 @@
-// ===== 抖音小游戏激励视频服务 (Phase 4) =====
+// ===== 抖音小游戏激励视频服务 (Phase 4 / V5.0 修复) =====
 // 使用官方 tt.createRewardedVideoAd
 // 铁律: 仅 onClose 回调 res.isEnded === true (或 res.isEnded 布尔真) 才算完整观看
-// 广告位ID从配置读取; 未配置 → isAvailable()=false, 不伪造广告
-
-// 广告位ID配置(抖音平台分配后填入; 为空时广告功能降级不可用)
-var DOUYIN_AD_UNITS = {
-    rewardVideo: ''  // TODO: 上线时填入抖音分配的激励视频广告位ID
-};
+// 广告位ID从平台配置读取(构建期由 tools/build-douyin.js 注入 window.__GAME_SETTINGS.ads.douyin);
+// 未配置 → isAvailable()=false, 不伪造广告
 
 class DouyinAdService extends AdService {
     constructor(storage, lifecycle) {
         super(storage, lifecycle);
+        // V5.0修复: 旧代码引用从未赋值的this.tt导致初始化必然抛错(广告永不可用)。
+        // tt 句柄由 Platform 门面注入(平台检测时捕获), 小游戏环境兜底直接读全局。
+        this.tt = (typeof Platform !== 'undefined' && Platform.tt) ? Platform.tt
+            : (typeof tt !== 'undefined' ? tt : null);
         this._rewardAd = null;
         this._loadError = null;
         this._showing = false;
     }
 
-    _adUnitId() { return DOUYIN_AD_UNITS.rewardVideo; }
+    /** 广告位ID: 优先构建期注入配置(window.__GAME_SETTINGS.ads.douyin.rewardVideo), 未配置返回空 */
+    _adUnitId() {
+        try {
+            var s = (typeof window !== 'undefined' && window.__GAME_SETTINGS) || null;
+            var units = s && s.ads && s.ads.douyin;
+            return (units && units.rewardVideo) || '';
+        } catch (e) { return ''; }
+    }
 
     _doInitialize() {
         var self = this;
-        if (!this._adUnitId()) return; // 未配置广告位: 保持不可用
+        if (!this.tt || !this._adUnitId()) return; // 无平台句柄/未配置广告位: 保持不可用
         try {
             this._rewardAd = this.tt.createRewardedVideoAd({ adUnitId: this._adUnitId() });
             // 平台错误(加载失败等)
@@ -90,8 +97,9 @@ class DouyinAdService extends AdService {
     }
 
     _doInterrupt() {
-        // 抖音切后台由系统接管视频; 标记中断, onClose若仍回调isEnded需防护
-        if (this._showing) this._interrupted = true;
+        // 抖音切后台由系统接管视频; AdService._onAppHide 已统一结算为 interrupted(不发奖),
+        // onClose 若仍回调 isEnded=true 会被状态机幂等拦截(_settle 二次调用直接 return)。
+        this._showing = false;
     }
 
     _doDispose() {

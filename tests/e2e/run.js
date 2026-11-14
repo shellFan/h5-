@@ -181,14 +181,15 @@ async function suiteBasics(page) {
         await page.waitForTimeout(120);
         const cw = await page.evaluate(() => document.getElementById('game-canvas').clientWidth || 390);
         const maxX = await gameApi(page, '(g) => MovementMath.centerBounds(g.squad.getHalfWidth())');
-        const dragPx = Math.round(cw * 0.325); // 半个可玩范围(65%灵敏度的一半)
+        const dragPx = Math.round(cw / 2 / (await gameApi(page, '(g) => CONFIG.MOVE.touchSensitivity'))); // 拖半屏÷灵敏度 = 半个可玩范围
         await page.mouse.move(195, 400);
         await page.mouse.down();
         await page.mouse.move(195 + dragPx, 400, { steps: 8 });
         await page.waitForTimeout(120);
         const tx = await gameApi(page, '(g) => g.squad.targetX');
         await page.mouse.up();
-        const expect = Math.min(maxX, dragPx * (maxX * 2) / (cw * 0.65));
+        const sens = await gameApi(page, '(g) => CONFIG.MOVE.touchSensitivity');
+        const expect = Math.min(maxX, dragPx * (maxX * 2) * sens / cw); // V5.0: 越大越灵敏
         assert(Math.abs(tx - expect) < 0.15, '拖动' + dragPx + 'px → targetX ' + tx.toFixed(2) + ' 期望' + expect.toFixed(2));
     });
     await step('V4平滑跟随: 无单帧位置跳变', async () => {

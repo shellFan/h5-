@@ -17,10 +17,13 @@ class LifecycleAdapter {
             if (document.hidden) self._fire('hide');
             else self._fire('show');
         });
-        // 失焦兜底(部分安卓WebView不触发visibilitychange)
+        // V5.0: 失焦兜底 — visibilitychange 均触发时两者幂等(_fire 有 isBackground 去重语义由消费方保证);
+        // 部分安卓WebView只触发blur不触发visibilitychange, 作为补充信号。
         window.addEventListener('blur', function() {
-            // visibilitychange 已覆盖多数场景, blur仅作为补充信号
-            if (document.visibilityState !== 'hidden') return;
+            if (document.visibilityState !== 'hidden') self._fire('hide');
+        });
+        window.addEventListener('focus', function() {
+            if (!document.hidden) self._fire('show');
         });
     }
 

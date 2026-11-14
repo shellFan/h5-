@@ -5,14 +5,27 @@ module.exports.run = function(ctx) {
     const { describe, test, assert, assertEq } = ctx;
 
     describe('MovementMath 拖动映射', () => {
-        test('灵敏度: 拖过65%屏幕宽度 = 横穿全可玩范围', () => {
+        test('灵敏度语义: 拖过整屏宽度 = 横穿全可玩范围', () => {
             var maxX = 2.6, cw = 390;
-            var full = MovementMath.dragTarget(0, cw * CONFIG.MOVE.touchSensitivity, cw, maxX);
-            assertEq(Math.round(full * 100) / 100, maxX, '整幅灵敏度拖动应恰好到达maxX');
+            var full = MovementMath.dragTarget(0, cw / CONFIG.MOVE.touchSensitivity, cw, maxX);
+            assertEq(Math.round(full * 100) / 100, maxX, '整屏拖动(÷灵敏度)应恰好到达maxX');
+        });
+        test('灵敏度单调性: 越大移动越快(V5.0语义修正)', () => {
+            var maxX = 2.6, cw = 390;
+            var saved = CONFIG.MOVE.touchSensitivity;
+            try {
+                CONFIG.MOVE.touchSensitivity = 0.5;
+                var slow = MovementMath.dragTarget(0, 100, cw, maxX);
+                CONFIG.MOVE.touchSensitivity = 2.0;
+                var fast = MovementMath.dragTarget(0, 100, cw, maxX);
+                assert(fast > slow, '高灵敏度位移(' + fast.toFixed(3) + ')必须大于低灵敏度(' + slow.toFixed(3) + ')');
+            } finally {
+                CONFIG.MOVE.touchSensitivity = saved;
+            }
         });
         test('锚点相对映射: 起点世界坐标 + 像素位移×worldPerPx', () => {
             var maxX = 2.6, cw = 390;
-            var wpp = (maxX * 2) / (cw * CONFIG.MOVE.touchSensitivity);
+            var wpp = (maxX * 2) * CONFIG.MOVE.touchSensitivity / cw;
             var t = MovementMath.dragTarget(-1.0, 100, cw, maxX);
             assertEq(Math.round(t * 1000) / 1000, Math.round((-1.0 + 100 * wpp) * 1000) / 1000, '映射公式一致');
         });
