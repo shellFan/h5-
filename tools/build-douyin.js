@@ -23,6 +23,8 @@ const OUT = path.join(ROOT, 'dist', 'douyin');
 const GAME_SCRIPTS = [
     'js/config.js',
     'js/utils.js',
+    'js/economy.js',
+    'js/upgrades.js',
     'js/movement.js',
     'js/vendor/GLTFLoader.js',
     'js/soldier-loader.js',
