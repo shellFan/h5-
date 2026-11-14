@@ -27,7 +27,7 @@ class Game {
             if (type === 'boss') {
                 var base = hp || CONFIG.ZOMBIE.boss.hp;
                 var dpsNow = self.squad.count * self.squad.getDamage() * self.squad.getFireRate();
-                hp = Math.round((base + dpsNow * 8) / 50) * 50;
+                hp = Math.round((base + dpsNow * 7) / 50) * 50; // V5.0: 8→7s, 中规模小队Boss竞速余量(平衡模拟L3)
             }
             if(type==='boss' && self.enemies.bossStyle==='twinelite') {
                 self.enemies.spawnEnemy(type,-1.1,z,hp/2,'elite');
@@ -93,13 +93,8 @@ class Game {
         // 人数气泡3D投影用临时向量
         this._badgeV = new THREE.Vector3();
 
-        // 待机画面: 1个士兵站在起点(跳过弹出动画直接显示)
-        this.squad.reset(1);
-        for (var i = 0; i < this.squad.soldiers.length; i++) {
-            this.squad.soldiers[i].spawnT = 1;
-        }
-        this.squad.update(0.001, 0);
-        this.world.updateCamera(0, 0, 0.016, 1);
+        // 待机画面: V5.0 首页军团展示 — 12人士兵方阵行进姿态(原1人被面板遮挡)
+        this._setupIdleShowcase();
 
         this._setupInput();
         this._setupUI();
@@ -108,6 +103,24 @@ class Game {
 
         this._loop = this._loop.bind(this);
         requestAnimationFrame(this._loop);
+    }
+
+    /** V5.0: 首页待机军团展示 — 小方阵置于镜头中上部, 不被首页面板遮挡 */
+    _setupIdleShowcase() {
+        this.squad.reset(12);
+        for (var i = 0; i < this.squad.soldiers.length; i++) {
+            this.squad.soldiers[i].spawnT = 1;
+        }
+        this.squad.z = -13;
+        this.squad.update(0.001, 0);
+        this.world.updateRoadScroll(this.squad.z);
+        this.world.updateCamera(0, this.squad.z, 0.016, 12);
+        this._refreshBestRecord();
+    }
+
+    /** V5.0: 刷新首页最高纪录(防御性: 元素可能不存在) */
+    _refreshBestRecord() {
+        try { this._updateBestRecord(); } catch (e) {}
     }
 
     _setupInput() {
@@ -199,7 +212,10 @@ class Game {
             btnDouble: document.getElementById('btn-double-reward'),
             btnRefreshGates: document.getElementById('btn-refresh-gates'),
             rgCount: document.getElementById('rg-count'),
-            btnSound: document.getElementById('btn-sound-toggle')
+            btnSound: document.getElementById('btn-sound-toggle'),
+            // V5.0: 首页元素
+            homeSound: document.getElementById('btn-home-sound'),
+            bestRecord: document.getElementById('v42-best-record')
         };
 
         // 进度节点数据(从关卡segments动态生成)
@@ -207,23 +223,29 @@ class Game {
 
         // 按钮事件绑定(防御性: 元素可能不存在于测试页面)
         var btnStart = document.getElementById('btn-start');
-        if (btnStart) btnStart.addEventListener('click', function() { self.start(); });
+        if (btnStart) btnStart.addEventListener('click', function() { self._sfx('click'); self.start(); });
         var btnRestartWin = document.getElementById('btn-restart-win');
-        if (btnRestartWin) btnRestartWin.addEventListener('click', function() { self.start(); });
+        if (btnRestartWin) btnRestartWin.addEventListener('click', function() { self._sfx('click'); self.start(); });
         var btnRestartLose = document.getElementById('btn-restart-lose');
-        if (btnRestartLose) btnRestartLose.addEventListener('click', function() { self.start(); });
+        if (btnRestartLose) btnRestartLose.addEventListener('click', function() { self._sfx('click'); self.start(); });
+        // V5.0: 失败页返回首页入口(任务书9.5)
+        var btnLoseMenu = document.getElementById('btn-lose-menu');
+        if (btnLoseMenu) btnLoseMenu.addEventListener('click', function() { self._sfx('click'); self._backToMenu(); });
         var btnPause = document.getElementById('btn-pause');
-        if (btnPause) btnPause.addEventListener('click', function() { self._togglePause(); });
+        if (btnPause) btnPause.addEventListener('click', function() { self._sfx('click'); self._togglePause(); });
         var btnRevive = document.getElementById('btn-revive');
         if (btnRevive) btnRevive.addEventListener('click', function() { self._revive(); });
         // V3.4: 双倍结算 / 刷门 / 音效开关
         if (this.ui.btnDouble) this.ui.btnDouble.addEventListener('click', function() { self._doubleRewardViaAd(); });
         if (this.ui.btnRefreshGates) this.ui.btnRefreshGates.addEventListener('click', function() { self._refreshGatesViaAd(); });
         if (this.ui.btnSound) this.ui.btnSound.addEventListener('click', function() { self._toggleSound(); });
+        // V5.0: 首页音效开关(与暂停菜单开关同一逻辑)
+        if (this.ui.homeSound) this.ui.homeSound.addEventListener('click', function() { self._toggleSound(); });
         // V3.3: 下一关按钮
         if (this.ui.btnNextLevel) {
             this.ui.btnNextLevel.addEventListener('click', function() {
                 if (self.levelIndex + 1 < LEVELS.length) {
+                    self._sfx('click');
                     self.levelIndex++;
                     self.start();
                 }
@@ -231,15 +253,16 @@ class Game {
         }
         // 暂停菜单按钮
         var btnResume = document.getElementById('btn-resume');
-        if (btnResume) btnResume.addEventListener('click', function() { self._togglePause(); });
+        if (btnResume) btnResume.addEventListener('click', function() { self._sfx('click'); self._togglePause(); });
         var btnPauseRestart = document.getElementById('btn-pause-restart');
         if (btnPauseRestart) btnPauseRestart.addEventListener('click', function() {
+            self._sfx('click');
             if (self.ui.pauseScreen) self.ui.pauseScreen.classList.add('hidden');
             self.paused = false;
             self.start();
         });
         var btnPauseMenu = document.getElementById('btn-pause-menu');
-        if (btnPauseMenu) btnPauseMenu.addEventListener('click', function() { self._backToMenu(); });
+        if (btnPauseMenu) btnPauseMenu.addEventListener('click', function() { self._sfx('click'); self._backToMenu(); });
 
         // V3.3: 生成关卡选择按钮
         if (this.ui.levelSelect) {
@@ -300,6 +323,12 @@ class Game {
         }
     }
 
+    /** V5.0: 统一音效入口(自动初始化 + 平台/静音守卫) */
+    _sfx(type) {
+        if (typeof Platform === 'undefined' || !Platform.audio) return;
+        Platform.audio.play(type);
+    }
+
     /** V4.0: Boss出场预警横幅(震动+音效, 预警结束由onBossSpawn隐藏) */
     /** V4.0: 短暂慢动作(0.35s, 时间流速0.35), 不打断操作 */
     _slowmo() {
@@ -329,19 +358,19 @@ class Game {
         this.paused = false;
         this.state = 'idle';
         if (this.ui.pauseScreen) this.ui.pauseScreen.classList.add('hidden');
+        if (this.ui.winScreen) this.ui.winScreen.classList.add('hidden');
+        if (this.ui.loseScreen) this.ui.loseScreen.classList.add('hidden');
         if (this.ui.hud) this.ui.hud.classList.add('hidden');
         if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
         if (this.ui.startScreen) this.ui.startScreen.classList.remove('hidden');
-        // 重置待机士兵
-        this.squad.reset(1);
-        for (var i = 0; i < this.squad.soldiers.length; i++) {
-            this.squad.soldiers[i].spawnT = 1;
-        }
+        // V5.0: 恢复首页待机军团展示
+        this._setupIdleShowcase();
         this.gates.clear();
         this.enemies.clear();
         this.pacing.clear();
         this._showBossWarning(false);
         this.combat.clear();
+        this.effects.clear();
         // V3.3: 刷新关卡选择解锁状态
         this._refreshLevelSelect();
     }
@@ -437,8 +466,18 @@ class Game {
     }
 
     _updateSoundLabel() {
-        if (!this.ui.btnSound || typeof Platform === 'undefined') return;
-        this.ui.btnSound.textContent = Platform.audio.isMuted() ? '🔇 音效: 关' : '🔊 音效: 开';
+        if (typeof Platform === 'undefined') return;
+        var muted = Platform.audio.isMuted();
+        if (this.ui.btnSound) this.ui.btnSound.textContent = muted ? '🔇 音效: 关' : '🔊 音效: 开';
+        // V5.0: 首页音效图标同步
+        if (this.ui.homeSound) this.ui.homeSound.textContent = muted ? '🔇' : '🔊';
+    }
+
+    /** V5.0: 刷新首页最高纪录展示(读取关卡解锁进度) */
+    _updateBestRecord() {
+        if (!this.ui.bestRecord) return;
+        var unlocked = this._loadProgress();
+        this.ui.bestRecord.textContent = '🏆 最高纪录: 第' + unlocked + '关';
     }
 
     /** V3.4: 广告入口按钮可见性(随状态/次数刷新) */
@@ -755,7 +794,7 @@ class Game {
             var bosses=this.enemies.enemies.filter(e=>e.isBoss&&e.alive);
             var ratio = Math.max(0,bosses.reduce((n,e)=>n+e.hp,0)/bosses.reduce((n,e)=>n+e.maxHp,0));
             var bossNameNode=document.getElementById('boss-name');
-            if(bossNameNode.firstChild && bossNameNode.firstChild.nodeType===3)bossNameNode.firstChild.nodeValue=CONFIG.BOSS_NAMES[this.levelIndex];
+            if(bossNameNode && bossNameNode.firstChild && bossNameNode.firstChild.nodeType===3)bossNameNode.firstChild.nodeValue=CONFIG.BOSS_NAMES[this.levelIndex];
             var phaseLabel=document.getElementById('boss-phase');
             if(phaseLabel)phaseLabel.textContent='阶段 '+(this.enemies.boss.phaseIndex||1)+(this.enemies.boss.shieldT>0?' · 护盾':'');
             if (this.ui.bossFill) this.ui.bossFill.style.width = (ratio * 100) + '%';
@@ -878,6 +917,7 @@ class Game {
 
     _win() {
         this.state = 'won';
+        this._sfx('win'); // V5.0
         this.squad.setAnimationState('Victory');
         if (this.ui.hud) this.ui.hud.classList.add('hidden');
         if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
@@ -903,6 +943,8 @@ class Game {
 
     _lose(reason) {
         this.state = 'lost';
+        this.lastLoseReason = reason; // V5.0: 供平衡模拟分析失败原因
+        this._sfx('lose'); // V5.0
         if (this.ui.hud) this.ui.hud.classList.add('hidden');
         if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
         this._showBossWarning(false);
@@ -938,6 +980,7 @@ class Game {
     _refreshLevelSelect() {
         if (!this.ui.levelSelect) return;
         var unlocked = this._loadProgress();
+        this._refreshBestRecord(); // V5.0: 首页最高纪录同步
         var self = this;
         var btns = this.ui.levelSelect.querySelectorAll('button');
         for (var i = 0; i < btns.length; i++) {

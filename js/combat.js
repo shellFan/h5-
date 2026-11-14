@@ -118,6 +118,7 @@ class CombatSystem {
                 // 齐射数量: 1~4发(人数越多越多)
                 var volley = Math.min(5, 1 + Math.floor(Math.sqrt(count) / 2.6)); // V3.7: 齐射最多5发
                 var positions = squad.getShootPositions(volley);
+                if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('shoot'); // V5.0: 齐射音效(适配器内部限流)
                 for (var k = 0; k < positions.length; k++) {
                     // V3.1: 每发子弹瞄准前方最近敌人(修复阵型散布导致5/7子弹打不中Boss的问题)
                     var target = enemyManager.getNearest(positions[k].x, positions[k].z, CONFIG.BULLET_RANGE);

@@ -314,6 +314,43 @@
 #game-container.v42-ui .v42-panel-kicker.gold { color: #a56a12; }
 #game-container.v42-ui .v42-panel-kicker.red { color: #bb3d52; }
 
+/* V5.0: 首页顶栏(最高纪录 + 音效开关) */
+#game-container.v42-ui .v42-home-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 2px 0 8px;
+}
+
+#game-container.v42-ui .v42-best-record {
+    font-size: 13px;
+    font-weight: 800;
+    color: #8a5b12;
+    background: rgba(255, 196, 71, .16);
+    border: 1px solid rgba(233, 168, 37, .35);
+    border-radius: 999px;
+    padding: 5px 12px;
+    letter-spacing: .5px;
+}
+
+#game-container.v42-ui .v42-home-sound {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border: 1px solid rgba(28, 100, 124, .22);
+    border-radius: 13px;
+    background: #eef7f7;
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+}
+
+#game-container.v42-ui .v42-home-sound:active {
+    transform: scale(.94);
+}
+
 #game-container.v42-ui .logo-badge {
     width: 66px;
     height: 66px;

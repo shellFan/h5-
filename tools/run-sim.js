@@ -31,6 +31,13 @@ function startServer() {
     await page.evaluate(driver);
     console.log('驱动器注入完成');
 
+    // V5.0: game.js 启动改为异步GLB加载 — 轮询等待模拟引擎就绪(30s超时)
+    const ready = await page.waitForFunction(
+        () => window.__game && window.__game.squad && window.__game.squad.renderer,
+        { timeout: 30000 }
+    ).then(() => true).catch(() => false);
+    if (!ready) { console.error('模拟引擎未就绪(GLB加载超时)'); process.exit(1); }
+
     const t0 = Date.now();
     const res = await page.evaluate(() => {
         try { return window.__runSimulation(); }
@@ -40,16 +47,18 @@ function startServer() {
 
     if (res.error) { console.error('模拟失败:', res.error); }
     else {
-        console.log('\n=== V4 数值模拟汇总 (5策略×10关, 种子确定性) ===');
+        console.log('\n=== V5.0 数值模拟汇总 (5策略×10关, 种子确定性) ===');
         console.log(JSON.stringify(res.summary, null, 2));
+        console.log('\n=== 第一关 100 次随机种子扫描 ===');
+        console.log(JSON.stringify(res.level1Sweep, null, 2));
         // 每关通关明细(检查有无必败关卡)
         const fs = require('fs');
         const lines = res.results.map(r =>
             (r.win ? '✓' : '✗') + ' L' + r.level + ' ' + r.strategy +
             ' t=' + r.time + 's max=' + r.maxCount + ' kills=' + r.kills + (r.stepsCapped ? ' [步数封顶]' : ''));
         console.log('\n' + lines.join('\n'));
-        fs.writeFileSync(path.join(ROOT, 'docs', 'V4_SIM_RESULTS.json'), JSON.stringify(res, null, 2));
-        console.log('\n已保存 docs/V4_SIM_RESULTS.json');
+        fs.writeFileSync(path.join(ROOT, 'docs', 'V50_SIM_RESULTS.json'), JSON.stringify(res, null, 2));
+        console.log('\n已保存 docs/V50_SIM_RESULTS.json');
     }
 
     await browser.close();

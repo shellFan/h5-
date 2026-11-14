@@ -12,10 +12,17 @@
     <h2>数值模拟器 (确定性步进驱动真实引擎)</h2>
     <div id="log">初始化中...</div>
     <canvas id="game-canvas" width="390" height="844" style="display:none"></canvas>
+    <div id="game-container" style="display:none"></div>
     <script src="/js/vendor/three.min.js"></script>
     <script src="/js/config.js"></script>
     <script src="/js/utils.js"></script>
     <script src="/js/movement.js"></script>
+    <script src="/js/vendor/GLTFLoader.js"></script>
+    <script src="/js/soldier-loader.js"></script>
+    <script src="/js/soldier-renderer.js"></script>
+    <script src="/js/enemy-models.js"></script>
+    <script src="/js/boss-v42.js"></script>
+    <script src="/js/art-v42.js"></script>
     <script src="/js/models.js"></script>
     <script src="/js/world.js"></script>
     <script src="/js/effects.js"></script>
@@ -24,6 +31,40 @@
     <script src="/js/enemies.js"></script>
     <script src="/js/pacing.js"></script>
     <script src="/js/combat.js"></script>
+    <script src="/js/platform/storage-adapter.js"></script>
+    <script src="/js/platform/lifecycle-adapter.js"></script>
+    <script src="/js/platform/audio-adapter.js"></script>
+    <script src="/js/platform/share-adapter.js"></script>
+    <script src="/js/platform/platform.js"></script>
+    <script src="/js/ads/ad-service.js"></script>
+    <script src="/js/ads/web-mock-ad.js"></script>
+    <script src="/js/ads/douyin-ad.js"></script>
+    <script src="/js/ads/wechat-ad.js"></script>
+    <script src="/js/ads/game-ad-coordinator.js"></script>
+    <script>
+        // 模拟器环境: Platform 初始化 + 游戏自动启动(game.js IIFE)
+        // sim.html 位于 /test/ 子目录 — GLB 相对路径需重写回站点根(仅模拟器页使用)
+        (function() {
+            var origLoad = SoldierModelLoader.load.bind(SoldierModelLoader);
+            var origEnemyLoad = EnemyModelLoader.load.bind(EnemyModelLoader);
+            var patchUrls = function(loaderProto, prefix) {
+                var origOne = null;
+            };
+            // 简单方案: 重写 GLTFLoader.load 的 url 前缀
+            var RealLoader = THREE.GLTFLoader;
+            THREE.GLTFLoader = function() {
+                var impl = new RealLoader();
+                var origLoadFn = impl.load.bind(impl);
+                impl.load = function(url, onLoad, onProgress, onError) {
+                    if (url.indexOf('assets/') === 0) url = '/' + url;
+                    return origLoadFn(url, onLoad, onProgress, onError);
+                };
+                return impl;
+            };
+        })();
+        Platform.initialize();
+        window.__adService = setupAdService();
+    </script>
     <script src="/js/game.js"></script>
     <script>
         // 屏蔽真实启动: game.js的IIFE会自动new Game() — 保留它作为模拟引擎

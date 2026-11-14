@@ -157,7 +157,7 @@ class Enemy {
             if (this.attackTimer <= 0) {
                 this.attackTimer = CONFIG.ZOMBIE_ATTACK_INTERVAL * (this.attackMul || 1) * (frozen ? 2 : 1);
                 this.attackT=1;
-                const kill = this.isBoss ? (this.enraged ? 5 : 3) : CONFIG.ZOMBIE_ATTACK_KILL;
+                const kill = this.isBoss ? (this.enraged ? 5 : 2) : CONFIG.ZOMBIE_ATTACK_KILL; // V5.0: 非狂暴3→2, 中规模小队Boss竞速可胜(平衡模拟L3)
                 squad.killSoldiers(kill, effects);
                 if (effects) {
                     effects.burst(squad.x, 0.5, squad.z, 0xFF4444, 5, 2, 0.3);
@@ -287,6 +287,8 @@ class EnemyManager {
             if (!e.alive && !e.deathHandled) {
                 e.deathHandled = true;
                 this.killCount++;
+                // V5.0: 击杀音效(适配器内部限流70ms) / Boss死亡低音轰鸣
+                if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play(e.isBoss ? 'bossDie' : 'kill');
                 // 分裂僵尸: 死亡时排队分裂
                 if (e.type === 'split') {
                     this.splitQueue.push({ x: e.x, z: e.z, delay: 0.2 });

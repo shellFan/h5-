@@ -626,3 +626,26 @@ LEVELS.forEach(function(level, li) {
         }
     });
 });
+
+// V5.0 平衡修复: 每关首排门全部为人数门(不同档位) — 任何首选都不会开局即死。
+// 依据 docs/V50_SIM_RESULTS.json: 旧数据下"首排选buff/risk"策略在L2+首波团灭(t≈17s, max=1)。
+// mul/buff 的深度取舍自第二排起保留。
+LEVELS.forEach(function(level) {
+    var firstGatesSeg = null;
+    for (var i = 0; i < level.segments.length; i++) {
+        if (level.segments[i].type === 'gates') { firstGatesSeg = level.segments[i]; break; }
+    }
+    if (!firstGatesSeg) return;
+    var addGate = null;
+    for (var j = 0; j < firstGatesSeg.gates.length; j++) {
+        if (firstGatesSeg.gates[j].op === 'add') { addGate = firstGatesSeg.gates[j]; break; }
+    }
+    var base = addGate ? addGate.value : 10;
+    var mid = Math.max(3, Math.round(base * 0.6));
+    var low = Math.max(2, Math.round(base * 0.35));
+    firstGatesSeg.gates = [
+        { lane: 0, op: 'add', value: base, label: '+' + base },
+        { lane: 1, op: 'add', value: mid,  label: '+' + mid },
+        { lane: 2, op: 'add', value: low,  label: '+' + low }
+    ];
+});

@@ -167,6 +167,10 @@ class Squad {
                 case 'vamp':    this.vampStacks = Math.min(2, this.vampStacks + 1); break;
             }
         }
+        // V5.0: 穿门音效(人数增长用grow, 其余用gate)
+        if (typeof Platform !== 'undefined' && Platform.audio) {
+            Platform.audio.play(added > 0 ? 'grow' : 'gate');
+        }
         // 穿门反馈: 冲击波 + 膨胀文字 + 粒子
         if (effects) {
             var isMul = gate.op === 'mul';

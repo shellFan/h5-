@@ -154,9 +154,9 @@
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         var panel = ctx.createLinearGradient(0, 20, 0, 238);
-        panel.addColorStop(0, 'rgba(255,255,255,.16)');
-        panel.addColorStop(0.46, 'rgba(9,19,48,.36)');
-        panel.addColorStop(1, 'rgba(5,12,31,.18)');
+        panel.addColorStop(0, 'rgba(255,255,255,.14)');
+        panel.addColorStop(0.46, 'rgba(9,19,48,.55)');
+        panel.addColorStop(1, 'rgba(5,12,31,.38)');
         ctx.fillStyle = panel;
         ctx.strokeStyle = 'rgba(255,255,255,.45)';
         ctx.lineWidth = 5;
@@ -340,15 +340,17 @@
             transparent: true,
             depthWrite: false,
             depthTest: true,
-            toneMapped: false
+            toneMapped: false,
+            fog: false // V5.0: 门文字不受雾影响, 远距离仍清晰可读(玩法可读性)
         });
         var label = new THREE.Sprite(labelMat);
         var labelWidth = width - 0.30;
         var labelHeight = labelWidth * labelTexture.image.height / labelTexture.image.width;
         if (labelTexture.userData.v42Multiline) labelHeight = Math.max(labelHeight, 0.72);
         label.scale.set(labelWidth, labelHeight, 1);
-        label.position.set(0, 1.03, -0.175);
-        label.renderOrder = 2;
+        // V5.0: 文字置于玻璃前侧(-0.105为玻璃), 避免金/红等亮色玻璃洗白文字
+        label.position.set(0, 1.03, -0.055);
+        label.renderOrder = 3;
         group.add(label);
 
         group.userData.artSource = 'V42Art.createGateModel/' + style.kind + '/procedural-beveled-PBR';
@@ -450,7 +452,11 @@
         var glass = makeCityMaterial(0x93C6C7, { roughness: 0.22, metalness: 0.18 });
         var warmLight = new THREE.MeshBasicMaterial({ color: 0xFFE5A3, toneMapped: false });
         var charcoal = makeCityMaterial(0x304552, { roughness: 0.5, metalness: 0.25 });
-        var cloudMat = new THREE.MeshLambertMaterial({ color: 0xFFF7E9, transparent: true, opacity: 0.82 });
+        // V5.0: 云朵不受雾影响并加自发光, 修复远景发灰像岩石
+        var cloudMat = new THREE.MeshLambertMaterial({
+            color: 0xFFFFFF, emissive: 0xB8C4CC, emissiveIntensity: 0.55,
+            transparent: true, opacity: 0.92, fog: false
+        });
 
         var roadside = makeRecords(27, function (i) {
             var side = i % 2 ? 1 : -1;
@@ -597,9 +603,22 @@
 
         var startPanel = document.querySelector('#start-screen .title-panel');
         if (startPanel && !document.getElementById('v42-brand')) {
-            var brand = makeElement('div', 'v42-brand', 'TACTICAL RUN · V42');
+            var brand = makeElement('div', 'v42-brand', '膨胀小队 · V5.0 正式版');
             brand.id = 'v42-brand';
             startPanel.insertBefore(brand, startPanel.firstChild);
+        }
+        // V5.0: 首页顶栏 — 最高纪录 + 音效开关(任务书9.1)
+        if (startPanel && !document.getElementById('v42-home-top')) {
+            var homeTop = makeElement('div', 'v42-home-top');
+            homeTop.id = 'v42-home-top';
+            var best = makeElement('span', 'v42-best-record', '🏆 最高纪录: 第1关');
+            best.id = 'v42-best-record';
+            var soundBtn = makeElement('button', 'v42-home-sound', '🔊');
+            soundBtn.id = 'btn-home-sound';
+            soundBtn.setAttribute('aria-label', '音效开关');
+            homeTop.appendChild(best);
+            homeTop.appendChild(soundBtn);
+            startPanel.insertBefore(homeTop, startPanel.firstChild.nextSibling);
         }
         var title = document.querySelector('.game-title');
         if (title) title.textContent = '膨胀小队';
@@ -664,6 +683,8 @@
             game.ui.levelSubtitle = document.getElementById('level-subtitle');
             game.ui.waveBanner = document.getElementById('v42-wave-banner');
             game.ui.bossPhase = document.getElementById('boss-phase');
+            game.ui.bestRecord = document.getElementById('v42-best-record');
+            game.ui.homeSound = document.getElementById('btn-home-sound');
         }
         return true;
     };

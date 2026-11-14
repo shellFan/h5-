@@ -56,7 +56,9 @@
         Math.random = seededRandom;
         game.levelIndex = levelIndex;
         game.start();
-        game.paused = false;
+        // V5.0修复: 置paused阻断页面rAF实时循环 — 否则rAF以真实dt并发消费
+        // 已播种的Math.random流, 模拟结果跨页不可复现。模拟直接驱动_updateInner, 不受paused影响。
+        game.paused = true;
         var g = game;
         var steps = 0;
         var targetLane = 1;
@@ -103,7 +105,8 @@
             endCount: g.squad.count,
             damageBuff: g.squad.damageBuff,
             fireRateBuff: +g.squad.fireRateBuff.toFixed(2),
-            stepsCapped: steps >= MAX_STEPS
+            stepsCapped: steps >= MAX_STEPS,
+            loseReason: g.state === 'lost' ? (g.lastLoseReason || '') : null
         };
         return result;
     }
@@ -130,7 +133,23 @@
                 failAt: rs.filter(function(r) { return !r.win; }).map(function(r) { return 'L' + r.level; }).join(',')
             };
         });
-        window.__simResults = { results: results, summary: summary };
+        // V5.0: 第一关 100 次随机种子扫描(策略轮换, 检验新手关稳定性)
+        var l1 = [];
+        var stratCycle = ['greedy', 'balanced', 'random', 'left', 'right'];
+        for (var run = 0; run < 100; run++) {
+            l1.push(simulateRun(g, 0, stratCycle[run % 5], 90000 + run * 131));
+        }
+        var l1Wins = l1.filter(function(r) { return r.win; }).length;
+        var l1Summary = {
+            runs: 100,
+            wins: l1Wins,
+            winRate: +(l1Wins / 100 * 100).toFixed(0) + '%',
+            avgTime: +(l1.reduce(function(a, r) { return a + r.time; }, 0) / l1.length).toFixed(0),
+            avgMaxCount: Math.round(l1.reduce(function(a, r) { return a + r.maxCount; }, 0) / l1.length),
+            avgKills: Math.round(l1.reduce(function(a, r) { return a + r.kills; }, 0) / l1.length),
+            stepsCapped: l1.filter(function(r) { return r.stepsCapped; }).length
+        };
+        window.__simResults = { results: results, summary: summary, level1Sweep: l1Summary, level1Results: l1 };
         return window.__simResults;
     }
 
