@@ -10,3 +10,4 @@ package-lock.json
 dist/
 server.log
 __pycache__/
+tools/v51-diag.tmp.js
