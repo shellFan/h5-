@@ -123,10 +123,25 @@ async function runLevel(page, levelIndex, opts) {
         await shot(page, 'combat-L1-390x844.png', expected);
                 await shot(page, 'combat-L1-390x844.png', expected);
 
-        // 第3关尸潮(打到中段截帧)
+        // 第3关尸潮: 手动注入大波(盾/普通/快速混合40只) + 真实跑帧到接敌(稳定构图)
         await runLevel(page, 1, { maxSec: 400 });
-        const l3 = await runLevel(page, 2, { maxSec: 500, hordeAlive: 16 });
-        console.log('L3 mid-capture state:', JSON.stringify(l3));
+        await page.evaluate(() => {
+            const g = window.__game;
+            g.levelIndex = 2; g.start();
+            if (g.pacing.clear) g.pacing.clear();
+            if (g.enemies.clear) g.enemies.clear();
+            g.squad.reset(26); g.squad.z = 0; g.squad.x = 0; g.squad.targetX = 0;
+            g.state = 'playing'; g.paused = false;
+            const roster = ['shield', 'normal', 'fast', 'normal', 'shield', 'fast', 'normal', 'shield', 'normal', 'fast',
+                            'normal', 'shield', 'fast', 'normal', 'normal', 'shield', 'fast', 'normal', 'shield', 'normal',
+                            'fast', 'normal', 'shield', 'normal', 'fast', 'normal', 'shield', 'normal', 'fast', 'normal',
+                            'shield', 'normal', 'fast', 'normal', 'shield', 'normal', 'fast', 'normal', 'shield', 'normal'];
+            for (let i = 0; i < 40; i++) {
+                const col = i % 3, row = Math.floor(i / 3);
+                g.enemies.spawnEnemy(roster[i], (col - 1) * 2.1 + (row % 2 ? 0.35 : -0.35), -10 - row * 1.7, 60);
+            }
+            for (let f = 0; f < 34; f++) g._update(1 / 60);
+        });
         await shot(page, 'horde-L3-390x844.png', expected);
 
         // 先走完 L3/L4 积累金币, 再打 L5 至 Boss

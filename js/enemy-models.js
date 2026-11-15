@@ -77,7 +77,7 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
         if(this.banks[key])return this.banks[key];
         var source=this.data.styles[style][lod],meshes={};
         for(var part of this.data.parts) {
-            var m=new THREE.InstancedMesh(source.geometries[part],source.material,160);
+            var m=new THREE.InstancedMesh(source.geometries[part],source.material,256); // V5.1.2: 单类型可堆256(屏满尸潮)
             m.name='Enemy_'+style+'_'+lod+'_'+part;m.count=0;m.frustumCulled=false;
             m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);m.setColorAt(0,new THREE.Color(1,1,1));
             m.userData.artSource=source.url;m.userData.collidable=false;
@@ -93,7 +93,7 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
             var style=e.artStyle||e.type;
             var lod=e.isBoss?(Math.abs(e.z-squadZ)>42?'lod':'hero'):((enemies.length>40||Math.abs(e.z-squadZ)>22)?'lod':'hero');
             var bank=this._bank(style,lod),slot=bank.count++;
-            if(slot>=160){bank.count=160;continue;}
+            if(slot>=256){bank.count=256;continue;}
             e.model.updateMatrix();this._root.copy(e.model.matrix);
             if(e.alive && e.shieldT>0 && shieldCount<8) {this._matrix.copy(this._root).multiply(this._shieldLocal);this.shieldMesh.setMatrixAt(shieldCount++,this._matrix);}
             var speed=e.type==='fast'?10:(e.isBoss?3:4.5),phase=time*speed+e.phase;

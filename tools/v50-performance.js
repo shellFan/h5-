@@ -20,7 +20,8 @@ const SCENARIOS = [
     { name: '100人+40怪', squad: 100, enemies: 40 },
     { name: '300人+60怪', squad: 300, enemies: 60 },
     { name: '500人+100怪', squad: 500, enemies: 100 },
-    { name: 'Boss+小怪+特效洪峰', squad: 220, enemies: 34, boss: true, bulletRain: true }
+    { name: 'Boss+小怪+特效洪峰', squad: 220, enemies: 34, boss: true, bulletRain: true },
+    { name: '超级尸潮500人+170怪', squad: 500, enemies: 170 }
 ];
 
 const SAMPLE_MS = 5000;

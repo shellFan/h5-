@@ -47,7 +47,7 @@ const CONFIG = {
         batchSizeBase: 4,           // V5.1.1: 整波成墙批次
         batchSizeMax: 16,
         streamInterval: 0.02,       // 单怪间隔(秒) — 60只/秒爆发率(每帧≤3只)
-        spawnDepth: 6,              // 生成纵深收紧: 怪群聚成一团(尸潮团块感)
+        spawnDepth: 8,              // 生成纵深: 团块感+屏满尸潮
         bossTriggerAhead: 24,
         bossWarningTime: 2.0,
         bossSpawnSetback: 4,
@@ -57,7 +57,8 @@ const CONFIG = {
     },
 
     // ===== V5.1 每关场上活敌上限矩阵 (尸潮规模, 非同屏全部) =====
-    MAX_ALIVE: [35, 45, 55, 70, 90], // V5.1.1: 尸潮密度强化(玩家反馈怪物太少)
+    MAX_ALIVE: [40, 80, 110, 140, 170],   // 硬上限(尸潮墙)
+    ALIVE_TARGET: [18, 32, 45, 60, 85],   // V5.1.2: 每关期望同屏活敌(反馈控制平衡点)
 
 
     // 射击
@@ -148,20 +149,20 @@ const LEVELS = [
                 { lane: 1, op: 'add', value: 5, label: '+5' },
                 { lane: 2, op: 'add', value: 3, label: '+3' }
             ]},
-            { type: 'wave', z: -18, enemies: [ { type: 'normal', count: 10 } ] },
+            { type: 'wave', z: -18, enemies: [ { type: 'normal', count: 14 } ] },
             { type: 'gates', z: -28, gates: [
                 { lane: 0, op: 'add', value: 5, label: '+5' },
                 { lane: 1, op: 'buff', value: 'damage', label: '输出+1' },
                 { lane: 2, op: 'add', value: 8, label: '+8' }
             ]},
-            { type: 'wave', z: -40, enemies: [ { type: 'normal', count: 12 }, { type: 'fast', count: 3 } ] },
+            { type: 'wave', z: -40, enemies: [ { type: 'normal', count: 17 }, { type: 'fast', count: 4 } ] },
             { type: 'gates', z: -52, gates: [
                 { lane: 0, op: 'buff', value: 'firerate', label: '射速+10%' },
                 { lane: 1, op: 'add', value: 8, label: '+8' },
                 { lane: 2, op: 'buff', value: 'crit', label: '暴击+5%' }
             ]},
-            { type: 'wave', z: -64, enemies: [ { type: 'normal', count: 10 }, { type: 'fast', count: 4 } ] },
-            { type: 'wave', z: -78, enemies: [ { type: 'normal', count: 5 } ] }
+            { type: 'wave', z: -64, enemies: [ { type: 'normal', count: 14 }, { type: 'fast', count: 6 } ] },
+            { type: 'wave', z: -78, enemies: [ { type: 'normal', count: 7 } ] }
         ]
     },
     // ============ 第2关 快速尸潮 (总怪60, 火力分配) ============
@@ -176,20 +177,20 @@ const LEVELS = [
                 { lane: 1, op: 'add', value: 5, label: '+5' },
                 { lane: 2, op: 'buff', value: 'pierce', label: '穿透+1' }
             ]},
-            { type: 'wave', z: -20, enemies: [ { type: 'fast', count: 12 }, { type: 'normal', count: 10 } ] },
+            { type: 'wave', z: -20, enemies: [ { type: 'fast', count: 20 }, { type: 'normal', count: 16 } ] },
             { type: 'gates', z: -34, gates: [
                 { lane: 0, op: 'addpct', value: 20, label: '人数+20%' },
                 { lane: 1, op: 'add', value: 12, label: '+12' },
                 { lane: 2, op: 'buff', value: 'crit', label: '暴击+5%' }
             ]},
-            { type: 'wave', z: -46, enemies: [ { type: 'fast', count: 17 }, { type: 'normal', count: 10 } ] },
+            { type: 'wave', z: -46, enemies: [ { type: 'fast', count: 28 }, { type: 'normal', count: 16 } ] },
             { type: 'gates', z: -60, gates: [
                 { lane: 0, op: 'buff', value: 'firerate', label: '射速+10%' },
                 { lane: 1, op: 'add', value: 8, label: '+8' },
                 { lane: 2, op: 'buff', value: 'damage', label: '输出+1' }
             ]},
-            { type: 'wave', z: -72, enemies: [ { type: 'fast', count: 14 }, { type: 'normal', count: 7 }, { type: 'shield', count: 2 } ] },
-            { type: 'wave', z: -86, enemies: [ { type: 'fast', count: 7 } ] }
+            { type: 'wave', z: -72, enemies: [ { type: 'fast', count: 23 }, { type: 'normal', count: 12 }, { type: 'shield', count: 3 } ] },
+            { type: 'wave', z: -86, enemies: [ { type: 'fast', count: 12 } ] }
         ]
     },
     // ============ 第3关 盾牌军团 (总怪78, 破防思路) ============
@@ -204,21 +205,21 @@ const LEVELS = [
                 { lane: 1, op: 'add', value: 10, label: '+10' },
                 { lane: 2, op: 'buff', value: 'crit', label: '暴击+5%' }
             ]},
-            { type: 'wave', z: -22, enemies: [ { type: 'shield', count: 11 }, { type: 'normal', count: 14 } ] },
+            { type: 'wave', z: -22, enemies: [ { type: 'shield', count: 18 }, { type: 'normal', count: 23 } ] },
             { type: 'gates', z: -36, gates: [
                 { lane: 0, op: 'buff', value: 'pierce', label: '穿透+1' },
                 { lane: 1, op: 'mul', value: 2, label: '\u00d72' },
                 { lane: 2, op: 'buff', value: 'firerate', label: '射速+10%' }
             ]},
-            { type: 'wave', z: -50, enemies: [ { type: 'shield', count: 16 }, { type: 'fast', count: 11 } ] },
+            { type: 'wave', z: -50, enemies: [ { type: 'shield', count: 26 }, { type: 'fast', count: 18 } ] },
             { type: 'gates', z: -64, gates: [
                 { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
                 { lane: 1, op: 'add', value: 12, label: '+12' },
                 { lane: 2, op: 'buff', value: 'freeze', label: '冰冻弹' }
             ]},
-            { type: 'wave', z: -78, enemies: [ { type: 'shield', count: 14 }, { type: 'normal', count: 14 }, { type: 'spitter', count: 3 } ] },
-            { type: 'wave', z: -94, enemies: [ { type: 'shield', count: 8 }, { type: 'normal', count: 11 }, { type: 'spitter', count: 5 } ] },
-            { type: 'wave', z: -108, enemies: [ { type: 'shield', count: 8 }, { type: 'fast', count: 8 } ] }
+            { type: 'wave', z: -78, enemies: [ { type: 'shield', count: 23 }, { type: 'normal', count: 23 }, { type: 'spitter', count: 5 } ] },
+            { type: 'wave', z: -94, enemies: [ { type: 'shield', count: 13 }, { type: 'normal', count: 18 }, { type: 'spitter', count: 8 } ] },
+            { type: 'wave', z: -108, enemies: [ { type: 'shield', count: 13 }, { type: 'fast', count: 13 } ] }
         ]
     },
     // ============ 第4关 变异尸潮 (总怪96, 组合压力) ============
@@ -233,21 +234,21 @@ const LEVELS = [
                 { lane: 1, op: 'buff', value: 'freeze', label: '冰冻弹' },
                 { lane: 2, op: 'buff', value: 'damage', label: '输出+1' }
             ]},
-            { type: 'wave', z: -22, enemies: [ { type: 'split', count: 11 }, { type: 'fast', count: 14 } ] },
+            { type: 'wave', z: -22, enemies: [ { type: 'split', count: 17 }, { type: 'fast', count: 22 } ] },
             { type: 'gates', z: -36, gates: [
                 { lane: 0, op: 'buff', value: 'pierce', label: '穿透+1' },
                 { lane: 1, op: 'buff', value: 'crit2', label: '暴击+10%' },
                 { lane: 2, op: 'mul', value: 2, label: '\u00d72' }
             ]},
-            { type: 'wave', z: -50, enemies: [ { type: 'split', count: 20 }, { type: 'shield', count: 8 }, { type: 'fast', count: 11 } ] },
+            { type: 'wave', z: -50, enemies: [ { type: 'split', count: 31 }, { type: 'shield', count: 12 }, { type: 'fast', count: 17 } ] },
             { type: 'gates', z: -64, gates: [
                 { lane: 0, op: 'buff', value: 'explosive', label: '爆炸弹' },
                 { lane: 1, op: 'add', value: 15, label: '+15' },
                 { lane: 2, op: 'buff', value: 'firerate', label: '射速+10%' }
             ]},
-            { type: 'wave', z: -78, enemies: [ { type: 'split', count: 14 }, { type: 'spitter', count: 11 }, { type: 'normal', count: 14 } ] },
-            { type: 'wave', z: -94, enemies: [ { type: 'split', count: 20 }, { type: 'fast', count: 17 }, { type: 'shield', count: 6 } ] },
-            { type: 'wave', z: -108, enemies: [ { type: 'split', count: 11 }, { type: 'spitter', count: 8 } ] }
+            { type: 'wave', z: -78, enemies: [ { type: 'split', count: 22 }, { type: 'spitter', count: 17 }, { type: 'normal', count: 22 } ] },
+            { type: 'wave', z: -94, enemies: [ { type: 'split', count: 31 }, { type: 'fast', count: 26 }, { type: 'shield', count: 9 } ] },
+            { type: 'wave', z: -108, enemies: [ { type: 'split', count: 17 }, { type: 'spitter', count: 12 } ] }
         ]
     },
     // ============ 第5关 终局Boss (总怪127+Boss, 三阶段挑战) ============
@@ -262,26 +263,26 @@ const LEVELS = [
                 { lane: 1, op: 'mul', value: 2, label: '\u00d72' },
                 { lane: 2, op: 'buff', value: 'damage2', label: '输出+2' }
             ]},
-            { type: 'wave', z: -22, enemies: [ { type: 'normal', count: 19 }, { type: 'fast', count: 16 } ] },
+            { type: 'wave', z: -22, enemies: [ { type: 'normal', count: 29 }, { type: 'fast', count: 25 } ] },
             { type: 'gates', z: -38, gates: [
                 { lane: 0, op: 'buff', value: 'pierce', label: '穿透+1' },
                 { lane: 1, op: 'buff', value: 'crit2', label: '暴击+10%' },
                 { lane: 2, op: 'add', value: 12, label: '+12' }
             ]},
-            { type: 'wave', z: -52, enemies: [ { type: 'elite', count: 3 }, { type: 'shield', count: 11 }, { type: 'normal', count: 16 } ] },
+            { type: 'wave', z: -52, enemies: [ { type: 'elite', count: 5 }, { type: 'shield', count: 17 }, { type: 'normal', count: 25 } ] },
             { type: 'gates', z: -68, gates: [
                 { lane: 0, op: 'buff', value: 'freeze', label: '冰冻弹' },
                 { lane: 1, op: 'buff', value: 'vamp', label: '吸血' },
                 { lane: 2, op: 'mul', value: 2, label: '\u00d72' }
             ]},
-            { type: 'wave', z: -82, enemies: [ { type: 'split', count: 14 }, { type: 'spitter', count: 11 }, { type: 'fast', count: 14 } ] },
+            { type: 'wave', z: -82, enemies: [ { type: 'split', count: 22 }, { type: 'spitter', count: 17 }, { type: 'fast', count: 22 } ] },
             { type: 'gates', z: -96, gates: [
                 { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
                 { lane: 1, op: 'add', value: 15, label: '+15' },
                 { lane: 2, op: 'buff', value: 'crit2', label: '暴击+10%' }
             ]},
-            { type: 'wave', z: -110, enemies: [ { type: 'elite', count: 4 }, { type: 'shield', count: 11 }, { type: 'spitter', count: 8 }, { type: 'normal', count: 14 } ] },
-            { type: 'wave', z: -124, enemies: [ { type: 'elite', count: 3 }, { type: 'normal', count: 19 }, { type: 'fast', count: 11 } ] },
+            { type: 'wave', z: -110, enemies: [ { type: 'elite', count: 6 }, { type: 'shield', count: 17 }, { type: 'spitter', count: 12 }, { type: 'normal', count: 22 } ] },
+            { type: 'wave', z: -124, enemies: [ { type: 'elite', count: 5 }, { type: 'normal', count: 29 }, { type: 'fast', count: 17 } ] },
             { type: 'boss', z: -150, boss: { type: 'boss', hp: 2600 } }
         ]
     }
@@ -295,4 +296,25 @@ LEVELS.forEach(function(level, li) {
     level.segments.forEach(function(seg) {
         if (seg.type === 'boss') seg.boss.style = level.bossStyle;
     });
+});
+
+// V5.1.2: 每关首排门全部为人数门 — 任何首选都不会开局即死(填墙控制器下弱build首排选buff=秒杀)
+LEVELS.forEach(function(level) {
+    var firstGatesSeg = null;
+    for (var i = 0; i < level.segments.length; i++) {
+        if (level.segments[i].type === 'gates') { firstGatesSeg = level.segments[i]; break; }
+    }
+    if (!firstGatesSeg) return;
+    var addGate = null;
+    for (var j = 0; j < firstGatesSeg.gates.length; j++) {
+        if (firstGatesSeg.gates[j].op === 'add') { addGate = firstGatesSeg.gates[j]; break; }
+    }
+    var base = addGate ? addGate.value : 10;
+    var mid = Math.max(4, Math.round(base * 0.75));  // V5.1.2: 低档上调(0.6/0.35→0.75/0.5) — 弱build首排不再送命
+    var low = Math.max(3, Math.round(base * 0.5));
+    firstGatesSeg.gates = [
+        { lane: 0, op: 'add', value: base, label: '+' + base },
+        { lane: 1, op: 'add', value: mid,  label: '+' + mid },
+        { lane: 2, op: 'add', value: low,  label: '+' + low }
+    ];
 });

@@ -40,9 +40,9 @@ module.exports.run = function(ctx) {
             assert(CONFIG.PACING.streamInterval <= 0.02, '爆发率≥50只/秒');
             
         });
-        test('MAX_ALIVE尸潮矩阵覆盖五关且递增(V5.1.1: 35-90)', () => {
-            assertEq(CONFIG.MAX_ALIVE[0], 35, 'L1=35');
-            assertEq(CONFIG.MAX_ALIVE[4], 90, 'L5=90');
+        test('MAX_ALIVE尸潮矩阵覆盖五关且递增(V5.1.2: 40-170)', () => {
+            assertEq(CONFIG.MAX_ALIVE[0], 40, 'L1=40');
+            assertEq(CONFIG.MAX_ALIVE[4], 170, 'L5=170');
             assertEq(CONFIG.MAX_ALIVE.length, 5, '五关');
             for (var i = 1; i < CONFIG.MAX_ALIVE.length; i++) {
                 assert(CONFIG.MAX_ALIVE[i] > CONFIG.MAX_ALIVE[i - 1], 'L' + (i + 1) + '上限递增');

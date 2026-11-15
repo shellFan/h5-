@@ -127,21 +127,23 @@ class GamePacingController {
                     ? randRange(P.batchGapMin, P.batchGapMax)
                     : randRange(P.spawnIntervalMin, P.spawnIntervalMax);
             }
-            // V5.1.1(玩家反馈"怪物太少"): 尸潮墙涌出 — 每帧最多3只(待出场>6时)
-            // × streamInterval 0.02 → 峰值180只/秒; 负信用不结转(v42-stream修复保留)。
+            // V5.1.2(玩家反馈"来超级多的"): 活敌目标控制器(填充-涓流反馈) —
+            //   alive < ALIVE_TARGET → 快速填充(~30只/秒) 尸潮墙成形
+            //   alive ≥ ALIVE_TARGET → 涓流(≈4.5只/秒) 缓慢逼近硬上限, 持续施压
+            // Little定律(alive=spawn×TTK)下TTK随血量缩放平方增长, 速率公式不可解析 — 反馈控制最鲁棒。
             var alive = this.aliveCountFn ? this.aliveCountFn() : 0;
-            var maxEmit = w.pending.length > 6 ? 3 : 1;
-            var emitted = 0;
-            while (w.pending.length && emitted < maxEmit && alive < this._maxAlive()) {
+            // V5.1.2: 目标活敌随队伍规模自适应(13人队≈18只, 100人队≈70只, 500人队=硬上限)
+            // 固定常数会让弱build被填墙秒杀 / 强build无尸潮感
+            var cap = this._maxAlive();
+            var aliveTarget = Math.min(cap, Math.max(10, Math.round((squad.count || 1) * 0.75 + 6)));
+            var interval = alive < aliveTarget ? Math.max(P.streamInterval, 0.04) : 0.3;
+            if(w.pending.length && w.emitTimer<=0 && alive<this._maxAlive()) {
                 var type=w.pending[0],lane=Math.floor(Math.random()*3);
-                var x=CONFIG.LANE_X[lane]+randRange(-.4,.4);
+                var x=CONFIG.LANE_X[lane]+randRange(-.9,.9);
                 var z=squad.z-randRange(11,11+P.spawnDepth);
                 if(this.spawnFn)this.spawnFn(type,x,z,null);
-                w.pending.shift();w.spawned++;emitted++;
-                alive++;
-            }
-            if (emitted > 0) {
-                w.emitTimer=dt>.1?P.streamInterval:Math.max(0,w.emitTimer)+P.streamInterval;
+                w.pending.shift();w.spawned++;
+                w.emitTimer=dt>.1?interval:Math.max(0,w.emitTimer)+interval;
             }
             if (w.queue.length === 0 && w.pending.length === 0) {
                 w.state = 'clearing';

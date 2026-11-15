@@ -32,13 +32,13 @@ class Game {
             var dpsNow = self.squad.count * self.squad.getDamage() * self.squad.getFireRate();
             if (type !== 'boss' && !hp) {
                 var refHp = (CONFIG.ZOMBIE[type] || CONFIG.ZOMBIE.normal).hp;
-                var hordeMul = Math.max(1, Math.min(30, dpsNow / 40));
+                var hordeMul = Math.max(1, Math.min(30, dpsNow / 60)); // V5.1.2: 分母60 — 血量成长慢于DPS成长, 升级有正反馈
                 hp = Math.max(refHp, Math.round(refHp * hordeMul));
             }
             // V4.0: Boss血量按出场时队伍战力动态缩放 — 任何策略/养成水平都面临~8-12s Boss战
             if (type === 'boss') {
                 var base = hp || CONFIG.ZOMBIE.boss.hp;
-                hp = Math.round((base + Math.min(dpsNow * 7, base * 3)) / 50) * 50; // V5.0: 8→7s; V5.1: 封顶base*3, 禁止随DPS无限膨胀
+                hp = Math.round((base + Math.min(dpsNow * 6, base * 1.6)) / 50) * 50; // V5.1.2: ×6/封顶1.6(尸潮强化后Boss竞速8-12s可胜)
             }
             if(type==='boss' && self.enemies.bossStyle==='twinelite') {
                 self.enemies.spawnEnemy(type,-1.1,z,hp/2,'elite');
