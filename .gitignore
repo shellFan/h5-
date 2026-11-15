@@ -11,3 +11,4 @@ dist/
 server.log
 __pycache__/
 tools/v51-diag.tmp.js
+tools/v51-*.tmp.js
