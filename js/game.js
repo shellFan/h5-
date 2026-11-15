@@ -41,7 +41,7 @@ class Game {
                 // V5.1.3: Boss血量 = 人数×DPS双因子(人数=防御/竞速生存, DPS=输出) —
                 // 旧公式只随DPS缩放, 小队打Boss时人数劣势无补偿必败。预算≈count×dps×0.64(1.25/s磨损×0.8安全)。
                 var base = hp || CONFIG.ZOMBIE.boss.hp;
-                hp = Math.round(Math.max(base * 0.85, Math.min(base * 3.5, self.squad.count * dpsNow * 0.64)) / 50) * 50; // V5.1.3: 封顶3.5(73人队=7000≈14s竞速=磨损生存期)
+                hp = Math.round(Math.max(base * 0.85, Math.min(base * 3.5, self.squad.count * dpsNow * 0.5)) / 50) * 50; // V5.1.4: 系数0.5(磨损0.625/s下竞速与生存平衡)
             }
             if(type==='boss' && self.enemies.bossStyle==='twinelite') {
                 self.enemies.spawnEnemy(type,-1.1,z,hp/2,'elite');
@@ -255,6 +255,9 @@ class Game {
         if (this.ui.btnSound) this.ui.btnSound.addEventListener('click', function() { self._toggleSound(); });
         // V5.0: 首页音效开关(与暂停菜单开关同一逻辑)
         if (this.ui.homeSound) this.ui.homeSound.addEventListener('click', function() { self._toggleSound(); });
+        // V5.1.4: 胜利页商店入口(关卡之间购升级, 用户反馈)
+        var btnShopWin = document.getElementById('btn-open-shop-win');
+        if (btnShopWin) btnShopWin.addEventListener('click', function() { self._sfx('click'); self._openShop(); });
         // V5.1: 首页每日免费补给(广告)
         var btnSupply = document.getElementById('btn-free-supply');
         if (btnSupply) btnSupply.addEventListener('click', function() { self._freeSupplyViaAd(); });

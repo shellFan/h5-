@@ -21,6 +21,11 @@ class GamePacingController {
         this.clear();
         var P = CONFIG.PACING;
         this.levelIndex = levelIndex || 0;
+        // V5.1.4: 标记最后一个波段(末波清尾驻停用)
+        var lastWaveIdx = -1;
+        for (var wi = 0; wi < level.segments.length; wi++) {
+            if (level.segments[wi].type === 'wave') lastWaveIdx = wi;
+        }
         for (var i = 0; i < level.segments.length; i++) {
             var seg = level.segments[i];
             if (seg.type === 'wave') {
@@ -33,6 +38,7 @@ class GamePacingController {
                 this.waves.push({
                     type: 'wave', z: seg.z,
                     index: this.waves.filter(function(w) { return w.type === 'wave'; }).length,
+                    isFinal: i === lastWaveIdx,
                     triggerZ: seg.z + P.waveTriggerAhead,
                     queue: queue,
                     state: 'idle',          // idle|spawning|clearing|done
@@ -197,6 +203,8 @@ class GamePacingController {
     frontierStopZ() {
         var w = this.activeWave;
         if (w && w.type === 'boss' && w.state === 'warning') return w.triggerZ - 1;
+        // V5.1.4: 末波清尾驻停 — 全部涌出后(clearing)停驻清完残余, 进度条到头=清完=结算(用户反馈"进度条到头怪还在")
+        if (w && w.type === 'wave' && w.isFinal && w.state === 'clearing') return w.z + 2;
         return null;
     }
 

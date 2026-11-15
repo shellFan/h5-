@@ -41,8 +41,8 @@ module.exports.run = function(ctx) {
             
         });
         test('MAX_ALIVE尸潮矩阵覆盖五关且递增(V5.1.3: L1=32教学保护, L5=170)', () => {
-            assertEq(CONFIG.MAX_ALIVE[0], 32, 'L1=32(教学保护)');
-            assertEq(CONFIG.MAX_ALIVE[4], 170, 'L5=170');
+            assertEq(CONFIG.MAX_ALIVE[0], 40, 'L1=40(教学保护)');
+            assertEq(CONFIG.MAX_ALIVE[4], 220, 'L5=220(屏幕铺满)');
             assertEq(CONFIG.MAX_ALIVE.length, 5, '五关');
             for (var i = 1; i < CONFIG.MAX_ALIVE.length; i++) {
                 assert(CONFIG.MAX_ALIVE[i] > CONFIG.MAX_ALIVE[i - 1], 'L' + (i + 1) + '上限递增');

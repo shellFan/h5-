@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-15T09:24:06.871Z",
+  "timestamp": "2026-11-15T09:37:29.974Z",
   "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0",
   "viewport": "390x844@2x",
   "quality": 2,
@@ -7,80 +7,80 @@
     {
       "scenario": "31人+20怪",
       "fps": 240,
-      "workMs": 1.62,
+      "workMs": 1.33,
       "p95FrameMs": 4.3,
-      "drawCalls": 136,
-      "triangles": 526693,
+      "drawCalls": 139,
+      "triangles": 526881,
       "geometries": 128,
       "textures": 32,
       "squadCount": 33,
       "enemyCount": 20,
-      "heapMB": 15.6
+      "heapMB": 18.5
     },
     {
       "scenario": "100人+40怪",
       "fps": 240,
-      "workMs": 2.31,
+      "workMs": 1.28,
       "p95FrameMs": 4.2,
-      "drawCalls": 148,
-      "triangles": 1443381,
+      "drawCalls": 149,
+      "triangles": 1456307,
       "geometries": 143,
       "textures": 36,
-      "squadCount": 91,
+      "squadCount": 96,
       "enemyCount": 40,
-      "heapMB": 18.5
+      "heapMB": 19
     },
     {
       "scenario": "300人+60怪",
       "fps": 240,
-      "workMs": 1.69,
+      "workMs": 1.48,
       "p95FrameMs": 4.3,
-      "drawCalls": 146,
-      "triangles": 1207182,
+      "drawCalls": 150,
+      "triangles": 1226843,
       "geometries": 144,
-      "textures": 49,
-      "squadCount": 268,
-      "enemyCount": 64,
-      "heapMB": 22
+      "textures": 44,
+      "squadCount": 273,
+      "enemyCount": 66,
+      "heapMB": 25.3
     },
     {
       "scenario": "500人+100怪",
       "fps": 240,
-      "workMs": 1.58,
+      "workMs": 1.59,
       "p95FrameMs": 4.3,
-      "drawCalls": 155,
-      "triangles": 1493988,
+      "drawCalls": 153,
+      "triangles": 1475028,
       "geometries": 144,
-      "textures": 76,
-      "squadCount": 329,
-      "enemyCount": 108,
-      "heapMB": 28.2
+      "textures": 71,
+      "squadCount": 323,
+      "enemyCount": 110,
+      "heapMB": 17.1
     },
     {
       "scenario": "Boss+小怪+特效洪峰",
       "fps": 240,
-      "workMs": 1.37,
+      "workMs": 1.41,
       "p95FrameMs": 4.3,
-      "drawCalls": 156,
-      "triangles": 1069699,
+      "drawCalls": 161,
+      "triangles": 1069407,
       "geometries": 149,
-      "textures": 84,
+      "textures": 79,
       "squadCount": 229,
-      "enemyCount": 34,
-      "heapMB": 23
+      "enemyCount": 36,
+      "heapMB": 17.6
     },
     {
       "scenario": "超级尸潮500人+170怪",
       "fps": 240,
-      "workMs": 1.88,
+      "workMs": 1.85,
       "p95FrameMs": 4.3,
-      "drawCalls": 152,
-      "triangles": 1499259,
-      "geometries": 150,
-      "textures": 88,
-      "squadCount": 307,
+      "drawCalls": 156,
+      "triangles": 1475518,
+      "geometries": 149,
+      "textures": 84,
+      "squadCount": 300,
       "enemyCount": 187,
-      "heapMB": 25.9
+      "heapMB": 20.4
     }
   ],
   "pageErrors": [],
@@ -91,8 +91,8 @@
   },
   "lowQuality500": {
     "fps": 240,
-    "drawCalls": 149,
-    "triangles": 1473670,
+    "drawCalls": 154,
+    "triangles": 1522188,
     "quality": 0
   }
 }

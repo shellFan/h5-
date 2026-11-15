@@ -57,8 +57,8 @@ const CONFIG = {
     },
 
     // ===== V5.1 每关场上活敌上限矩阵 (尸潮规模, 非同屏全部) =====
-    MAX_ALIVE: [32, 80, 110, 140, 170],   // 硬上限(L1=32保护教学关, 其余尸潮墙)
-    ALIVE_TARGET: [18, 32, 45, 60, 85],   // V5.1.2: 每关期望同屏活敌(反馈控制平衡点)
+    MAX_ALIVE: [40, 100, 140, 180, 220],  // 硬上限(V5.1.4: 后期屏幕铺满; L1=40保护教学关)
+    ALIVE_TARGET: [24, 50, 70, 95, 130],  // V5.1.4: 每关期望同屏活敌(后期铺满屏幕)
 
 
     // 射击
@@ -214,7 +214,7 @@ const LEVELS = [
             { type: 'wave', z: -50, enemies: [ { type: 'shield', count: 78 }, { type: 'fast', count: 54 } ] },
             { type: 'gates', z: -64, gates: [
                 { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
-                { lane: 1, op: 'add', value: 12, label: '+12' },
+                { lane: 1, op: 'buff', value: 'crit2', label: '暴击+10%' },
                 { lane: 2, op: 'buff', value: 'freeze', label: '冰冻弹' }
             ]},
             { type: 'wave', z: -78, enemies: [ { type: 'shield', count: 69 }, { type: 'normal', count: 69 }, { type: 'spitter', count: 15 } ] },
@@ -243,7 +243,7 @@ const LEVELS = [
             { type: 'wave', z: -50, enemies: [ { type: 'split', count: 93 }, { type: 'shield', count: 36 }, { type: 'fast', count: 51 } ] },
             { type: 'gates', z: -64, gates: [
                 { lane: 0, op: 'buff', value: 'explosive', label: '爆炸弹' },
-                { lane: 1, op: 'add', value: 15, label: '+15' },
+                { lane: 1, op: 'mul', value: 2, label: '×2' },
                 { lane: 2, op: 'buff', value: 'firerate', label: '射速+10%' }
             ]},
             { type: 'wave', z: -78, enemies: [ { type: 'split', count: 66 }, { type: 'spitter', count: 51 }, { type: 'normal', count: 66 } ] },
@@ -267,7 +267,7 @@ const LEVELS = [
             { type: 'gates', z: -38, gates: [
                 { lane: 0, op: 'buff', value: 'pierce', label: '穿透+1' },
                 { lane: 1, op: 'buff', value: 'crit2', label: '暴击+10%' },
-                { lane: 2, op: 'add', value: 12, label: '+12' }
+                { lane: 2, op: 'buff', value: 'damage2', label: '输出+2' }
             ]},
             { type: 'wave', z: -52, enemies: [ { type: 'elite', count: 15 }, { type: 'shield', count: 51 }, { type: 'normal', count: 75 } ] },
             { type: 'gates', z: -68, gates: [
@@ -278,7 +278,7 @@ const LEVELS = [
             { type: 'wave', z: -82, enemies: [ { type: 'split', count: 66 }, { type: 'spitter', count: 51 }, { type: 'fast', count: 66 } ] },
             { type: 'gates', z: -96, gates: [
                 { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
-                { lane: 1, op: 'add', value: 15, label: '+15' },
+                { lane: 1, op: 'buff', value: 'chain', label: '连锁闪电' },
                 { lane: 2, op: 'buff', value: 'crit2', label: '暴击+10%' }
             ]},
             { type: 'wave', z: -110, enemies: [ { type: 'elite', count: 18 }, { type: 'shield', count: 51 }, { type: 'spitter', count: 36 }, { type: 'normal', count: 66 } ] },
@@ -324,5 +324,5 @@ LEVELS.forEach(function(level) {
 //   Boss关:   totalZ = boss.z+4.5(Boss战驻停位, 击杀时进度恰好100%)
 LEVELS.forEach(function(level) {
     var last = level.segments[level.segments.length - 1];
-    level.totalZ = last.type === 'boss' ? last.z + 4.5 : last.z - 1;
+    level.totalZ = last.type === 'boss' ? last.z + 4.5 : last.z + 2;
 });

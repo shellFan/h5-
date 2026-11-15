@@ -159,9 +159,10 @@ class Enemy {
             // 近战攻击 (V3.3: 冰冻时攻击间隔延长)
             this.attackTimer -= dt;
             if (this.attackTimer <= 0) {
-                this.attackTimer = CONFIG.ZOMBIE_ATTACK_INTERVAL * (this.attackMul || 1) * (frozen ? 2 : 1);
+                // V5.1.4: Boss攻击间隔×2(挥击1.6s, 磨损0.625/s) — Boss竞速与召唤磨损平衡
+                this.attackTimer = CONFIG.ZOMBIE_ATTACK_INTERVAL * (this.attackMul || 1) * (frozen ? 2 : 1) * (this.isBoss ? 2 : 1);
                 this.attackT=1;
-                const kill = this.isBoss ? (this.enraged ? 4 : 1) : CONFIG.ZOMBIE_ATTACK_KILL; // V5.1.2: 非狂暴2→1(尸潮强化后Boss竞速平衡), 狂暴5→4
+                const kill = this.isBoss ? (this.enraged ? 3 : 1) : CONFIG.ZOMBIE_ATTACK_KILL; // 非狂暴1/狂暴3
                 squad.killSoldiers(kill, effects);
                 if (effects) {
                     effects.burst(squad.x, 0.5, squad.z, 0xFF4444, 5, 2, 0.3);
