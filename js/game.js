@@ -33,12 +33,15 @@ class Game {
             if (type !== 'boss' && !hp) {
                 var refHp = (CONFIG.ZOMBIE[type] || CONFIG.ZOMBIE.normal).hp;
                 var hordeMul = Math.max(1, Math.min(30, dpsNow / 60)); // V5.1.2: 分母60 — 血量成长慢于DPS成长, 升级有正反馈
+                if (type === 'elite') hordeMul = Math.max(1, hordeMul * 0.5); // V5.1.3: 精英缩放减半(×3体量下精英墙不可破)
                 hp = Math.max(refHp, Math.round(refHp * hordeMul));
             }
             // V4.0: Boss血量按出场时队伍战力动态缩放 — 任何策略/养成水平都面临~8-12s Boss战
             if (type === 'boss') {
+                // V5.1.3: Boss血量 = 人数×DPS双因子(人数=防御/竞速生存, DPS=输出) —
+                // 旧公式只随DPS缩放, 小队打Boss时人数劣势无补偿必败。预算≈count×dps×0.64(1.25/s磨损×0.8安全)。
                 var base = hp || CONFIG.ZOMBIE.boss.hp;
-                hp = Math.round((base + Math.min(dpsNow * 6, base * 1.6)) / 50) * 50; // V5.1.2: ×6/封顶1.6(尸潮强化后Boss竞速8-12s可胜)
+                hp = Math.round(Math.max(base * 0.85, Math.min(base * 3.5, self.squad.count * dpsNow * 0.64)) / 50) * 50; // V5.1.3: 封顶3.5(73人队=7000≈14s竞速=磨损生存期)
             }
             if(type==='boss' && self.enemies.bossStyle==='twinelite') {
                 self.enemies.spawnEnemy(type,-1.1,z,hp/2,'elite');
@@ -827,7 +830,7 @@ class Game {
                 this.squad.pierce = Math.min(3, this.shop.pierceBonus(this.profile));
             }
             this.gates.loadFromLevel(level);
-            this.enemies.loadFromLevel(level);
+            this.enemies.loadFromLevel(level, this.levelIndex);
             this.enemies.bossStyle=level.bossStyle;
             // V4.0: 波次计划移交节奏控制器(分批生成)
             this.pacing.loadFromLevel(level, this.levelIndex);

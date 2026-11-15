@@ -119,9 +119,18 @@
         var results = [];
         for (var li = 0; li < LEVELS.length; li++) {
             for (var si = 0; si < strategies.length; si++) {
-                // V5.1.1: 模拟真实玩家 — 进入关卡前用累积金币购买永久升级(枪械>招募>射速)
+                // V5.1.3: 模拟真实玩家 — 进关前把金币全部花在升级上(枪械>招募>快速射击 轮转买满)
                 if (window.__game.profile) {
-                    ['gun', 'recruit', 'rapid'].forEach(function(id) { UpgradeShop.purchase(window.__game.profile, id); });
+                    var boughtGuard = 0;
+                    while (boughtGuard < 40) {
+                        var order = ['gun', 'gun', 'recruit', 'rapid', 'gun', 'recruit'];
+                        var done = false;
+                        for (var pi = 0; pi < order.length; pi++) {
+                            if (UpgradeShop.purchase(window.__game.profile, order[pi]).ok) { done = true; break; }
+                        }
+                        if (!done) break;
+                        boughtGuard++;
+                    }
                 }
                 var r = simulateRun(g, li, strategies[si], 12345 + li * 17 + si * 3);
                 results.push(r);

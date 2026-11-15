@@ -204,32 +204,37 @@ async function fastForward(page, maxGameSec, stepDt) {
     await step('第5关: 失败→商店升级→重试(玩家核心循环; 首试胜利则跳过)', async () => {
         let state = await page.evaluate(() => window.__game.state);
         let buys = 0;
-        if (state === 'lost') {
-            // 失败: 用积累金币购买升级(优先枪械/招募)
-            const bought = await page.evaluate(() => {
-                const g = window.__game;
-                let n = 0;
-                ['recruit', 'gun', 'gun', 'rapid', 'recruit', 'gun'].forEach(function(id) {
-                    const r = UpgradeShop.purchase(g.profile, id);
-                    if (r.ok) n++;
+        let attempt = 0;
+        // V5.1.3: 超级尸潮下允许最多3次"升级→重试"循环(倾囊购买, 招募优先保生存)
+        while (state !== 'won' && attempt < 3) {
+            if (state === 'lost') {
+                const bought = await page.evaluate(() => {
+                    const g = window.__game;
+                    let n = 0, guard = 0;
+                    const order = ['recruit', 'gun', 'gun', 'recruit', 'rapid', 'recruit', 'gun', 'recruit', 'gun', 'recruit'];
+                    let oi = 0;
+                    while (guard++ < 30) {
+                        const r = UpgradeShop.purchase(g.profile, order[oi % order.length]);
+                        oi++;
+                        if (r.ok) n++;
+                        else if (r.reason === 'insufficient') break;
+                    }
+                    return n;
                 });
-                return n;
-            });
-            buys = bought;
-            await page.evaluate(() => { window.__game.levelIndex = 4; window.__game.start(); });
+                buys += bought;
+                await page.evaluate(() => { window.__game.levelIndex = 4; window.__game.start(); });
+            }
             const sawHorde = await page.waitForFunction(() => {
                 const g = window.__game;
                 return g.state === 'playing' && g.enemies.aliveCount >= 10;
             }, { timeout: 40000 }).then(() => true).catch(() => false);
             assert(sawHorde, '尸潮出现(场上≥10怪)');
-        }
-        if (state !== 'won') {
             const r = await fastForward(page, 400);
-            console.log('    [L5重试] 升级' + buys + '项 → ' + r.state + ' 存活' + r.count + '人');
-            assert(r.state === 'won', '升级后L5胜利(实际' + r.state + ')');
-        } else {
-            console.log('    [L5首试即胜] 跳过重试路径');
+            console.log('    [L5尝试' + (attempt + 1) + '] 升级累计' + buys + '项 → ' + r.state + ' 存活' + r.count + '人');
+            state = r.state;
+            attempt++;
         }
+        assert(state === 'won', '升级重试后L5胜利(实际' + state + ')');
         const barSeen = await page.evaluate(() => window.__game.bossSpawned || !!window.__game.enemies.boss);
         assert(barSeen, 'Boss确实出场过(bossSpawned)');
     });

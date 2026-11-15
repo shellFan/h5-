@@ -137,10 +137,11 @@ class Enemy {
         }
 
         // 吐痰僵尸: 远程攻击
+        // V5.1.3: 攻击间隔随场上吐痰怪数量摊薄(×3体量下24只齐射=12击杀/秒, 任何队伍都融化)
         if (this.type === 'spitter' && dist > attackDist && dist < 10) {
             this.spitTimer -= dt;
             if (this.spitTimer <= 0) {
-                this.spitTimer = randRange(1.8, 2.5);
+                this.spitTimer = randRange(1.8, 2.5) * (1 + 0.3 * ((manager && manager._spitterCount) || 1));
                 manager.spawnSpit(this.x, 0.5, this.z, squad);
             }
         }
@@ -218,6 +219,7 @@ class Enemy {
 class EnemyManager {
     constructor(scene, effects) {
         this.scene = scene;
+        this._levelIndex = 0;
         this.effects = effects;
         this.enemies = [];
         this.spits = [];
@@ -234,8 +236,9 @@ class EnemyManager {
     }
 
     /** V4.0: loadFromLevel 只负责清场; 波次计划移交 GamePacingController 分批驱动 */
-    loadFromLevel(level) {
+    loadFromLevel(level, levelIndex) {
         this.clear();
+        this._levelIndex = levelIndex || 0;
     }
 
     /** V4.0: 统一出生入口(供节奏控制器/分裂/E2E注入调用) */
@@ -269,18 +272,28 @@ class EnemyManager {
         // V4.0: 生成由 GamePacingController 驱动(分批+上限), 此处不再整波触发
 
         // 分裂僵尸死亡后产生小僵尸
+        // V5.1.3: 小体受活敌门控 — 超上限时延迟分裂(否则×3体量下小体洪流无视控制器团灭小队)
+        // V5.1.3: 分裂门控基准=目标活敌×1.5(随队伍规模缩放; 旧MAX_ALIVE×1.3基准过松导致小体洪流)
+        var splitCap = Math.max(20, Math.round((squad.count || 1) * 0.9 + 4) * 1.5);
+        var splitEmitted = 0;
         for (let i = this.splitQueue.length - 1; i >= 0; i--) {
             const sq = this.splitQueue[i];
             sq.delay -= dt;
             if (sq.delay <= 0) {
+                if (splitEmitted >= 1 || this.aliveCount >= splitCap) { sq.delay = 0.15; continue; } // 每帧至多1只, 超限延后
                 const e = new Enemy('normal', sq.x + randRange(-0.5, 0.5), sq.z, this.scene);
                 e.model.scale.multiplyScalar(0.6);
                 e.visScale = e.cfg.scale * 0.6;
                 e.hp = 2;
                 this.enemies.push(e);
                 this.splitQueue.splice(i, 1);
+                splitEmitted++;
             }
         }
+
+        // V5.1.3: 统计场上吐痰怪数(供攻击间隔摊薄)
+        this._spitterCount = 0;
+        for (const e of this.enemies) if (e.alive && e.type === 'spitter') this._spitterCount++;
 
         // 更新僵尸
         for (let i = this.enemies.length - 1; i >= 0; i--) {

@@ -1,7 +1,7 @@
 const vm=require('vm'),fs=require('fs'),assert=require('assert/strict');
 vm.runInThisContext(['config','utils','movement','pacing'].map(n=>fs.readFileSync('js/'+n+'.js','utf8')).join('\n')+'\nglobalThis.C=CONFIG;globalThis.L=LEVELS;globalThis.M=MovementMath;globalThis.P=GamePacingController;');
 // V5.1: 五关重做后的关卡长度(不可静默改动)
-assert.deepEqual(L.map(l=>l.totalZ),[-96,-104,-122,-126,-166],'V5.1 five-level lengths locked');
+assert.deepEqual(L.map(l=>l.totalZ),[-79,-87,-109,-109,-145.5],'V5.1.3 progress endpoint = last anchor');
 function follow(hz,seconds){let x=0;for(let t=0;t<seconds-1e-6;t+=1/hz)x=damp(x,2,M.followLambda(),1/hz);return x;}
 assert(follow(60,.15)>1.1 && follow(60,.15)<1.5,'.15s must behave as a time constant, not a nearly instantaneous snap');
 assert(follow(60,.45)>1.88&&follow(60,.45)<1.96,'.45s reaches about95%');

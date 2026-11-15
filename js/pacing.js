@@ -32,6 +32,7 @@ class GamePacingController {
                 }
                 this.waves.push({
                     type: 'wave', z: seg.z,
+                    index: this.waves.filter(function(w) { return w.type === 'wave'; }).length,
                     triggerZ: seg.z + P.waveTriggerAhead,
                     queue: queue,
                     state: 'idle',          // idle|spawning|clearing|done
@@ -134,8 +135,11 @@ class GamePacingController {
             var alive = this.aliveCountFn ? this.aliveCountFn() : 0;
             // V5.1.2: 目标活敌随队伍规模自适应(13人队≈18只, 100人队≈70只, 500人队=硬上限)
             // 固定常数会让弱build被填墙秒杀 / 强build无尸潮感
+            // V5.1.3: ×波次进度因子 — 首波0.55温和开场, 末波1.0成墙(×3体量下首波即墙=必死)
             var cap = this._maxAlive();
-            var aliveTarget = Math.min(cap, Math.max(10, Math.round((squad.count || 1) * 0.75 + 6)));
+            var waveCount = this.waves.filter(function(w) { return w.type === 'wave'; }).length || 1;
+            var progressFactor = 0.55 + 0.45 * Math.min(1, (w.index || 0) / Math.max(1, waveCount - 1));
+            var aliveTarget = Math.min(cap, Math.max(8, Math.round(((squad.count || 1) * 0.9 + 4) * progressFactor)));
             var interval = alive < aliveTarget ? Math.max(P.streamInterval, 0.04) : 0.3;
             if(w.pending.length && w.emitTimer<=0 && alive<this._maxAlive()) {
                 var type=w.pending[0],lane=Math.floor(Math.random()*3);
