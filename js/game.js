@@ -32,8 +32,9 @@ class Game {
             var dpsNow = self.squad.count * self.squad.getDamage() * self.squad.getFireRate();
             if (type !== 'boss' && !hp) {
                 var refHp = (CONFIG.ZOMBIE[type] || CONFIG.ZOMBIE.normal).hp;
-                var hordeMul = Math.max(1, Math.min(30, dpsNow / 60)); // V5.1.2: 分母60 — 血量成长慢于DPS成长, 升级有正反馈
-                if (type === 'elite') hordeMul = Math.max(1, hordeMul * 0.5); // V5.1.3: 精英缩放减半(×3体量下精英墙不可破)
+                var hordeMul = Math.max(1, Math.min(30, dpsNow / 65)); // V5.1.5: 分母65(校准: 分级加强+×3总量已足够)
+                hordeMul *= 0.8 + 0.2 * Math.min(1, self.levelIndex / 4); // V5.1.5: 分级加强 L1温和(×0.8)→L5全力(×1.0)
+                if (type === 'elite') hordeMul = Math.max(1, hordeMul * 0.5); // 精英缩放减半(精英墙不可破)
                 hp = Math.max(refHp, Math.round(refHp * hordeMul));
             }
             // V4.0: Boss血量按出场时队伍战力动态缩放 — 任何策略/养成水平都面临~8-12s Boss战

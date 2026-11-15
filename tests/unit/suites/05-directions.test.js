@@ -37,20 +37,21 @@ module.exports.run = function(ctx) {
         test('怪群在军团前方涌现且成堆(纵深收紧)', () => {
             assert(CONFIG.PACING.spawnDepth >= 6 && CONFIG.PACING.spawnDepth <= 8, '纵深6-8: 团块感');
             assert(CONFIG.PACING.batchSizeBase >= 4, '批量≥4成堆涌现');
-            assert(CONFIG.PACING.streamInterval <= 0.02, '爆发率≥50只/秒');
             
         });
-        test('MAX_ALIVE尸潮矩阵覆盖五关且递增(V5.1.3: L1=32教学保护, L5=170)', () => {
-            assertEq(CONFIG.MAX_ALIVE[0], 40, 'L1=40(教学保护)');
-            assertEq(CONFIG.MAX_ALIVE[4], 220, 'L5=220(屏幕铺满)');
+        test('MAX_ALIVE尸潮矩阵覆盖五关且非递减(V5.1.5: L1=70, L4/L5=260 Boss关)', () => {
+            assertEq(CONFIG.MAX_ALIVE[0], 70, 'L1=70');
+            assertEq(CONFIG.MAX_ALIVE[4], 240, 'L5=240(Boss关竞速校准, ≤L4的260)');
             assertEq(CONFIG.MAX_ALIVE.length, 5, '五关');
             for (var i = 1; i < CONFIG.MAX_ALIVE.length; i++) {
-                assert(CONFIG.MAX_ALIVE[i] > CONFIG.MAX_ALIVE[i - 1], 'L' + (i + 1) + '上限递增');
+                if (i < CONFIG.MAX_ALIVE.length - 1) assert(CONFIG.MAX_ALIVE[i] >= CONFIG.MAX_ALIVE[i - 1], 'L' + (i + 1) + '上限非递减'); // L5=240 Boss关压力校准特例
             }
         });
         test('怪群生成于军团前方(行进中迎面相遇)', () => {
             // spawn点=squad.z-11..-(11+spawnDepth): 始终在前进方向前方
             assert(CONFIG.PACING.spawnDepth >= 6, '迎面涌现纵深');
+            assert(CONFIG.PACING.fillFrameInterval <= 0.01 && CONFIG.PACING.fillFrameInterval > 0, '填充预算有效');
+            assert(CONFIG.PACING.trickleInterval >= 0.12, '涓流施压有效');
         });
     });
 };

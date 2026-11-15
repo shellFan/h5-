@@ -7,7 +7,7 @@
     "enemies": [
      {
       "type": "normal",
-      "count": 42
+      "count": 21
      }
     ]
    },
@@ -16,11 +16,11 @@
     "enemies": [
      {
       "type": "normal",
-      "count": 51
+      "count": 26
      },
      {
       "type": "fast",
-      "count": 12
+      "count": 6
      }
     ]
    },
@@ -29,11 +29,11 @@
     "enemies": [
      {
       "type": "normal",
-      "count": 42
+      "count": 21
      },
      {
       "type": "fast",
-      "count": 18
+      "count": 9
      }
     ]
    },
@@ -42,7 +42,7 @@
     "enemies": [
      {
       "type": "normal",
-      "count": 21
+      "count": 10
      }
     ]
    }

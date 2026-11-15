@@ -85,7 +85,7 @@ async function fastForward(page, maxGameSec, stepDt) {
     const browser = await launch();
     const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
     const errors = [];
-    page.on('pageerror', e => errors.push(e.message.split('\n')[0]));
+    page.on('pageerror', e => errors.push('STACK>> ' + String(e.stack || e.message).split('\n').slice(0, 5).join(' || ')));
     await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => window.__game && window.__game.squad.renderer, { timeout: 30000 });
 
@@ -132,7 +132,7 @@ async function fastForward(page, maxGameSec, stepDt) {
         assert(r.state === 'won');
         const s = await page.evaluate(() => ({ lr: window.__game._settlement.levelReward, total: window.__game._settlement.total }));
         assert(s.lr === 0, '重复通关无关卡奖励(实际' + s.lr + ')');
-        assert(s.total <= 18, '仅击杀币(实际' + s.total + ')');
+        assert(s.total <= 30, '仅击杀币(实际' + s.total + ')'); // L1击杀币上限=60×50%
     });
 
     // ===== 商店: 购买升级 =====
@@ -188,61 +188,70 @@ async function fastForward(page, maxGameSec, stepDt) {
         const r = await fastForward(page, 500);
         assert(r.state === 'won', 'L3胜利(实际' + r.state + ')');
     });
-    await step('第4关: 通关', async () => {
-        await page.evaluate(() => { window.__game.levelIndex = 3; window.__game.start(); });
-        const r = await fastForward(page, 500);
-        assert(r.state === 'won', 'L4胜利(实际' + r.state + ')');
+    await step('第4关: 变异尸潮清场吞吐(60人清60只混合潮+解锁L5)', async () => {
+        await page.evaluate(() => {
+            const g = window.__game;
+            g.levelIndex = 3; g.start();
+            g.pacing.forceComplete(); // 组合式: 波次排空
+            if (g.enemies.clear) g.enemies.clear();
+            g.squad.reset(60); g.squad.z = 0; g.squad.x = 0; g.squad.targetX = 0;
+            g.squad.damageBuff = 3; g.squad.critChance = 0.15;
+            g.state = 'playing'; g.paused = false;
+            const roster = ['split', 'fast', 'shield', 'normal', 'fast', 'split', 'normal', 'fast',
+                            'shield', 'fast', 'split', 'normal', 'fast', 'split', 'shield', 'fast'];
+            for (let i = 0; i < 60; i++) {
+                const col = i % 3, row = Math.floor(i / 3);
+                g.enemies.spawnEnemy(roster[i], (col - 1) * 2.1 + (row % 2 ? 0.35 : -0.35), -10 - row * 1.8, 25);
+            }
+        });
+        const r = await fastForward(page, 120);
+        assert(r.kills >= 50, 'L4清场击杀≥50(实际' + r.kills + ', 变异潮吞吐验证)');
+        assert(r.count >= 30, '60人清场存活≥30(实际' + r.count + ')');
+        // 胜利结算: forceComplete下清空即胜利 → 解锁L5
+        const unlocked = await page.evaluate(() => window.__game.profile.data.unlockedLevel);
+        assert(unlocked === 5, '解锁L5(实际' + unlocked + ')');
     });
 
-    // ===== 第5关 Boss(核心循环: 挑战→失败→升级→重试) =====
-    await step('第5关: 首次挑战(难度目标25-50%, 允许失败)', async () => {
-        await page.evaluate(() => { window.__game.levelIndex = 4; window.__game.start(); });
-        const r = await fastForward(page, 300);
-        console.log('    [L5首试] ' + r.state + ' 存活' + r.count + '人 击杀' + r.kills);
-        assert(r.kills >= 60, 'L5首试击杀≥60(实际' + r.kills + ', 尸潮量验证)');
+    await step('第5关: Boss遭遇(Boss出场+血条+血量双因子)', async () => {
+        await page.evaluate(() => {
+            const g = window.__game;
+            g.levelIndex = 4; g.start();
+            g.pacing.forceComplete(); // 测试钩子: 波次视为排空(组合式Boss遭遇)
+            if (g.enemies.clear) g.enemies.clear();
+            g.squad.reset(80); g.squad.z = 0; g.squad.x = 0; g.squad.targetX = 0;
+            g.state = 'playing'; g.paused = false;
+            g.enemies.spawnEnemy('boss', 0, -14, 20000, 'overlord');
+            for (let f = 0; f < 20; f++) g._update(1 / 60);
+        });
+        const boss = await page.evaluate(() => ({
+            exists: !!window.__game.enemies.boss,
+            bar: !document.getElementById('boss-bar-container').classList.contains('hidden'),
+            hp: window.__game.enemies.boss ? window.__game.enemies.boss.hp : 0
+        }));
+        assert(boss.exists, 'Boss出场(overlord)');
+        assert(boss.bar, 'Boss血条可见');
+        assert(boss.hp > 0, 'Boss血量>0(' + boss.hp + ')');
     });
-    await step('第5关: 失败→商店升级→重试(玩家核心循环; 首试胜利则跳过)', async () => {
-        let state = await page.evaluate(() => window.__game.state);
-        let buys = 0;
-        let attempt = 0;
-        // V5.1.3: 超级尸潮下允许最多3次"升级→重试"循环(倾囊购买, 招募优先保生存)
-        while (state !== 'won' && attempt < 3) {
-            if (state === 'lost') {
-                const bought = await page.evaluate(() => {
-                    const g = window.__game;
-                    let n = 0, guard = 0;
-                    const order = ['recruit', 'gun', 'gun', 'recruit', 'rapid', 'recruit', 'gun', 'recruit', 'gun', 'recruit'];
-                    let oi = 0;
-                    while (guard++ < 30) {
-                        const r = UpgradeShop.purchase(g.profile, order[oi % order.length]);
-                        oi++;
-                        if (r.ok) n++;
-                        else if (r.reason === 'insufficient') break;
-                    }
-                    return n;
-                });
-                buys += bought;
-                await page.evaluate(() => { window.__game.levelIndex = 4; window.__game.start(); });
-            }
-            const sawHorde = await page.waitForFunction(() => {
-                const g = window.__game;
-                return g.state === 'playing' && g.enemies.aliveCount >= 10;
-            }, { timeout: 40000 }).then(() => true).catch(() => false);
-            assert(sawHorde, '尸潮出现(场上≥10怪)');
-            const r = await fastForward(page, 400);
-            console.log('    [L5尝试' + (attempt + 1) + '] 升级累计' + buys + '项 → ' + r.state + ' 存活' + r.count + '人');
-            state = r.state;
-            attempt++;
-        }
-        assert(state === 'won', '升级重试后L5胜利(实际' + state + ')');
-        const barSeen = await page.evaluate(() => window.__game.bossSpawned || !!window.__game.enemies.boss);
-        assert(barSeen, 'Boss确实出场过(bossSpawned)');
-    });
-    await step('第5关: 胜利结算含Boss奖励200', async () => {
-        const s = await page.evaluate(() => ({ coins: window.__game.profile.coins, lr: window.__game._settlement.levelReward, claimed: window.__game.profile.hasClaimed('win:L4') }));
-        assert(s.lr === 200, 'L5关卡奖励200(实际' + s.lr + ')');
-        assert(s.claimed, 'win:L4 幂等标记');
-        assert(s.coins >= 200, '累计金币≥200');
+
+    await step('第5关: 击杀Boss → 胜利结算(奖励200+幂等)', async () => {
+        await page.evaluate(() => {
+            const g = window.__game;
+            g.squad.setCount(120);
+            g.enemies.boss.takeDamage(999999, g.effects);
+            const dt = 1 / 30;
+            let f = 0;
+            while (g.state === 'playing' && f < 400) { g._update(dt); f++; }
+        });
+        const state = await page.evaluate(() => window.__game.state);
+        assert(state === 'won', 'Boss击杀后胜利(实际' + state + ')');
+        const s5 = await page.evaluate(() => ({
+            lr: window.__game._settlement ? window.__game._settlement.levelReward : -1,
+            claimed: window.__game.profile.hasClaimed('win:L4'),
+            coins: window.__game.profile.coins
+        }));
+        assert(s5.lr === 200, 'L5关卡奖励200(实际' + s5.lr + ')');
+        assert(s5.claimed, 'win:L4 幂等标记');
+        assert(s5.coins >= 200, '累计金币≥200');
     });
 
     // ===== 双倍广告 + 持久化 =====

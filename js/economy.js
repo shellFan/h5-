@@ -8,9 +8,9 @@
 var ECONOMY_RULES = {
     PROFILE_KEY: 'profile_v51',
     PROFILE_VERSION: 1,
-    KILL_COIN_RATE: 0.5,          // 每击杀 0.5 金币
-    KILL_COIN_WIN_CAP_RATIO: 0.3, // 胜利局击杀币上限 = 关卡奖励×30%
-    KILL_COIN_LOSE_CAP: 15,       // 失败局击杀币上限(低, 防故意失败刷钱)
+    KILL_COIN_RATE: 0.8,          // V5.1.5: 每击杀 0.8 金币(超级尸潮下升级资金需求提升)
+    KILL_COIN_WIN_CAP_RATIO: 0.5, // V5.1.5: 胜利局击杀币上限 = 关卡奖励×50%
+    KILL_COIN_LOSE_CAP: 70,       // V5.1.5: 失败保底=胜利上限(超级尸潮下防软锁; 赢仍2倍+首通奖励优于刷)
     LEGACY_PROGRESS_KEY: 'pz_progress' // V3.3 旧解锁进度键(迁移源)
 };
 

@@ -44,9 +44,10 @@ const CONFIG = {
         spawnIntervalMax: 1.5,
         batchGapMin: 0.25,          // V5.1.1: 同一波内后续批次密接间隔 — alive持续堆积成墙
         batchGapMax: 0.4,
-        batchSizeBase: 4,           // V5.1.1: 整波成墙批次
-        batchSizeMax: 16,
-        streamInterval: 0.02,       // 单怪间隔(秒) — 60只/秒爆发率(每帧≤3只)
+        batchSizeBase: 8,           // V5.1.5: 批次与目标活敌匹配(旧上限16导致alive永远堆不到目标)
+        batchSizeMax: 48,
+        fillFrameInterval: 0.008,   // V5.1.5: 填充帧预算(秒/只) — 每帧可涌 ceil(dt/0.008)≈4只(120-240只/s)
+        trickleInterval: 0.15,      // V5.1.5: 涓流冷却(秒/只) — alive达标后6.7只/s持续施压
         spawnDepth: 8,              // 生成纵深: 团块感+屏满尸潮
         bossTriggerAhead: 24,
         bossWarningTime: 2.0,
@@ -57,8 +58,8 @@ const CONFIG = {
     },
 
     // ===== V5.1 每关场上活敌上限矩阵 (尸潮规模, 非同屏全部) =====
-    MAX_ALIVE: [40, 100, 140, 180, 220],  // 硬上限(V5.1.4: 后期屏幕铺满; L1=40保护教学关)
-    ALIVE_TARGET: [24, 50, 70, 95, 130],  // V5.1.4: 每关期望同屏活敌(后期铺满屏幕)
+    MAX_ALIVE: [70, 140, 190, 260, 240],  // V5.1.5: 超级尸潮 — L5=240(Boss关兼顾竞速)
+    ALIVE_TARGET: [40, 80, 110, 150, 120],  // V5.1.5: 每关期望同屏活敌 — L5=120(Boss关)
 
 
     // 射击
@@ -149,20 +150,20 @@ const LEVELS = [
                 { lane: 1, op: 'add', value: 5, label: '+5' },
                 { lane: 2, op: 'add', value: 3, label: '+3' }
             ]},
-            { type: 'wave', z: -18, enemies: [ { type: 'normal', count: 42 } ] },
+            { type: 'wave', z: -18, enemies: [ { type: 'normal', count: 21 } ] },
             { type: 'gates', z: -28, gates: [
                 { lane: 0, op: 'add', value: 5, label: '+5' },
                 { lane: 1, op: 'buff', value: 'damage', label: '输出+1' },
                 { lane: 2, op: 'add', value: 8, label: '+8' }
             ]},
-            { type: 'wave', z: -40, enemies: [ { type: 'normal', count: 51 }, { type: 'fast', count: 12 } ] },
+            { type: 'wave', z: -40, enemies: [ { type: 'normal', count: 26 }, { type: 'fast', count: 6 } ] },
             { type: 'gates', z: -52, gates: [
                 { lane: 0, op: 'buff', value: 'firerate', label: '射速+10%' },
                 { lane: 1, op: 'add', value: 8, label: '+8' },
                 { lane: 2, op: 'buff', value: 'crit', label: '暴击+5%' }
             ]},
-            { type: 'wave', z: -64, enemies: [ { type: 'normal', count: 42 }, { type: 'fast', count: 18 } ] },
-            { type: 'wave', z: -78, enemies: [ { type: 'normal', count: 21 } ] }
+            { type: 'wave', z: -64, enemies: [ { type: 'normal', count: 21 }, { type: 'fast', count: 9 } ] },
+            { type: 'wave', z: -78, enemies: [ { type: 'normal', count: 10 } ] }
         ]
     },
     // ============ 第2关 快速尸潮 (总怪60, 火力分配) ============
