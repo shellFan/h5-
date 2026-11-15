@@ -40,7 +40,7 @@ async function shot(page, name, expected) {
 
 /** 贪心选门 + 固定步长快进真实游戏 */
 async function runLevel(page, levelIndex, opts) {
-    const o = Object.assign({ levelIndex: levelIndex, maxSec: 400, stopAtBoss: false, framesAfter: 30, stopAfterSec: 0 }, opts);
+    const o = Object.assign({ levelIndex: levelIndex, maxSec: 400, stopAtBoss: false, framesAfter: 30, stopAfterSec: 0, hordeAlive: 0 }, opts);
     return page.evaluate(o => {
         const g = window.__game;
         g.levelIndex = o.levelIndex;
@@ -73,6 +73,7 @@ async function runLevel(page, levelIndex, opts) {
             steps++;
             if (o.stopAtBoss && g.enemies.boss && !bossSeen) { bossSeen = true; break; }
             if (o.stopAfterSec > 0 && (g.elapsedTime - t0) >= o.stopAfterSec) break;
+            if (o.hordeAlive > 0 && g.enemies.aliveCount >= o.hordeAlive && g.pacing.activeWave && g.pacing.activeWave.type === 'wave') break;
         }
         return { state: g.state, count: g.squad.count, kills: g.enemies.killCount, bossSeen: bossSeen || !!g.enemies.boss };
     }, o);
@@ -103,13 +104,28 @@ async function runLevel(page, levelIndex, opts) {
         await page.evaluate(() => { window.__game._closeShop(); window.__game.profile.data.upgrades.gun = 1; window.__game.profile.save(); });
 
         // 第1关战斗(防守阵地+首波尸潮)
-        const l1 = await runLevel(page, 0, { maxSec: 400, stopAfterSec: 36 });
-        console.log('L1 mid-capture state:', JSON.stringify(l1));
+        // L1战斗: 开始后手动注入第一波尸潮, 真实跑帧到接敌瞬间(稳定构图)
+        await page.evaluate(() => {
+            const g = window.__game;
+            g.levelIndex = 0; g.start();
+            if (g.pacing.clear) g.pacing.clear();
+            if (g.enemies.clear) g.enemies.clear();
+            g.squad.reset(16); g.squad.z = 0; g.squad.x = 0; g.squad.targetX = 0;
+            g.state = 'playing'; g.paused = false;
+            const roster = ['normal', 'fast', 'normal', 'shield', 'normal', 'fast', 'normal', 'normal', 'fast', 'normal', 'shield', 'normal', 'fast', 'normal', 'normal', 'fast'];
+            for (let i = 0; i < 16; i++) {
+                const col = i % 3;
+                const row = Math.floor(i / 3);
+                g.enemies.spawnEnemy(roster[i], (col - 1) * 2.1 + (row % 2 ? 0.3 : -0.3), -10.5 - row * 1.6, 30);
+            }
+            for (let f = 0; f < 26; f++) g._update(1 / 60); // 接敌瞬间(子弹已上膛, 怪群逼近)
+        });
         await shot(page, 'combat-L1-390x844.png', expected);
+                await shot(page, 'combat-L1-390x844.png', expected);
 
         // 第3关尸潮(打到中段截帧)
         await runLevel(page, 1, { maxSec: 400 });
-        const l3 = await runLevel(page, 2, { maxSec: 500, stopAfterSec: 50 });
+        const l3 = await runLevel(page, 2, { maxSec: 500, hordeAlive: 16 });
         console.log('L3 mid-capture state:', JSON.stringify(l3));
         await shot(page, 'horde-L3-390x844.png', expected);
 

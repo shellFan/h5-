@@ -119,6 +119,10 @@
         var results = [];
         for (var li = 0; li < LEVELS.length; li++) {
             for (var si = 0; si < strategies.length; si++) {
+                // V5.1.1: 模拟真实玩家 — 进入关卡前用累积金币购买永久升级(枪械>招募>射速)
+                if (window.__game.profile) {
+                    ['gun', 'recruit', 'rapid'].forEach(function(id) { UpgradeShop.purchase(window.__game.profile, id); });
+                }
                 var r = simulateRun(g, li, strategies[si], 12345 + li * 17 + si * 3);
                 results.push(r);
             }

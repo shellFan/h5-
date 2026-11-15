@@ -68,12 +68,13 @@ class GamePacingController {
         return Math.min(20, 10 + li);
     }
 
-    /** 批次规模: 随关卡推进逐渐提高(1-4只) */
+    /** V5.1.1: 批次规模加大(尸潮成堆涌现, 玩家反馈"怪物太少") */
     _batchSize(wave) {
         var P = CONFIG.PACING;
         if(wave) {
-            var ceiling=Math.min(P.batchSizeMax,Math.max(2,Math.ceil(wave.total/5)));
-            var floor=Math.max(P.batchSizeBase,ceiling-2);
+            // V5.1.1: 整波成墙 — 批次≈波总量/1.5(10-16只), 连续批次间alive持续堆积
+            var ceiling=Math.min(P.batchSizeMax,Math.max(P.batchSizeBase,Math.ceil(wave.total/1.5)));
+            var floor=Math.max(P.batchSizeBase,ceiling-4);
             return floor+Math.floor(Math.random()*(ceiling-floor+1));
         }
         var effMax = Math.min(P.batchSizeMax, 2 + Math.floor((this.levelIndex || 0) / 2));
@@ -121,18 +122,25 @@ class GamePacingController {
                 // Atomic ownership transfer: backpressure never discards a
                 // queued actor; it remains in pending until it really spawns.
                 w.pending=w.queue.splice(0,Math.min(this._batchSize(w),w.queue.length));
-                w.batchTimer = randRange(P.spawnIntervalMin, P.spawnIntervalMax);
+                // V5.1.1: 同波后续批次密接(0.25-0.4s) — 批与批间alive持续堆积成墙
+                w.batchTimer = w.spawned > 0
+                    ? randRange(P.batchGapMin, P.batchGapMax)
+                    : randRange(P.spawnIntervalMin, P.spawnIntervalMax);
             }
+            // V5.1.1(玩家反馈"怪物太少"): 尸潮墙涌出 — 每帧最多3只(待出场>6时)
+            // × streamInterval 0.02 → 峰值180只/秒; 负信用不结转(v42-stream修复保留)。
             var alive = this.aliveCountFn ? this.aliveCountFn() : 0;
-            if(w.pending.length && w.emitTimer<=0 && alive<this._maxAlive()) {
+            var maxEmit = w.pending.length > 6 ? 3 : 1;
+            var emitted = 0;
+            while (w.pending.length && emitted < maxEmit && alive < this._maxAlive()) {
                 var type=w.pending[0],lane=Math.floor(Math.random()*3);
                 var x=CONFIG.LANE_X[lane]+randRange(-.4,.4);
                 var z=squad.z-randRange(11,11+P.spawnDepth);
                 if(this.spawnFn)this.spawnFn(type,x,z,null);
-                w.pending.shift();w.spawned++;
-                // Explicit one-actor-per-frame cap, including catch-up frames.
-                // V5.0修复: 准备期/背压等待期间emitTimer累计负值 — 负信用不得结转,
-                // 否则生成一帧后仍为负导致下一帧瞬发(测试v42-stream"bank catch-up credit")。
+                w.pending.shift();w.spawned++;emitted++;
+                alive++;
+            }
+            if (emitted > 0) {
                 w.emitTimer=dt>.1?P.streamInterval:Math.max(0,w.emitTimer)+P.streamInterval;
             }
             if (w.queue.length === 0 && w.pending.length === 0) {
@@ -175,16 +183,14 @@ class GamePacingController {
         }
     }
 
-    /** V5.1: 当前防线停止锚点(阵地防守模式)
-     *  波次 spawning/clearing → 停在波点前方 defenseStandoff 处列阵迎敌(不再跑过波点深入怪区)
-     *  Boss warning → 预警线前停住
-     *  返回 null 表示行军段(无战斗) */
+    /** V5.1.1(玩家反馈): 军团持续推进模式 — 波次期间不再停驻
+     *  (停驻+怪物朝镜头涌来在视觉上等同"人物向后走/撤退", 用户实测否定)
+     *  现在: 军团始终前进穿越尸潮, 怪群迎面而来, 相向运动产生"推进感"。
+     *  Boss warning 保留停驻(决战前蓄势)。
+     *  返回 null 表示不停(继续推进) */
     frontierStopZ() {
         var w = this.activeWave;
         if (w && w.type === 'boss' && w.state === 'warning') return w.triggerZ - 1;
-        if (w && w.type === 'wave' && (w.state === 'spawning' || w.state === 'clearing')) {
-            return w.z + CONFIG.PACING.defenseStandoff;
-        }
         return null;
     }
 

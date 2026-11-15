@@ -138,10 +138,15 @@ module.exports.run = function(ctx) {
             var p9 = makeCtl(8).p;
             assertEq(p9._maxAlive(), CONFIG.MAX_ALIVE[CONFIG.MAX_ALIVE.length - 1], '越界取末档60');
         });
-        test('V5.1防线锚点: 激活波次后stopZ=波点+defenseStandoff', () => {
+        test('V5.1.1持续推进: 普通波不再停驻(仅Boss预警停)', () => {
             var { p } = makeCtl(0);
             p.update(0.05, { z: -25 }); // 越过triggerZ(-24)激活首波
-            assertEq(p.frontierStopZ(), p.waves[0].z + CONFIG.PACING.defenseStandoff, '防线在波点前方9单位');
+            assertEq(p.frontierStopZ(), null, '波次期间军团持续推进不停驻');
+            var { p: pb } = makeCtl(0);
+            pb.waves[0].state = 'done';
+            pb.waves[1].state = 'done'; // 两段普通波排空后才轮到Boss波(pacing单波准入)
+            pb.update(0.05, { z: -130 }); // 越过Boss triggerZ(-116)进入warning
+            assert(pb.frontierStopZ() !== null, 'Boss预警期停驻蓄势');
         });
         test('批次规模不超过有效上限', () => {
             var { p } = makeCtl(9);

@@ -27,10 +27,17 @@ class Game {
         this.pacing = new GamePacingController(this);
         var self = this;
         this.pacing.spawnFn = function(type, x, z, hp) {
+            // V5.1.1: 普通怪血量随队伍DPS缩放(hordeMul=dps/40, 1~30封顶) —
+            // 强队伍不再瞬间融化尸潮(玩家反馈"怪物太少/看不到一堆"), 弱队伍体验不变。
+            var dpsNow = self.squad.count * self.squad.getDamage() * self.squad.getFireRate();
+            if (type !== 'boss' && !hp) {
+                var refHp = (CONFIG.ZOMBIE[type] || CONFIG.ZOMBIE.normal).hp;
+                var hordeMul = Math.max(1, Math.min(30, dpsNow / 40));
+                hp = Math.max(refHp, Math.round(refHp * hordeMul));
+            }
             // V4.0: Boss血量按出场时队伍战力动态缩放 — 任何策略/养成水平都面临~8-12s Boss战
             if (type === 'boss') {
                 var base = hp || CONFIG.ZOMBIE.boss.hp;
-                var dpsNow = self.squad.count * self.squad.getDamage() * self.squad.getFireRate();
                 hp = Math.round((base + Math.min(dpsNow * 7, base * 3)) / 50) * 50; // V5.0: 8→7s; V5.1: 封顶base*3, 禁止随DPS无限膨胀
             }
             if(type==='boss' && self.enemies.bossStyle==='twinelite') {

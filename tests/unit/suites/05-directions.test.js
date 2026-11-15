@@ -30,24 +30,27 @@ module.exports.run = function(ctx) {
     });
 
     describe('V5.1 防守不后退', () => {
-        test('PACING使用defenseStandoff(无combatAdvance)', () => {
-            assert(CONFIG.PACING.defenseStandoff > 0, 'defenseStandoff配置存在');
+        test('V5.1.1持续推进: 无combatAdvance/无停驻字段(行进中交火)', () => {
             assertEq(CONFIG.PACING.combatAdvance, undefined, '旧combatAdvance已移除');
+            assertEq(CONFIG.PACING.defenseStandoff, undefined, '停驻字段已移除(玩家反馈后退感)');
         });
-        test('防线在波点前方(玩家不深入怪区)', () => {
-            var waveZ = -50;
-            var stopZ = waveZ + CONFIG.PACING.defenseStandoff;
-            assert(stopZ > waveZ, '防线z大于波点z(波点更深入敌区)');
-            assert(Math.abs(stopZ - waveZ) < CONFIG.PACING.waveTriggerAhead, 'standoff小于激活提前量');
+        test('怪群在军团前方涌现且成堆(纵深收紧)', () => {
+            assert(CONFIG.PACING.spawnDepth >= 6 && CONFIG.PACING.spawnDepth <= 8, '纵深6-8: 团块感');
+            assert(CONFIG.PACING.batchSizeBase >= 4, '批量≥4成堆涌现');
+            assert(CONFIG.PACING.streamInterval <= 0.02, '爆发率≥50只/秒');
+            
         });
-        test('MAX_ALIVE尸潮矩阵覆盖五关且递增', () => {
+        test('MAX_ALIVE尸潮矩阵覆盖五关且递增(V5.1.1: 35-90)', () => {
+            assertEq(CONFIG.MAX_ALIVE[0], 35, 'L1=35');
+            assertEq(CONFIG.MAX_ALIVE[4], 90, 'L5=90');
             assertEq(CONFIG.MAX_ALIVE.length, 5, '五关');
             for (var i = 1; i < CONFIG.MAX_ALIVE.length; i++) {
                 assert(CONFIG.MAX_ALIVE[i] > CONFIG.MAX_ALIVE[i - 1], 'L' + (i + 1) + '上限递增');
             }
         });
-        test('spawnDepth > defenseStandoff(怪从防线前方纵深出现)', () => {
-            assert(CONFIG.PACING.spawnDepth > CONFIG.PACING.defenseStandoff, '怪群在防线前方生成');
+        test('怪群生成于军团前方(行进中迎面相遇)', () => {
+            // spawn点=squad.z-11..-(11+spawnDepth): 始终在前进方向前方
+            assert(CONFIG.PACING.spawnDepth >= 6, '迎面涌现纵深');
         });
     });
 };

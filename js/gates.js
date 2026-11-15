@@ -63,6 +63,18 @@ class GateSystem {
         for (let i = this.gates.length - 1; i >= 0; i--) {
             const g = this.gates[i];
 
+            // V5.1.1: 触发溶解动画 — 缩放收缩+玻璃/文字淡出, 完成后移除
+            if (g.triggered && g.dissolveT !== undefined && g.dissolveT < 1) {
+                g.dissolveT = Math.min(1, g.dissolveT + stepDt / 0.45);
+                const t = g.dissolveT;
+                g.model.scale.setScalar(Math.max(0.001, 1 - easeOutCubic(t)));
+                const lbl = g.model.userData.label;
+                if (lbl && lbl.material) lbl.material.opacity = 1 - t;
+                const gls = g.model.userData.glass;
+                if (gls && gls.material) { gls.material.transparent = true; gls.material.opacity = 0.5 * (1 - t); }
+                if (t >= 1) { this._fadeRemove(g, i); continue; }
+            }
+
             // 远处的门: 标签轻微浮动
             if (!g.triggered && g.model.userData.label) {
                 g.model.userData.label.position.y =
@@ -92,6 +104,7 @@ class GateSystem {
             if (!g.triggered && !g.passed && squad.z <= g.z + 0.2 && squad.z >= g.z - 0.8) {
                 if (rows[g.z] && rows[g.z].gate === g) {
                     g.triggered = true;
+                    g.dissolveT = 0; // V5.1.1: 触发即开始溶解消失(玩家反馈: 门获得后要有消失效果)
                     for (const sibling of this.gates) if (sibling !== g && sibling.z === g.z) sibling.passed = true;
                     squad.applyGate(g.data, effects);
                     this._highlight(g, effects);
@@ -99,8 +112,8 @@ class GateSystem {
                 }
             }
 
-            // 已触发且已远离: 淡出移除
-            if ((g.triggered || g.passed) && squad.z < g.z - 6) {
+            // V5.1.1: 同排未选中门(passed)远离后移除; 触发门走溶解动画
+            if (g.passed && !g.triggered && squad.z < g.z - 6) {
                 this._fadeRemove(g, i);
             }
         }
@@ -118,9 +131,11 @@ class GateSystem {
         if (label) {
             label.scale.multiplyScalar(1.04);
         }
-        // 冲击波
+        // 冲击波 + 门色粒子爆发(V5.1.1)
         if (effects) {
             effects.shockwave(g.x, 0.05, g.z, 0x6EE7B7);
+            var gc = g.data && g.data.style === 'mul' ? 0xFFC247 : (g.data && g.data.style === 'buff' ? 0xA78BFA : 0x6EE7B7);
+            effects.burst(g.x, 1.1, g.z, gc, 10, 3, 0.45);
         }
     }
 

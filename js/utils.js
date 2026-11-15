@@ -49,7 +49,7 @@ var BattleKinematics = {
     bulletZ: function(z, speed, dt) {
         return z + CONFIG.DIRS.SHOOT_SIGN * speed * dt;
     },
-    /** 玩家是否已抵达防线锚点(锚点在波点前方 defenseStandoff 处) */
+    /** 纯数学判定: squadZ 是否已到达 anchorZ 前方 standoff 处(保留供Boss战/扩展使用) */
     atDefenseLine: function(squadZ, anchorZ, standoff) {
         return squadZ <= anchorZ + (standoff || 0);
     }

@@ -146,9 +146,12 @@ class Enemy {
         }
 
         if (dist > attackDist) {
-            // V5.1: 怪物向防线追击方向统一走 BattleKinematics(ENEMY_ADVANCE_SIGN=+Z); 冻结减速70%
-            const spd = this.cfg.speed * (this.speedMul || 1) * (frozen ? 0.3 : 1);
-            this.z = BattleKinematics.enemyApproachZ(this.z, Math.abs(Math.sign(dz)) * spd, dt);
+            // V5.1.1修复: 前方怪(+Z)向防线追击; 落后于军团的怪(-Z)以2.5倍冲刺归队
+            // (旧Math.abs(sign)写反了落后怪方向 → 怪永远追不上 → 波次永不完成关卡卡死)
+            const behind = dz < -1;
+            const spd = this.cfg.speed * (this.speedMul || 1) * (frozen ? 0.3 : 1) * (behind ? 2.5 : 1);
+            if (behind) this.z -= spd * dt;
+            else this.z = BattleKinematics.enemyApproachZ(this.z, spd, dt);
             const dx = squad.x - this.x;
             this.x += clamp(dx, -1, 1) * spd * 0.4 * dt;
         } else {
