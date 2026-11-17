@@ -123,6 +123,10 @@ var SignInSystem = {
         if (!d.signin) d.signin = { lastDate: '', streak: 0, totalDays: 0 };
         return d.signin;
     },
+    today: function() {
+        var d = new Date();
+        return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+    },
     /** 今日是否可签(上次签到不是今天) */
     canSign: function(profile) {
         var si = this.ensure(profile);

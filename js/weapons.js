@@ -106,7 +106,10 @@ var WeaponSystem = {
             var e = evoDef.effect;
             for (var k in e) base[k] = e[k];
             base.evolvedName = evoDef.name;
+            base.evolvedId = evo;
         }
+        base.weaponId = id;
+        base.weaponLevel = lv;
         return base;
     },
 
