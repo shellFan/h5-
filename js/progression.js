@@ -39,7 +39,27 @@ var ACHIEVEMENT_DEFS = [
     { id: 'wins_10',      name: '常胜将军',   icon: '🎉', desc: '累计通关10次',      reward: 140 },
     { id: 'upgrades_10',  name: '军火大亨',   icon: '🏭', desc: '永久升级总等级达10', reward: 160 },
     { id: 'rich_2000',    name: '战地富豪',   icon: '💰', desc: '同时持有2000金币',   reward: 120 },
-    { id: 'player_10',    name: '身经百战',   icon: '📈', desc: '玩家等级达到10级',   reward: 200 }
+    { id: 'player_10',    name: '身经百战',   icon: '📈', desc: '玩家等级达到10级',   reward: 200 },
+    { id: 'player_20',    name: '战场老兵',   icon: '🎖️', desc: '玩家等级达到20级',   reward: 400 },
+    { id: 'clear_l7',     name: '巢穴猎人',   icon: '🕳️', desc: '通过第7关地下巢穴',   reward: 350 },
+    { id: 'clear_l8',     name: '机械终结',   icon: '🤖', desc: '通过第8关机械废土',   reward: 400 },
+    { id: 'clear_l9',     name: '防线突破',   icon: '🏰', desc: '通过第9关最终防线',   reward: 450 },
+    { id: 'clear_l10',    name: '末日降临',   icon: '🌍', desc: '通过第10关终极末日',   reward: 600 },
+    { id: 'perfect_l5',   name: '防线守护',   icon: '🌟', desc: '第5关获得三星',      reward: 250 },
+    { id: 'perfect_l2',   name: '街区清理',   icon: '⭐', desc: '第2关获得三星',      reward: 100 },
+    { id: 'perfect_l3',   name: '实验突破',   icon: '⭐', desc: '第3关获得三星',      reward: 120 },
+    { id: 'perfect_l4',   name: '工业毁灭',   icon: '⭐', desc: '第4关获得三星',      reward: 140 },
+    { id: 'boss_10',      name: '屠君者',     icon: '🔪', desc: '累计击败10个Boss',   reward: 350 },
+    { id: 'boss_20',      name: 'Boss终结者', icon: '💀', desc: '累计击败20个Boss',   reward: 500 },
+    { id: 'elite_50',     name: '精英猎手',   icon: '🎯', desc: '累计击杀50个精英',   reward: 200 },
+    { id: 'elite_100',    name: '精英屠戮',   icon: '⚔️', desc: '累计击杀100个精英',  reward: 350 },
+    { id: 'kills_10000',  name: '僵尸末日',   icon: '💀', desc: '累计击杀10000只僵尸', reward: 500 },
+    { id: 'wins_25',      name: '胜利之师',   icon: '🎊', desc: '累计通关25次',      reward: 280 },
+    { id: 'rich_5000',    name: '战争财阀',   icon: '💎', desc: '同时持有5000金币',   reward: 200 },
+    { id: 'weapon_evo',   name: '武器大师',   icon: '🔧', desc: '进化一把武器',      reward: 200 },
+    { id: 'tech_5',       name: '科学家',     icon: '🔬', desc: '科技树升级5次',     reward: 180 },
+    { id: 'upgrades_20',  name: '军备竞赛',   icon: '🏭', desc: '永久升级总等级达20', reward: 300 },
+    { id: 'sign_7',       name: '七日忠诚',   icon: '📅', desc: '连续签到7天',      reward: 250 }
 ];
 
 var Progression = {
@@ -115,7 +135,27 @@ var Progression = {
             wins_10: (d.totalWins || 0) >= 10,
             upgrades_10: upgradeTotal >= 10,
             rich_2000: (d.coins || 0) >= 2000,
-            player_10: pl >= 10
+            player_10: pl >= 10,
+            player_20: pl >= 20,
+            clear_l7: (d.unlockedLevel || 1) >= 8,
+            clear_l8: (d.unlockedLevel || 1) >= 9,
+            clear_l9: (d.unlockedLevel || 1) >= 10,
+            clear_l10: !!d.achievements_meta && d.achievements_meta.clear_l10,
+            perfect_l5: (d.stars && d.stars.L5) === 3,
+            perfect_l2: (d.stars && d.stars.L2) === 3,
+            perfect_l3: (d.stars && d.stars.L3) === 3,
+            perfect_l4: (d.stars && d.stars.L4) === 3,
+            boss_10: (d.stats && d.stats.bossKills || 0) >= 10,
+            boss_20: (d.stats && d.stats.bossKills || 0) >= 20,
+            elite_50: (d.stats && d.stats.eliteKills || 0) >= 50,
+            elite_100: (d.stats && d.stats.eliteKills || 0) >= 100,
+            kills_10000: (d.totalKills || 0) >= 10000,
+            wins_25: (d.totalWins || 0) >= 25,
+            rich_5000: (d.coins || 0) >= 5000,
+            weapon_evo: !!(d.weaponEvolved),
+            tech_5: (function() { var t = d.tech || {}; var total = 0; for (var k in t) total += t[k]; return total >= 5; })(),
+            upgrades_20: (function() { var t = d.upgrades || {}; var total = 0; for (var k in t) total += t[k]; return total >= 20; })(),
+            sign_7: (d.signin && d.signin.streak || 0) >= 7
         };
         var newly = [];
         for (var i = 0; i < ACHIEVEMENT_DEFS.length; i++) {
