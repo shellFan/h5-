@@ -7,7 +7,7 @@
 
 var ECONOMY_RULES = {
     PROFILE_KEY: 'profile_v51',
-    PROFILE_VERSION: 2,
+    PROFILE_VERSION: 3,
     KILL_COIN_RATE: 0.8,          // V5.1.5: 每击杀 0.8 金币(超级尸潮下升级资金需求提升)
     KILL_COIN_WIN_CAP_RATIO: 0.5, // V5.1.5: 胜利局击杀币上限 = 关卡奖励×50%
     KILL_COIN_LOSE_CAP: 70,       // V5.1.5: 失败保底=胜利上限(超级尸潮下防软锁; 赢仍2倍+首通奖励优于刷)
@@ -29,11 +29,10 @@ class GameProfile {
         var raw = null;
         try { raw = this._storage.get(ECONOMY_RULES.PROFILE_KEY, null); } catch (e) {}
         if (raw && typeof raw === 'object') {
-            // V6.0: v2 迁移 — 星级/经验/成就/统计, 旧字段一律保留
-            if ((raw.profileVersion || 0) >= 2) return this._normalize(raw);
-            if ((raw.profileVersion || 0) === 1 && typeof Progression !== 'undefined') {
-                return this._normalize(Progression.migrate(raw));
-            }
+            // V8.0: 分版本迁移链 — v1→v2(星级/成就)→v3(武器/科技/签到)
+            if ((raw.profileVersion || 0) >= 3) return this._normalize(raw);
+            if (typeof Progression !== 'undefined') raw = Progression.migrate(raw);
+            return this._normalize(raw);
         }
         // 首次建档: 迁移旧版解锁进度(旧键在原始存储层, 无前缀)
         var legacyUnlocked = 1;
@@ -77,7 +76,14 @@ class GameProfile {
             playerLevel: Math.max(1, Math.floor(d.playerLevel || 1)),
             achievements: d.achievements || {},
             achievements_meta: d.achievements_meta || {},
-            stats: d.stats || { bossKills: 0, eliteKills: 0, playTime: 0 }
+            stats: d.stats || { bossKills: 0, eliteKills: 0, playTime: 0 },
+            // V8.0: 武器/科技/签到
+            weapon: d.weapon || 'rifle',
+            weaponLevel: Math.max(0, Math.floor(d.weaponLevel || 0)),
+            weaponEvolved: d.weaponEvolved || null,
+            tech: d.tech || {},
+            techPoints: Math.max(0, Math.floor(d.techPoints || 0)),
+            signin: d.signin || { lastDate: '', streak: 0, totalDays: 0 }
         };
     }
 

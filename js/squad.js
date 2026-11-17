@@ -257,6 +257,8 @@ class Squad {
         this.targetX = MovementMath.clampCenter(this.targetX, bound);
         this.x = MovementMath.clampCenter(
             damp(this.x, this.targetX, MovementMath.followLambda(), dt), bound);
+        // V8.0: game 引用(武器/科技读取)
+        if (this._gameRef === undefined && typeof window !== 'undefined' && window.__game) this._gameRef = window.__game;
         // V6.0: 背水阈值 + 护盾冷却
         this._halfCount = Math.floor(CONFIG.SQUAD_MAX_COUNT / 2);
         if (this._shieldCd > 0) this._shieldCd -= dt;
@@ -323,6 +325,9 @@ class Squad {
     /** 获取射速(永久快速射击升级 + 门buff) V5.1: 全局上限3.0 */
     getFireRate() {
         var mul = this.profile && typeof UpgradeShop !== 'undefined' ? UpgradeShop.fireRateMul(this.profile) : 1;
+        // V8.0: 武器+科技射速(从 game 引用)
+        if (this._gameRef && this._gameRef._weaponStats && this._gameRef._weaponStats.rateMul) mul *= this._gameRef._weaponStats.rateMul;
+        if (this._gameRef && this._gameRef._techStats && this._gameRef._techStats.rateBonus) mul *= (1 + this._gameRef._techStats.rateBonus);
         // V6.0: 无人机技能 — 每层+15%射速
         if (this._skillDrones) mul *= 1 + 0.15 * this._skillDrones;
         return Math.min(3.0, CONFIG.BULLET_FIRE_RATE_BASE * mul * (1 + this.fireRateBuff));
