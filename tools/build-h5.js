@@ -24,6 +24,7 @@ const COPY_LIST = [
     'js/energy-core.js',
     'js/ui-v60.js',
     'js/skills.js',
+    'js/affixes.js',
     'js/progression.js',
     'js/upgrades.js',
     'js/utils.js',

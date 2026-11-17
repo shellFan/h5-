@@ -256,8 +256,13 @@ class EnemyManager {
     /** V4.0: 统一出生入口(供节奏控制器/分裂/E2E注入调用) */
     spawnEnemy(type, x, z, hp, style) {
         const e = new Enemy(type, x, z, this.scene, hp || null, style || (type==='boss' ? this.bossStyle : null));
+        // V6.0: 精英词缀
+        if (type === 'elite' && typeof AffixSystem !== 'undefined') {
+            AffixSystem.roll(e, this._levelIndex || 0);
+            if (e.affixNames) e.model.userData.affixTag = e.affixNames;
+        }
         this.enemies.push(e);
-        if (type === 'boss') this.boss = e;
+        if (type === 'boss') { this.boss = e; this.bossKills = this.bossKills || 0; }
         return e;
     }
 
@@ -310,6 +315,7 @@ class EnemyManager {
         // 更新僵尸
         for (let i = this.enemies.length - 1; i >= 0; i--) {
             const e = this.enemies[i];
+            if (typeof AffixSystem !== 'undefined') AffixSystem.update(e, dt, squad, this, this.effects);
             e.update(dt, time, squad, this, this.effects);
             // 刚死亡: 触发分裂/Boss爆炸(仅一次)
             if (!e.alive && !e.deathHandled) {
@@ -322,6 +328,8 @@ class EnemyManager {
                     this.splitQueue.push({ x: e.x, z: e.z, delay: 0.2 });
                     this.splitQueue.push({ x: e.x, z: e.z, delay: 0.35 });
                 }
+                // V6.0: 分裂词缀
+                if (e.affixes && typeof AffixSystem !== 'undefined') AffixSystem.onDeath(e, this);
                 if (e === this.boss) {
                     this.bossKills = (this.bossKills || 0) + 1;
                     this.boss = this.enemies.find(other=>other!==e && other.isBoss && other.alive) || null;
