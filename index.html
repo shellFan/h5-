@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="style-v42.css">
     <link rel="stylesheet" href="style-v51.css">
+    <link rel="stylesheet" href="style-v60.css">
 </head>
 <body>
     <div id="game-container">
@@ -128,6 +129,7 @@
                     <div class="win-stat"><span class="ws-label">最大连杀</span><span class="ws-val" id="win-combo">0</span></div>
                     <div class="win-stat"><span class="ws-label">通关时间</span><span class="ws-val" id="win-time">0s</span></div>
                 </div>
+                <div id="win-stars" class="v60-win-stars hidden"></div>
                 <div id="win-coins" class="hidden">
                     <div class="wc-row"><span>关卡奖励</span><b id="wc-level">+0</b></div>
                     <div class="wc-row"><span>击杀奖励</span><b id="wc-kills">+0</b></div>
@@ -165,6 +167,7 @@
                 </div>
                 <div id="lose-coins" class="hidden">
                     <div class="wc-row"><span>击杀金币(保留)</span><b id="lc-kills-coin">+0</b></div>
+                    <div class="wc-row"><span>获得经验</span><b id="lc-xp">+0</b></div>
                 </div>
                 <button id="btn-restart-lose" class="btn-primary">重新挑战</button>
                 <button id="btn-revive" class="btn-ad">📺 观看广告复活</button>
@@ -208,6 +211,7 @@
     <script src="js/economy.js?v=51"></script>
     <script src="js/energy-core.js?v=60"></script>
     <script src="js/progression.js?v=60"></script>
+    <script src="js/ui-v60.js?v=60"></script>
     <script src="js/upgrades.js?v=51"></script>
     <script src="js/movement.js"></script>
     <script src="js/vendor/GLTFLoader.js"></script>

@@ -113,6 +113,7 @@ class Game {
         this._setupUI();
         this._setupDebugPanel(); // V3.7: ?debug=1 显示运行时美术/性能面板
         V42Art.installUI(this);
+        if (typeof V60UI !== 'undefined') V60UI.install(this);
 
         this._loop = this._loop.bind(this);
         requestAnimationFrame(this._loop);
@@ -413,7 +414,8 @@ class Game {
         this.gates.clear();
         this.enemies.clear();
         this.pacing.clear();
-        this._showBossWarning(false);
+        var ws = document.getElementById('win-stars'); if (ws) ws.classList.add('hidden');
+            this._showBossWarning(false);
         this.combat.clear();
         this.effects.clear();
         // V3.3: 刷新关卡选择解锁状态
@@ -497,6 +499,8 @@ class Game {
         var loseBox = document.getElementById('lose-coins');
         if (loseBox && st && this.state === 'lost') {
             document.getElementById('lc-kills-coin').textContent = '+' + st.killReward;
+            var xpEl = document.getElementById('lc-xp');
+            if (xpEl) xpEl.textContent = '+' + this.enemies.killCount;
             loseBox.classList.remove('hidden');
         }
         this._refreshCoinDisplays();
@@ -1181,6 +1185,12 @@ class Game {
             this.profile.data.playerLevel = Progression ? Progression.levelFromXp(this.profile.data.xp).level : this.profile.data.playerLevel;
             this.profile.save();
             this._newAchievements = typeof Progression !== 'undefined' ? Progression.checkAchievements(this.profile) : [];
+        }
+        if (this.ui && this.ui.winStars !== undefined) {}
+        var starsEl = document.getElementById('win-stars');
+        if (starsEl && this._stars !== undefined) {
+            starsEl.innerHTML = '★'.repeat(this._stars) + '☆'.repeat(3 - this._stars);
+            starsEl.classList.remove('hidden');
         }
         this._fillSettlementUI();
         if (this.ui.hud) this.ui.hud.classList.add('hidden');
