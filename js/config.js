@@ -194,9 +194,9 @@ const LEVELS = [
             ]},
             { type: 'wave', z: -20, enemies: [ { type: 'fast', count: 60 }, { type: 'normal', count: 48 } ] },
             { type: 'gates', z: -34, gates: [
-                { lane: 0, op: 'addpct', value: 20, label: '人数+20%' },
-                { lane: 1, op: 'add', value: 12, label: '+12' },
-                { lane: 2, op: 'buff', value: 'crit', label: '暴击+5%' }
+                { lane: 0, op: 'skill', value: 'roll' },
+                { lane: 1, op: 'skill', value: 'roll' },
+                { lane: 2, op: 'skill', value: 'roll' }
             ]},
             { type: 'wave', z: -46, enemies: [ { type: 'fast', count: 84 }, { type: 'normal', count: 48 } ] },
             { type: 'gates', z: -60, gates: [
@@ -256,11 +256,7 @@ const LEVELS = [
                 { lane: 2, op: 'mul', value: 2, label: '\u00d72' }
             ]},
             { type: 'wave', z: -50, enemies: [ { type: 'split', count: 93 }, { type: 'shield', count: 36 }, { type: 'fast', count: 51 } ] },
-            { type: 'gates', z: -64, gates: [
-                { lane: 0, op: 'buff', value: 'explosive', label: '爆炸弹' },
-                { lane: 1, op: 'mul', value: 2, label: '×2' },
-                { lane: 2, op: 'buff', value: 'firerate', label: '射速+10%' }
-            ]},
+            { type: 'gates', z: -64, gates: [ { lane: 0, op: 'skill', value: 'roll' }, { lane: 1, op: 'skill', value: 'roll' }, { lane: 2, op: 'skill', value: 'roll' } ] },
             { type: 'wave', z: -78, enemies: [ { type: 'split', count: 66 }, { type: 'spitter', count: 51 }, { type: 'normal', count: 66 } ] },
             { type: 'wave', z: -94, enemies: [ { type: 'split', count: 93 }, { type: 'fast', count: 78 }, { type: 'shield', count: 27 } ] },
             { type: 'wave', z: -108, enemies: [ { type: 'split', count: 51 }, { type: 'spitter', count: 36 } ] }
@@ -324,9 +320,9 @@ const LEVELS = [
             { type: 'wave', z: -56, enemies: [ { type: 'elite', count: 6 }, { type: 'shield', count: 45 }, { type: 'normal', count: 60 } ] },
             { type: 'energy', z: -72, core: { hp: 900, buffRadius: 9 } },
             { type: 'gates', z: -86, gates: [
-                { lane: 0, op: 'buff', value: 'freeze', label: '冰冻弹' },
-                { lane: 1, op: 'mul', value: 2, label: '×2' },
-                { lane: 2, op: 'buff', value: 'explosive', label: '爆炸弹' }
+                { lane: 0, op: 'skill', value: 'roll' },
+                { lane: 1, op: 'skill', value: 'roll' },
+                { lane: 2, op: 'skill', value: 'roll' }
             ]},
             { type: 'wave', z: -102, enemies: [ { type: 'elite', count: 8 }, { type: 'spitter', count: 40 }, { type: 'split', count: 45 }, { type: 'fast', count: 45 } ] },
             { type: 'gates', z: -118, gates: [

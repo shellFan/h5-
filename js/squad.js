@@ -115,6 +115,13 @@ class Squad {
     /** 僵尸击杀士兵 (V3.3: 复活无敌期间免疫) */
     killSoldiers(n, effects) {
         if (this.invulnT > 0) return; // 复活无敌
+        // V6.0: 能量护盾技能 — 挡致命伤害, 冷却恢复
+        if (this._skillShieldMax && this._skillShield > 0 && n >= this.count && this._shieldCd <= 0) {
+            this._skillShield--;
+            this._shieldCd = 6;
+            if (effects) effects.floatText(this.x, 2.2, this.z, '护盾格挡!', '#4DA8FF', true);
+            return;
+        }
         const before = this.count;
         var removed = Math.min(before, Math.max(0, Math.floor(n)));
         var removedStart = before - removed;
@@ -152,6 +159,10 @@ class Squad {
             // V5.1: 百分比人数门(+20%/+50%), 至少+1
             added = Math.max(1, Math.floor(this.count * gate.value / 100));
             this.setCount(this.count + added);
+        } else if (gate.op === 'skill') {
+            // V6.0: 肉鸽技能门 — 技能升层, 立即生效
+            if (typeof Skills !== 'undefined') Skills.apply(this, gate.value);
+            added = 0;
         } else if (gate.op === 'nuke') {
             // V5.1: 史诗门 全屏爆炸 — 由 Game 在下帧对所有场上怪结算(this.nukePending)
             this.nukePending = true;
@@ -246,6 +257,10 @@ class Squad {
         this.targetX = MovementMath.clampCenter(this.targetX, bound);
         this.x = MovementMath.clampCenter(
             damp(this.x, this.targetX, MovementMath.followLambda(), dt), bound);
+        // V6.0: 背水阈值 + 护盾冷却
+        this._halfCount = Math.floor(CONFIG.SQUAD_MAX_COUNT / 2);
+        if (this._shieldCd > 0) this._shieldCd -= dt;
+        if (this._skillShieldMax && this._shieldCd <= 0 && this._skillShield < this._skillShieldMax) this._skillShield = this._skillShieldMax;
         // V3.2: 换道倾斜(速度感) + 跑动前倾
         const tilt = clamp((this.x - this.targetX) * 0.28, -0.28, 0.28);
         // V5.1: 防守阵地时完全站立(无残余前倾漂移感)
@@ -308,6 +323,8 @@ class Squad {
     /** 获取射速(永久快速射击升级 + 门buff) V5.1: 全局上限3.0 */
     getFireRate() {
         var mul = this.profile && typeof UpgradeShop !== 'undefined' ? UpgradeShop.fireRateMul(this.profile) : 1;
+        // V6.0: 无人机技能 — 每层+15%射速
+        if (this._skillDrones) mul *= 1 + 0.15 * this._skillDrones;
         return Math.min(3.0, CONFIG.BULLET_FIRE_RATE_BASE * mul * (1 + this.fireRateBuff));
     }
 
@@ -333,6 +350,9 @@ class Squad {
         this.explosive = 0;
         this.chain = 0;
         this.nukePending = false;
+        this._skillRage = 0; this._skillDrones = 0; this._skillVenom = 0;
+        this._skillShieldMax = 0; this._skillShield = 0; this._shieldCd = 0;
+        this._skillMagnet = 0; this._skillBerserk = 0; this._skills = null;
         this.alive = true;
         this.soldiers = [];
         this.count = 0; // 必须重置count, 否则setCount认为人数未变不补充士兵

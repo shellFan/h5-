@@ -857,9 +857,8 @@ class Game {
             this.gates.loadFromLevel(level);
             this.enemies.loadFromLevel(level, this.levelIndex);
             this.enemies.bossStyle=level.bossStyle;
-            // V4.0: 波次计划移交节奏控制器(分批生成)
-            this.pacing.loadFromLevel(level, this.levelIndex, this.levelIndex < 5); // V6.0: L6手授终稿数量不吃boost
-            this.gates.syncVisibility(this.pacing, 0);
+            this.gates.resolveSkillGates(this.squad); // V6.0: 技能门roll(需squad._skills已重置)
+            this.gates.syncVisibility(this.pacing, 0, this.squad.z);
             this._showBossWarning(false);
             this.combat.clear();
             this.effects.clear();
@@ -986,7 +985,7 @@ class Game {
             this.world.shake(0.5);
             this.effects.floatText(this.squad.x, 2.4, this.squad.z, '全屏爆炸!', '#FFC247', true);
         }
-        this.gates.syncVisibility(this.pacing, this.enemies.encounterOutstanding);
+        this.gates.syncVisibility(this.pacing, this.enemies.encounterOutstanding, this.squad.z);
         this.gates.update(this.squad, this.effects, this.time, dt);
         // V4.0: 节奏控制器驱动分批刷怪/Boss预警
         this.pacing.update(dt, this.squad);
@@ -1171,7 +1170,7 @@ class Game {
         this.squad.setAnimationState('Victory');
         // V5.1: 金币结算(幂等入账) + 档案统计
         this._doubleApplied = false;
-        this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, true, false) : null;
+        this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, true, false, this.squad._skillMagnet || 0) : null;
         if (this.profile) {
             this._newUnlocked = this.profile.recordRun(this.levelIndex, this.enemies.killCount, this.maxCount, true, LEVELS.length);
             // V6.0: 星级/经验/成就/统计
@@ -1220,7 +1219,7 @@ class Game {
         this.lastLoseReason = reason; // V5.0: 供平衡模拟分析失败原因
         this._sfx('lose'); // V5.0
         // V5.1: 失败只给少量击杀金币(防故意失败刷钱)
-        this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, false, false) : null;
+        this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, false, false, this.squad._skillMagnet || 0) : null;
         if (this.profile) {
             this.profile.recordRun(this.levelIndex, this.enemies.killCount, this.maxCount, false, LEVELS.length);
             this.profile.data.xp = (this.profile.data.xp || 0) + this.enemies.killCount * (typeof XP_RULES !== 'undefined' ? XP_RULES.perKill : 1);

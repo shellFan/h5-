@@ -124,6 +124,12 @@ class CombatSystem {
                     var target = enemyManager.getNearest(positions[k].x, positions[k].z, CONFIG.BULLET_RANGE);
                     // V3.3: 暴击判定(开火时掷骰, 伤害×2)
                     var dmgFinal = dmg;
+                    // V6.0: 狂暴技能伤害乘区
+                    if (squad._skillRage) dmgFinal = Math.round(dmgFinal * (1 + 0.35 * squad._skillRage));
+                    // V6.0: 背水一战 — 人数低于一半时增伤
+                    if (squad._skillBerserk && squad.count > 0 && squad._halfCount && squad.count <= squad._halfCount) {
+                        dmgFinal = Math.round(dmgFinal * (1 + 0.5 * squad._skillBerserk));
+                    }
                     var isCrit = Math.random() < squad.critChance;
                     if (isCrit) dmgFinal = dmg * 2;
                     this._fire(positions[k], dmgFinal, target, isCrit);
@@ -239,6 +245,22 @@ class CombatSystem {
                 b.mesh.visible = false;
                 this.pool.push(b.mesh);
                 this.bullets.splice(i, 1);
+            }
+        }
+
+        // V6.0: 毒液DoT结算(每帧)
+        if (enemyManager && enemyManager.enemies) {
+            for (var vi = enemyManager.enemies.length - 1; vi >= 0; vi--) {
+                var ve = enemyManager.enemies[vi];
+                if (!ve.alive || !ve._venomT) continue;
+                ve._venomT -= dt;
+                ve._venomTick = (ve._venomTick || 0) - dt;
+                if (ve._venomTick <= 0) {
+                    ve._venomTick = 0.5;
+                    ve.takeDamage(Math.max(1, Math.round(ve._venomDps * 0.5)), this.effects, ve.x, false);
+                    if (this.effects) this.effects.burst(ve.x, 1, ve.z, 0x66DD44, 2, 1.5, 0.25);
+                }
+                if (ve._venomT <= 0) { ve._venomT = 0; ve._venomStacks = 0; }
             }
         }
     }

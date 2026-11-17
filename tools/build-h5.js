@@ -22,6 +22,7 @@ const COPY_LIST = [
     'js/config.js',
     'js/economy.js',
     'js/energy-core.js',
+    'js/skills.js',
     'js/progression.js',
     'js/upgrades.js',
     'js/utils.js',

@@ -25,6 +25,7 @@ const GAME_SCRIPTS = [
     'js/utils.js',
     'js/economy.js',
     'js/energy-core.js',
+    'js/skills.js',
     'js/progression.js',
     'js/upgrades.js',
     'js/movement.js',

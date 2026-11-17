@@ -53,13 +53,20 @@ class GateSystem {
     }
 
     syncVisibility(pacing, outstanding) {
+        // V5.1.5: next = 队伍前方最近的未选行(考虑队伍已越过的行)
         var nextZ = null;
+        var squadZ = arguments[2] !== undefined ? arguments[2] : pacing ? (pacing.game ? pacing.game.squad.z : 0) : 0;
         for (const g of this.gates) {
             if (this.isRowChosen(g.z)) continue;
-            if (nextZ === null || g.z > nextZ) nextZ = g.z;
+            if (nextZ === null || (g.z <= squadZ + 2 && g.z > nextZ)) nextZ = g.z;
         }
         var available = outstanding === 0 && nextZ !== null && pacing.canChooseGate(nextZ);
         for (const g of this.gates) {
+            // V6.0: 技能门始终可见(不走 exclusive next 选中逻辑)
+            if (g.data && g.data.op === 'skill') {
+                g.model.visible = !g.passed;
+                continue;
+            }
             g.model.visible = g.triggered || (available && g.z === nextZ && !g.passed);
         }
     }
@@ -178,6 +185,32 @@ class GateSystem {
         for (const g of this.gates) {
             if (!g.triggered) {
                 g.model.visible = false;
+            }
+        }
+    }
+
+    /** V6.0: 解析技能门 — 每排3个不同技能, 重建门模型 */
+    resolveSkillGates(squad) {
+        if (typeof Skills === 'undefined') return;
+        var rebuilt = [];
+        for (var i = 0; i < this.gates.length; i++) {
+            var g = this.gates[i];
+            if (!g.data || g.data.op !== 'skill' || g.data.value !== 'roll') continue;
+            if (rebuilt.indexOf(g.z) >= 0) continue;
+            rebuilt.push(g.z);
+            var ids = Skills.rollChoices(squad) || ['rage', 'drone', 'venom'];
+            var members = this.gates.filter(function(x) { return x.z === g.z && x.data && x.data.op === 'skill'; });
+            for (var m = 0; m < members.length && m < ids.length; m++) {
+                var id = ids[m];
+                var def = SKILL_DEFS[id];
+                var lv = squad._skills ? (squad._skills[id] || 0) : 0;
+                members[m].data.value = id;
+                members[m].data.label = def.icon + ' ' + def.name + (lv > 0 ? ' Lv' + (lv + 1) : '');
+                this.scene.remove(members[m].model);
+                members[m].model = V42Art.createGateModel(members[m].data, CONFIG.LANE_WIDTH * 0.9);
+                this.scene.add(members[m].model);
+                members[m].triggered = false;
+                members[m].passed = false;
             }
         }
     }

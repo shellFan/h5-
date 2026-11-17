@@ -148,6 +148,8 @@ function settleRunEconomy(profile, level, levelIndex, kills, won, useDoubleAd) {
         ? Math.round(reward * ECONOMY_RULES.KILL_COIN_WIN_CAP_RATIO)
         : ECONOMY_RULES.KILL_COIN_LOSE_CAP;
     var killReward = Math.min(cap, Math.floor(kills * ECONOMY_RULES.KILL_COIN_RATE));
+    // V6.0: 磁力吸附技能 — 击杀币加成(settleRunEconomy 外部注入 squad._skillMagnet)
+    if (typeof arguments !== 'undefined' && arguments[6]) killReward = Math.min(cap * 2, Math.floor(killReward * (1 + 0.5 * arguments[6])));
     var base = levelReward + killReward;
     var total = base;
     if (won && useDoubleAd && levelReward > 0) {
