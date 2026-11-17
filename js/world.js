@@ -545,6 +545,38 @@ class World {
         this.sunLight.target.updateMatrixWorld();
     }
 
+    /** V6.0: 关卡主题 — 末日核心等场景换装(天空/雾/灯光), 'default'还原 */
+    applyTheme(themeName) {
+        var T = themeName === 'apocalypse' ? CONFIG.APOCALYPSE_THEME : null;
+        if (!T) {
+            this.scene.background = new THREE.Color(CONFIG.COLORS.sky);
+            this.scene.fog = new THREE.Fog(CONFIG.COLORS.fog, 45, 130);
+            this.sunLight.color.setHex(0xFFF4E0);
+            this.sunLight.intensity = 0.72;
+            this._themeApplied = 'default';
+            return;
+        }
+        this.scene.background = new THREE.Color(T.sky);
+        this.scene.fog = new THREE.Fog(T.fog, T.fogNear, T.fogFar);
+        this.sunLight.color.setHex(T.sunColor);
+        this.sunLight.intensity = T.sunIntensity;
+        // 环境实例材质染色(草地/路面/建筑向末日色过渡)
+        if (this._v42Environment && this._v42Environment.root) {
+            var mix = { done: false };
+            this._v42Environment.root.traverse(function(o) {
+                if (o.isInstancedMesh && o.material && o.material.color) {
+                    if (o.material.__themeBaseHex === undefined) o.material.__themeBaseHex = o.material.color.getHex();
+                    var base = new THREE.Color(o.material.__themeBaseHex);
+                    var target = new THREE.Color(T.grass).lerp(base, 0.35);
+                    o.material.color.copy(base.lerp(target, 0.55));
+                    o.material.needsUpdate = true;
+                }
+            });
+            mix.done = true;
+        }
+        this._themeApplied = themeName;
+    }
+
     /** V4.0: 触发屏幕震动(amp≈世界单位幅度) */
     shake(amp, duration) {
         var strength = amp || 0.3;

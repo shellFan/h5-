@@ -24,6 +24,8 @@ const GAME_SCRIPTS = [
     'js/config.js',
     'js/utils.js',
     'js/economy.js',
+    'js/energy-core.js',
+    'js/progression.js',
     'js/upgrades.js',
     'js/movement.js',
     'js/vendor/GLTFLoader.js',

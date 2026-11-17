@@ -352,6 +352,22 @@ class Game {
         }
     }
 
+    /** V6.0: 能源核心生成与清理 */
+    _setupEnergyCore(level) {
+        if (this.energyCore) { this.energyCore.destroy(this.world.scene); this.energyCore = null; }
+        var seg = null;
+        for (var i = 0; i < level.segments.length; i++) {
+            if (level.segments[i].type === 'energy') { seg = level.segments[i]; break; }
+        }
+        if (!seg || typeof EnergyCore === 'undefined') return;
+        this.energyCore = new EnergyCore(this.world.scene, 0, seg.z, seg.core || {}, this);
+    }
+
+    /** V6.0: 能源核心击破回调 */
+    onCoreDestroyed() {
+        if (this.effects) this.effects.floatText(this.squad.x, 2.4, this.squad.z, '僵尸失去强化!', '#66FFB3', true);
+    }
+
     /** V5.0: 统一音效入口(自动初始化 + 平台/静音守卫) */
     _sfx(type) {
         if (typeof Platform === 'undefined' || !Platform.audio) return;
@@ -831,11 +847,14 @@ class Game {
             if (this.shop && this.profile) {
                 this.squad.pierce = Math.min(3, this.shop.pierceBonus(this.profile));
             }
+            // V6.0: 关卡主题(末日核心等) + 能源核心生成
+            if (this.world.applyTheme) this.world.applyTheme(level.theme);
+            this._setupEnergyCore(level);
             this.gates.loadFromLevel(level);
             this.enemies.loadFromLevel(level, this.levelIndex);
             this.enemies.bossStyle=level.bossStyle;
             // V4.0: 波次计划移交节奏控制器(分批生成)
-            this.pacing.loadFromLevel(level, this.levelIndex, true);
+            this.pacing.loadFromLevel(level, this.levelIndex, this.levelIndex < 5); // V6.0: L6手授终稿数量不吃boost
             this.gates.syncVisibility(this.pacing, 0);
             this._showBossWarning(false);
             this.combat.clear();
@@ -968,7 +987,8 @@ class Game {
         // V4.0: 节奏控制器驱动分批刷怪/Boss预警
         this.pacing.update(dt, this.squad);
         this.enemies.update(dt, this.time, this.squad);
-        this.combat.update(dt, this.squad, this.enemies);
+        if (this.energyCore) this.energyCore.update(dt, this.time, this.squad, this.enemies.enemies, this.effects);
+        this.combat.update(dt, this.squad, this.enemies, this.energyCore);
         this.combat._syncInstances();
         this.effects.update(dt);
 
@@ -1150,6 +1170,17 @@ class Game {
         this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, true, false) : null;
         if (this.profile) {
             this._newUnlocked = this.profile.recordRun(this.levelIndex, this.enemies.killCount, this.maxCount, true, LEVELS.length);
+            // V6.0: 星级/经验/成就/统计
+            this._stars = typeof Progression !== 'undefined' ? Progression.computeStars(this.levelIndex, this.squad.count, this.enemies.killCount, true) : 0;
+            var starKey = 'L' + (this.levelIndex + 1);
+            var prevStars = this.profile.data.stars[starKey] || 0;
+            this._newStars = Math.max(0, this._stars - prevStars);
+            if (this._stars > prevStars) this.profile.data.stars[starKey] = this._stars;
+            if (this.enemies.bossKills) this.profile.data.stats.bossKills = (this.profile.data.stats.bossKills || 0) + this.enemies.bossKills;
+            this.profile.data.xp = (this.profile.data.xp || 0) + (typeof Progression !== 'undefined' ? Progression.computeXp(this.enemies.killCount, true, this.levelIndex, this._newStars) : 0);
+            this.profile.data.playerLevel = Progression ? Progression.levelFromXp(this.profile.data.xp).level : this.profile.data.playerLevel;
+            this.profile.save();
+            this._newAchievements = typeof Progression !== 'undefined' ? Progression.checkAchievements(this.profile) : [];
         }
         this._fillSettlementUI();
         if (this.ui.hud) this.ui.hud.classList.add('hidden');
@@ -1180,7 +1211,13 @@ class Game {
         this._sfx('lose'); // V5.0
         // V5.1: 失败只给少量击杀金币(防故意失败刷钱)
         this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, false, false) : null;
-        if (this.profile) this.profile.recordRun(this.levelIndex, this.enemies.killCount, this.maxCount, false, LEVELS.length);
+        if (this.profile) {
+            this.profile.recordRun(this.levelIndex, this.enemies.killCount, this.maxCount, false, LEVELS.length);
+            this.profile.data.xp = (this.profile.data.xp || 0) + this.enemies.killCount * (typeof XP_RULES !== 'undefined' ? XP_RULES.perKill : 1);
+            this.profile.data.playerLevel = typeof Progression !== 'undefined' ? Progression.levelFromXp(this.profile.data.xp).level : this.profile.data.playerLevel;
+            this._newAchievements = typeof Progression !== 'undefined' ? Progression.checkAchievements(this.profile) : [];
+            this.profile.save();
+        }
         this._fillSettlementUI();
         if (this.ui.hud) this.ui.hud.classList.add('hidden');
         if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');

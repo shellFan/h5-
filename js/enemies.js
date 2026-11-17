@@ -323,6 +323,7 @@ class EnemyManager {
                     this.splitQueue.push({ x: e.x, z: e.z, delay: 0.35 });
                 }
                 if (e === this.boss) {
+                    this.bossKills = (this.bossKills || 0) + 1;
                     this.boss = this.enemies.find(other=>other!==e && other.isBoss && other.alive) || null;
                     // Boss死亡大爆炸 + 金色粒子
                     this.effects.burst(e.x, 1, e.z, 0xFF4444, 30, 5, 1);

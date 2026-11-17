@@ -100,7 +100,7 @@ class CombatSystem {
         }
     }
 
-    update(dt, squad, enemyManager) {
+    update(dt, squad, enemyManager, energyCore) {
         this._squad = squad; // V3.3: 供_fire读取穿透层数
         // === 射击逻辑 ===
         if (squad.count > 0 && squad.alive) {
@@ -224,6 +224,14 @@ class CombatSystem {
                         break;
                     }
                 }
+            }
+
+            // V6.0: 能源核心命中(穿越核心z面且横向命中)
+            if (!hit && energyCore && energyCore.alive &&
+                oldZ >= energyCore.z - 0.4 && newZ <= energyCore.z + 0.4 &&
+                Math.abs(b.mesh.position.x - energyCore.x) < 1.6) {
+                energyCore.takeBulletHit(b.damage, this.effects);
+                hit = true;
             }
 
             // 超射程或命中: 回收

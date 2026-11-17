@@ -61,11 +61,19 @@ const CONFIG = {
     // ===== V5.1 每关场上活敌上限矩阵 (尸潮规模, 非同屏全部) =====
     MAX_ALIVE: [70, 140, 190, 260, 240],  // V5.1.5: 超级尸潮 — L5=240(Boss关兼顾竞速)
     ALIVE_TARGET: [40, 80, 110, 150, 120],  // V5.1.5: 每关期望同屏活敌 — L5=120(Boss关)
+    // V6.0: 末日核心主题(第6关) — 场景配色/雾气/灯光与能源核心参数
+    APOCALYPSE_THEME: {
+        sky: 0x4A2C3A, fog: 0x5A3040, fogNear: 30, fogFar: 95,
+        grass: 0x3E5C43, grassDark: 0x33503A, road: 0x6E6470, roadEdge: 0x5A5060,
+        hemiSky: 0x8A6070, hemiGround: 0x2E3A30, sunColor: 0xFFB0A0, sunIntensity: 0.55,
+        coreHp: 900, coreBuffRadius: 9, coreBuffInterval: 4.5,
+        star2Count: 250, star3Kills: 700
+    },
     // 试玩强化：每关 authored wave 总量×3，并提高同屏密度。
     ENEMY_WAVE_MULTIPLIER: 3,
     ENEMY_MAX_ALIVE_MULTIPLIER: 2.2,
     ENEMY_ALIVE_TARGET_MULTIPLIER: 2,
-    ENEMY_HP_MULTIPLIER: [1.7, 2.2, 2.8, 3.4, 4.0],
+    ENEMY_HP_MULTIPLIER: [1.7, 2.2, 2.8, 3.4, 4.0, 4.6], // V6.0: 追加L6=4.6(原数组仅5项, L6索引越界→NaN血量)
 
 
     // 射击
@@ -293,11 +301,48 @@ const LEVELS = [
             { type: 'boss', z: -150, boss: { type: 'boss', hp: 2600 } }
         ]
     }
+    ,
+    // ============ 第6关 末日核心 · 尸潮源头 (V6.0 终局关) ============
+    {
+        name: '第 6 关 末日核心',
+        startCount: 1,
+        totalZ: -180,
+        rewardCoins: 300,
+        theme: 'apocalypse',
+        segments: [
+            { type: 'gates', z: -8, gates: [
+                { lane: 0, op: 'add', value: 18, label: '+18' },
+                { lane: 1, op: 'mul', value: 2, label: '×2' },
+                { lane: 2, op: 'buff', value: 'damage2', label: '输出+2' }
+            ]},
+            { type: 'wave', z: -24, enemies: [ { type: 'normal', count: 90 }, { type: 'fast', count: 60 } ] },
+            { type: 'gates', z: -40, gates: [
+                { lane: 0, op: 'buff', value: 'pierce', label: '穿透+1' },
+                { lane: 1, op: 'buff', value: 'crit2', label: '暴击+10%' },
+                { lane: 2, op: 'buff', value: 'damage2', label: '输出+2' }
+            ]},
+            { type: 'wave', z: -56, enemies: [ { type: 'elite', count: 6 }, { type: 'shield', count: 45 }, { type: 'normal', count: 60 } ] },
+            { type: 'energy', z: -72, core: { hp: 900, buffRadius: 9 } },
+            { type: 'gates', z: -86, gates: [
+                { lane: 0, op: 'buff', value: 'freeze', label: '冰冻弹' },
+                { lane: 1, op: 'mul', value: 2, label: '×2' },
+                { lane: 2, op: 'buff', value: 'explosive', label: '爆炸弹' }
+            ]},
+            { type: 'wave', z: -102, enemies: [ { type: 'elite', count: 8 }, { type: 'spitter', count: 40 }, { type: 'split', count: 45 }, { type: 'fast', count: 45 } ] },
+            { type: 'gates', z: -118, gates: [
+                { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
+                { lane: 1, op: 'buff', value: 'chain', label: '连锁闪电' },
+                { lane: 2, op: 'buff', value: 'crit2', label: '暴击+10%' }
+            ]},
+            { type: 'wave', z: -134, enemies: [ { type: 'elite', count: 10 }, { type: 'shield', count: 50 }, { type: 'spitter', count: 35 }, { type: 'normal', count: 70 } ] },
+            { type: 'boss', z: -166, boss: { type: 'boss', hp: 5200, style: 'overlord', title: '末日吞噬者' } }
+        ]
+    }
 ];
 
 // ===== V5.1 Boss 装配 =====
-CONFIG.BOSS_STYLES = ['bruiser', 'bruiser', 'bulwark', 'hivelord', 'overlord'];
-CONFIG.BOSS_NAMES = ['铁拳队长', '赤拳突击者', '钢盾领主', '裂变母巢', '终焉核心'];
+CONFIG.BOSS_STYLES = ['bruiser', 'bruiser', 'bulwark', 'hivelord', 'overlord', 'overlord'];
+CONFIG.BOSS_NAMES = ['铁拳队长', '赤拳突击者', '钢盾领主', '裂变母巢', '终焉核心', '末日吞噬者'];
 LEVELS.forEach(function(level, li) {
     level.bossStyle = CONFIG.BOSS_STYLES[li];
     level.segments.forEach(function(seg) {

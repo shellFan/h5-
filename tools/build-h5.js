@@ -21,6 +21,8 @@ const COPY_LIST = [
     'assets',
     'js/config.js',
     'js/economy.js',
+    'js/energy-core.js',
+    'js/progression.js',
     'js/upgrades.js',
     'js/utils.js',
     'js/movement.js',   // V4.0
