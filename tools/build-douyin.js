@@ -27,6 +27,8 @@ const GAME_SCRIPTS = [
     'js/energy-core.js',
     'js/skills.js',
     'js/affixes.js',
+    'js/weapons.js',
+    'js/tech-tree.js',
     'js/progression.js',
     'js/challenge.js',
     'js/upgrades.js',

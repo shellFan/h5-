@@ -25,6 +25,8 @@ const COPY_LIST = [
     'js/ui-v60.js',
     'js/skills.js',
     'js/affixes.js',
+    'js/weapons.js',
+    'js/tech-tree.js',
     'js/progression.js',
     'js/challenge.js',
     'js/upgrades.js',

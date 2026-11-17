@@ -851,6 +851,12 @@ class Game {
             if (this.shop && this.profile) {
                 this.squad.pierce = Math.min(3, this.shop.pierceBonus(this.profile));
             }
+            // V8.0: 武器+科技战斗属性
+            this._weaponStats = (typeof WeaponSystem !== 'undefined' && this.profile) ? WeaponSystem.stats(this.profile) : {};
+            this._techStats = (typeof TechTree !== 'undefined' && this.profile) ? TechTree.combatStats(this.profile) : {};
+            if (this._techStats.startBonus) this.squad.setCount(this.squad.count + this._techStats.startBonus);
+            if (this._techStats.pierceBonus) this.squad.pierce = Math.min(3, this.squad.pierce + this._techStats.pierceBonus);
+            if (this._techStats.critBonus) this.squad.critChance = Math.min(0.5, this.squad.critChance + this._techStats.critBonus);
             // V6.0: 关卡主题(末日核心等) + 能源核心生成
             if (this.world.applyTheme) this.world.applyTheme(level.theme);
             this._setupEnergyCore(level);
