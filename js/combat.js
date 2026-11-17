@@ -100,7 +100,7 @@ class CombatSystem {
         }
     }
 
-    update(dt, squad, enemyManager) {
+    update(dt, squad, enemyManager, energyCore) {
         this._squad = squad; // V3.3: 供_fire读取穿透层数
         // === 射击逻辑 ===
         if (squad.count > 0 && squad.alive) {
@@ -124,6 +124,12 @@ class CombatSystem {
                     var target = enemyManager.getNearest(positions[k].x, positions[k].z, CONFIG.BULLET_RANGE);
                     // V3.3: 暴击判定(开火时掷骰, 伤害×2)
                     var dmgFinal = dmg;
+                    // V6.0: 狂暴技能伤害乘区
+                    if (squad._skillRage) dmgFinal = Math.round(dmgFinal * (1 + 0.35 * squad._skillRage));
+                    // V6.0: 背水一战 — 人数低于一半时增伤
+                    if (squad._skillBerserk && squad.count > 0 && squad._halfCount && squad.count <= squad._halfCount) {
+                        dmgFinal = Math.round(dmgFinal * (1 + 0.5 * squad._skillBerserk));
+                    }
                     var isCrit = Math.random() < squad.critChance;
                     if (isCrit) dmgFinal = dmg * 2;
                     this._fire(positions[k], dmgFinal, target, isCrit);
@@ -226,11 +232,35 @@ class CombatSystem {
                 }
             }
 
+            // V6.0: 能源核心命中(穿越核心z面且横向命中)
+            if (!hit && energyCore && energyCore.alive &&
+                oldZ >= energyCore.z - 0.4 && newZ <= energyCore.z + 0.4 &&
+                Math.abs(b.mesh.position.x - energyCore.x) < 1.6) {
+                energyCore.takeBulletHit(b.damage, this.effects);
+                hit = true;
+            }
+
             // 超射程或命中: 回收
             if (hit || b.life <= 0 || newZ < squad.z - CONFIG.BULLET_RANGE) {
                 b.mesh.visible = false;
                 this.pool.push(b.mesh);
                 this.bullets.splice(i, 1);
+            }
+        }
+
+        // V6.0: 毒液DoT结算(每帧)
+        if (enemyManager && enemyManager.enemies) {
+            for (var vi = enemyManager.enemies.length - 1; vi >= 0; vi--) {
+                var ve = enemyManager.enemies[vi];
+                if (!ve.alive || !ve._venomT) continue;
+                ve._venomT -= dt;
+                ve._venomTick = (ve._venomTick || 0) - dt;
+                if (ve._venomTick <= 0) {
+                    ve._venomTick = 0.5;
+                    ve.takeDamage(Math.max(1, Math.round(ve._venomDps * 0.5)), this.effects, ve.x, false);
+                    if (this.effects) this.effects.burst(ve.x, 1, ve.z, 0x66DD44, 2, 1.5, 0.25);
+                }
+                if (ve._venomT <= 0) { ve._venomT = 0; ve._venomStacks = 0; }
             }
         }
     }
@@ -260,7 +290,7 @@ class CombatSystem {
             mesh: mesh, damage: damage, life: 1.2,
             target: target || null,
             crit: !!isCrit,
-            pierceLeft: this._squad ? this._squad.pierce : 0,
+            pierceLeft: 1 + (this._squad ? this._squad.pierce : 0),
             hitSet: null
         });
 

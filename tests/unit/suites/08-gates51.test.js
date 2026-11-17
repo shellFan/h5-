@@ -100,8 +100,8 @@ module.exports.run = function(ctx) {
             LEVELS.forEach(function(level, li) {
                 level.segments.forEach(function(seg) {
                     if (seg.type !== 'gates') return;
-                    var labels = seg.gates.map(function(g) { return g.label; });
-                    assert(new Set(labels).size === 3, 'L' + (li + 1) + ' 排内label重复: ' + labels);
+                    var labels = seg.gates.filter(function(g) { return g.op !== 'skill'; }).map(function(g) { return g.label; });
+                    assert(new Set(labels).size === labels.length, 'L' + (li + 1) + ' 排内label重复: ' + labels);
                 });
             });
         });
@@ -111,12 +111,13 @@ module.exports.run = function(ctx) {
                 assert(g.op === 'add', 'L1首排全人数门');
             });
         });
-        test('×2在全部关卡门中占比≤10%', () => {
+        test('×2在全部关卡门中占比≤10%(技能门不计)', () => {
             var mul = 0, total = 0;
             LEVELS.forEach(function(level) {
                 level.segments.forEach(function(seg) {
                     if (seg.type !== 'gates') return;
                     seg.gates.forEach(function(g) {
+                        if (g.op === 'skill') return;
                         total++;
                         if (g.op === 'mul') mul++;
                     });
@@ -124,16 +125,11 @@ module.exports.run = function(ctx) {
             });
             assert(mul / total <= 0.1, '×2占比: ' + mul + '/' + total);
         });
-        test('新op(爆炸弹/连锁/人数%)出现在关卡设计里', () => {
-            var ops = {};
-            LEVELS.forEach(function(level) {
-                level.segments.forEach(function(seg) {
-                    if (seg.type !== 'gates') return;
-                    seg.gates.forEach(function(g) { ops[g.op + ':' + g.value] = true; });
-                });
+        test('技能门出现在L2/L4/L6', () => {
+            LEVELS.forEach(function(level, li) {
+                var has = level.segments.some(function(seg) { return seg.type === 'gates' && seg.gates.some(function(g) { return g.op === 'skill'; }); });
+                if ([1, 3, 5].indexOf(li) >= 0) assert(has, 'L' + (li + 1) + ' 应有技能门');
             });
-            assert(ops['buff:explosive'], '爆炸弹');
-            assert(ops['addpct:20'], '人数+20%');
         });
     });
 

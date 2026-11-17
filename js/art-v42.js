@@ -384,6 +384,124 @@
         }));
     }
 
+    function makeFacadeTexture() {
+        var canvas = document.createElement('canvas');
+        canvas.width = 256;
+        canvas.height = 512;
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#e5e9e4';
+        ctx.fillRect(0, 0, 256, 512);
+        for (var floor = 0; floor < 4; floor++) {
+            var y = 18 + floor * 120;
+            ctx.fillStyle = '#b5bfbb';
+            ctx.fillRect(0, y + 90, 256, 5);
+            ctx.fillStyle = '#f6f4e9';
+            ctx.fillRect(0, y + 95, 256, 7);
+            for (var col = 0; col < 3; col++) {
+                var x = 18 + col * 80;
+                ctx.fillStyle = '#899996';
+                ctx.fillRect(x - 4, y - 4, 64, 84);
+                ctx.fillStyle = '#283e48';
+                ctx.fillRect(x, y, 56, 74);
+                ctx.fillStyle = floor % 2 === col % 2 ? '#a3ccd1' : '#57818b';
+                ctx.fillRect(x + 5, y + 4, 46, 32);
+                ctx.fillStyle = '#d6e5df';
+                ctx.fillRect(x + 26, y, 4, 74);
+                ctx.fillRect(x, y + 35, 56, 4);
+                ctx.fillStyle = '#f7f4e8';
+                ctx.fillRect(x - 7, y + 77, 70, 6);
+            }
+        }
+        var tex = new THREE.CanvasTexture(canvas);
+        tex.anisotropy = 4;
+        return tex;
+    }
+
+    function makeShopTexture(text, color) {
+        var canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 128;
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, 512, 128);
+        ctx.strokeStyle = '#ecf3e9';
+        ctx.lineWidth = 5;
+        ctx.strokeRect(8, 8, 496, 112);
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = '800 68px "Microsoft YaHei", Arial, sans-serif';
+        ctx.fillText(text, 256, 67, 460);
+        return new THREE.CanvasTexture(canvas);
+    }
+
+    function addStreetDetails(env, buildings, random) {
+        var solids = [], glass = [], trims = [], foliage = [], wheels = [];
+        var signs = [[], [], []], canopies = [], awningStripes = [], markings = [];
+        var box = new THREE.BoxGeometry(1, 1, 1);
+        function record(x, y, z, sx, sy, sz, ry) {
+            return { x: x, y: y, z: z, sx: sx, sy: sy, sz: sz, ry: ry || 0 };
+        }
+        for (var i = 0; i < buildings.length; i++) {
+            var b = buildings[i], inner = b.x - b.s * (b.w * .558 + .035);
+            // Shops and their awnings face the road; the combat lanes stay clear.
+            glass.push(record(inner, .92, b.z, .035, 1.45, b.sz * .77));
+            trims.push(record(inner - b.s * .025, .17, b.z, .12, .16, b.sz * .86));
+            for (var f = -1; f <= 1; f++) {
+                trims.push(record(inner - b.s * .04, .92, b.z + f * b.sz * .32, .09, 1.55, .06));
+            }
+            canopies.push(record(inner - b.s * .35, 1.95, b.z, .85, .14, b.sz * .91));
+            for (var st = 0; st < 7; st++) {
+                awningStripes.push(record(inner - b.s * .35, 2.027, b.z + (st - 3) * b.sz * .13, .86, .018, b.sz * .055));
+            }
+            signs[i % 3].push(record(inner - b.s * .06, 2.36, b.z, 2.6, .56, 1, -b.s * Math.PI / 2));
+            solids.push(record(b.x, b.h + .28, b.z, b.w * .38, .45, b.sz * .35));
+            if (i % 2 === 0) {
+                var pz = b.z + b.sz * .63;
+                solids.push(record(b.s * 5.05, .19, pz, .7, .35, 1.3));
+                foliage.push(record(b.s * 5.05, .49, pz, .7, .52, 1.25));
+            }
+            if (i % 4 === 1) {
+                solids.push(record(b.s * 4.9, .28, b.z - 1.3, .8, .45, 1.25));
+                trims.push(record(b.s * 4.9, .53, b.z - 1.3, .82, .07, 1.28));
+                for (var h = -1; h <= 1; h += 2) {
+                    markings.push(record(b.s * 4.9, .54, b.z - 1.3 + h * .42, .84, .02, .1));
+                }
+            }
+            if (i % 5 === 2) {
+                var carX = b.s * 5.8, carZ = b.z + 2.9;
+                canopies.push(record(carX, .44, carZ, 1.05, .45, 1.95));
+                glass.push(record(carX, .83, carZ - .12, .86, .38, .92));
+                trims.push(record(carX, .28, carZ + 1, 1, .15, .12));
+                for (var side = -1; side <= 1; side += 2) {
+                    for (var axle = -1; axle <= 1; axle += 2) {
+                        wheels.push(record(carX + side * .54, .24, carZ + axle * .65, .16, .38, .38));
+                    }
+                }
+            }
+        }
+        // Street furniture is batched by surface, not by individual object.
+        addInstancedCategory(env, 'street-concrete', box, makeCityMaterial(0x9AAFAA), solids, { receiveShadow: true });
+        addInstancedCategory(env, 'shop-windows', box, makeCityMaterial(0x325D6A, { roughness: .24, metalness: .18 }), glass);
+        addInstancedCategory(env, 'shop-frames', box, makeCityMaterial(0xDDE3DB), trims);
+        addInstancedCategory(env, 'striped-awnings', box, makeCityMaterial(0xBB4E53), canopies, { castShadow: true });
+        addInstancedCategory(env, 'awning-stripes', box, makeCityMaterial(0xF6EFE4), awningStripes);
+        addInstancedCategory(env, 'planter-shrubs', new THREE.IcosahedronGeometry(.65, 1), makeCityMaterial(0x407B59), foliage);
+        addInstancedCategory(env, 'parked-car-wheels', box, makeCityMaterial(0x283239), wheels);
+        addInstancedCategory(env, 'street-reflectors', box, new THREE.MeshBasicMaterial({ color: 0xFFD365 }), markings);
+        var labels = ['CITY MART', '补给站', 'METRO  03'];
+        var colors = ['#386f67', '#ac4d4c', '#3b607f'];
+        for (var s = 0; s < signs.length; s++) {
+            addInstancedCategory(env, 'shop-sign-' + s, new THREE.PlaneGeometry(1, 1),
+                new THREE.MeshBasicMaterial({ map: makeShopTexture(labels[s], colors[s]), side: THREE.DoubleSide }), signs[s]);
+        }
+        var skyline = makeRecords(32, function (i) {
+            var h = 7 + random() * 10;
+            return record((i % 2 ? 1 : -1) * (14 + random() * 9), h * .5, 10 - i * 5.2, 3 + random() * 3, h, 3 + random() * 3);
+        });
+        addInstancedCategory(env, 'distant-skyline', box, makeCityMaterial(0x7C9BA5), skyline);
+    }
+
     function addInstancedCategory(env, name, geometry, material, records, options) {
         options = options || {};
         var mesh = new THREE.InstancedMesh(geometry, material, records.length);
@@ -444,9 +562,11 @@
         };
         world._v42Environment = env;
 
-        var cream = makeCityMaterial(0xE8D9BC);
-        var teal = makeCityMaterial(0x2D7778, { roughness: 0.58, metalness: 0.08 });
-        var coral = makeCityMaterial(0xD77A67);
+        var facade = makeFacadeTexture();
+        var cream = makeCityMaterial(0xD8E0DC);
+        var teal = makeCityMaterial(0x8AB8AF, { roughness: 0.68 });
+        var coral = makeCityMaterial(0xD7A29B);
+        cream.map = teal.map = coral.map = facade;
         var leaf = makeCityMaterial(0x70A77B, { roughness: 0.9 });
         var trunk = makeCityMaterial(0x8B684B, { roughness: 0.92 });
         var glass = makeCityMaterial(0x93C6C7, { roughness: 0.22, metalness: 0.18 });
@@ -458,9 +578,9 @@
             transparent: true, opacity: 0.92, fog: false
         });
 
-        var roadside = makeRecords(27, function (i) {
+        var roadside = makeRecords(54, function (i) {
             var side = i % 2 ? 1 : -1;
-            return { x: side * (4.8 + random() * 1.7), y: 0, z: 10 - i * 6.15 + random() * 1.1, s: side };
+            return { x: side * (4.8 + random() * .4), y: 0, z: 10 - i * 3.08 + random() * .5, s: side };
         });
         var treeBase = roadside.filter(function (_, i) { return i % 3 === 0; });
         var lampBase = roadside.filter(function (_, i) { return i % 3 === 1; });
@@ -487,11 +607,12 @@
         addInstancedCategory(env, 'barriers', roundedRectGeometry(0.96, 0.27, 0.07, 0.14), cream,
             propBase.filter(function (_, i) { return i % 3 === 2; }).map(function (r) { return { x: r.x, y: 0.42, z: r.z, ry: r.s > 0 ? -0.15 : 0.15 }; }), { castShadow: true });
 
-        var buildings = makeRecords(24, function (i) {
+        var buildings = makeRecords(44, function (i) {
             var side = i % 2 ? 1 : -1;
-            var h = 3.8 + random() * 4.8;
-            var w = 1.7 + random() * 1.45;
-            return { x: side * (9.2 + random() * 4.6), y: h * 0.5, z: 12 - i * 7.05, sx: w, sy: h, sz: 1.8 + random() * 0.8, h: h, w: w, s: side };
+            var h = 3.4 + random() * 4.6;
+            var w = 2.4 + random() * 1.2;
+            return { x: side * (7.4 + random() * .9), y: h * .5, z: 12 - i * 3.84,
+                sx: w, sy: h, sz: 4.5 + random() * 1.4, h: h, w: w, s: side };
         });
         var buildingGeo = roundedRectGeometry(1, 1, 0.08, 1);
         addInstancedCategory(env, 'cream-buildings', buildingGeo, cream,
@@ -542,6 +663,8 @@
             }
         }
         addInstancedCategory(env, 'windows', new THREE.PlaneGeometry(1, 1), warmLight, windows);
+
+        addStreetDetails(env, buildings, random);
 
         var clouds = makeRecords(12, function (i) {
             var side = i % 2 ? 1 : -1;

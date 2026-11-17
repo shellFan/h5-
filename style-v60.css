@@ -1,0 +1,56 @@
+/* ===== V6.0: 页面/地图/成就/设置/成长 ===== */
+.v60-page { position: absolute; inset: 0; z-index: 46; display: flex; align-items: center; justify-content: center; background: rgba(8, 18, 34, .6); padding: 10px; }
+.v60-page.hidden { display: none; }
+#game-container.v42-ui .v60-panel { width: min(100%, 390px); max-height: 94%; overflow-y: auto; padding: 20px 18px 16px; }
+.v60-page-title { text-align: center; color: #1E40AF; font-size: 22px; font-weight: 900; letter-spacing: 2px; margin-bottom: 8px; }
+
+.v60-map-stats { text-align: center; font-size: 13px; font-weight: 800; color: #8a5b12; background: rgba(255,196,71,.14); border-radius: 999px; padding: 5px; margin-bottom: 10px; }
+.v60-map-nodes { display: flex; flex-direction: column; }
+.v60-map-node { display: flex; align-items: center; gap: 10px; background: rgba(238,246,252,.92); border: 1.5px solid rgba(28,100,124,.18); border-radius: 16px; padding: 9px 12px; margin: 0 0 0 14px; }
+.v60-map-node.clickable { cursor: pointer; }
+.v60-map-node.clickable:active { transform: scale(.97); }
+.v60-map-node.locked { opacity: .5; filter: grayscale(.7); }
+.v60-map-node.cleared { border-color: rgba(233,168,37,.5); background: rgba(255,243,214,.9); }
+.v60-node-icon { font-size: 26px; width: 36px; text-align: center; flex-shrink: 0; }
+.v60-node-info { flex: 1; min-width: 0; }
+.v60-node-name { font-size: 14px; font-weight: 900; color: #173B79; }
+.v60-node-meta { font-size: 10.5px; color: #5b7a92; margin-top: 1px; }
+.v60-node-stars { font-size: 12px; color: #E9A825; letter-spacing: 2px; }
+.v60-node-current { font-size: 18px; color: #1A6FD4; animation: v60pulse 1s infinite; }
+@keyframes v60pulse { 50% { opacity: .35; } }
+.v60-node-medal { font-size: 20px; }
+.v60-map-line { width: 3px; height: 14px; margin-left: 30px; background: rgba(28,100,124,.25); border-radius: 2px; }
+.v60-map-line.done { background: #E9A825; }
+
+.v60-ach-list { display: flex; flex-direction: column; gap: 6px; max-height: 46vh; overflow-y: auto; }
+.v60-ach-row { display: flex; align-items: center; gap: 9px; background: rgba(238,246,252,.9); border-radius: 13px; padding: 8px 10px; border: 1px solid rgba(28,100,124,.12); opacity: .55; }
+.v60-ach-row.got { opacity: 1; border-color: rgba(233,168,37,.45); background: rgba(255,243,214,.85); }
+.v60-ach-icon { font-size: 21px; width: 30px; text-align: center; }
+.v60-ach-info { flex: 1; min-width: 0; }
+.v60-ach-name { font-size: 13px; font-weight: 900; color: #173B79; }
+.v60-ach-desc { font-size: 10.5px; color: #5b7a92; }
+.v60-ach-reward { font-size: 11px; font-weight: 900; color: #B07A12; flex-shrink: 0; }
+
+.v60-setting-row { display: flex; justify-content: space-between; align-items: center; background: rgba(238,246,252,.9); border-radius: 13px; padding: 10px 14px; margin-bottom: 8px; font-size: 14px; font-weight: 800; color: #173B79; }
+.v60-toggle { border: none; border-radius: 10px; background: #1A6FD4; color: #fff; font-size: 12px; font-weight: 900; padding: 7px 16px; cursor: pointer; }
+.v60-saveinfo { text-align: center; font-size: 11px; color: #5b7a92; margin: 10px 0; }
+
+.v60-home-nav { display: flex; gap: 6px; justify-content: center; margin-top: 10px; }
+.v60-nav-btn { flex: 1; border: 1px solid rgba(64,140,220,.4); border-radius: 12px; background: #EAF4FB; color: #1A6FD4; font-size: 12px; font-weight: 900; padding: 8px 4px; cursor: pointer; }
+.v60-nav-btn:active { transform: scale(.95); }
+.v60-home-growth { margin-top: 8px; }
+.v60-growth-row { display: flex; align-items: center; gap: 8px; }
+.v60-growth-lv { font-size: 12px; font-weight: 900; color: #1A6FD4; background: rgba(77,168,255,.14); border-radius: 8px; padding: 3px 8px; }
+.v60-xp-bar { flex: 1; height: 9px; background: #d7e6f0; border-radius: 5px; overflow: hidden; }
+.v60-xp-fill { height: 100%; background: linear-gradient(90deg, #4DA8FF, #1A6FD4); border-radius: 5px; transition: width .4s; }
+.v60-growth-xp { font-size: 10px; color: #5b7a92; font-weight: 700; }
+.v60-growth-stats { text-align: center; font-size: 11px; color: #5b7a92; font-weight: 800; margin-top: 4px; }
+.v60-win-stars { text-align: center; font-size: 26px; color: #E9A825; letter-spacing: 6px; text-shadow: 0 2px 8px rgba(233,168,37,.5); margin-bottom: 8px; }
+.v60-win-stars.hidden { display: none; }
+
+/* V6.0: 每日任务进度条 */
+.v60-ach-bar { height: 7px; background: #d7e6f0; border-radius: 4px; overflow: hidden; margin-top: 4px; }
+.v60-ach-fill { height: 100%; background: linear-gradient(90deg, #39D98A, #1A6FD4); border-radius: 4px; transition: width .3s; }
+.v60-ach-row.ready { border-color: rgba(57,217,138,.5); background: rgba(57,217,138,.08); opacity: 1; cursor: pointer; }
+.v60-ach-row.ready .v60-ach-reward { color: #39D98A; }
+.v60-home-nav .v60-nav-btn { font-size: 11px; padding: 7px 2px; }

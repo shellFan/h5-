@@ -27,22 +27,17 @@ class Game {
         this.pacing = new GamePacingController(this);
         var self = this;
         this.pacing.spawnFn = function(type, x, z, hp) {
-            // V5.1.1: 普通怪血量随队伍DPS缩放(hordeMul=dps/40, 1~30封顶) —
-            // 强队伍不再瞬间融化尸潮(玩家反馈"怪物太少/看不到一堆"), 弱队伍体验不变。
-            var dpsNow = self.squad.count * self.squad.getDamage() * self.squad.getFireRate();
+            // Enemy health depends on the encounter, never on the player's upgrades.
             if (type !== 'boss' && !hp) {
                 var refHp = (CONFIG.ZOMBIE[type] || CONFIG.ZOMBIE.normal).hp;
-                var hordeMul = Math.max(1, Math.min(30, dpsNow / 65)); // V5.1.5: 分母65(校准: 分级加强+×3总量已足够)
-                hordeMul *= 0.8 + 0.2 * Math.min(1, self.levelIndex / 4); // V5.1.5: 分级加强 L1温和(×0.8)→L5全力(×1.0)
-                if (type === 'elite') hordeMul = Math.max(1, hordeMul * 0.5); // 精英缩放减半(精英墙不可破)
-                hp = Math.max(refHp, Math.round(refHp * hordeMul));
+                hp = Math.round(refHp * CONFIG.ENEMY_HP_MULTIPLIER[self.levelIndex]);
             }
             // V4.0: Boss血量按出场时队伍战力动态缩放 — 任何策略/养成水平都面临~8-12s Boss战
             if (type === 'boss') {
                 // V5.1.3: Boss血量 = 人数×DPS双因子(人数=防御/竞速生存, DPS=输出) —
                 // 旧公式只随DPS缩放, 小队打Boss时人数劣势无补偿必败。预算≈count×dps×0.64(1.25/s磨损×0.8安全)。
                 var base = hp || CONFIG.ZOMBIE.boss.hp;
-                hp = Math.round(Math.max(base * 0.85, Math.min(base * 3.5, self.squad.count * dpsNow * 0.5)) / 50) * 50; // V5.1.4: 系数0.5(磨损0.625/s下竞速与生存平衡)
+                hp = base;
             }
             if(type==='boss' && self.enemies.bossStyle==='twinelite') {
                 self.enemies.spawnEnemy(type,-1.1,z,hp/2,'elite');
@@ -51,6 +46,9 @@ class Game {
             return self.enemies.spawnEnemy(type, x, z, hp);
         };
         this.pacing.aliveCountFn = function() { return self.enemies.encounterOutstanding; };
+        this.pacing.gateReadyFn = function(w, squad) {
+            return self.gates.isRowChosen(w.requiredGateZ) && squad.z <= w.requiredGateZ - 1.5;
+        };
         this.pacing.onWaveStart = function(w) {
             self._waveNoticeT=CONFIG.PACING.firstContactGrace;
             var el=document.getElementById('v42-wave-banner');
@@ -115,6 +113,7 @@ class Game {
         this._setupUI();
         this._setupDebugPanel(); // V3.7: ?debug=1 显示运行时美术/性能面板
         V42Art.installUI(this);
+        if (typeof V60UI !== 'undefined') V60UI.install(this);
 
         this._loop = this._loop.bind(this);
         requestAnimationFrame(this._loop);
@@ -354,6 +353,22 @@ class Game {
         }
     }
 
+    /** V6.0: 能源核心生成与清理 */
+    _setupEnergyCore(level) {
+        if (this.energyCore) { this.energyCore.destroy(this.world.scene); this.energyCore = null; }
+        var seg = null;
+        for (var i = 0; i < level.segments.length; i++) {
+            if (level.segments[i].type === 'energy') { seg = level.segments[i]; break; }
+        }
+        if (!seg || typeof EnergyCore === 'undefined') return;
+        this.energyCore = new EnergyCore(this.world.scene, 0, seg.z, seg.core || {}, this);
+    }
+
+    /** V6.0: 能源核心击破回调 */
+    onCoreDestroyed() {
+        if (this.effects) this.effects.floatText(this.squad.x, 2.4, this.squad.z, '僵尸失去强化!', '#66FFB3', true);
+    }
+
     /** V5.0: 统一音效入口(自动初始化 + 平台/静音守卫) */
     _sfx(type) {
         if (typeof Platform === 'undefined' || !Platform.audio) return;
@@ -399,7 +414,8 @@ class Game {
         this.gates.clear();
         this.enemies.clear();
         this.pacing.clear();
-        this._showBossWarning(false);
+        var ws = document.getElementById('win-stars'); if (ws) ws.classList.add('hidden');
+            this._showBossWarning(false);
         this.combat.clear();
         this.effects.clear();
         // V3.3: 刷新关卡选择解锁状态
@@ -483,6 +499,8 @@ class Game {
         var loseBox = document.getElementById('lose-coins');
         if (loseBox && st && this.state === 'lost') {
             document.getElementById('lc-kills-coin').textContent = '+' + st.killReward;
+            var xpEl = document.getElementById('lc-xp');
+            if (xpEl) xpEl.textContent = '+' + this.enemies.killCount;
             loseBox.classList.remove('hidden');
         }
         this._refreshCoinDisplays();
@@ -833,11 +851,16 @@ class Game {
             if (this.shop && this.profile) {
                 this.squad.pierce = Math.min(3, this.shop.pierceBonus(this.profile));
             }
+            // V6.0: 关卡主题(末日核心等) + 能源核心生成
+            if (this.world.applyTheme) this.world.applyTheme(level.theme);
+            this._setupEnergyCore(level);
             this.gates.loadFromLevel(level);
             this.enemies.loadFromLevel(level, this.levelIndex);
             this.enemies.bossStyle=level.bossStyle;
-            // V4.0: 波次计划移交节奏控制器(分批生成)
-            this.pacing.loadFromLevel(level, this.levelIndex);
+            // V6.0: 波次计划加载(L1-L5吃boost, L6手授终稿)
+            this.pacing.loadFromLevel(level, this.levelIndex, this.levelIndex < 5);
+            this.gates.resolveSkillGates(this.squad); // V6.0: 技能门roll(需squad._skills已重置)
+            this.gates.syncVisibility(this.pacing, 0, this.squad.z);
             this._showBossWarning(false);
             this.combat.clear();
             this.effects.clear();
@@ -964,23 +987,40 @@ class Game {
             this.world.shake(0.5);
             this.effects.floatText(this.squad.x, 2.4, this.squad.z, '全屏爆炸!', '#FFC247', true);
         }
+        this.gates.syncVisibility(this.pacing, this.enemies.encounterOutstanding, this.squad.z);
         this.gates.update(this.squad, this.effects, this.time, dt);
         // V4.0: 节奏控制器驱动分批刷怪/Boss预警
         this.pacing.update(dt, this.squad);
         this.enemies.update(dt, this.time, this.squad);
-        this.combat.update(dt, this.squad, this.enemies);
+        if (this.energyCore) this.energyCore.update(dt, this.time, this.squad, this.enemies.enemies, this.effects);
+        this.combat.update(dt, this.squad, this.enemies, this.energyCore);
         this.combat._syncInstances();
         this.effects.update(dt);
 
+        if (typeof ChallengeDaily !== 'undefined' && this.profile) {
+            ChallengeDaily.report(this.profile, 'kills', 0);
+            ChallengeDaily.report(this.profile, 'squad', 0);
+            ChallengeDaily.report(this.profile, 'gates', 0);
+            ChallengeDaily.report(this.profile, 'skills', 0);
+            ChallengeDaily.report(this.profile, 'boss', 0);
+        }
         // V3.3: 连杀系统 — 击杀数增长时combo+1, 2秒无击杀清零
         var kc = this.enemies.killCount;
         if (kc > this._prevKillCount) {
+            var newKills = kc - this._prevKillCount;
+            var previousCombo = this.combo;
             this.combo += kc - this._prevKillCount;
-            this.comboTimer = 2.0;
+            this.comboTimer = 3.0;
+            this.world.shake(Math.min(.12, .045 + newKills * .009), .1);
+            if (this.ui.comboBox) {
+                this.ui.comboBox.classList.remove('combo-hit');
+                void this.ui.comboBox.offsetWidth;
+                this.ui.comboBox.classList.add('combo-hit');
+            }
             // 连杀里程碑
             var milestones = [10, 30, 50, 100];
             for (var mi = 0; mi < milestones.length; mi++) {
-                if (this.combo >= milestones[mi] && this._prevKillCount < milestones[mi] && kc - this._prevKillCount <= milestones[mi] - this._prevKillCount) {
+                if (previousCombo < milestones[mi] && this.combo >= milestones[mi]) {
                     if (this._comboMilestone !== milestones[mi]) {
                         this._comboMilestone = milestones[mi];
                         this.effects.floatText(this.squad.x, 2.2, this.squad.z - 1, milestones[mi] + '连杀!', '#FFC247', true);
@@ -1139,9 +1179,26 @@ class Game {
         this.squad.setAnimationState('Victory');
         // V5.1: 金币结算(幂等入账) + 档案统计
         this._doubleApplied = false;
-        this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, true, false) : null;
+        this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, true, false, this.squad._skillMagnet || 0) : null;
         if (this.profile) {
             this._newUnlocked = this.profile.recordRun(this.levelIndex, this.enemies.killCount, this.maxCount, true, LEVELS.length);
+            // V6.0: 星级/经验/成就/统计
+            this._stars = typeof Progression !== 'undefined' ? Progression.computeStars(this.levelIndex, this.squad.count, this.enemies.killCount, true) : 0;
+            var starKey = 'L' + (this.levelIndex + 1);
+            var prevStars = this.profile.data.stars[starKey] || 0;
+            this._newStars = Math.max(0, this._stars - prevStars);
+            if (this._stars > prevStars) this.profile.data.stars[starKey] = this._stars;
+            if (this.enemies.bossKills) this.profile.data.stats.bossKills = (this.profile.data.stats.bossKills || 0) + this.enemies.bossKills;
+            this.profile.data.xp = (this.profile.data.xp || 0) + (typeof Progression !== 'undefined' ? Progression.computeXp(this.enemies.killCount, true, this.levelIndex, this._newStars) : 0);
+            this.profile.data.playerLevel = Progression ? Progression.levelFromXp(this.profile.data.xp).level : this.profile.data.playerLevel;
+            this.profile.save();
+            this._newAchievements = typeof Progression !== 'undefined' ? Progression.checkAchievements(this.profile) : [];
+        }
+        if (this.ui && this.ui.winStars !== undefined) {}
+        var starsEl = document.getElementById('win-stars');
+        if (starsEl && this._stars !== undefined) {
+            starsEl.innerHTML = '★'.repeat(this._stars) + '☆'.repeat(3 - this._stars);
+            starsEl.classList.remove('hidden');
         }
         this._fillSettlementUI();
         if (this.ui.hud) this.ui.hud.classList.add('hidden');
@@ -1171,8 +1228,14 @@ class Game {
         this.lastLoseReason = reason; // V5.0: 供平衡模拟分析失败原因
         this._sfx('lose'); // V5.0
         // V5.1: 失败只给少量击杀金币(防故意失败刷钱)
-        this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, false, false) : null;
-        if (this.profile) this.profile.recordRun(this.levelIndex, this.enemies.killCount, this.maxCount, false, LEVELS.length);
+        this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, false, false, this.squad._skillMagnet || 0) : null;
+        if (this.profile) {
+            this.profile.recordRun(this.levelIndex, this.enemies.killCount, this.maxCount, false, LEVELS.length);
+            this.profile.data.xp = (this.profile.data.xp || 0) + this.enemies.killCount * (typeof XP_RULES !== 'undefined' ? XP_RULES.perKill : 1);
+            this.profile.data.playerLevel = typeof Progression !== 'undefined' ? Progression.levelFromXp(this.profile.data.xp).level : this.profile.data.playerLevel;
+            this._newAchievements = typeof Progression !== 'undefined' ? Progression.checkAchievements(this.profile) : [];
+            this.profile.save();
+        }
         this._fillSettlementUI();
         if (this.ui.hud) this.ui.hud.classList.add('hidden');
         if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');

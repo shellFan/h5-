@@ -29,6 +29,38 @@ class Effects {
         // 浮动文字纹理缓存
         this._textCache = {};
         this._floatTextCount = 0;
+        this.impacts = [];
+        this._impactPool = Array.from({ length: 48 }, function() { return new THREE.Object3D(); });
+        var canvas = document.createElement('canvas');
+        canvas.width = canvas.height = 128;
+        var ink = canvas.getContext('2d');
+        ink.translate(64, 64);
+        ink.fillStyle = '#FFFFFF';
+        ink.beginPath();
+        for (var ray = 0; ray < 16; ray++) {
+            var angle = ray * Math.PI / 8;
+            var radius = ray % 2 ? 12 : (ray % 4 ? 43 : 62);
+            ink.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+        }
+        ink.closePath();
+        ink.fill();
+        var impactTex = new THREE.CanvasTexture(canvas);
+        this.impactMesh = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1),
+            new THREE.MeshBasicMaterial({ map: impactTex, transparent: true, depthWrite: false, alphaTest: .05 }), 48);
+        this.impactMesh.count = 0;
+        this.impactMesh.frustumCulled = false;
+        this.impactMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        this.impactMesh.userData.artSource = 'pooled-impact-starbursts';
+        scene.add(this.impactMesh);
+    }
+
+    impact(x, y, z, critical, lethal) {
+        var p = this._impactPool.pop();
+        if (!p) return;
+        p.position.set(x, y, z + .15);
+        p.userData = { life: .16, maxLife: .16, size: lethal ? .9 : critical ? .78 : .48,
+            color: critical ? 0xFF9C47 : 0xFFF0AF, angle: Math.random() * Math.PI };
+        this.impacts.push(p);
     }
 
     /** 生成粒子爆发 */
@@ -159,6 +191,9 @@ class Effects {
     }
 
     clear() {
+        for (var impact of this.impacts) this._impactPool.push(impact);
+        this.impacts.length = 0;
+        this.impactMesh.count = 0;
         for(var p of this.particles){p.visible=false;this.pool.push(p);}this.particles.length=0;
         for(var f of this.flashes){this.scene.remove(f.mesh);f.mesh.visible=false;this._flashPool.push(f.mesh);}this.flashes.length=0;
         for(var r of this.shockwaves){this.scene.remove(r.mesh);r.mesh.visible=false;this._ringPool.push(r.mesh);}this.shockwaves.length=0;
@@ -167,6 +202,34 @@ class Effects {
     }
 
     update(dt) {
+        var camera = this.scene.userData.camera;
+        for (var ii = this.impacts.length - 1; ii >= 0; ii--) {
+            var impact = this.impacts[ii], data = impact.userData;
+            data.life -= dt;
+            if (data.life <= 0) {
+                this._impactPool.push(impact);
+                this.impacts.splice(ii, 1);
+                continue;
+            }
+            var progress = 1 - data.life / data.maxLife;
+            if (camera) impact.quaternion.copy(camera.quaternion);
+            impact.rotateZ(data.angle);
+            impact.scale.setScalar(data.size * (.6 + progress * 1.25));
+            impact.updateMatrix();
+            this.impactMesh.setMatrixAt(ii, impact.matrix);
+            this._particleColor.setHex(data.color).multiplyScalar(1 - progress * .55);
+            this.impactMesh.setColorAt(ii, this._particleColor);
+        }
+        // Repack after expiry; splice must not leave a stale instance in a hole.
+        this.impactMesh.count = this.impacts.length;
+        for (var packed = 0; packed < this.impacts.length; packed++) {
+            var item = this.impacts[packed];
+            this.impactMesh.setMatrixAt(packed, item.matrix);
+            this._particleColor.setHex(item.userData.color).multiplyScalar(.45 + .55 * item.userData.life / item.userData.maxLife);
+            this.impactMesh.setColorAt(packed, this._particleColor);
+        }
+        this.impactMesh.instanceMatrix.needsUpdate = true;
+        if (this.impactMesh.instanceColor) this.impactMesh.instanceColor.needsUpdate = true;
         // 粒子
         for (let i = this.particles.length - 1; i >= 0; i--) {
             const p = this.particles[i];

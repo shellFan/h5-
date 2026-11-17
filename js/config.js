@@ -40,26 +40,40 @@ const CONFIG = {
     // ===== V5.1 节奏控制 (持续推进模式, V5.1.1 尸潮密度强化) =====
     PACING: {
         waveTriggerAhead: 14,       // 波次激活提前量(队伍距波点z, 世界单位)
-        spawnIntervalMin: 0.8,      // 首批生成延迟(秒)
-        spawnIntervalMax: 1.5,
+        spawnIntervalMin: 0.18,
+        spawnIntervalMax: 0.3,
         batchGapMin: 0.25,          // V5.1.1: 同一波内后续批次密接间隔 — alive持续堆积成墙
         batchGapMax: 0.4,
         batchSizeBase: 8,           // V5.1.5: 批次与目标活敌匹配(旧上限16导致alive永远堆不到目标)
         batchSizeMax: 48,
-        fillFrameInterval: 0.008,   // V5.1.5: 填充帧预算(秒/只) — 每帧可涌 ceil(dt/0.008)≈4只(120-240只/s)
+        fillFrameInterval: 0.01,
         trickleInterval: 0.15,      // V5.1.5: 涓流冷却(秒/只) — alive达标后6.7只/s持续施压
-        spawnDepth: 8,              // 生成纵深: 团块感+屏满尸潮
+        spawnDepth: 8,
+        spawnDistance: 14,          // 留足开火距离，不贴脸刷新
         bossTriggerAhead: 24,
         bossWarningTime: 2.0,
         bossSpawnSetback: 4,
-        firstContactGrace: 2.0,
-        waveRestMin: 1.5,           // V5.1.1: 波间压缩(场空窗太短)
-        waveRestMax: 2.5
+        firstContactGrace: 0.65,
+        waveRestMin: 0.35,
+        waveRestMax: 0.65
     },
 
     // ===== V5.1 每关场上活敌上限矩阵 (尸潮规模, 非同屏全部) =====
     MAX_ALIVE: [70, 140, 190, 260, 240],  // V5.1.5: 超级尸潮 — L5=240(Boss关兼顾竞速)
     ALIVE_TARGET: [40, 80, 110, 150, 120],  // V5.1.5: 每关期望同屏活敌 — L5=120(Boss关)
+    // V6.0: 末日核心主题(第6关) — 场景配色/雾气/灯光与能源核心参数
+    APOCALYPSE_THEME: {
+        sky: 0x4A2C3A, fog: 0x5A3040, fogNear: 30, fogFar: 95,
+        grass: 0x3E5C43, grassDark: 0x33503A, road: 0x6E6470, roadEdge: 0x5A5060,
+        hemiSky: 0x8A6070, hemiGround: 0x2E3A30, sunColor: 0xFFB0A0, sunIntensity: 0.55,
+        coreHp: 900, coreBuffRadius: 9, coreBuffInterval: 4.5,
+        star2Count: 250, star3Kills: 700
+    },
+    // 试玩强化：每关 authored wave 总量×3，并提高同屏密度。
+    ENEMY_WAVE_MULTIPLIER: 3,
+    ENEMY_MAX_ALIVE_MULTIPLIER: 2.2,
+    ENEMY_ALIVE_TARGET_MULTIPLIER: 2,
+    ENEMY_HP_MULTIPLIER: [1.7, 2.2, 2.8, 3.4, 4.0, 4.6], // V6.0: 追加L6=4.6(原数组仅5项, L6索引越界→NaN血量)
 
 
     // 射击
@@ -83,7 +97,7 @@ const CONFIG = {
     // 僵尸攻击小队的距离
     ZOMBIE_ATTACK_DIST: 1.2,
     // 僵尸攻击间隔(秒)
-    ZOMBIE_ATTACK_INTERVAL: 0.8,
+    ZOMBIE_ATTACK_INTERVAL: 1.05,
     // 每次攻击杀死士兵数
     ZOMBIE_ATTACK_KILL: 1,
 
@@ -105,8 +119,8 @@ const CONFIG = {
         road: 0xB8B4C8,
         roadEdge: 0x9A94B0,
         roadLine: 0xF0EEF5,
-        grass: 0x8FCB6F,
-        grassDark: 0x7ABA5A,
+        grass: 0x719C80,
+        grassDark: 0x537A64,
         // 士兵: 明亮蓝
         soldierBlue: 0x3B82F6,
         soldierHelmet: 0x1E3A8A,   // V4.3: 深藏青头盔(与亮蓝军服色块分离, 背面可辨头/身)
@@ -150,20 +164,20 @@ const LEVELS = [
                 { lane: 1, op: 'add', value: 5, label: '+5' },
                 { lane: 2, op: 'add', value: 3, label: '+3' }
             ]},
-            { type: 'wave', z: -18, enemies: [ { type: 'normal', count: 21 } ] },
+            { type: 'wave', z: -18, enemies: [ { type: 'normal', count: 48 } ] },
             { type: 'gates', z: -28, gates: [
                 { lane: 0, op: 'add', value: 5, label: '+5' },
                 { lane: 1, op: 'buff', value: 'damage', label: '输出+1' },
                 { lane: 2, op: 'add', value: 8, label: '+8' }
             ]},
-            { type: 'wave', z: -40, enemies: [ { type: 'normal', count: 26 }, { type: 'fast', count: 6 } ] },
+            { type: 'wave', z: -40, enemies: [ { type: 'normal', count: 54 }, { type: 'fast', count: 18 } ] },
             { type: 'gates', z: -52, gates: [
                 { lane: 0, op: 'buff', value: 'firerate', label: '射速+10%' },
                 { lane: 1, op: 'add', value: 8, label: '+8' },
                 { lane: 2, op: 'buff', value: 'crit', label: '暴击+5%' }
             ]},
-            { type: 'wave', z: -64, enemies: [ { type: 'normal', count: 21 }, { type: 'fast', count: 9 } ] },
-            { type: 'wave', z: -78, enemies: [ { type: 'normal', count: 10 } ] }
+            { type: 'wave', z: -64, enemies: [ { type: 'normal', count: 60 }, { type: 'fast', count: 24 } ] },
+            { type: 'wave', z: -78, enemies: [ { type: 'normal', count: 60 } ] }
         ]
     },
     // ============ 第2关 快速尸潮 (总怪60, 火力分配) ============
@@ -180,9 +194,9 @@ const LEVELS = [
             ]},
             { type: 'wave', z: -20, enemies: [ { type: 'fast', count: 60 }, { type: 'normal', count: 48 } ] },
             { type: 'gates', z: -34, gates: [
-                { lane: 0, op: 'addpct', value: 20, label: '人数+20%' },
-                { lane: 1, op: 'add', value: 12, label: '+12' },
-                { lane: 2, op: 'buff', value: 'crit', label: '暴击+5%' }
+                { lane: 0, op: 'skill', value: 'roll' },
+                { lane: 1, op: 'skill', value: 'roll' },
+                { lane: 2, op: 'skill', value: 'roll' }
             ]},
             { type: 'wave', z: -46, enemies: [ { type: 'fast', count: 84 }, { type: 'normal', count: 48 } ] },
             { type: 'gates', z: -60, gates: [
@@ -242,11 +256,7 @@ const LEVELS = [
                 { lane: 2, op: 'mul', value: 2, label: '\u00d72' }
             ]},
             { type: 'wave', z: -50, enemies: [ { type: 'split', count: 93 }, { type: 'shield', count: 36 }, { type: 'fast', count: 51 } ] },
-            { type: 'gates', z: -64, gates: [
-                { lane: 0, op: 'buff', value: 'explosive', label: '爆炸弹' },
-                { lane: 1, op: 'mul', value: 2, label: '×2' },
-                { lane: 2, op: 'buff', value: 'firerate', label: '射速+10%' }
-            ]},
+            { type: 'gates', z: -64, gates: [ { lane: 0, op: 'skill', value: 'roll' }, { lane: 1, op: 'skill', value: 'roll' }, { lane: 2, op: 'skill', value: 'roll' } ] },
             { type: 'wave', z: -78, enemies: [ { type: 'split', count: 66 }, { type: 'spitter', count: 51 }, { type: 'normal', count: 66 } ] },
             { type: 'wave', z: -94, enemies: [ { type: 'split', count: 93 }, { type: 'fast', count: 78 }, { type: 'shield', count: 27 } ] },
             { type: 'wave', z: -108, enemies: [ { type: 'split', count: 51 }, { type: 'spitter', count: 36 } ] }
@@ -287,11 +297,48 @@ const LEVELS = [
             { type: 'boss', z: -150, boss: { type: 'boss', hp: 2600 } }
         ]
     }
+    ,
+    // ============ 第6关 末日核心 · 尸潮源头 (V6.0 终局关) ============
+    {
+        name: '第 6 关 末日核心',
+        startCount: 1,
+        totalZ: -180,
+        rewardCoins: 300,
+        theme: 'apocalypse',
+        segments: [
+            { type: 'gates', z: -8, gates: [
+                { lane: 0, op: 'add', value: 18, label: '+18' },
+                { lane: 1, op: 'mul', value: 2, label: '×2' },
+                { lane: 2, op: 'buff', value: 'damage2', label: '输出+2' }
+            ]},
+            { type: 'wave', z: -24, enemies: [ { type: 'normal', count: 90 }, { type: 'fast', count: 60 } ] },
+            { type: 'gates', z: -40, gates: [
+                { lane: 0, op: 'buff', value: 'pierce', label: '穿透+1' },
+                { lane: 1, op: 'buff', value: 'crit2', label: '暴击+10%' },
+                { lane: 2, op: 'buff', value: 'damage2', label: '输出+2' }
+            ]},
+            { type: 'wave', z: -56, enemies: [ { type: 'elite', count: 6 }, { type: 'shield', count: 45 }, { type: 'normal', count: 60 } ] },
+            { type: 'energy', z: -72, core: { hp: 900, buffRadius: 9 } },
+            { type: 'gates', z: -86, gates: [
+                { lane: 0, op: 'skill', value: 'roll' },
+                { lane: 1, op: 'skill', value: 'roll' },
+                { lane: 2, op: 'skill', value: 'roll' }
+            ]},
+            { type: 'wave', z: -102, enemies: [ { type: 'elite', count: 8 }, { type: 'spitter', count: 40 }, { type: 'split', count: 45 }, { type: 'fast', count: 45 } ] },
+            { type: 'gates', z: -118, gates: [
+                { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
+                { lane: 1, op: 'buff', value: 'chain', label: '连锁闪电' },
+                { lane: 2, op: 'buff', value: 'crit2', label: '暴击+10%' }
+            ]},
+            { type: 'wave', z: -134, enemies: [ { type: 'elite', count: 10 }, { type: 'shield', count: 50 }, { type: 'spitter', count: 35 }, { type: 'normal', count: 70 } ] },
+            { type: 'boss', z: -166, boss: { type: 'boss', hp: 5200, style: 'overlord', title: '末日吞噬者' } }
+        ]
+    }
 ];
 
 // ===== V5.1 Boss 装配 =====
-CONFIG.BOSS_STYLES = ['bruiser', 'bruiser', 'bulwark', 'hivelord', 'overlord'];
-CONFIG.BOSS_NAMES = ['铁拳队长', '赤拳突击者', '钢盾领主', '裂变母巢', '终焉核心'];
+CONFIG.BOSS_STYLES = ['bruiser', 'bruiser', 'bulwark', 'hivelord', 'overlord', 'overlord'];
+CONFIG.BOSS_NAMES = ['铁拳队长', '赤拳突击者', '钢盾领主', '裂变母巢', '终焉核心', '末日吞噬者'];
 LEVELS.forEach(function(level, li) {
     level.bossStyle = CONFIG.BOSS_STYLES[li];
     level.segments.forEach(function(seg) {

@@ -52,12 +52,14 @@ class Enemy {
         var actualDamage = this.shieldT > 0 ? dmg * .3 : dmg;
         if(this.artStyle==='titan')actualDamage*=.85;
         this.hp -= actualDamage;
-        this.hitFlash = 0.08;
+        this.hitFlash = 0.13;
+        this._deathSide = clamp((this.x - (fromX === undefined ? this.x : fromX)) * 2, -1.4, 1.4);
         // 击退(非Boss)
         if (!this.isBoss) this.knockback = Math.min(this.knockback + 1.5, 3);
         // 命中火花
         if (effects) {
-            effects.burst(this.x, 0.55, this.z, isCrit ? 0xFF8844 : 0xFFE066, 3, 2, 0.25);
+            effects.burst(this.x, 0.65, this.z, isCrit ? 0xFF8844 : 0xFFE066, isCrit ? 6 : 3, 2.5, .25);
+            if (effects.impact) effects.impact(this.x, .85, this.z, isCrit, this.hp <= 0);
             // 伤害数字 (V3.6: 降低概率避免大规模战斗时文字刷屏; V3.3: 暴击必显大字)
             if (isCrit) {
                 effects.floatText(this.x, 1.0, this.z, String(dmg), '#FF8844', true);
@@ -65,6 +67,7 @@ class Enemy {
                 effects.floatText(this.x, 0.9, this.z, String(dmg), '#FFD700', false);
             }
         }
+        if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('hit');
         if (this.hp <= 0) {
             this.die(effects);
             return true;
@@ -89,12 +92,16 @@ class Enemy {
         // === 死亡动画: 后仰+缩小 ===
         if (this.dying) {
             this.dieT += dt;
-            var dur = this.isBoss ? 0.8 : 0.35;
+            var dur = this.isBoss ? 0.8 : 0.46;
             var t = Math.min(1, this.dieT / dur);
             // 后仰
             this.model.rotation.x = -t * 1.4;
+            this.model.rotation.z += (this._deathSide || .35) * dt * 2.5;
+            this.model.position.y = Math.sin(t * Math.PI) * (this.isBoss ? .25 : .65);
+            this.model.position.z = this.z - t * (this.isBoss ? .25 : 1.35);
+            this.model.position.x = this.x + (this._deathSide || .25) * t;
             // 缩小消失 (V2.2: 使用visScale避免分裂僵尸跳变)
-            var s = this.visScale * (1 - easeOutCubic(t));
+            var s = this.visScale * (1 - t * t);
             this.model.scale.setScalar(Math.max(0.001, s));
             if (this.dieT >= dur) {
                 this.removeReady = true;
@@ -155,8 +162,10 @@ class Enemy {
             else this.z = BattleKinematics.enemyApproachZ(this.z, spd, dt);
             const dx = squad.x - this.x;
             this.x += clamp(dx, -1, 1) * spd * 0.4 * dt;
+        } else if (Math.abs(this.x - squad.x) > (squad.getHalfWidth ? squad.getHalfWidth() : 1) + (this.isBoss ? 1.2 : .45)) {
+            this.x += Math.sign(squad.x - this.x) * this.cfg.speed * dt;
         } else {
-            // 近战攻击 (V3.3: 冰冻时攻击间隔延长)
+            // Melee requires horizontal contact too, not just a matching Z.
             this.attackTimer -= dt;
             if (this.attackTimer <= 0) {
                 // V5.1.4: Boss攻击间隔×2(挥击1.6s, 磨损0.625/s) — Boss竞速与召唤磨损平衡
@@ -193,7 +202,7 @@ class Enemy {
         // 受击反馈 (V3.5: 合并模型用缩放冲击, Group模型用emissive闪烁)
         if (this.hitFlash > 0) {
             this.hitFlash -= dt;
-            const k = Math.max(0, this.hitFlash / 0.08);
+            const k = Math.max(0, this.hitFlash / 0.13);
             if (this.model.userData.merged) {
                 // 缩放冲击: 短暂膨胀回弹
                 var punch = 1 + k * 0.18;
@@ -204,6 +213,8 @@ class Enemy {
                     this.flashMats[i].emissive.setRGB(f, f * 0.85, f * 0.6);
                 }
             }
+        } else if (this.spawnT >= 1 && this.model.userData.merged) {
+            this.model.scale.setScalar(this.visScale);
         }
     }
 
@@ -245,8 +256,13 @@ class EnemyManager {
     /** V4.0: 统一出生入口(供节奏控制器/分裂/E2E注入调用) */
     spawnEnemy(type, x, z, hp, style) {
         const e = new Enemy(type, x, z, this.scene, hp || null, style || (type==='boss' ? this.bossStyle : null));
+        // V6.0: 精英词缀
+        if (type === 'elite' && typeof AffixSystem !== 'undefined') {
+            AffixSystem.roll(e, this._levelIndex || 0);
+            if (e.affixNames) e.model.userData.affixTag = e.affixNames;
+        }
         this.enemies.push(e);
-        if (type === 'boss') this.boss = e;
+        if (type === 'boss') { this.boss = e; this.bossKills = this.bossKills || 0; }
         return e;
     }
 
@@ -299,6 +315,7 @@ class EnemyManager {
         // 更新僵尸
         for (let i = this.enemies.length - 1; i >= 0; i--) {
             const e = this.enemies[i];
+            if (typeof AffixSystem !== 'undefined') AffixSystem.update(e, dt, squad, this, this.effects);
             e.update(dt, time, squad, this, this.effects);
             // 刚死亡: 触发分裂/Boss爆炸(仅一次)
             if (!e.alive && !e.deathHandled) {
@@ -311,7 +328,10 @@ class EnemyManager {
                     this.splitQueue.push({ x: e.x, z: e.z, delay: 0.2 });
                     this.splitQueue.push({ x: e.x, z: e.z, delay: 0.35 });
                 }
+                // V6.0: 分裂词缀
+                if (e.affixes && typeof AffixSystem !== 'undefined') AffixSystem.onDeath(e, this);
                 if (e === this.boss) {
+                    this.bossKills = (this.bossKills || 0) + 1;
                     this.boss = this.enemies.find(other=>other!==e && other.isBoss && other.alive) || null;
                     // Boss死亡大爆炸 + 金色粒子
                     this.effects.burst(e.x, 1, e.z, 0xFF4444, 30, 5, 1);
@@ -375,7 +395,7 @@ class EnemyManager {
         for (const e of this.enemies) {
             if (!e.alive) continue;
             if (e.z > z + 1) continue; // 身后的敌人不瞄准
-            const d = Math.abs(e.z - z);
+            const d = Math.hypot(e.z - z, (e.x - x) * .85);
             if (d < bestDist) {
                 bestDist = d;
                 best = e;
