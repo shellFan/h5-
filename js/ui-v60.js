@@ -13,11 +13,20 @@ var V60UI = {
 
     install: function(game) {
         this.game = game;
+        if (typeof ChallengeDaily !== 'undefined') ChallengeDaily._gameRef = game;
         var container = document.getElementById('game-container');
         if (!container || document.getElementById('v60-map-page')) return;
 
         // —— 页面骨架(地图/成就/设置) ——
         container.insertAdjacentHTML('beforeend',
+            '<div id="v60-daily-page" class="v60-page hidden">' +
+                '<div class="title-panel v60-panel">' +
+                    '<div class="v42-panel-kicker cyan">每日作战令</div>' +
+                    '<h2 class="v60-page-title">每日任务</h2>' +
+                    '<div id="v60-daily-list" class="v60-ach-list"></div>' +
+                    '<button id="v60-daily-back" class="btn-primary">返回</button>' +
+                '</div>' +
+            '</div>' +
             '<div id="v60-map-page" class="v60-page hidden">' +
                 '<div class="title-panel v60-panel">' +
                     '<div class="v42-panel-kicker">作战地图 · 六大防区</div>' +
@@ -54,6 +63,7 @@ var V60UI = {
                 '<div id="v60-home-nav" class="v60-home-nav">' +
                     '<button id="v60-btn-map" class="v60-nav-btn">🗺️ 作战地图</button>' +
                     '<button id="v60-btn-ach" class="v60-nav-btn">🏅 成就</button>' +
+                    '<button id="v60-btn-daily" class="v60-nav-btn">📋 每日</button>' +
                     '<button id="v60-btn-set" class="v60-nav-btn">⚙️ 设置</button>' +
                 '</div>' +
                 '<div id="v60-home-growth" class="v60-home-growth"></div>');
@@ -64,8 +74,10 @@ var V60UI = {
         document.getElementById('v60-btn-map').onclick = function() { game._sfx('click'); self.showPage('v60-map-page'); self.renderMap(game); };
         document.getElementById('v60-btn-ach').onclick = function() { game._sfx('click'); self.showPage('v60-ach-page'); self.renderAchievements(game); };
         document.getElementById('v60-btn-set').onclick = function() { game._sfx('click'); self.showPage('v60-settings-page'); self.renderSettings(game); };
+        document.getElementById('v60-btn-daily').onclick = function() { game._sfx('click'); self.showPage('v60-daily-page'); self.renderDaily(game); };
         document.getElementById('v60-map-back').onclick = document.getElementById('v60-ach-back').onclick =
             function() { game._sfx('click'); self.hidePages(); };
+        document.getElementById('v60-daily-back').onclick = function() { game._sfx('click'); self.hidePages(); };
         document.getElementById('v60-set-back').onclick = function() { game._sfx('click'); self.hidePages(); };
         document.getElementById('v60-set-sound').onclick = function() {
             if (typeof Platform !== 'undefined' && Platform.audio) {
@@ -92,6 +104,23 @@ var V60UI = {
         } catch (e) {}
 
         this.renderHomeGrowth(game);
+    },
+
+    /** 战斗事件上报(每帧或结算时调用) */
+    reportProgress: function(game) {
+        if (!game.profile || typeof ChallengeDaily === 'undefined') return;
+        var d = game.profile.data;
+        if (!d.daily || d.daily.date !== ChallengeDaily.today()) return;
+        var kills = d.totalKills || 0;
+        var daily = d.daily;
+        daily.tasks.forEach(function(t) {
+            if (t.type === 'kills' && !t.claimed) t.progress = Math.min(t.target, kills);
+            if (t.type === 'squad' && !t.claimed) t.progress = Math.min(t.target, Math.max(t.progress, game.maxCount || 0));
+            if (t.type === 'gates' && !t.claimed) t.progress = Math.min(t.target, g.gates.chosenRows.size);
+            if (t.type === 'skills' && !t.claimed) t.progress = Math.min(t.target, Object.keys(g.squad._skills || {}).length);
+            if (t.type === 'boss' && !t.claimed) t.progress = Math.min(t.target, g.enemies.bossKills || 0);
+        });
+        // wins 和 clear 只在胜利结算时更新
     },
 
     showPage: function(id) {
@@ -182,6 +211,25 @@ var V60UI = {
                 '<div class="v60-ach-info"><div class="v60-ach-name">' + def.name + '</div>' +
                 '<div class="v60-ach-desc">' + def.desc + '</div></div>' +
                 '<div class="v60-ach-reward">' + (got ? '✓' : '+' + def.reward + '🪙') + '</div>';
+            el.appendChild(row);
+        });
+    },
+
+    renderDaily: function(game) {
+        var el = document.getElementById('v60-daily-list');
+        if (!el || !game.profile || typeof ChallengeDaily === 'undefined') return;
+        var daily = ChallengeDaily.ensureDaily(game.profile);
+        el.innerHTML = '';
+        daily.tasks.forEach(function(t, i) {
+            var pct = Math.min(100, Math.round(t.progress / t.target * 100));
+            var can = t.progress >= t.target && !t.claimed;
+            var row = document.createElement('div');
+            row.className = 'v60-ach-row' + (t.claimed ? ' got' : can ? ' ready' : '');
+            row.innerHTML =
+                '<div class="v60-ach-info"><div class="v60-ach-name">' + t.name + '</div>' +
+                '<div class="v60-ach-bar"><div class="v60-ach-fill" style="width:' + pct + '%"></div></div></div>' +
+                '<div class="v60-ach-reward">' + (t.claimed ? '✓' : '+' + t.reward + '🪙') + '</div>';
+            if (can) row.onclick = function() { ChallengeDaily.claim(game.profile, i); game._sfx('gate'); self.renderDaily(game); game._refreshCoinDisplays(); };
             el.appendChild(row);
         });
     },

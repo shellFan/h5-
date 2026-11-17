@@ -47,3 +47,10 @@
 .v60-growth-stats { text-align: center; font-size: 11px; color: #5b7a92; font-weight: 800; margin-top: 4px; }
 .v60-win-stars { text-align: center; font-size: 26px; color: #E9A825; letter-spacing: 6px; text-shadow: 0 2px 8px rgba(233,168,37,.5); margin-bottom: 8px; }
 .v60-win-stars.hidden { display: none; }
+
+/* V6.0: 每日任务进度条 */
+.v60-ach-bar { height: 7px; background: #d7e6f0; border-radius: 4px; overflow: hidden; margin-top: 4px; }
+.v60-ach-fill { height: 100%; background: linear-gradient(90deg, #39D98A, #1A6FD4); border-radius: 4px; transition: width .3s; }
+.v60-ach-row.ready { border-color: rgba(57,217,138,.5); background: rgba(57,217,138,.08); opacity: 1; cursor: pointer; }
+.v60-ach-row.ready .v60-ach-reward { color: #39D98A; }
+.v60-home-nav .v60-nav-btn { font-size: 11px; padding: 7px 2px; }

@@ -26,6 +26,7 @@ const COPY_LIST = [
     'js/skills.js',
     'js/affixes.js',
     'js/progression.js',
+    'js/challenge.js',
     'js/upgrades.js',
     'js/utils.js',
     'js/movement.js',   // V4.0

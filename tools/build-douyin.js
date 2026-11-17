@@ -28,6 +28,7 @@ const GAME_SCRIPTS = [
     'js/skills.js',
     'js/affixes.js',
     'js/progression.js',
+    'js/challenge.js',
     'js/upgrades.js',
     'js/movement.js',
     'js/vendor/GLTFLoader.js',

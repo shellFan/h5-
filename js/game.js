@@ -997,6 +997,13 @@ class Game {
         this.combat._syncInstances();
         this.effects.update(dt);
 
+        if (typeof ChallengeDaily !== 'undefined' && this.profile) {
+            ChallengeDaily.report(this.profile, 'kills', 0);
+            ChallengeDaily.report(this.profile, 'squad', 0);
+            ChallengeDaily.report(this.profile, 'gates', 0);
+            ChallengeDaily.report(this.profile, 'skills', 0);
+            ChallengeDaily.report(this.profile, 'boss', 0);
+        }
         // V3.3: 连杀系统 — 击杀数增长时combo+1, 2秒无击杀清零
         var kc = this.enemies.killCount;
         if (kc > this._prevKillCount) {
