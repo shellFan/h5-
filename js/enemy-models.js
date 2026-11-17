@@ -107,9 +107,9 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
             var attack=e.attackT||0,charge=e.chargeT||0;
             this._color.setRGB(1,1,1);
             if(e.frozenT>0)this._color.setRGB(.50,.85,1.35);
-            if(e.hitFlash>0)this._color.setRGB(1.65,1.4,1.1);
             if(e.phaseIndex>=3)this._color.setRGB(1.35,.72,.75);
             else if(e.phaseIndex===2)this._color.setRGB(1.12,.85,1.2);
+            if(e.hitFlash>0)this._color.setRGB(2.8,2.4,1.8);
             for(var part of this.data.parts) {
                 this._pose.identity();
                 if(part==='LegL'||part==='LegR')this._pose.makeRotationX(walk*(part==='LegL'?1:-1));

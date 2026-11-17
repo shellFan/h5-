@@ -40,26 +40,32 @@ const CONFIG = {
     // ===== V5.1 节奏控制 (持续推进模式, V5.1.1 尸潮密度强化) =====
     PACING: {
         waveTriggerAhead: 14,       // 波次激活提前量(队伍距波点z, 世界单位)
-        spawnIntervalMin: 0.8,      // 首批生成延迟(秒)
-        spawnIntervalMax: 1.5,
+        spawnIntervalMin: 0.18,
+        spawnIntervalMax: 0.3,
         batchGapMin: 0.25,          // V5.1.1: 同一波内后续批次密接间隔 — alive持续堆积成墙
         batchGapMax: 0.4,
         batchSizeBase: 8,           // V5.1.5: 批次与目标活敌匹配(旧上限16导致alive永远堆不到目标)
         batchSizeMax: 48,
-        fillFrameInterval: 0.008,   // V5.1.5: 填充帧预算(秒/只) — 每帧可涌 ceil(dt/0.008)≈4只(120-240只/s)
+        fillFrameInterval: 0.01,
         trickleInterval: 0.15,      // V5.1.5: 涓流冷却(秒/只) — alive达标后6.7只/s持续施压
-        spawnDepth: 8,              // 生成纵深: 团块感+屏满尸潮
+        spawnDepth: 8,
+        spawnDistance: 14,          // 留足开火距离，不贴脸刷新
         bossTriggerAhead: 24,
         bossWarningTime: 2.0,
         bossSpawnSetback: 4,
-        firstContactGrace: 2.0,
-        waveRestMin: 1.5,           // V5.1.1: 波间压缩(场空窗太短)
-        waveRestMax: 2.5
+        firstContactGrace: 0.65,
+        waveRestMin: 0.35,
+        waveRestMax: 0.65
     },
 
     // ===== V5.1 每关场上活敌上限矩阵 (尸潮规模, 非同屏全部) =====
     MAX_ALIVE: [70, 140, 190, 260, 240],  // V5.1.5: 超级尸潮 — L5=240(Boss关兼顾竞速)
     ALIVE_TARGET: [40, 80, 110, 150, 120],  // V5.1.5: 每关期望同屏活敌 — L5=120(Boss关)
+    // 试玩强化：每关 authored wave 总量×3，并提高同屏密度。
+    ENEMY_WAVE_MULTIPLIER: 3,
+    ENEMY_MAX_ALIVE_MULTIPLIER: 2.2,
+    ENEMY_ALIVE_TARGET_MULTIPLIER: 2,
+    ENEMY_HP_MULTIPLIER: [1.7, 2.2, 2.8, 3.4, 4.0],
 
 
     // 射击
@@ -83,7 +89,7 @@ const CONFIG = {
     // 僵尸攻击小队的距离
     ZOMBIE_ATTACK_DIST: 1.2,
     // 僵尸攻击间隔(秒)
-    ZOMBIE_ATTACK_INTERVAL: 0.8,
+    ZOMBIE_ATTACK_INTERVAL: 1.05,
     // 每次攻击杀死士兵数
     ZOMBIE_ATTACK_KILL: 1,
 
@@ -105,8 +111,8 @@ const CONFIG = {
         road: 0xB8B4C8,
         roadEdge: 0x9A94B0,
         roadLine: 0xF0EEF5,
-        grass: 0x8FCB6F,
-        grassDark: 0x7ABA5A,
+        grass: 0x719C80,
+        grassDark: 0x537A64,
         // 士兵: 明亮蓝
         soldierBlue: 0x3B82F6,
         soldierHelmet: 0x1E3A8A,   // V4.3: 深藏青头盔(与亮蓝军服色块分离, 背面可辨头/身)
@@ -150,20 +156,20 @@ const LEVELS = [
                 { lane: 1, op: 'add', value: 5, label: '+5' },
                 { lane: 2, op: 'add', value: 3, label: '+3' }
             ]},
-            { type: 'wave', z: -18, enemies: [ { type: 'normal', count: 21 } ] },
+            { type: 'wave', z: -18, enemies: [ { type: 'normal', count: 48 } ] },
             { type: 'gates', z: -28, gates: [
                 { lane: 0, op: 'add', value: 5, label: '+5' },
                 { lane: 1, op: 'buff', value: 'damage', label: '输出+1' },
                 { lane: 2, op: 'add', value: 8, label: '+8' }
             ]},
-            { type: 'wave', z: -40, enemies: [ { type: 'normal', count: 26 }, { type: 'fast', count: 6 } ] },
+            { type: 'wave', z: -40, enemies: [ { type: 'normal', count: 54 }, { type: 'fast', count: 18 } ] },
             { type: 'gates', z: -52, gates: [
                 { lane: 0, op: 'buff', value: 'firerate', label: '射速+10%' },
                 { lane: 1, op: 'add', value: 8, label: '+8' },
                 { lane: 2, op: 'buff', value: 'crit', label: '暴击+5%' }
             ]},
-            { type: 'wave', z: -64, enemies: [ { type: 'normal', count: 21 }, { type: 'fast', count: 9 } ] },
-            { type: 'wave', z: -78, enemies: [ { type: 'normal', count: 10 } ] }
+            { type: 'wave', z: -64, enemies: [ { type: 'normal', count: 60 }, { type: 'fast', count: 24 } ] },
+            { type: 'wave', z: -78, enemies: [ { type: 'normal', count: 60 } ] }
         ]
     },
     // ============ 第2关 快速尸潮 (总怪60, 火力分配) ============

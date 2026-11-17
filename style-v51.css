@@ -219,3 +219,13 @@
     color: #1A6FD4;
 }
 .btn-secondary.v51-shop-btn-win:active { transform: scale(.97); }
+@keyframes combo-impact {
+    0% { transform: scale(1.18) rotate(-3deg); }
+    100% { transform: scale(1) rotate(0); }
+}
+
+#game-container.v42-ui #combo-box.combo-hit {
+    animation: combo-impact 160ms ease-out;
+    border-color: #ffc75a;
+    box-shadow: 0 2px 14px rgba(255, 185, 51, .28);
+}

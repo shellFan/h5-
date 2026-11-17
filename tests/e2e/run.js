@@ -261,7 +261,7 @@ async function suiteGameplay(page) {
         // Isolate this boss fixture from earlier wave queues. The full ten-level
         // replay separately covers natural progression without teleport/skip.
         // V5.1: 仅第5关含Boss段 — 切到L5重建波次计划, 排空普通波, 传送到Boss预警线内
-        await gameApi(page, '(g) => { g.levelIndex = 4; g.start(); g.enemies.clear(); g.pacing.waves.filter(w=>w.type==="wave").forEach(w=>w.state="done"); g.pacing.restTimer=0; g.pacing.activeWave=null; const b = LEVELS[4].segments.find(s => s.type === "boss"); g.squad.z = b.z + 16; g.squad.setCount(40); }');
+        await gameApi(page, '(g) => { g.levelIndex = 4; g.start(); g.enemies.clear(); g.pacing.waves.filter(w=>w.type==="wave").forEach(w=>w.state="done"); g.pacing.waves.filter(w=>w.type==="boss").forEach(w=>{ w.requiredGateZ = null; }); g.pacing.restTimer=0; g.pacing.activeWave=null; LEVELS[4].segments.filter(s=>s.type==="gates").forEach(s=>g.gates.chosenRows.add(s.z)); const b = LEVELS[4].segments.find(s => s.type === "boss"); g.squad.z = b.z + 16; g.squad.setCount(40); }');
         // 等待Boss生成(轮询代替固定等待, 消除时序不稳定)
         await page.waitForFunction(() => {
             const g = window.__game;
@@ -358,9 +358,9 @@ async function suiteAdMock(page) {
     _current = '双倍结算E2E';
     await step('通关后广告领取双倍(限1次)', async () => {
         await gotoGame(page, '?adtest=auto_complete');
-        await gameApi(page, "(g) => { g.levelIndex = 4; g.start(); g.pacing.waves.filter(w=>w.type==='wave').forEach(w=>w.state='done'); g.pacing.restTimer=0; g.pacing.activeWave=null; const b = LEVELS[4].segments.find(s => s.type === 'boss'); g.squad.setCount(150); g.squad.z = b.z + 16; }");
+        await gameApi(page, "(g) => { g.levelIndex = 4; g.start(); g.pacing.waves.filter(w=>w.type==='wave').forEach(w=>w.state='done'); g.pacing.restTimer=0; g.pacing.activeWave=null; LEVELS[4].segments.filter(s=>s.type==='gates').forEach(s=>g.gates.chosenRows.add(s.z)); const b = LEVELS[4].segments.find(s => s.type === 'boss'); g.squad.setCount(300); g.squad.damageBuff = 3; g.squad.z = b.z + 16; }");
         // 等待Boss被击杀→won
-        await page.waitForFunction(() => { const g = window.__game; return g && g.state === 'won'; }, { timeout: 12000 }).catch(() => {});
+        await page.waitForFunction(() => { const g = window.__game; return g && g.state === 'won'; }, { timeout: 25000 }).catch(() => {});
         assert(await gameApi(page, '(g) => g.state') === 'won', '应进入胜利状态');
         const btnVisible = await page.evaluate(() => !document.getElementById('btn-double-reward').classList.contains('hidden'));
         assert(btnVisible, '双倍按钮应显示');

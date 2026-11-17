@@ -260,7 +260,7 @@ class CombatSystem {
             mesh: mesh, damage: damage, life: 1.2,
             target: target || null,
             crit: !!isCrit,
-            pierceLeft: this._squad ? this._squad.pierce : 0,
+            pierceLeft: 1 + (this._squad ? this._squad.pierce : 0),
             hitSet: null
         });
 

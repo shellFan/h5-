@@ -27,22 +27,17 @@ class Game {
         this.pacing = new GamePacingController(this);
         var self = this;
         this.pacing.spawnFn = function(type, x, z, hp) {
-            // V5.1.1: 普通怪血量随队伍DPS缩放(hordeMul=dps/40, 1~30封顶) —
-            // 强队伍不再瞬间融化尸潮(玩家反馈"怪物太少/看不到一堆"), 弱队伍体验不变。
-            var dpsNow = self.squad.count * self.squad.getDamage() * self.squad.getFireRate();
+            // Enemy health depends on the encounter, never on the player's upgrades.
             if (type !== 'boss' && !hp) {
                 var refHp = (CONFIG.ZOMBIE[type] || CONFIG.ZOMBIE.normal).hp;
-                var hordeMul = Math.max(1, Math.min(30, dpsNow / 65)); // V5.1.5: 分母65(校准: 分级加强+×3总量已足够)
-                hordeMul *= 0.8 + 0.2 * Math.min(1, self.levelIndex / 4); // V5.1.5: 分级加强 L1温和(×0.8)→L5全力(×1.0)
-                if (type === 'elite') hordeMul = Math.max(1, hordeMul * 0.5); // 精英缩放减半(精英墙不可破)
-                hp = Math.max(refHp, Math.round(refHp * hordeMul));
+                hp = Math.round(refHp * CONFIG.ENEMY_HP_MULTIPLIER[self.levelIndex]);
             }
             // V4.0: Boss血量按出场时队伍战力动态缩放 — 任何策略/养成水平都面临~8-12s Boss战
             if (type === 'boss') {
                 // V5.1.3: Boss血量 = 人数×DPS双因子(人数=防御/竞速生存, DPS=输出) —
                 // 旧公式只随DPS缩放, 小队打Boss时人数劣势无补偿必败。预算≈count×dps×0.64(1.25/s磨损×0.8安全)。
                 var base = hp || CONFIG.ZOMBIE.boss.hp;
-                hp = Math.round(Math.max(base * 0.85, Math.min(base * 3.5, self.squad.count * dpsNow * 0.5)) / 50) * 50; // V5.1.4: 系数0.5(磨损0.625/s下竞速与生存平衡)
+                hp = base;
             }
             if(type==='boss' && self.enemies.bossStyle==='twinelite') {
                 self.enemies.spawnEnemy(type,-1.1,z,hp/2,'elite');
@@ -51,6 +46,9 @@ class Game {
             return self.enemies.spawnEnemy(type, x, z, hp);
         };
         this.pacing.aliveCountFn = function() { return self.enemies.encounterOutstanding; };
+        this.pacing.gateReadyFn = function(w, squad) {
+            return self.gates.isRowChosen(w.requiredGateZ) && squad.z <= w.requiredGateZ - 1.5;
+        };
         this.pacing.onWaveStart = function(w) {
             self._waveNoticeT=CONFIG.PACING.firstContactGrace;
             var el=document.getElementById('v42-wave-banner');
@@ -837,7 +835,8 @@ class Game {
             this.enemies.loadFromLevel(level, this.levelIndex);
             this.enemies.bossStyle=level.bossStyle;
             // V4.0: 波次计划移交节奏控制器(分批生成)
-            this.pacing.loadFromLevel(level, this.levelIndex);
+            this.pacing.loadFromLevel(level, this.levelIndex, true);
+            this.gates.syncVisibility(this.pacing, 0);
             this._showBossWarning(false);
             this.combat.clear();
             this.effects.clear();
@@ -964,6 +963,7 @@ class Game {
             this.world.shake(0.5);
             this.effects.floatText(this.squad.x, 2.4, this.squad.z, '全屏爆炸!', '#FFC247', true);
         }
+        this.gates.syncVisibility(this.pacing, this.enemies.encounterOutstanding);
         this.gates.update(this.squad, this.effects, this.time, dt);
         // V4.0: 节奏控制器驱动分批刷怪/Boss预警
         this.pacing.update(dt, this.squad);
@@ -975,12 +975,20 @@ class Game {
         // V3.3: 连杀系统 — 击杀数增长时combo+1, 2秒无击杀清零
         var kc = this.enemies.killCount;
         if (kc > this._prevKillCount) {
+            var newKills = kc - this._prevKillCount;
+            var previousCombo = this.combo;
             this.combo += kc - this._prevKillCount;
-            this.comboTimer = 2.0;
+            this.comboTimer = 3.0;
+            this.world.shake(Math.min(.12, .045 + newKills * .009), .1);
+            if (this.ui.comboBox) {
+                this.ui.comboBox.classList.remove('combo-hit');
+                void this.ui.comboBox.offsetWidth;
+                this.ui.comboBox.classList.add('combo-hit');
+            }
             // 连杀里程碑
             var milestones = [10, 30, 50, 100];
             for (var mi = 0; mi < milestones.length; mi++) {
-                if (this.combo >= milestones[mi] && this._prevKillCount < milestones[mi] && kc - this._prevKillCount <= milestones[mi] - this._prevKillCount) {
+                if (previousCombo < milestones[mi] && this.combo >= milestones[mi]) {
                     if (this._comboMilestone !== milestones[mi]) {
                         this._comboMilestone = milestones[mi];
                         this.effects.floatText(this.squad.x, 2.2, this.squad.z - 1, milestones[mi] + '连杀!', '#FFC247', true);

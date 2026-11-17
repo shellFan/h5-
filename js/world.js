@@ -79,7 +79,7 @@ class World {
         roadCanvas.height = 512;
         const rctx = roadCanvas.getContext('2d');
         // 底色: 灰紫柏油(V3.6: 加深一档,对抗雾色保证路面可读)
-        rctx.fillStyle = '#A6A0B8';
+        rctx.fillStyle = '#788792';
         rctx.fillRect(0, 0, 256, 512);
         // 柏油噪点纹理
         for (let i = 0; i < 400; i++) {
@@ -99,7 +99,7 @@ class World {
             rctx.stroke();
         }
         // V3.7: 车辙印(两条纵向暗带 — 增加柏油路真实感)
-        rctx.fillStyle = 'rgba(60,55,80,0.07)';
+        rctx.fillStyle = 'rgba(28,40,48,0.12)';
         rctx.fillRect(52, 0, 22, 512);
         rctx.fillRect(182, 0, 22, 512);
         // V3.7: 深色补丁(随机圆形沥青修补痕)
@@ -117,9 +117,22 @@ class World {
             rctx.fillRect(163, y, 5, 30);
         }
         // 路边实线(黄色警示边线)
-        rctx.fillStyle = '#E8C840';
+        rctx.fillStyle = '#F6CC59';
         rctx.fillRect(4, 0, 5, 512);
         rctx.fillRect(247, 0, 5, 512);
+        // Drain covers and repairs make the road read as part of a lived-in street.
+        rctx.fillStyle = '#445660';
+        rctx.fillRect(12, 350, 19, 34);
+        rctx.fillRect(225, 100, 19, 34);
+        rctx.strokeStyle = '#8B9A9E';
+        for (var drain = 0; drain < 6; drain++) {
+            rctx.beginPath();
+            rctx.moveTo(14, 354 + drain * 5);
+            rctx.lineTo(29, 354 + drain * 5);
+            rctx.moveTo(227, 104 + drain * 5);
+            rctx.lineTo(242, 104 + drain * 5);
+            rctx.stroke();
+        }
         const roadTex = new THREE.CanvasTexture(roadCanvas);
         roadTex.wrapS = THREE.RepeatWrapping;
         roadTex.wrapT = THREE.RepeatWrapping;
@@ -140,8 +153,8 @@ class World {
 
             // 路侧结构合并: 人行道×2 + 护栏×2 + 顶盖×2 (顶点色单材质)
             var structGeos = [
-                { g: new THREE.BoxGeometry(0.8, 0.1, SEG_LEN), x: -3.8, y: 0.05, z: 0, c: 0xC8C4D0 },
-                { g: new THREE.BoxGeometry(0.8, 0.1, SEG_LEN), x: 3.8, y: 0.05, z: 0, c: 0xC8C4D0 },
+                { g: new THREE.BoxGeometry(0.8, 0.1, SEG_LEN), x: -3.8, y: 0.05, z: 0, c: 0xC5CDC9 },
+                { g: new THREE.BoxGeometry(0.8, 0.1, SEG_LEN), x: 3.8, y: 0.05, z: 0, c: 0xC5CDC9 },
                 { g: new THREE.BoxGeometry(0.25, 0.35, SEG_LEN), x: -4.35, y: 0.17, z: 0, c: 0x8E8AA0 },
                 { g: new THREE.BoxGeometry(0.25, 0.35, SEG_LEN), x: 4.35, y: 0.17, z: 0, c: 0x8E8AA0 },
                 { g: new THREE.BoxGeometry(0.3, 0.06, SEG_LEN), x: -4.35, y: 0.37, z: 0, c: 0xA8A4B8 },
@@ -155,6 +168,19 @@ class World {
             structMesh.castShadow = true;
             structMesh.receiveShadow = true;
             seg.add(structMesh);
+
+            var pavement = [];
+            for (var side = -1; side <= 1; side += 2) {
+                for (var tile = 0; tile < 8; tile++) {
+                    var seam = new THREE.BoxGeometry(.78, .012, .025);
+                    seam.translate(side * 3.8, .108, -5.25 + tile * 1.5);
+                    pavement.push(colorize(seam, 0x879A97));
+                    var curb = new THREE.BoxGeometry(.12, .08, .72);
+                    curb.translate(side * 3.43, .06, -5.25 + tile * 1.5);
+                    pavement.push(colorize(curb, tile % 2 ? 0xE7E4CF : 0x4C6266));
+                }
+            }
+            seg.add(new THREE.Mesh(mergeGeometries(pavement), new THREE.MeshLambertMaterial({ vertexColors: true })));
 
             // 草地(两侧合并)
             var gL = new THREE.PlaneGeometry(20, SEG_LEN);
@@ -506,7 +532,7 @@ class World {
         cam.position.z = damp(cam.position.z, targetPos.z, 8, dt);
         // V4.0: 屏幕震动(受击/翻倍/Boss入场), 指数衰减
         if (this._shakeT > 0.001) {
-            this._shakeT = Math.max(0, this._shakeT - dt * 2.2);
+            this._shakeT = Math.max(0, this._shakeT - dt * (this._shakeDecay || 2.2));
             var sAmp = this._shakeAmp * this._shakeT;
             cam.position.x += (Math.random() - 0.5) * sAmp;
             cam.position.y += (Math.random() - 0.5) * sAmp * 0.5;
@@ -520,9 +546,12 @@ class World {
     }
 
     /** V4.0: 触发屏幕震动(amp≈世界单位幅度) */
-    shake(amp) {
+    shake(amp, duration) {
+        var strength = amp || 0.3;
+        if ((this._shakeAmp || 0) * (this._shakeT || 0) > strength) return;
         this._shakeT = 1;
-        this._shakeAmp = amp || 0.3;
+        this._shakeAmp = strength;
+        this._shakeDecay = 1 / (duration || .45);
     }
 
     _detectQuality() {

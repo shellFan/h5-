@@ -1,0 +1,62 @@
+[
+  {
+    "level": 1,
+    "state": "won",
+    "seconds": 28.37,
+    "survivors": 25,
+    "kills": 792,
+    "peak": 80,
+    "average": 40.84,
+    "contact": 1.87,
+    "longestGap": 1.28,
+    "error": null
+  },
+  {
+    "level": 2,
+    "state": "won",
+    "seconds": 32.78,
+    "survivors": 29,
+    "kills": 1170,
+    "peak": 115,
+    "average": 48.86,
+    "contact": 2.48,
+    "longestGap": 1.28,
+    "error": null
+  },
+  {
+    "level": 3,
+    "state": "won",
+    "seconds": 59.32,
+    "survivors": 21,
+    "kills": 1809,
+    "peak": 94,
+    "average": 58.3,
+    "contact": 3.08,
+    "longestGap": 1.35,
+    "error": null
+  },
+  {
+    "level": 4,
+    "state": "lost",
+    "seconds": 16.12,
+    "survivors": 0,
+    "kills": 287,
+    "peak": 49,
+    "average": 18.79,
+    "contact": 3.08,
+    "longestGap": 0.43,
+    "error": null
+  },
+  {
+    "level": 5,
+    "state": "lost",
+    "seconds": 109.35,
+    "survivors": 0,
+    "kills": 1844,
+    "peak": 124,
+    "average": 33.67,
+    "contact": 3.08,
+    "longestGap": 11.78,
+    "error": null
+  }
+]

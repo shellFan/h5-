@@ -4,6 +4,7 @@ class GateSystem {
     constructor(scene) {
         this.scene = scene;
         this.gates = [];
+        this.chosenRows = new Set();
     }
 
     /** 从关卡数据加载所有状态门 */
@@ -44,6 +45,23 @@ class GateSystem {
             });
         }
         this.gates = [];
+        this.chosenRows.clear();
+    }
+
+    isRowChosen(z) {
+        return this.chosenRows.has(z);
+    }
+
+    syncVisibility(pacing, outstanding) {
+        var nextZ = null;
+        for (const g of this.gates) {
+            if (this.isRowChosen(g.z)) continue;
+            if (nextZ === null || g.z > nextZ) nextZ = g.z;
+        }
+        var available = outstanding === 0 && nextZ !== null && pacing.canChooseGate(nextZ);
+        for (const g of this.gates) {
+            g.model.visible = g.triggered || (available && g.z === nextZ && !g.passed);
+        }
     }
 
     update(squad, effects, time, dt) {
@@ -55,13 +73,14 @@ class GateSystem {
         // glass panels. Choose the nearest gate centre, never stack rewards.
         var rows = {};
         for (const candidate of this.gates) {
-            if (candidate.triggered || candidate.passed || squad.z > candidate.z + .2 || squad.z < candidate.z - .8) continue;
+            if (!candidate.model.visible || candidate.triggered || candidate.passed || squad.z > candidate.z + .2 || squad.z < candidate.z - .8) continue;
             var distance = Math.abs(squad.x - candidate.x);
-            if (distance < triggerWin && (!rows[candidate.z] || distance < rows[candidate.z].distance)) rows[candidate.z] = {gate:candidate,distance:distance};
+            if (!rows[candidate.z] || distance < rows[candidate.z].distance) rows[candidate.z] = {gate:candidate,distance:distance};
         }
 
         for (let i = this.gates.length - 1; i >= 0; i--) {
             const g = this.gates[i];
+            if (!g.model.visible && !g.triggered) continue;
 
             // V5.1.1: 触发溶解动画 — 缩放收缩+玻璃/文字淡出, 完成后移除
             if (g.triggered && g.dissolveT !== undefined && g.dissolveT < 1) {
@@ -104,6 +123,7 @@ class GateSystem {
             if (!g.triggered && !g.passed && squad.z <= g.z + 0.2 && squad.z >= g.z - 0.8) {
                 if (rows[g.z] && rows[g.z].gate === g) {
                     g.triggered = true;
+                    this.chosenRows.add(g.z);
                     g.dissolveT = 0; // V5.1.1: 触发即开始溶解消失(玩家反馈: 门获得后要有消失效果)
                     for (const sibling of this.gates) if (sibling !== g && sibling.z === g.z) sibling.passed = true;
                     squad.applyGate(g.data, effects);
