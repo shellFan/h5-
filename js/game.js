@@ -857,6 +857,8 @@ class Game {
             this.gates.loadFromLevel(level);
             this.enemies.loadFromLevel(level, this.levelIndex);
             this.enemies.bossStyle=level.bossStyle;
+            // V6.0: 波次计划加载(L1-L5吃boost, L6手授终稿)
+            this.pacing.loadFromLevel(level, this.levelIndex, this.levelIndex < 5);
             this.gates.resolveSkillGates(this.squad); // V6.0: 技能门roll(需squad._skills已重置)
             this.gates.syncVisibility(this.pacing, 0, this.squad.z);
             this._showBossWarning(false);

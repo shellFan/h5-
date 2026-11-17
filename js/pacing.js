@@ -19,6 +19,7 @@ class GamePacingController {
 
     /** 从关卡数据构建波次计划 */
     loadFromLevel(level, levelIndex, runtimeHordeBoost) {
+        console.log('[pacing] loadFromLevel', levelIndex, 'segments:', level.segments.length, 'boost:', runtimeHordeBoost);
         this.clear();
         var P = CONFIG.PACING;
         this.levelIndex = levelIndex || 0;
@@ -45,6 +46,7 @@ class GamePacingController {
                     var swap = Math.floor(Math.random() * (qi + 1));
                     var held = queue[qi]; queue[qi] = queue[swap]; queue[swap] = held;
                 }
+                console.log('[pacing] wave pushed z=' + seg.z + ' q=' + queue.length);
                 this.waves.push({
                     type: 'wave', z: seg.z,
                     requiredGateZ: previousGateZ,
