@@ -54,3 +54,81 @@
 .v60-ach-row.ready { border-color: rgba(57,217,138,.5); background: rgba(57,217,138,.08); opacity: 1; cursor: pointer; }
 .v60-ach-row.ready .v60-ach-reward { color: #39D98A; }
 .v60-home-nav .v60-nav-btn { font-size: 11px; padding: 7px 2px; }
+
+/* V8.0: 训练中心 */
+.v60-train-header { text-align: center; margin-bottom: 10px; }
+.v60-train-level { font-size: 28px; font-weight: 900; color: #1A6FD4; }
+.v60-train-tier { font-size: 14px; font-weight: 900; margin-left: 10px; }
+.v60-train-stats { margin-bottom: 12px; }
+.v60-stat-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(28,100,124,.1); font-size: 13px; color: #173B79; font-weight: 700; }
+.v60-stat-row b { color: #39D98A; }
+.v60-train-equip { margin: 10px 0; }
+.v60-equip-title { font-size: 14px; font-weight: 900; color: #1E40AF; margin-bottom: 6px; }
+.v60-equip-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 12px; border-bottom: 1px solid rgba(0,0,0,.05); }
+.v60-equip-slot { font-weight: 800; color: #1E40AF; width: 70px; }
+.v60-equip-name { flex: 1; font-weight: 700; }
+.v60-equip-quality { font-size: 11px; color: #5b7a92; }
+.v60-train-cost { text-align: center; font-size: 13px; color: #5b7a92; margin: 8px 0; font-weight: 700; }
+.v60-maxed { background: #cfe6d8 !important; color: #3e7d54 !important; }
+
+/* V8.0: 军械库 */
+.v60-armory-list { display: flex; flex-direction: column; gap: 8px; max-height: 52vh; overflow-y: auto; }
+.v60-armory-row { background: rgba(238,246,252,.92); border-radius: 14px; padding: 10px 12px; border: 1.5px solid rgba(28,100,124,.15); }
+.v60-armory-row.equipped { border-color: rgba(57,217,138,.6); background: rgba(57,217,138,.06); }
+.v60-armory-row.locked { opacity: .45; filter: grayscale(.8); }
+.v60-armory-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.v60-armory-icon { font-size: 22px; }
+.v60-armory-name { font-size: 14px; font-weight: 900; color: #173B79; flex: 1; }
+.v60-armory-lv { font-size: 13px; font-weight: 900; color: #1A6FD4; }
+.v60-armory-stats { font-size: 11.5px; color: #5b7a92; margin-bottom: 6px; }
+.v60-armory-evo { font-size: 11px; color: #9C4DFF; font-weight: 700; margin-bottom: 4px; }
+.v60-armory-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.v60-armory-btn { border: none; border-radius: 10px; background: #1A6FD4; color: #fff; font-size: 12px; font-weight: 800; padding: 6px 14px; cursor: pointer; }
+.v60-armory-btn.upgrade { background: linear-gradient(180deg,#FFD871,#F0A93A); color: #5b3c07; }
+.v60-armory-btn.evolve { background: linear-gradient(180deg,#C084FC,#7C3AED); color: #fff; }
+.v60-armory-btn:disabled { background: #d0dce4; color: #93a7b5; cursor: default; }
+.v60-locked { font-size: 11px; color: #93a7b5; font-weight: 700; }
+
+/* V8.0: 九宫格导航(9按钮自动换行) */
+.v60-home-nav { flex-wrap: wrap; }
+.v60-home-nav .v60-nav-btn { flex: 0 0 30%; min-width: 30%; box-sizing: border-box; }
+
+/* V8.0: 签到条 */
+.v60-signin-strip { display: flex; gap: 4px; margin-bottom: 10px; }
+.v60-signin-day { flex: 1; text-align: center; background: rgba(238,246,252,.9); border: 1.5px solid rgba(28,100,124,.15); border-radius: 10px; padding: 6px 2px; font-size: 10px; }
+.v60-signin-day .v60-signin-day-num { display: block; font-weight: 900; color: #1A6FD4; font-size: 11px; }
+.v60-signin-day .v60-signin-day-r { display: block; color: #B07A12; font-weight: 800; margin-top: 2px; }
+.v60-signin-day.done { background: rgba(57,217,138,.12); border-color: rgba(57,217,138,.4); }
+.v60-signin-day.done .v60-signin-day-r { color: #39D98A; }
+.v60-signin-day.today { border-color: #E9A825; background: rgba(255,196,71,.14); box-shadow: 0 0 8px rgba(233,168,37,.4); }
+#v60-signin-btn { width: 100%; margin-bottom: 10px; }
+
+/* V8.0: 科技树 */
+.v60-tech-points { text-align: center; font-size: 14px; color: #173B79; font-weight: 900; background: rgba(156,77,255,.1); border-radius: 999px; padding: 7px; margin-bottom: 10px; }
+.v60-tech-tip { display: block; font-size: 10.5px; color: #5b7a92; font-weight: 700; margin-top: 2px; }
+.v60-tech-list { display: flex; flex-direction: column; gap: 6px; max-height: 48vh; overflow-y: auto; margin-bottom: 10px; }
+.v60-tech-branch { font-size: 13px; font-weight: 900; color: #1E40AF; margin: 8px 0 2px; border-left: 4px solid #4DA8FF; padding-left: 8px; }
+.v60-tech-row { display: flex; align-items: center; gap: 9px; background: rgba(238,246,252,.9); border-radius: 13px; padding: 8px 10px; border: 1px solid rgba(28,100,124,.12); opacity: .55; }
+.v60-tech-row.clickable { cursor: pointer; opacity: 1; }
+.v60-tech-row.clickable:active { transform: scale(.98); }
+.v60-tech-row.maxed { opacity: 1; border-color: rgba(57,217,138,.5); background: rgba(57,217,138,.08); }
+.v60-tech-row.ready { opacity: 1; border-color: rgba(156,77,255,.5); background: rgba(156,77,255,.08); }
+.v60-tech-row i { font-style: normal; font-size: 11px; color: #1A6FD4; font-weight: 800; }
+
+/* V8.0: 图鉴 */
+.v60-codex-list { display: flex; flex-direction: column; gap: 6px; max-height: 26vh; overflow-y: auto; margin-bottom: 10px; }
+.v60-codex-card { display: flex; align-items: center; gap: 9px; background: rgba(238,246,252,.9); border-radius: 13px; padding: 7px 10px; border: 1px solid rgba(28,100,124,.12); }
+.v60-codex-card.unknown { opacity: .45; filter: grayscale(.7); }
+.v60-codex-icon { font-size: 21px; width: 30px; text-align: center; flex-shrink: 0; }
+
+/* V8.0: 挑战模式 */
+.v60-challenge-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.v60-challenge-card { display: flex; align-items: center; gap: 9px; background: rgba(238,246,252,.92); border-radius: 14px; padding: 12px; border: 1.5px solid rgba(233,168,37,.4); cursor: pointer; }
+.v60-challenge-card:active { transform: scale(.98); }
+.v60-challenge-card.locked { opacity: .5; filter: grayscale(.7); cursor: default; }
+
+/* V8.0: 成就进度头 */
+.v60-ach-progress { text-align: center; font-size: 12px; font-weight: 900; color: #8a5b12; background: rgba(255,196,71,.14); border-radius: 999px; padding: 5px; margin-bottom: 8px; }
+
+/* V8.0: 训练中心头部金币 */
+.v60-train-coins { float: right; font-size: 13px; font-weight: 900; color: #B07A12; }

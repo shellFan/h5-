@@ -1,8 +1,17 @@
 # 当前开发进度
 
-> **V5.1 交付完成（2026-11-15）** —— 阵地防守玩法重构 + 五关 + 金币经济 + 升级商店；V5.0 历史见文末。
+> **V8.0/V8.0.1 交付完成（2026-11-19）** —— 十级战役 + 武器/科技/士兵成长 + 技能组合 + 随机事件 + 挑战模式 + 九页UI；V5.1/V6.0 历史见文末。
 
-## V5.1 检查点
+## V8.0.1 检查点
+- 文档: docs/V80_FINAL_REPORT.md / V80_SYSTEMS.md / V80_BALANCE.md / V80_TEST_REPORT.md / V80_RELEASE_CHECKLIST.md
+- 战役: 10关(L7巢穴/L8废土/L9双Boss/L10终极), 每关首行门含人数门(防软锁)
+- 修复: BOSS_NAMES未闭合吞关卡定义 / HP乘数L7+越界NaN / 武器dmgMul等属性未消费 / 双因子Boss血量恢复 / Boss火力优先 / _normalize白名单丢challengeBest·daily·soldier·equipment / L6乘数重标定
+- 新增: skills组合10种+毒液DoT修复 / random-events.js 12事件 / 挑战模式(无尽+Boss快打) / ui-v60九页重写
+- 测试: 94 unit + 29 e2e + 39 v51 + 37 v80(新) + 32 visual + 11 soldier + 7 v41 + h5/douyin build + 十关马拉松33/33
+- 平衡: 自然预算 L6-L10 15/15胜(47-82s), 零养成对照L10 1/4(终局门槛); 工装 tools/v80-balance-sim.js(已修预算入账bug)
+- 已知边界: 武器pellets由齐射曲线表达 / army_limit未接SQUAD_MAX_COUNT / L9血条固定首Boss名 / 真机手测待做
+
+## V5.1 检查点（2026-11-15, 历史保留）
 - 最新 SHA: 8add142（feat 防守模式 / feat 经济+商店+门池 / test 五关E2E / perf+docs 四批提交）
 - 玩法: 阵地防守（standoff=9）、MAX_ALIVE [25,30,35,45,60]、五关 44/66/90/108/127 怪、L5 Boss 三阶段
 - 经济: GameProfile(pz_squad_profile_v51)、首通 60/80/110/140/200 幂等、击杀币封顶、双倍/每日补给广告

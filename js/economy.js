@@ -83,7 +83,13 @@ class GameProfile {
             weaponEvolved: d.weaponEvolved || null,
             tech: d.tech || {},
             techPoints: Math.max(0, Math.floor(d.techPoints || 0)),
-            signin: d.signin || { lastDate: '', streak: 0, totalDays: 0 }
+            signin: d.signin || { lastDate: '', streak: 0, totalDays: 0 },
+            // V8.0.1修复: 以下字段曾不在白名单 → 每次启动被 _normalize 静默丢弃
+            // (挑战最高纪录/每日任务进度/士兵训练等级/装备全部无法持久化)
+            challengeBest: d.challengeBest || {},
+            daily: d.daily || null,
+            soldier: d.soldier || null,
+            equipment: d.equipment || {}
         };
     }
 

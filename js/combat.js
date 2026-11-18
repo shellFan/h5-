@@ -108,29 +108,37 @@ class CombatSystem {
             if (this.fireTimer <= 0) {
                 var count = squad.count;
                 // 视觉弹道频率: 随人数增长但有上限(性能保护)
-                var visualRate = Math.min(2 + Math.sqrt(count) * 1.8, 22); // V3.7: 弹幕更壮观(池120容量内)
+                // V8.0.1: 吞吐曲线提升(×1.8→×2.2, 上限22→30, 池120容量内) — 大编制波次需要在行军窗口内被清空
+                var visualRate = Math.min(2 + Math.sqrt(count) * 2.2, 30);
                 this.fireTimer = 1 / visualRate;
 
                 // 每发子弹伤害 = 总DPS / 视觉弹道频率
                 var totalDPS = count * squad.getDamage() * squad.getFireRate();
                 var dmg = Math.max(1, Math.round(totalDPS / visualRate));
 
-                // 齐射数量: 1~4发(人数越多越多)
-                var volley = Math.min(5, 1 + Math.floor(Math.sqrt(count) / 2.6)); // V3.7: 齐射最多5发
+                // 齐射数量: 1~5发(人数越多越多)
+                var volley = Math.min(5, 1 + Math.floor(Math.sqrt(count) / 2.3)); // V8.0.1: 齐射曲线提升(÷2.6→÷2.3)
                 var positions = squad.getShootPositions(volley);
                 if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('shoot'); // V5.0: 齐射音效(适配器内部限流)
                 for (var k = 0; k < positions.length; k++) {
                     // V3.1: 每发子弹瞄准前方最近敌人(修复阵型散布导致5/7子弹打不中Boss的问题)
-                    var target = enemyManager.getNearest(positions[k].x, positions[k].z, CONFIG.BULLET_RANGE);
+                    // V8.0.1: Boss存活时火力优先Boss — 修复杂兵吸引弹道导致Boss战输出饥饿(战损失衡)
+                    var target = (enemyManager.boss && enemyManager.boss.alive)
+                        ? enemyManager.boss
+                        : enemyManager.getNearest(positions[k].x, positions[k].z, CONFIG.BULLET_RANGE);
                     // V3.3: 暴击判定(开火时掷骰, 伤害×2)
                     var dmgFinal = dmg;
                     // V6.0: 狂暴技能伤害乘区
                     if (squad._skillRage) dmgFinal = Math.round(dmgFinal * (1 + 0.35 * squad._skillRage));
+                    // V8.0: 守护之怒组合 — 护盾可用时+25%
+                    if (squad._comboGuardianFury && squad._skillShield > 0) dmgFinal = Math.round(dmgFinal * 1.25);
+                    // V8.0: 随机事件伤害buff(狂热时刻)
+                    if (squad._evDmgMul) dmgFinal = Math.round(dmgFinal * squad._evDmgMul);
                     // V6.0: 背水一战 — 人数低于一半时增伤
                     if (squad._skillBerserk && squad.count > 0 && squad._halfCount && squad.count <= squad._halfCount) {
                         dmgFinal = Math.round(dmgFinal * (1 + 0.5 * squad._skillBerserk));
                     }
-                    var isCrit = Math.random() < squad.critChance;
+                    var isCrit = Math.random() < Math.min(0.8, squad.critChance + (squad._evCritBonus || 0)); // V8.0: 事件暴击buff
                     if (isCrit) dmgFinal = dmg * 2;
                     this._fire(positions[k], dmgFinal, target, isCrit);
                 }
@@ -170,6 +178,14 @@ class CombatSystem {
                                 this.effects.burst(e.x, 0.5, e.z, 0x9AD8FF, 4, 1.8, 0.35);
                                 e._frozenFx = true;
                             }
+                        }
+                        // V6.0: 毒液弹头 — 命中附加中毒DoT(修复: 原实现从未挂载)
+                        if (squad._skillVenom) {
+                            var venomMul = squad._comboPlagueFury ? 2 : 1; // V8.0: 瘟疫狂怒×2
+                            e._venomT = 2;
+                            e._venomStacks = Math.min(3, (e._venomStacks || 0) + 1);
+                            e._venomDps = Math.max(e._venomDps || 0, b.damage * 0.2 * squad._skillVenom * venomMul);
+                            if (e._venomStacks === 1) this.effects.burst(e.x, 0.6, e.z, 0x88CC44, 3, 1.5, 0.3);
                         }
                         var died = e.takeDamage(b.damage, this.effects, b.mesh.position.x, b.crit);
                         // V5.1: 爆炸弹 — 命中溅射(半径1.7, 50%伤害, 最多4个邻近目标)
@@ -218,6 +234,11 @@ class CombatSystem {
                                     this.effects.floatText(squad.x, 1.4, squad.z, '+1', '#66D68F', false);
                                 }
                             }
+                            // V8.0: 回收无人机组合 — 3%概率补员
+                            if (squad._comboRecycle && squad.count > 0 && squad.count < CONFIG.SQUAD_MAX_COUNT && Math.random() < 0.03) {
+                                squad.setCount(squad.count + 1);
+                                this.effects.floatText(squad.x, 1.4, squad.z, '回收+1', '#4DA8FF', false);
+                            }
                         }
                         hit = true;
                         // V3.3: 穿透 — 命中后不消失, 继续飞行
@@ -262,6 +283,23 @@ class CombatSystem {
                 }
                 if (ve._venomT <= 0) { ve._venomT = 0; ve._venomStacks = 0; }
             }
+        }
+
+        // V8.0: 毒性护盾组合 — 格挡时毒化周围敌人(半径3, 每秒20%基础伤害×毒液层)
+        if (squad._toxicWardPulse) {
+            squad._toxicWardPulse = false;
+            var wardDps = Math.max(1, Math.round(squad.getDamage() * 0.2 * Math.max(1, squad._skillVenom || 1)));
+            for (var wi = 0; wi < enemyManager.enemies.length; wi++) {
+                var we = enemyManager.enemies[wi];
+                if (!we.alive) continue;
+                var wdx = we.x - squad.x, wdz = we.z - squad.z;
+                if (wdx * wdx + wdz * wdz < 9) {
+                    we._venomT = 3;
+                    we._venomStacks = Math.min(3, (we._venomStacks || 0) + 1);
+                    we._venomDps = Math.max(we._venomDps || 0, wardDps);
+                }
+            }
+            this.effects.shockwave(squad.x, 0.05, squad.z, 0x88CC44);
         }
     }
 

@@ -73,7 +73,7 @@ const CONFIG = {
     ENEMY_WAVE_MULTIPLIER: 3,
     ENEMY_MAX_ALIVE_MULTIPLIER: 2.2,
     ENEMY_ALIVE_TARGET_MULTIPLIER: 2,
-    ENEMY_HP_MULTIPLIER: [1.7, 2.2, 2.8, 3.4, 4.0, 4.6], // V6.0: 追加L6=4.6(原数组仅5项, L6索引越界→NaN血量)
+    ENEMY_HP_MULTIPLIER: [1.7, 2.2, 2.8, 3.4, 4.0, 2.8, 2.2, 2.5, 2.8, 2.6], // V8.0.1: L6=4.6为HP乘数bug时期标定(150敌×4.6实测开局10s全灭); L7-L10大编制波次以数量为难度主轴
 
 
     // 射击
@@ -313,29 +313,34 @@ const LEVELS = [
             ]},
             { type: 'wave', z: -24, enemies: [ { type: 'normal', count: 90 }, { type: 'fast', count: 60 } ] },
             { type: 'gates', z: -40, gates: [
-                { lane: 0, op: 'buff', value: 'pierce', label: '穿透+1' },
+                { lane: 0, op: 'addpct', value: 50, label: '+50%' },
                 { lane: 1, op: 'buff', value: 'crit2', label: '暴击+10%' },
-                { lane: 2, op: 'buff', value: 'damage2', label: '输出+2' }
+                { lane: 2, op: 'skill', value: 'roll' }
             ]},
-            { type: 'wave', z: -56, enemies: [ { type: 'elite', count: 6 }, { type: 'shield', count: 45 }, { type: 'normal', count: 60 } ] },
+            { type: 'wave', z: -56, enemies: [ { type: 'elite', count: 5 }, { type: 'shield', count: 35 }, { type: 'normal', count: 55 } ] },
             { type: 'energy', z: -72, core: { hp: 900, buffRadius: 9 } },
             { type: 'gates', z: -86, gates: [
-                { lane: 0, op: 'skill', value: 'roll' },
+                { lane: 0, op: 'add', value: 25, label: '+25' },
                 { lane: 1, op: 'skill', value: 'roll' },
-                { lane: 2, op: 'skill', value: 'roll' }
+                { lane: 2, op: 'buff', value: 'pierce', label: '穿透+1' }
             ]},
             { type: 'wave', z: -102, enemies: [ { type: 'elite', count: 8 }, { type: 'spitter', count: 40 }, { type: 'split', count: 45 }, { type: 'fast', count: 45 } ] },
             { type: 'gates', z: -118, gates: [
-                { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
+                { lane: 0, op: 'addpct', value: 40, label: '+40%' },
                 { lane: 1, op: 'buff', value: 'chain', label: '连锁闪电' },
                 { lane: 2, op: 'buff', value: 'crit2', label: '暴击+10%' }
             ]},
             { type: 'wave', z: -134, enemies: [ { type: 'elite', count: 10 }, { type: 'shield', count: 50 }, { type: 'spitter', count: 35 }, { type: 'normal', count: 70 } ] },
+            { type: 'gates', z: -150, gates: [
+                { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
+                { lane: 1, op: 'skill', value: 'roll' },
+                { lane: 2, op: 'buff', value: 'explosive', label: '爆炸弹' }
+            ]},
             { type: 'boss', z: -166, boss: { type: 'boss', hp: 5200, style: 'overlord', title: '末日吞噬者' } }
         ]
     }
     ,
-    // ============ 第7关 地下巢穴 (V8.0) ============
+    // ============ 第7关 地下巢穴 (V8.0, V8.0.1: 补人数门防软锁) ============
     {
         name: '第 7 关 地下巢穴',
         startCount: 1,
@@ -344,28 +349,33 @@ const LEVELS = [
         theme: 'cave',
         segments: [
             { type: 'gates', z: -8, gates: [
-                { lane: 0, op: 'add', value: 20, label: '+20' },
+                { lane: 0, op: 'add', value: 25, label: '+25' },
                 { lane: 1, op: 'buff', value: 'damage2', label: '输出+2' },
                 { lane: 2, op: 'skill', value: 'roll' }
             ]},
             { type: 'wave', z: -24, enemies: [ { type: 'normal', count: 80 }, { type: 'fast', count: 50 } ] },
             { type: 'gates', z: -40, gates: [
-                { lane: 0, op: 'buff', value: 'crit2', label: '暴击+10%' },
+                { lane: 0, op: 'addpct', value: 30, label: '+30%' },
                 { lane: 1, op: 'buff', value: 'damage2', label: '输出+2' },
                 { lane: 2, op: 'skill', value: 'roll' }
             ]},
-            { type: 'wave', z: -56, enemies: [ { type: 'elite', count: 8 }, { type: 'fast', count: 60 }, { type: 'normal', count: 50 } ] },
-            { type: 'wave', z: -78, enemies: [ { type: 'elite', count: 6 }, { type: 'shield', count: 50 }, { type: 'spitter', count: 30 } ] },
+            { type: 'wave', z: -56, enemies: [ { type: 'elite', count: 6 }, { type: 'fast', count: 60 }, { type: 'normal', count: 50 } ] },
+            { type: 'wave', z: -78, enemies: [ { type: 'elite', count: 5 }, { type: 'shield', count: 40 }, { type: 'spitter', count: 25 } ] },
             { type: 'gates', z: -96, gates: [
-                { lane: 0, op: 'buff', value: 'explosive', label: '爆炸弹' },
+                { lane: 0, op: 'add', value: 20, label: '+20' },
                 { lane: 1, op: 'skill', value: 'roll' },
                 { lane: 2, op: 'buff', value: 'chain', label: '连锁闪电' }
             ]},
-            { type: 'wave', z: -112, enemies: [ { type: 'elite', count: 10 }, { type: 'split', count: 60 }, { type: 'shield', count: 40 } ] },
-            { type: 'boss', z: -148, boss: { type: 'boss', hp: 6000, style: 'hivelord', title: '巢穴之母' } }
+            { type: 'wave', z: -112, enemies: [ { type: 'elite', count: 8 }, { type: 'split', count: 60 }, { type: 'shield', count: 40 } ] },
+            { type: 'gates', z: -128, gates: [
+                { lane: 0, op: 'buff', value: 'explosive', label: '爆炸弹' },
+                { lane: 1, op: 'skill', value: 'roll' },
+                { lane: 2, op: 'buff', value: 'crit2', label: '暴击+10%' }
+            ]},
+            { type: 'boss', z: -148, boss: { type: 'boss', hp: 4500, style: 'hivelord', title: '巢穴之母' } }
         ]
     },
-    // ============ 第8关 机械废土 (V8.0) ============
+    // ============ 第8关 机械废土 (V8.0, V8.0.1: 全关零人数门修复) ============
     {
         name: '第 8 关 机械废土',
         startCount: 1,
@@ -374,25 +384,30 @@ const LEVELS = [
         theme: 'mechanical',
         segments: [
             { type: 'gates', z: -8, gates: [
-                { lane: 0, op: 'buff', value: 'pierce', label: '穿透+1' },
+                { lane: 0, op: 'add', value: 25, label: '+25' },
                 { lane: 1, op: 'buff', value: 'damage2', label: '输出+2' },
                 { lane: 2, op: 'skill', value: 'roll' }
             ]},
-            { type: 'wave', z: -24, enemies: [ { type: 'shield', count: 80 }, { type: 'normal', count: 60 }, { type: 'fast', count: 40 } ] },
+            { type: 'wave', z: -24, enemies: [ { type: 'shield', count: 40 }, { type: 'normal', count: 60 }, { type: 'fast', count: 40 } ] },
             { type: 'gates', z: -42, gates: [
-                { lane: 0, op: 'buff', value: 'crit2', label: '暴击+10%' },
+                { lane: 0, op: 'addpct', value: 30, label: '+30%' },
                 { lane: 1, op: 'buff', value: 'chain', label: '连锁闪电' },
                 { lane: 2, op: 'skill', value: 'roll' }
             ]},
-            { type: 'wave', z: -58, enemies: [ { type: 'elite', count: 10 }, { type: 'spitter', count: 50 }, { type: 'fast', count: 60 } ] },
+            { type: 'wave', z: -58, enemies: [ { type: 'elite', count: 8 }, { type: 'spitter', count: 45 }, { type: 'fast', count: 60 } ] },
             { type: 'energy', z: -76, core: { hp: 1400, buffRadius: 10 } },
             { type: 'gates', z: -92, gates: [
-                { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
+                { lane: 0, op: 'add', value: 20, label: '+20' },
                 { lane: 1, op: 'buff', value: 'explosive', label: '爆炸弹' },
                 { lane: 2, op: 'skill', value: 'roll' }
             ]},
-            { type: 'wave', z: -108, enemies: [ { type: 'elite', count: 12 }, { type: 'shield', count: 60 }, { type: 'normal', count: 80 } ] },
-            { type: 'boss', z: -148, boss: { type: 'boss', hp: 7000, style: 'titan', title: '机械巨尸' } }
+            { type: 'wave', z: -108, enemies: [ { type: 'elite', count: 10 }, { type: 'shield', count: 50 }, { type: 'normal', count: 70 } ] },
+            { type: 'gates', z: -124, gates: [
+                { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
+                { lane: 1, op: 'skill', value: 'roll' },
+                { lane: 2, op: 'buff', value: 'crit2', label: '暴击+10%' }
+            ]},
+            { type: 'boss', z: -148, boss: { type: 'boss', hp: 5500, style: 'titan', title: '机械巨尸' } }
         ]
     },
     // ============ 第9关 最终防线 (V8.0) ============
@@ -404,25 +419,30 @@ const LEVELS = [
         theme: 'fortress',
         segments: [
             { type: 'gates', z: -8, gates: [
-                { lane: 0, op: 'add', value: 25, label: '+25' },
+                { lane: 0, op: 'add', value: 45, label: '+45' },
                 { lane: 1, op: 'buff', value: 'damage2', label: '输出+2' },
                 { lane: 2, op: 'skill', value: 'roll' }
             ]},
-            { type: 'wave', z: -24, enemies: [ { type: 'elite', count: 8 }, { type: 'normal', count: 90 }, { type: 'fast', count: 60 } ] },
+            { type: 'wave', z: -24, enemies: [ { type: 'elite', count: 6 }, { type: 'normal', count: 80 }, { type: 'fast', count: 60 } ] },
             { type: 'gates', z: -42, gates: [
-                { lane: 0, op: 'buff', value: 'crit2', label: '暴击+10%' },
+                { lane: 0, op: 'addpct', value: 50, label: '+50%' },
                 { lane: 1, op: 'buff', value: 'freeze', label: '冰冻弹' },
                 { lane: 2, op: 'skill', value: 'roll' }
             ]},
-            { type: 'wave', z: -58, enemies: [ { type: 'elite', count: 12 }, { type: 'shield', count: 70 }, { type: 'spitter', count: 50 } ] },
+            { type: 'wave', z: -58, enemies: [ { type: 'elite', count: 10 }, { type: 'shield', count: 60 }, { type: 'spitter', count: 45 } ] },
             { type: 'gates', z: -76, gates: [
-                { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
+                { lane: 0, op: 'add', value: 30, label: '+30' },
                 { lane: 1, op: 'skill', value: 'roll' },
                 { lane: 2, op: 'buff', value: 'chain', label: '连锁闪电' }
             ]},
-            { type: 'wave', z: -92, enemies: [ { type: 'elite', count: 14 }, { type: 'split', count: 60 }, { type: 'fast', count: 70 }, { type: 'normal', count: 80 } ] },
-            { type: 'boss', z: -130, boss: { type: 'boss', hp: 5000, style: 'bulwark', title: '钢盾领主' } },
-            { type: 'boss', z: -166, boss: { type: 'boss', hp: 5000, style: 'hivelord', title: '裂变母巢' } }
+            { type: 'wave', z: -92, enemies: [ { type: 'elite', count: 10 }, { type: 'split', count: 50 }, { type: 'fast', count: 60 }, { type: 'normal', count: 70 } ] },
+            { type: 'gates', z: -112, gates: [
+                { lane: 0, op: 'addpct', value: 40, label: '+40%' },
+                { lane: 1, op: 'buff', value: 'damage2', label: '输出+2' },
+                { lane: 2, op: 'skill', value: 'roll' }
+            ]},
+            { type: 'boss', z: -130, boss: { type: 'boss', hp: 3500, style: 'bulwark', title: '钢盾领主' } },
+            { type: 'boss', z: -166, boss: { type: 'boss', hp: 3500, style: 'hivelord', title: '裂变母巢' } }
         ]
     },
     // ============ 第10关 终极末日 (V8.0 终局关) ============
@@ -434,11 +454,11 @@ const LEVELS = [
         theme: 'apocalypse',
         segments: [
             { type: 'gates', z: -8, gates: [
-                { lane: 0, op: 'add', value: 30, label: '+30' },
+                { lane: 0, op: 'add', value: 40, label: '+40' },
                 { lane: 1, op: 'buff', value: 'damage2', label: '输出+2' },
                 { lane: 2, op: 'skill', value: 'roll' }
             ]},
-            { type: 'wave', z: -26, enemies: [ { type: 'elite', count: 10 }, { type: 'normal', count: 100 }, { type: 'fast', count: 70 } ] },
+            { type: 'wave', z: -26, enemies: [ { type: 'elite', count: 8 }, { type: 'normal', count: 90 }, { type: 'fast', count: 70 } ] },
             { type: 'gates', z: -44, gates: [
                 { lane: 0, op: 'buff', value: 'pierce', label: '穿透+1' },
                 { lane: 1, op: 'buff', value: 'crit2', label: '暴击+10%' },
@@ -453,160 +473,31 @@ const LEVELS = [
             ]},
             { type: 'wave', z: -110, enemies: [ { type: 'elite', count: 16 }, { type: 'split', count: 70 }, { type: 'shield', count: 70 }, { type: 'fast', count: 70 } ] },
             { type: 'gates', z: -128, gates: [
-                { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
+                { lane: 0, op: 'addpct', value: 50, label: '+50%' },
                 { lane: 1, op: 'buff', value: 'explosive', label: '爆炸弹' },
                 { lane: 2, op: 'skill', value: 'roll' }
             ]},
-            { type: 'wave', z: -144, enemies: [ { type: 'elite', count: 18 }, { type: 'spitter', count: 60 }, { type: 'shield', count: 60 }, { type: 'normal', count: 100 }, { type: 'fast', count: 80 } ] },
+            { type: 'wave', z: -144, enemies: [ { type: 'elite', count: 14 }, { type: 'spitter', count: 40 }, { type: 'shield', count: 40 }, { type: 'normal', count: 80 }, { type: 'fast', count: 60 } ] },
             { type: 'gates', z: -162, gates: [
                 { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
                 { lane: 1, op: 'buff', value: 'crit2', label: '暴击+10%' },
                 { lane: 2, op: 'skill', value: 'roll' }
             ]},
-            { type: 'wave', z: -178, enemies: [ { type: 'elite', count: 20 }, { type: 'normal', count: 120 }, { type: 'fast', count: 90 }, { type: 'shield', count: 60 }, { type: 'spitter', count: 50 } ] },
-            { type: 'boss', z: -208, boss: { type: 'boss', hp: 12000, style: 'overlord', title: '末日主宰' } }
+            { type: 'wave', z: -178, enemies: [ { type: 'elite', count: 16 }, { type: 'normal', count: 90 }, { type: 'fast', count: 70 }, { type: 'shield', count: 40 }, { type: 'spitter', count: 35 } ] },
+            { type: 'boss', z: -208, boss: { type: 'boss', hp: 10000, style: 'overlord', title: '末日主宰' } }
         ]
     }];
 
 // ===== V5.1 Boss 装配 =====
-CONFIG.BOSS_STYLES = ['bruiser', 'bruiser', 'bulwark', 'hivelord', 'overlord', 'overlord'];
-CONFIG.BOSS_NAMES = ['铁拳队长', '赤拳突击者', '钢盾领主', '裂变母巢', '终焉核心', '末日吞噬者'    ,
-    // ============ 第7关 地下巢穴 (V8.0) ============
-    {
-        name: '第 7 关 地下巢穴',
-        startCount: 1,
-        totalZ: -180,
-        rewardCoins: 350,
-        theme: 'cave',
-        segments: [
-            { type: 'gates', z: -8, gates: [
-                { lane: 0, op: 'add', value: 20, label: '+20' },
-                { lane: 1, op: 'buff', value: 'damage2', label: '输出+2' },
-                { lane: 2, op: 'skill', value: 'roll' }
-            ]},
-            { type: 'wave', z: -24, enemies: [ { type: 'normal', count: 80 }, { type: 'fast', count: 50 } ] },
-            { type: 'gates', z: -40, gates: [
-                { lane: 0, op: 'buff', value: 'crit2', label: '暴击+10%' },
-                { lane: 1, op: 'buff', value: 'damage2', label: '输出+2' },
-                { lane: 2, op: 'skill', value: 'roll' }
-            ]},
-            { type: 'wave', z: -56, enemies: [ { type: 'elite', count: 8 }, { type: 'fast', count: 60 }, { type: 'normal', count: 50 } ] },
-            { type: 'wave', z: -78, enemies: [ { type: 'elite', count: 6 }, { type: 'shield', count: 50 }, { type: 'spitter', count: 30 } ] },
-            { type: 'gates', z: -96, gates: [
-                { lane: 0, op: 'buff', value: 'explosive', label: '爆炸弹' },
-                { lane: 1, op: 'skill', value: 'roll' },
-                { lane: 2, op: 'buff', value: 'chain', label: '连锁闪电' }
-            ]},
-            { type: 'wave', z: -112, enemies: [ { type: 'elite', count: 10 }, { type: 'split', count: 60 }, { type: 'shield', count: 40 } ] },
-            { type: 'boss', z: -148, boss: { type: 'boss', hp: 6000, style: 'hivelord', title: '巢穴之母' } }
-        ]
-    },
-    // ============ 第8关 机械废土 (V8.0) ============
-    {
-        name: '第 8 关 机械废土',
-        startCount: 1,
-        totalZ: -190,
-        rewardCoins: 400,
-        theme: 'mechanical',
-        segments: [
-            { type: 'gates', z: -8, gates: [
-                { lane: 0, op: 'buff', value: 'pierce', label: '穿透+1' },
-                { lane: 1, op: 'buff', value: 'damage2', label: '输出+2' },
-                { lane: 2, op: 'skill', value: 'roll' }
-            ]},
-            { type: 'wave', z: -24, enemies: [ { type: 'shield', count: 80 }, { type: 'normal', count: 60 }, { type: 'fast', count: 40 } ] },
-            { type: 'gates', z: -42, gates: [
-                { lane: 0, op: 'buff', value: 'crit2', label: '暴击+10%' },
-                { lane: 1, op: 'buff', value: 'chain', label: '连锁闪电' },
-                { lane: 2, op: 'skill', value: 'roll' }
-            ]},
-            { type: 'wave', z: -58, enemies: [ { type: 'elite', count: 10 }, { type: 'spitter', count: 50 }, { type: 'fast', count: 60 } ] },
-            { type: 'energy', z: -76, core: { hp: 1400, buffRadius: 10 } },
-            { type: 'gates', z: -92, gates: [
-                { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
-                { lane: 1, op: 'buff', value: 'explosive', label: '爆炸弹' },
-                { lane: 2, op: 'skill', value: 'roll' }
-            ]},
-            { type: 'wave', z: -108, enemies: [ { type: 'elite', count: 12 }, { type: 'shield', count: 60 }, { type: 'normal', count: 80 } ] },
-            { type: 'boss', z: -148, boss: { type: 'boss', hp: 7000, style: 'titan', title: '机械巨尸' } }
-        ]
-    },
-    // ============ 第9关 最终防线 (V8.0) ============
-    {
-        name: '第 9 关 最终防线',
-        startCount: 1,
-        totalZ: -200,
-        rewardCoins: 450,
-        theme: 'fortress',
-        segments: [
-            { type: 'gates', z: -8, gates: [
-                { lane: 0, op: 'add', value: 25, label: '+25' },
-                { lane: 1, op: 'buff', value: 'damage2', label: '输出+2' },
-                { lane: 2, op: 'skill', value: 'roll' }
-            ]},
-            { type: 'wave', z: -24, enemies: [ { type: 'elite', count: 8 }, { type: 'normal', count: 90 }, { type: 'fast', count: 60 } ] },
-            { type: 'gates', z: -42, gates: [
-                { lane: 0, op: 'buff', value: 'crit2', label: '暴击+10%' },
-                { lane: 1, op: 'buff', value: 'freeze', label: '冰冻弹' },
-                { lane: 2, op: 'skill', value: 'roll' }
-            ]},
-            { type: 'wave', z: -58, enemies: [ { type: 'elite', count: 12 }, { type: 'shield', count: 70 }, { type: 'spitter', count: 50 } ] },
-            { type: 'gates', z: -76, gates: [
-                { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
-                { lane: 1, op: 'skill', value: 'roll' },
-                { lane: 2, op: 'buff', value: 'chain', label: '连锁闪电' }
-            ]},
-            { type: 'wave', z: -92, enemies: [ { type: 'elite', count: 14 }, { type: 'split', count: 60 }, { type: 'fast', count: 70 }, { type: 'normal', count: 80 } ] },
-            { type: 'boss', z: -130, boss: { type: 'boss', hp: 5000, style: 'bulwark', title: '钢盾领主' } },
-            { type: 'boss', z: -166, boss: { type: 'boss', hp: 5000, style: 'hivelord', title: '裂变母巢' } }
-        ]
-    },
-    // ============ 第10关 终极末日 (V8.0 终局关) ============
-    {
-        name: '第 10 关 终极末日',
-        startCount: 1,
-        totalZ: -220,
-        rewardCoins: 600,
-        theme: 'apocalypse',
-        segments: [
-            { type: 'gates', z: -8, gates: [
-                { lane: 0, op: 'add', value: 30, label: '+30' },
-                { lane: 1, op: 'buff', value: 'damage2', label: '输出+2' },
-                { lane: 2, op: 'skill', value: 'roll' }
-            ]},
-            { type: 'wave', z: -26, enemies: [ { type: 'elite', count: 10 }, { type: 'normal', count: 100 }, { type: 'fast', count: 70 } ] },
-            { type: 'gates', z: -44, gates: [
-                { lane: 0, op: 'buff', value: 'pierce', label: '穿透+1' },
-                { lane: 1, op: 'buff', value: 'crit2', label: '暴击+10%' },
-                { lane: 2, op: 'skill', value: 'roll' }
-            ]},
-            { type: 'wave', z: -60, enemies: [ { type: 'elite', count: 14 }, { type: 'shield', count: 80 }, { type: 'spitter', count: 60 } ] },
-            { type: 'energy', z: -78, core: { hp: 2000, buffRadius: 10 } },
-            { type: 'gates', z: -94, gates: [
-                { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
-                { lane: 1, op: 'skill', value: 'roll' },
-                { lane: 2, op: 'buff', value: 'chain', label: '连锁闪电' }
-            ]},
-            { type: 'wave', z: -110, enemies: [ { type: 'elite', count: 16 }, { type: 'split', count: 70 }, { type: 'shield', count: 70 }, { type: 'fast', count: 70 } ] },
-            { type: 'gates', z: -128, gates: [
-                { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
-                { lane: 1, op: 'buff', value: 'explosive', label: '爆炸弹' },
-                { lane: 2, op: 'skill', value: 'roll' }
-            ]},
-            { type: 'wave', z: -144, enemies: [ { type: 'elite', count: 18 }, { type: 'spitter', count: 60 }, { type: 'shield', count: 60 }, { type: 'normal', count: 100 }, { type: 'fast', count: 80 } ] },
-            { type: 'gates', z: -162, gates: [
-                { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },
-                { lane: 1, op: 'buff', value: 'crit2', label: '暴击+10%' },
-                { lane: 2, op: 'skill', value: 'roll' }
-            ]},
-            { type: 'wave', z: -178, enemies: [ { type: 'elite', count: 20 }, { type: 'normal', count: 120 }, { type: 'fast', count: 90 }, { type: 'shield', count: 60 }, { type: 'spitter', count: 50 } ] },
-            { type: 'boss', z: -208, boss: { type: 'boss', hp: 12000, style: 'overlord', title: '末日主宰' } }
-        ]
-    }];
+CONFIG.BOSS_STYLES = ['bruiser', 'bruiser', 'bulwark', 'hivelord', 'overlord', 'overlord', 'hivelord', 'titan', 'bulwark', 'overlord'];
+CONFIG.BOSS_NAMES = ['铁拳队长', '赤拳突击者', '钢盾领主', '裂变母巢', '终焉核心', '末日吞噬者', '巢穴之母', '机械巨尸', '钢盾领主', '末日主宰'];
+// V8.0修复: BOSS_NAMES数组曾未闭合 — L7-L10关卡定义被吞进数组(LEVELS外的重复块),
+// 导致BOSS_NAMES[6..9]=关卡对象(Boss血条显示[object Object])且关卡体积膨胀。
 LEVELS.forEach(function(level, li) {
-    level.bossStyle = CONFIG.BOSS_STYLES[li];
+    if (!level.bossStyle) level.bossStyle = CONFIG.BOSS_STYLES[li];
     level.segments.forEach(function(seg) {
-        if (seg.type === 'boss') seg.boss.style = level.bossStyle;
+        // V8.0: 尊重关卡内已写明的Boss体格(L9双Boss各自不同), 缺省才按关索引装配
+        if (seg.type === 'boss' && !seg.boss.style) seg.boss.style = level.bossStyle;
     });
 });
 

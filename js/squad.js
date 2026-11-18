@@ -118,8 +118,10 @@ class Squad {
         // V6.0: 能量护盾技能 — 挡致命伤害, 冷却恢复
         if (this._skillShieldMax && this._skillShield > 0 && n >= this.count && this._shieldCd <= 0) {
             this._skillShield--;
-            this._shieldCd = 6;
+            this._shieldCd = this._comboUndying ? 3 : 6; // V8.0: 不灭意志组合减冷却
             if (effects) effects.floatText(this.x, 2.2, this.z, '护盾格挡!', '#4DA8FF', true);
+            // V8.0: 毒性护盾组合 — 格挡时毒化周围敌人(由combat下一帧读取)
+            if (this._comboToxicWard) this._toxicWardPulse = true;
             return;
         }
         const before = this.count;
@@ -260,9 +262,13 @@ class Squad {
         // V8.0: game 引用(武器/科技读取)
         if (this._gameRef === undefined && typeof window !== 'undefined' && window.__game) this._gameRef = window.__game;
         // V6.0: 背水阈值 + 护盾冷却
-        this._halfCount = Math.floor(CONFIG.SQUAD_MAX_COUNT / 2);
+        this._halfCount = Math.floor(CONFIG.SQUAD_MAX_COUNT / (this._comboDesperate ? 1.67 : 2)); // V8.0: 绝境锋芒60%
         if (this._shieldCd > 0) this._shieldCd -= dt;
         if (this._skillShieldMax && this._shieldCd <= 0 && this._skillShield < this._skillShieldMax) this._skillShield = this._skillShieldMax;
+        // V8.0: 随机事件限时buff衰减
+        if (this._evDmgMulT > 0) { this._evDmgMulT -= dt; if (this._evDmgMulT <= 0) this._evDmgMul = 0; }
+        if (this._evRateMulT > 0) { this._evRateMulT -= dt; if (this._evRateMulT <= 0) this._evRateMul = 0; }
+        if (this._evCritT > 0) { this._evCritT -= dt; if (this._evCritT <= 0) this._evCritBonus = 0; }
         // V3.2: 换道倾斜(速度感) + 跑动前倾
         const tilt = clamp((this.x - this.targetX) * 0.28, -0.28, 0.28);
         // V5.1: 防守阵地时完全站立(无残余前倾漂移感)
@@ -319,7 +325,15 @@ class Squad {
     /** 获取伤害值(永久枪械升级 + 门buff) V5.1: 上限99 */
     getDamage() {
         var gun = this.profile && typeof UpgradeShop !== 'undefined' ? UpgradeShop.damageBonus(this.profile) : 0;
-        return Math.min(99, CONFIG.BULLET_DAMAGE_BASE + gun + this.damageBuff);
+        var dmg = CONFIG.BULLET_DAMAGE_BASE + gun + this.damageBuff;
+        // V8.0: 科技伤害加成(火力科技"弹药强化") + 武器伤害乘区 — 修复: 原先只算了不 consuming
+        if (this._gameRef) {
+            var tech = this._gameRef._techStats;
+            if (tech && tech.dmgBonus) dmg += tech.dmgBonus;
+            var w = this._gameRef._weaponStats;
+            if (w && w.dmgMul) dmg *= w.dmgMul;
+        }
+        return Math.min(99, Math.round(dmg * 10) / 10);
     }
 
     /** 获取射速(永久快速射击升级 + 门buff) V5.1: 全局上限3.0 */
@@ -328,8 +342,12 @@ class Squad {
         // V8.0: 武器+科技射速(从 game 引用)
         if (this._gameRef && this._gameRef._weaponStats && this._gameRef._weaponStats.rateMul) mul *= this._gameRef._weaponStats.rateMul;
         if (this._gameRef && this._gameRef._techStats && this._gameRef._techStats.rateBonus) mul *= (1 + this._gameRef._techStats.rateBonus);
-        // V6.0: 无人机技能 — 每层+15%射速
-        if (this._skillDrones) mul *= 1 + 0.15 * this._skillDrones;
+        // V6.0: 无人机技能 — 每层+15%射速 (V8.0: 火力全开组合+25%/层)
+        if (this._skillDrones) mul *= 1 + (this._comboFullBarrage ? 0.25 : 0.15) * this._skillDrones;
+        // V8.0: 毒雾僚机组合 — 毒液层附带射速
+        if (this._comboSwarmVenom && this._skillVenom) mul *= 1 + 0.08 * this._skillVenom;
+        // V8.0: 随机事件射速buff
+        if (this._evRateMul) mul *= this._evRateMul;
         return Math.min(3.0, CONFIG.BULLET_FIRE_RATE_BASE * mul * (1 + this.fireRateBuff));
     }
 
@@ -358,6 +376,13 @@ class Squad {
         this._skillRage = 0; this._skillDrones = 0; this._skillVenom = 0;
         this._skillShieldMax = 0; this._skillShield = 0; this._shieldCd = 0;
         this._skillMagnet = 0; this._skillBerserk = 0; this._skills = null;
+        // V8.0: 技能组合+事件buff复位
+        this._comboPlagueFury = 0; this._comboDesperate = 0; this._comboSwarmVenom = 0;
+        this._comboUndying = 0; this._comboGreedFire = 0; this._comboRecycle = 0;
+        this._comboToxicWard = 0; this._comboFullBarrage = 0; this._comboVenomBounty = 0;
+        this._comboGuardianFury = 0; this._toxicWardPulse = false;
+        this._evDmgMul = 0; this._evDmgMulT = 0; this._evRateMul = 0; this._evRateMulT = 0;
+        this._evCritBonus = 0; this._evCritT = 0;
         this.alive = true;
         this.soldiers = [];
         this.count = 0; // 必须重置count, 否则setCount认为人数未变不补充士兵

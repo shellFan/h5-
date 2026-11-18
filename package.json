@@ -12,6 +12,7 @@
     "test:unit": "node tests/unit/run.js",
     "test:h5-build": "node tests/e2e/h5-build.js",
     "test:v51": "node tests/e2e/v51.js",
+    "test:v80": "node tests/e2e/v80.js",
     "capture": "node tools/v50-capture.js",
     "capture51": "node tools/v51-capture.js",
     "sim": "node tools/run-sim.js",

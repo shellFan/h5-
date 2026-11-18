@@ -30,14 +30,19 @@ class Game {
             // Enemy health depends on the encounter, never on the player's upgrades.
             if (type !== 'boss' && !hp) {
                 var refHp = (CONFIG.ZOMBIE[type] || CONFIG.ZOMBIE.normal).hp;
-                hp = Math.round(refHp * CONFIG.ENEMY_HP_MULTIPLIER[self.levelIndex]);
+                // V8.0: 越界防御 — 乘数缺失时用末档而不是静默回退基础血量
+                var hpMul = CONFIG.ENEMY_HP_MULTIPLIER[Math.min(self.levelIndex, CONFIG.ENEMY_HP_MULTIPLIER.length - 1)] || 1.7;
+                hp = Math.round(refHp * hpMul);
             }
             // V4.0: Boss血量按出场时队伍战力动态缩放 — 任何策略/养成水平都面临~8-12s Boss战
             if (type === 'boss') {
                 // V5.1.3: Boss血量 = 人数×DPS双因子(人数=防御/竞速生存, DPS=输出) —
-                // 旧公式只随DPS缩放, 小队打Boss时人数劣势无补偿必败。预算≈count×dps×0.64(1.25/s磨损×0.8安全)。
+                // V8.0.1: 恢复在重构中丢失的双因子公式: hp = clamp(count×totalDPS×0.5, 关卡值×0.5, 关卡值×12)
+                // 战斗时长 ≈ 0.5×count/(0.8×volley) ≈ 9-12s, 与养成水平无关。
                 var base = hp || CONFIG.ZOMBIE.boss.hp;
-                hp = base;
+                var bossDps = self.squad.count * self.squad.getDamage() * self.squad.getFireRate();
+                var dualFactor = Math.max(base * 0.5, Math.min(self.squad.count * bossDps * 0.5, base * 12));
+                hp = Math.round(dualFactor);
             }
             if(type==='boss' && self.enemies.bossStyle==='twinelite') {
                 self.enemies.spawnEnemy(type,-1.1,z,hp/2,'elite');
@@ -442,6 +447,11 @@ class Game {
         this.squad.alive = true;
         this.squad.setCount(count);
         this.squad.invulnT = invSec || 2.0;
+        // V8.0: 挑战模式复活 — 重新开启计分(基准重置, 只计复活后的增量)
+        if (this._challenge) {
+            this._challenge._scored = false;
+            this._challenge._bossStart = this.enemies.bossKills || 0;
+        }
         if (this.ui.loseScreen) this.ui.loseScreen.classList.add('hidden');
         if (this.ui.hud) this.ui.hud.classList.remove('hidden');
         // 复活反馈
@@ -857,6 +867,21 @@ class Game {
             if (this._techStats.startBonus) this.squad.setCount(this.squad.count + this._techStats.startBonus);
             if (this._techStats.pierceBonus) this.squad.pierce = Math.min(3, this.squad.pierce + this._techStats.pierceBonus);
             if (this._techStats.critBonus) this.squad.critChance = Math.min(0.5, this.squad.critChance + this._techStats.critBonus);
+            if (this._techStats.explosive) this.squad.explosive = Math.max(this.squad.explosive, 1); // 爆炸弹头科技
+            // V8.0.1: 武器特化效果接线(修复: 武器特殊属性此前未进入战斗)
+            var ws = this._weaponStats || {};
+            if (ws.pierceBonus) this.squad.pierce = Math.min(5, this.squad.pierce + ws.pierceBonus);
+            if (ws.chain) this.squad.chain = Math.max(this.squad.chain, ws.chain);
+            if (ws.slowMul) this.squad.freezeStacks = Math.max(this.squad.freezeStacks, Math.round((1 - ws.slowMul) * 10));
+            if (ws.radius) this.squad.explosive = Math.max(this.squad.explosive, Math.round(ws.radius * 2));
+            if (ws.critBonus) this.squad.critChance = Math.min(0.8, this.squad.critChance + ws.critBonus);
+            // V8.0: 士兵成长属性(等级+装备)
+            if (typeof SoldierGrowth !== 'undefined' && this.profile) {
+                var solStats = SoldierGrowth.stats(this.profile);
+                if (solStats.dmgBonus) this.squad.damageBuff = Math.min(99, this.squad.damageBuff + solStats.dmgBonus);
+                if (solStats.critBonus) this.squad.critChance = Math.min(0.5, this.squad.critChance + solStats.critBonus);
+                this._soldierStats = solStats;
+            }
             // V6.0: 关卡主题(末日核心等) + 能源核心生成
             if (this.world.applyTheme) this.world.applyTheme(level.theme);
             this._setupEnergyCore(level);
@@ -897,6 +922,17 @@ class Game {
             this._prevDamage = this.squad.getDamage();
             this._prevFireRate = this.squad.getFireRate();
 
+            // V8.0: 随机事件系统每局重置
+            if (typeof RandomEvents !== 'undefined') RandomEvents.reset();
+            // V8.0: 挑战模式竞技场装配(普通关卡为 null)
+            if (this._pendingChallenge) {
+                this._challenge = this._pendingChallenge;
+                this._pendingChallenge = null;
+                this._initChallengeArena();
+            } else {
+                this._challenge = null;
+            }
+
             // 更新关卡名和等级徽章
             if (this.ui.levelName) this.ui.levelName.textContent = level.name;
             if (this.ui.levelBadge) this.ui.levelBadge.textContent = 'Lv.' + (this.levelIndex + 1);
@@ -916,6 +952,73 @@ class Game {
             this._updateUI();
         } catch (err) {
             this._showError('[start错误] ' + err.message + '\n' + (err.stack || ''));
+        }
+    }
+
+    // ===== V8.0: 挑战模式(无尽生存 / Boss试炼) =====
+    /** 进入挑战模式: 用最高解锁关作为竞技场, 失败即结算 */
+    startChallengeMode(type) {
+        if (typeof CHALLENGE_MODES === 'undefined' || !CHALLENGE_MODES[type]) return false;
+        var unlocked = this.profile ? (this.profile.data.unlockedLevel || 1) : 1;
+        this.levelIndex = Math.min(LEVELS.length - 1, Math.max(0, unlocked - 1));
+        this._pendingChallenge = {
+            type: type, cfg: CHALLENGE_MODES[type],
+            wave: 0, waveT: 3, time: 0, holdZ: undefined,
+            _bossStart: 0, _scored: false
+        };
+        this.start();
+        if (this.ui.levelName) this.ui.levelName.textContent = CHALLENGE_MODES[type].name;
+        if (this.ui.levelBadge) this.ui.levelBadge.textContent = '⚔️';
+        return true;
+    }
+
+    /** 竞技场初始化: 记录驻守线与Boss击杀基准 */
+    _initChallengeArena() {
+        var c = this._challenge;
+        if (!c) return;
+        c.holdZ = this.squad.z - 14;
+        c._bossStart = this.enemies.bossKills || 0;
+        c._scored = false;
+        c.time = 0;
+        c.wave = 0;
+        c.waveT = 3;
+        if (this.effects) {
+            this.effects.floatText(this.squad.x, 2.6, this.squad.z - 2, c.cfg.icon + ' ' + c.cfg.name + ' 开始!', '#FFC247', true);
+        }
+    }
+
+    /** 挑战波次驱动: 生存=混合波(每5波Boss); Boss试炼=纯Boss连续 */
+    _updateChallenge(dt) {
+        var c = this._challenge;
+        if (!c || c.holdZ === undefined) return;
+        c.time += dt;
+        c.waveT -= dt;
+        if (c.waveT > 0) return;
+        c.wave++;
+        if (c.type === 'survival') {
+            c.waveT = Math.max(7, 12 - c.wave * 0.3);
+            if (c.wave % 5 === 0) {
+                // 每5波Boss: HP按波次指数增长
+                var bhp = Math.round(1200 * Math.pow(c.cfg.hpScale || 1.12, c.wave));
+                this.enemies.spawnEnemy('boss', CONFIG.LANE_X[1], this.squad.z - 14, bhp);
+                this._showBossWarning(true);
+                if (this.effects) this.effects.floatText(this.squad.x, 2.4, this.squad.z - 3, '⚔️ Boss来袭!', '#FF4444', true);
+            } else {
+                var count = Math.min(70, 16 + Math.round(c.wave * 5));
+                for (var i = 0; i < count; i++) {
+                    var lane = i % 3;
+                    var type = (c.wave >= 3 && i % 9 === 8) ? 'elite' : (i % 5 === 4 ? 'fast' : 'normal');
+                    var x = CONFIG.LANE_X[lane] + (Math.random() - 0.5) * 2.4;
+                    this.enemies.spawnEnemy(type, x, this.squad.z - CONFIG.BULLET_RANGE * (0.75 + Math.random() * 0.25), 0);
+                }
+                if (this.effects) this.effects.floatText(this.squad.x, 2.4, this.squad.z - 3, '第 ' + c.wave + ' 波', '#FF8844', true);
+            }
+        } else if (c.type === 'boss_rush') {
+            c.waveT = 6;
+            var bhp2 = Math.round(1000 * Math.pow(c.cfg.hpScale || 1.25, c.wave));
+            this.enemies.spawnEnemy('boss', CONFIG.LANE_X[1], this.squad.z - 14, bhp2);
+            this._showBossWarning(true);
+            if (this.effects) this.effects.floatText(this.squad.x, 2.4, this.squad.z - 3, '👑 第 ' + c.wave + ' 个Boss', '#FFC247', true);
         }
     }
 
@@ -978,6 +1081,10 @@ class Game {
         var stopZ = this.enemies.boss ? this.enemies.boss.z + 4.5 : null;
         var frontier = this.pacing.frontierStopZ();
         if (frontier !== null) stopZ = stopZ === null ? frontier : Math.max(stopZ, frontier);
+        // V8.0: 挑战模式 — 小队驻守固定阵地
+        if (this._challenge && this._challenge.holdZ !== undefined) {
+            stopZ = stopZ === null ? this._challenge.holdZ : Math.max(stopZ, this._challenge.holdZ);
+        }
         this.squad.update(dt, this.time, stopZ);
         // V5.1: 全屏爆炸门 — 对场上所有活敌 50%maxHp 结算
         if (this.squad.nukePending) {
@@ -1010,6 +1117,9 @@ class Game {
             ChallengeDaily.report(this.profile, 'skills', 0);
             ChallengeDaily.report(this.profile, 'boss', 0);
         }
+        // V8.0: 随机事件 + 挑战模式波次驱动
+        if (typeof RandomEvents !== 'undefined') RandomEvents.update(dt, this);
+        if (this._challenge) this._updateChallenge(dt);
         // V3.3: 连杀系统 — 击杀数增长时combo+1, 2秒无击杀清零
         var kc = this.enemies.killCount;
         if (kc > this._prevKillCount) {
@@ -1063,7 +1173,8 @@ class Game {
         }
 
         // V5.1 胜利判定(阵地防守): 全部波次排空 + 场上无敌(含Boss已亡+召唤清完) → 通关
-        if (this.pacing.isComplete() && this.enemies.encounterOutstanding === 0 && !this.enemies.boss) {
+        // V8.0: 挑战模式无通关 — 由失败结算
+        if (!this._challenge && this.pacing.isComplete() && this.enemies.encounterOutstanding === 0 && !this.enemies.boss) {
             this.bossDefeated = true; // 兼容旧标志(E2E引用)
             if (this.ui.bossBar) this.ui.bossBar.classList.add('hidden');
             this._win();
@@ -1185,7 +1296,7 @@ class Game {
         this.squad.setAnimationState('Victory');
         // V5.1: 金币结算(幂等入账) + 档案统计
         this._doubleApplied = false;
-        this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, true, false, this.squad._skillMagnet || 0) : null;
+        this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, true, false, (typeof Skills !== 'undefined' ? Skills.coinBonus(this.squad) : (this.squad._skillMagnet || 0))) : null;
         if (this.profile) {
             this._newUnlocked = this.profile.recordRun(this.levelIndex, this.enemies.killCount, this.maxCount, true, LEVELS.length);
             // V6.0: 星级/经验/成就/统计
@@ -1234,13 +1345,36 @@ class Game {
         this.lastLoseReason = reason; // V5.0: 供平衡模拟分析失败原因
         this._sfx('lose'); // V5.0
         // V5.1: 失败只给少量击杀金币(防故意失败刷钱)
-        this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, false, false, this.squad._skillMagnet || 0) : null;
+        this._settlement = this.profile ? settleRunEconomy(this.profile, LEVELS[this.levelIndex], this.levelIndex, this.enemies.killCount, false, false, (typeof Skills !== 'undefined' ? Skills.coinBonus(this.squad) : (this.squad._skillMagnet || 0))) : null;
         if (this.profile) {
             this.profile.recordRun(this.levelIndex, this.enemies.killCount, this.maxCount, false, LEVELS.length);
             this.profile.data.xp = (this.profile.data.xp || 0) + this.enemies.killCount * (typeof XP_RULES !== 'undefined' ? XP_RULES.perKill : 1);
             this.profile.data.playerLevel = typeof Progression !== 'undefined' ? Progression.levelFromXp(this.profile.data.xp).level : this.profile.data.playerLevel;
             this._newAchievements = typeof Progression !== 'undefined' ? Progression.checkAchievements(this.profile) : [];
             this.profile.save();
+        }
+        // V8.0: 挑战模式结算 — 分数+奖励+最高纪录(幂等: _scored 防重复)
+        if (this._challenge && !this._challenge._scored) {
+            this._challenge._scored = true;
+            var cScore = this._challenge.type === 'survival'
+                ? this.enemies.killCount
+                : Math.max(0, (this.enemies.bossKills || 0) - (this._challenge._bossStart || 0));
+            var cReward = this.profile ? Math.round(cScore * (this._challenge.type === 'survival' ? 0.5 : 1.2)) : 0;
+            if (this.profile) {
+                this.profile.addCoins(cReward);
+                this.profile.data.xp = (this.profile.data.xp || 0) + Math.round(cScore * 2);
+                this.profile.data.playerLevel = typeof Progression !== 'undefined' ? Progression.levelFromXp(this.profile.data.xp).level : this.profile.data.playerLevel;
+                if (!this.profile.data.challengeBest) this.profile.data.challengeBest = {};
+                var bestKey = this._challenge.type;
+                if (cScore > (this.profile.data.challengeBest[bestKey] || 0)) {
+                    this.profile.data.challengeBest[bestKey] = cScore;
+                    this._challenge._newBest = true;
+                }
+                this.profile.save();
+            }
+            if (this.ui.loseReason) this._challenge._scoreText =
+                (this._challenge.cfg ? this._challenge.cfg.name : '挑战') + ' · 得分 ' + cScore +
+                (this._challenge._newBest ? ' 🎉新纪录!' : '') + ' · 奖励 ' + cReward + '🪙';
         }
         this._fillSettlementUI();
         if (this.ui.hud) this.ui.hud.classList.add('hidden');
@@ -1252,6 +1386,10 @@ class Game {
         if (this.ui.loseCombo) this.ui.loseCombo.textContent = this.maxCombo || 0;
         // V3.3: 失败原因
         if (this.ui.loseReason) this.ui.loseReason.textContent = reason || '小队全灭';
+        // V8.0: 挑战模式 — 失败原因替换为挑战得分(须在默认原因之后写入)
+        if (this._challenge && this._challenge._scored && this._challenge._scoreText && this.ui.loseReason) {
+            this.ui.loseReason.textContent = this._challenge._scoreText;
+        }
         // V3.4: 复活按钮(每局限1次)
         this._updateAdButtons();
         if (this.ui.loseScreen) this.ui.loseScreen.classList.remove('hidden');
