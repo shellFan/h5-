@@ -26,11 +26,13 @@ const COPY_LIST = [
     'js/skills.js',
     'js/affixes.js',
     'js/growth.js',
+    'js/classes.js',
     'js/weapons.js',
     'js/tech-tree.js',
     'js/random-events.js',
     'js/progression.js',
     'js/challenge.js',
+    'js/leaderboard.js',
     'js/upgrades.js',
     'js/utils.js',
     'js/movement.js',   // V4.0

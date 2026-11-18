@@ -40,6 +40,8 @@ var V60UI = {
                     '<div class="v60-train-header" id="v60-train-header"></div>' +
                     '<div class="v60-train-stats" id="v60-train-stats"></div>' +
                     '<div class="v60-train-equip" id="v60-train-equip"></div>' +
+                    '<div class="v60-equip-title" style="margin-top:10px">背包 · 掉落装备</div>' +
+                    '<div id="v60-train-bag" class="v60-bag-list"></div>' +
                     '<button id="v60-train-upgrade" class="btn-primary">升级士兵</button>' +
                     '<div class="v60-train-cost" id="v60-train-cost"></div>' +
                     '<button id="v60-train-back" class="btn-secondary">返回</button>' +
@@ -76,6 +78,14 @@ var V60UI = {
                     '<h2 class="v60-page-title">挑战模式</h2>' +
                     '<div id="v60-challenge-list" class="v60-challenge-list"></div>' +
                     '<button id="v60-challenge-back" class="btn-secondary">返回</button>' +
+                '</div>' +
+            '</div>' +
+            '<div id="v60-rank-page" class="v60-page hidden">' +
+                '<div class="title-panel v60-panel">' +
+                    '<div class="v42-panel-kicker gold">名人堂</div>' +
+                    '<h2 class="v60-page-title">战绩排行</h2>' +
+                    '<div id="v60-rank-list" class="v60-rank-list"></div>' +
+                    '<button id="v60-rank-back" class="btn-secondary">返回</button>' +
                 '</div>' +
             '</div>' +
             '<div id="v60-map-page" class="v60-page hidden">' +
@@ -118,10 +128,12 @@ var V60UI = {
                     '<button id="v60-btn-tech" class="v60-nav-btn">🔬 科技</button>' +
                     '<button id="v60-btn-codex" class="v60-nav-btn">📖 图鉴</button>' +
                     '<button id="v60-btn-challenge" class="v60-nav-btn">⚔️ 挑战</button>' +
+                    '<button id="v60-btn-rank" class="v60-nav-btn">🏆 排行</button>' +
                     '<button id="v60-btn-ach" class="v60-nav-btn">🏅 成就</button>' +
                     '<button id="v60-btn-daily" class="v60-nav-btn">📋 每日</button>' +
                     '<button id="v60-btn-set" class="v60-nav-btn">⚙️ 设置</button>' +
                 '</div>' +
+                '<div id="v60-class-row" class="v60-class-row"></div>' +
                 '<div id="v60-home-growth" class="v60-home-growth"></div>');
         }
 
@@ -140,6 +152,8 @@ var V60UI = {
         bind('v60-btn-tech', function() { self.showPage('v60-tech-page'); self.renderTech(game); });
         bind('v60-btn-codex', function() { self.showPage('v60-codex-page'); self.renderCodex(game); });
         bind('v60-btn-challenge', function() { self.showPage('v60-challenge-page'); self.renderChallenges(game); });
+        bind('v60-btn-rank', function() { self.showPage('v60-rank-page'); self.renderRank(game); });
+        bind('v60-rank-back', function() { self.hidePages(); });
         bind('v60-map-back', function() { self.hidePages(); });
         bind('v60-ach-back', function() { self.hidePages(); });
         bind('v60-daily-back', function() { self.hidePages(); });
@@ -186,6 +200,31 @@ var V60UI = {
         } catch (e) {}
 
         this.renderHomeGrowth(game);
+        this.renderClassSelector(game);
+    },
+
+    // ===== VNext: 职业选择(首页四卡) =====
+    renderClassSelector: function(game) {
+        var row = document.getElementById('v60-class-row');
+        if (!row || !game.profile || typeof SoldierClass === 'undefined') return;
+        var current = SoldierClass.def(game.profile).id;
+        row.innerHTML = '';
+        for (var id in CLASS_DEFS) {
+            var def = CLASS_DEFS[id];
+            var check = SoldierClass.canSelect(game.profile, id);
+            var card = document.createElement('button');
+            card.className = 'v60-class-card' + (id === current ? ' selected' : '') + (check.ok ? '' : ' locked');
+            card.innerHTML =
+                '<div class="v60-class-icon">' + def.icon + '</div>' +
+                '<div class="v60-class-name">' + def.name + '</div>' +
+                '<div class="v60-class-desc">' + (check.ok ? def.desc : def.unlockText) + '</div>';
+            card.onclick = function(cid) { return function() {
+                var r = SoldierClass.select(game.profile, cid);
+                if (r.ok) { game._sfx('gate'); V60UI.renderClassSelector(game); }
+                else { game._sfx('click'); }
+            }; }(id);
+            row.appendChild(card);
+        }
     },
 
     /** 战斗事件上报(战斗中每帧调用) */
@@ -215,7 +254,7 @@ var V60UI = {
     hidePages: function() {
         ['v60-map-page', 'v60-ach-page', 'v60-settings-page', 'v60-daily-page',
          'v60-train-page', 'v60-armory-page', 'v60-tech-page', 'v60-codex-page',
-         'v60-challenge-page'].forEach(function(id) {
+         'v60-challenge-page', 'v60-rank-page'].forEach(function(id) {
             var el = document.getElementById(id);
             if (el) el.classList.add('hidden');
         });
@@ -382,12 +421,62 @@ var V60UI = {
                 var piece = eq[slot];
                 var qName = piece ? EQUIP_QUALITY[piece.quality] : '空';
                 var qColor = piece ? EQUIP_QUALITY_COLORS[piece.quality] : '#666';
-                var eName = piece ? (EQUIPMENT_DEFS[piece.id] ? EQUIPMENT_DEFS[piece.id].name : piece.id) : '未装备';
+                var eName = piece ? (piece.name || (EQUIPMENT_DEFS[piece.id] ? EQUIPMENT_DEFS[piece.id].name : piece.id)) : '未装备';
                 equipHtml += '<div class="v60-equip-row"><span class="v60-equip-slot">' + EQUIP_SLOT_NAMES[slot] + '</span>' +
                     '<span class="v60-equip-name" style="color:' + qColor + '">' + eName + '</span>' +
                     '<span class="v60-equip-quality">' + qName + (piece ? ' +' + (piece.level - 1) : '') + '</span></div>';
             }
             equipEl.innerHTML = equipHtml;
+        }
+        // VNext: 背包(掉落装备 穿戴/强化/分解)
+        var bagEl = document.getElementById('v60-train-bag');
+        if (bagEl) {
+            var bag = game.profile.data.bag || [];
+            bagEl.innerHTML = '';
+            if (!bag.length) {
+                bagEl.innerHTML = '<div class="v60-rank-empty">暂无掉落装备 · 通关战斗获取</div>';
+            }
+            for (var bi = 0; bi < bag.length; bi++) {
+                (function(item) {
+                    var it = document.createElement('div');
+                    it.className = 'v60-bag-item';
+                    it.innerHTML =
+                        '<div class="v60-bag-main"><div class="v60-bag-name v60-quality-' + item.quality + '">' +
+                        (item.isNew ? '<span style="color:#FF4444">新!</span> ' : '') + item.name +
+                        ' <i style="font-style:normal;font-size:10px">Q' + EQUIP_QUALITY[item.quality] + ' +' + (item.level - 1) + '</i></div>' +
+                        '<div class="v60-bag-affix">' + (item.affixLines || []).join(' · ') + '</div></div>';
+                    var actions = document.createElement('div');
+                    actions.className = 'v60-bag-actions';
+                    var wearBtn = document.createElement('button');
+                    wearBtn.className = 'v60-bag-btn';
+                    wearBtn.textContent = '穿戴';
+                    wearBtn.onclick = function() {
+                        var r = SoldierGrowth ? EquipmentLoot.equipFromBag(game.profile, item.uid) : { ok: false };
+                        if (r.ok) { game._sfx('gate'); game._refreshCoinDisplays(); self.renderTraining(game); }
+                    };
+                    actions.appendChild(wearBtn);
+                    var upBtn = document.createElement('button');
+                    upBtn.className = 'v60-bag-btn up';
+                    var upCost = item.level >= 10 ? null : EQUIP_UPGRADE_COST(item.quality, item.level);
+                    upBtn.textContent = upCost === null ? 'MAX' : '强化🪙' + upCost;
+                    upBtn.disabled = upCost === null || game.profile.coins < upCost;
+                    upBtn.onclick = function() {
+                        var r = EquipmentLoot.upgradeBagEquip(game.profile, item.uid);
+                        if (r.ok) { game._sfx('gate'); game._refreshCoinDisplays(); self.renderTraining(game); }
+                    };
+                    actions.appendChild(upBtn);
+                    var sellBtn = document.createElement('button');
+                    sellBtn.className = 'v60-bag-btn sell';
+                    sellBtn.textContent = '分解';
+                    sellBtn.onclick = function() {
+                        var r = EquipmentLoot.sellEquip(game.profile, item.uid);
+                        if (r.ok) { game._sfx('coin'); game._refreshCoinDisplays(); self.renderTraining(game); }
+                    };
+                    actions.appendChild(sellBtn);
+                    it.appendChild(actions);
+                    bagEl.appendChild(it);
+                })(bag[bi]);
+            }
         }
         var maxed = lv >= 50;
         if (upBtn) {
@@ -590,6 +679,33 @@ var V60UI = {
                 card.classList.add('clickable');
             }
             el.appendChild(card);
+        }
+    },
+
+    // ===== VNext: 战绩排行(真实结算数据, 无假排名) =====
+    renderRank: function(game) {
+        var el = document.getElementById('v60-rank-list');
+        if (!el || !game.profile || typeof Leaderboard === 'undefined') return;
+        var list = Leaderboard.top(game.profile, LEADERBOARD_CAP);
+        el.innerHTML = '';
+        if (!list.length) {
+            el.innerHTML = '<div class="v60-rank-empty">暂无战绩 · 完成一局战斗后进入排行</div>';
+            return;
+        }
+        for (var i = 0; i < list.length; i++) {
+            var r = list[i];
+            var clsDef = (typeof CLASS_DEFS !== 'undefined' && CLASS_DEFS[r.classId]) ? CLASS_DEFS[r.classId] : null;
+            var row = document.createElement('div');
+            row.className = 'v60-rank-row' + (i < 3 ? ' top' + (i + 1) : '');
+            row.innerHTML =
+                '<div class="v60-rank-pos">' + (i + 1) + '</div>' +
+                '<div class="v60-rank-info"><div class="v60-rank-name">' +
+                (r.win ? '🏆 通关L' + r.level : (r.challenge ? '⚔️ ' + r.challenge : '💀 L' + r.level + '失利')) +
+                (clsDef ? ' <span style="color:' + clsDef.color + '">' + clsDef.icon + '</span>' : '') + '</div>' +
+                '<div class="v60-rank-meta">⚔️' + r.kills + ' · 👥' + r.maxCount + ' · 🔥' + (r.combo || 0) +
+                ' · ' + Leaderboard.fmtDate(r.ts) + '</div></div>' +
+                '<div class="v60-rank-score">' + r.score + '</div>';
+            el.appendChild(row);
         }
     },
 

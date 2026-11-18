@@ -513,7 +513,27 @@ class Game {
             if (xpEl) xpEl.textContent = '+' + this.enemies.killCount;
             loseBox.classList.remove('hidden');
         }
+        // VNext: 装备掉落展示(胜利/失败面板共用逻辑)
+        this._renderSettlementDrops('win-coins', 'wc-drops-row', '📦 装备掉落');
+        this._renderSettlementDrops('lose-coins', 'lc-drops-row', '📦 掉落');
         this._refreshCoinDisplays();
+    }
+
+    /** VNext: 结算面板掉落行(动态注入, 无掉落显示"无") */
+    _renderSettlementDrops(boxId, rowId, label) {
+        var box = document.getElementById(boxId);
+        if (!box) return;
+        var row = document.getElementById(rowId);
+        if (!row) {
+            row = document.createElement('div');
+            row.id = rowId;
+            row.className = 'wc-row';
+            var total = box.querySelector('.wc-total') || box.lastElementChild;
+            if (total) box.insertBefore(row, total); else box.appendChild(row);
+        }
+        var drops = this._drops || [];
+        row.innerHTML = '<span>' + label + '</span><b>' +
+            (drops.length ? drops.map(function(d) { return d.name; }).join('、') : '无') + '</b>';
     }
 
     /** V5.1: 每日免费补给(首页按钮 → 激励视频 → 下局生效) */
@@ -879,8 +899,23 @@ class Game {
             if (typeof SoldierGrowth !== 'undefined' && this.profile) {
                 var solStats = SoldierGrowth.stats(this.profile);
                 if (solStats.dmgBonus) this.squad.damageBuff = Math.min(99, this.squad.damageBuff + solStats.dmgBonus);
-                if (solStats.critBonus) this.squad.critChance = Math.min(0.5, this.squad.critChance + solStats.critBonus);
+                if (solStats.critBonus) this.squad.critChance = Math.min(0.8, this.squad.critChance + solStats.critBonus);
                 this._soldierStats = solStats;
+            }
+            // VNext: 职业系统 — 属性乘区+被动+技能循环
+            if (typeof SoldierClass !== 'undefined' && this.profile) {
+                this._classStats = SoldierClass.combat(this.profile);
+                var cs = this._classStats;
+                if (cs.critBonus) this.squad.critChance = Math.min(0.8, this.squad.critChance + cs.critBonus);
+                if (cs.pierce) this.squad.pierce = Math.min(5, this.squad.pierce + cs.pierce);
+                this.squad._classBulletSpeed = cs.bulletSpeed;
+                if (cs.eliteDmgMul && cs.eliteDmgMul !== 1) this.squad._classEliteMul = cs.eliteDmgMul;
+                else this.squad._classEliteMul = 0;
+                // 总减伤 = 科技 + 职业 + 士兵成长/装备 (killSoldiers 消费, 上限60%)
+                this.squad._totalDr = Math.min(0.6, (this._techStats.drBonus || 0) + (cs.dr || 0) + ((this._soldierStats && this._soldierStats.drBonus) || 0));
+            } else {
+                this._classStats = null;
+                this.squad._totalDr = Math.min(0.6, this._techStats.drBonus || 0);
             }
             // V6.0: 关卡主题(末日核心等) + 能源核心生成
             if (this.world.applyTheme) this.world.applyTheme(level.theme);
@@ -1311,6 +1346,17 @@ class Game {
             this.profile.save();
             this._newAchievements = typeof Progression !== 'undefined' ? Progression.checkAchievements(this.profile) : [];
         }
+        // VNext: 通关装备掉落(1件保底, 星级加成)
+        this._drops = (typeof EquipmentLoot !== 'undefined' && this.profile)
+            ? EquipmentLoot.rollOnWin(this.profile, this.levelIndex, this._stars || 0) : [];
+        // VNext: 真实战绩入榜
+        if (typeof Leaderboard !== 'undefined' && this.profile) {
+            Leaderboard.record(this.profile, {
+                level: this.levelIndex + 1, win: true, kills: this.enemies.killCount,
+                maxCount: this.maxCount, combo: this.maxCombo, time: this.elapsedTime,
+                classId: this.profile.data.classId
+            });
+        }
         if (this.ui && this.ui.winStars !== undefined) {}
         var starsEl = document.getElementById('win-stars');
         if (starsEl && this._stars !== undefined) {
@@ -1354,6 +1400,18 @@ class Game {
             this.profile.save();
         }
         // V8.0: 挑战模式结算 — 分数+奖励+最高纪录(幂等: _scored 防重复)
+        // VNext: 失败也有25%概率掉落1件装备(保底参与感)
+        this._drops = (typeof EquipmentLoot !== 'undefined' && this.profile)
+            ? EquipmentLoot.rollOnLose(this.profile, this.levelIndex) : [];
+        // VNext: 真实战绩入榜(失败也计)
+        if (typeof Leaderboard !== 'undefined' && this.profile) {
+            Leaderboard.record(this.profile, {
+                level: this.levelIndex + 1, win: false, kills: this.enemies.killCount,
+                maxCount: this.maxCount, combo: this.maxCombo, time: this.elapsedTime,
+                classId: this.profile.data.classId,
+                challenge: this._challenge ? this._challenge.type : null
+            });
+        }
         if (this._challenge && !this._challenge._scored) {
             this._challenge._scored = true;
             var cScore = this._challenge.type === 'survival'
@@ -1460,31 +1518,41 @@ class Game {
         return;
     }
 
-    var loading = document.createElement('div');
-    loading.id = 'soldier-loading';
-    loading.style.cssText = 'position:fixed;bottom:24px;left:10%;right:10%;z-index:99999;padding:14px;border-radius:16px;background:#153a67;color:white;text-align:center';
-    loading.textContent = '正在整备蓝色小队…';
-    document.body.appendChild(loading);
+    // VNext: 启动加载界面(真实进度条, 由 index.html 的 __BootProgress 驱动)
+    var loading = document.getElementById('boot-loading');
+    if (!loading) {
+        loading = document.createElement('div');
+        loading.id = 'boot-loading';
+        loading.textContent = '正在整备蓝色小队…';
+        document.body.appendChild(loading);
+    }
     var starting = false;
     function boot() {
         if (starting || window.__game) return;
         starting = true;
-        loading.hidden = false;
-        loading.textContent = '正在整备蓝色小队…';
+        loading.classList.remove('boot-hidden');
+        var actions = document.getElementById('boot-actions');
+        if (actions) actions.innerHTML = '';
+        window.__BootProgress && window.__BootProgress.stage('整备蓝色小队…', 2);
         var error = document.getElementById('error-display');
         if (error) error.remove();
-        Promise.all([SoldierModelLoader.load(),EnemyModelLoader.load()]).then(function() {
+        Promise.all([SoldierModelLoader.load(), EnemyModelLoader.load()]).then(function() {
+            window.__BootProgress && window.__BootProgress.stage('构建战场与渲染管线…', 99);
             if (!window.__game) window.__game = new Game();
-            loading.remove();
+            window.__BootProgress && window.__BootProgress.done();
+            window.__BootProgress && window.__BootProgress.stage('准备完毕!', 100);
+            setTimeout(function() { loading.classList.add('boot-hidden'); }, 260);
         }).catch(function(err) {
             starting = false;
             showError('角色资源加载失败：' + err.message);
-            loading.textContent = '';
+            window.__BootProgress && window.__BootProgress.stage('资源加载失败', 0);
             var retry = document.createElement('button');
             retry.id = 'btn-retry-model';
             retry.textContent = '重新加载小队';
             retry.onclick = boot;
-            loading.appendChild(retry);
+            var actions = document.getElementById('boot-actions');
+            if (actions) actions.appendChild(retry);
+            else loading.appendChild(retry);
         });
     }
     boot();

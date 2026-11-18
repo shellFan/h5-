@@ -24,7 +24,10 @@ var EnemyModelLoader = class EnemyModelLoader {
                     loaded.push(g.scene);
                     resolve({key,lod,bank});
                 }catch(e){SoldierModelLoader._disposeScene(g.scene);reject(e);}
-            },undefined,e=>reject(Error('Enemy asset failed: '+url+' '+(e.message||e))));
+            },undefined,ev=>{
+                // VNext: 启动进度上报(文件级 loaded/total)
+                if (window.__BootProgress && ev) window.__BootProgress.file(url, ev.loaded || 0, ev.total || 1);
+            },e=>reject(Error('Enemy asset failed: '+url+' '+(e.message||e))));
         })))).then(results=>{
             var fail=results.find(r=>r.status==='rejected');
             if(fail)throw fail.reason;

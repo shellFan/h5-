@@ -10,6 +10,52 @@
     <link rel="stylesheet" href="style-v60.css">
 </head>
 <body>
+    <!-- VNext: 真实资源加载进度(文件级统计, 阶段推进, 失败重试) -->
+    <div id="boot-loading">
+        <div class="boot-title">膨胀小队</div>
+        <div class="boot-sub">SQUAD INFLATE · 蓝色科技战线</div>
+        <div class="boot-bar-wrap"><div class="boot-bar-fill" id="boot-bar-fill"></div></div>
+        <div class="boot-meta"><span id="boot-stage">引擎初始化…</span><span id="boot-pct">0%</span></div>
+        <div id="boot-actions"></div>
+    </div>
+    <script>
+        // VNext: 加载进度追踪器(被 soldier-loader / enemy-models 调用; 仅统计真实文件进度, 无定时器伪造)
+        window.__BootProgress = {
+            files: {}, total: 26, // 2士兵 + 12×2 僵尸/Boss GLB
+            file: function(url, loaded, total) {
+                this.files[url] = { loaded: loaded, total: total };
+                var sum = 0, done = 0;
+                for (var k in this.files) {
+                    var f = this.files[k];
+                    sum += Math.min(1, f.loaded / Math.max(1, f.total));
+                    if (f.loaded >= f.total) done++;
+                }
+                var pct = Math.min(99, Math.round(sum / this.total * 100));
+                var bar = document.getElementById('boot-bar-fill');
+                var pctEl = document.getElementById('boot-pct');
+                if (bar) bar.style.width = pct + '%';
+                if (pctEl) pctEl.textContent = pct + '%';
+                var stage = document.getElementById('boot-stage');
+                if (stage && done < this.total) {
+                    stage.textContent = '加载战场资源 ' + done + '/' + this.total + ' (士兵/僵尸/Boss模型)';
+                }
+            },
+            stage: function(text, pct) {
+                var stage = document.getElementById('boot-stage');
+                var pctEl = document.getElementById('boot-pct');
+                var bar = document.getElementById('boot-bar-fill');
+                if (stage) stage.textContent = text;
+                if (pctEl && pct !== undefined) pctEl.textContent = pct + '%';
+                if (bar && pct !== undefined) bar.style.width = pct + '%';
+            },
+            done: function() {
+                var bar = document.getElementById('boot-bar-fill');
+                var pctEl = document.getElementById('boot-pct');
+                if (bar) bar.style.width = '100%';
+                if (pctEl) pctEl.textContent = '100%';
+            }
+        };
+    </script>
     <div id="game-container">
         <canvas id="game-canvas"></canvas>
 
@@ -213,9 +259,11 @@
     <script src="js/skills.js?v=80"></script>
     <script src="js/affixes.js?v=60"></script>
     <script src="js/growth.js?v=80"></script>
+    <script src="js/classes.js?v=81"></script>
     <script src="js/weapons.js?v=80"></script>
     <script src="js/tech-tree.js?v=80"></script>
     <script src="js/random-events.js?v=80"></script>
+    <script src="js/leaderboard.js?v=81"></script>
     <script src="js/progression.js?v=60"></script>
     <script src="js/challenge.js?v=60"></script>
     <script src="js/ui-v60.js?v=80"></script>

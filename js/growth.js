@@ -269,3 +269,149 @@ var Arsenal = {
         return true;
     }
 };
+
+// ===== VNext: 装备掉落 + 随机词条 + 背包 =====
+// 掉落物为独立实例(词条随机), 与固定装备(EQUIPMENT_DEFS)共存:
+// stats() 同时合并 piece.attrs(固定) 与 piece.affixes(随机词条), 全部真实进战斗。
+
+var EQUIP_AFFIX_POOL = [
+    { k: 'dmgBonus',     name: '伤害',      perQ: 1,    fmt: function(v) { return '+' + v; } },
+    { k: 'hpBonus',      name: '生命',      perQ: 8,    fmt: function(v) { return '+' + v; } },
+    { k: 'rateBonus',    name: '射速',      perQ: 0.02, fmt: function(v) { return '+' + Math.round(v * 100) + '%'; } },
+    { k: 'critBonus',    name: '暴击率',    perQ: 0.02, fmt: function(v) { return '+' + Math.round(v * 100) + '%'; } },
+    { k: 'drBonus',      name: '减伤',      perQ: 0.015, fmt: function(v) { return '+' + Math.round(v * 100) + '%'; } },
+    { k: 'recruitBonus', name: '招募',      perQ: 0.6,  fmt: function(v) { return '+' + Math.max(1, Math.round(v)); } }
+];
+var EQUIP_AFFIX_MAX = 3; // 词条条数上限(按品质 1-3)
+var EQUIP_NAME_PREFIX = ['哨兵', '猎手', '暴怒', '坚壁', '疾风', '掠夺', '王牌', '铁血'];
+var EQUIP_BAG_CAP = 30;
+var EQUIP_SELL_VALUE = function(quality, level) { return Math.round(40 * (1 + quality * 0.8) * (1 + (level - 1) * 0.3)); };
+
+var EquipmentLoot = {
+    _uid: 0,
+    /** 生成一件掉落装备 */
+    _makeItem: function(levelIndex, quality) {
+        this._uid++;
+        var slots = EQUIP_SLOTS;
+        var slot = slots[Math.floor(Math.random() * slots.length)];
+        // 词条数: 品质0→1条, 品质4→3条
+        var affixCount = 1 + Math.min(EQUIP_AFFIX_MAX - 1, quality);
+        var affixes = {};
+        var poolCopy = EQUIP_AFFIX_POOL.slice();
+        var lines = [];
+        for (var i = 0; i < affixCount && poolCopy.length; i++) {
+            var pool2 = poolCopy.splice(Math.floor(Math.random() * poolCopy.length), 1)[0];
+            var scale = (1 + quality * 0.5) * (1 + Math.min(9, levelIndex) * 0.12);
+            var raw = pool2.perQ * (0.7 + Math.random() * 0.6) * scale;
+            var v = (pool2.k === 'rateBonus' || pool2.k === 'critBonus' || pool2.k === 'drBonus')
+                ? Math.round(raw * 1000) / 1000 : Math.max(1, Math.round(raw));
+            affixes[pool2.k] = v;
+            lines.push(pool2.name + ' ' + pool2.fmt(v));
+        }
+        var prefix = EQUIP_NAME_PREFIX[Math.floor(Math.random() * EQUIP_NAME_PREFIX.length)];
+        return {
+            uid: Date.now().toString(36) + '_' + this._uid,
+            slot: slot, name: prefix + EQUIP_SLOT_NAMES[slot],
+            quality: quality, affixes: affixes, affixLines: lines,
+            level: 1, ts: Date.now(), isNew: true
+        };
+    },
+    /** 通关掉落: 1件保底 + 星级加成 */
+    rollOnWin: function(profile, levelIndex, stars) {
+        var drops = [];
+        var count = 1 + (stars >= 2 ? 1 : 0) + (Math.random() < 0.3 ? 1 : 0);
+        for (var i = 0; i < count; i++) {
+            var q = this._rollQuality(levelIndex, true);
+            drops.push(this._makeItem(levelIndex, q));
+        }
+        return this._store(profile, drops);
+    },
+    /** 失败掉落: 25%概率1件(保底参与感) */
+    rollOnLose: function(profile, levelIndex) {
+        if (Math.random() >= 0.25) return [];
+        return this._store(profile, [this._makeItem(levelIndex, this._rollQuality(levelIndex, false))]);
+    },
+    _rollQuality: function(levelIndex, win) {
+        // 品质权重随关卡推进右移: 普通/优秀/稀有/史诗/传说
+        var r = Math.random() * 100;
+        var shift = Math.min(20, levelIndex * 2.2) + (win ? 4 : 0);
+        if (r > 97 - shift * 0.3) return 4;
+        if (r > 88 - shift * 0.4) return 3;
+        if (r > 70 - shift * 0.5) return 2;
+        if (r > 42 - shift * 0.3) return 1;
+        return 0;
+    },
+    _store: function(profile, drops) {
+        if (!profile || !drops.length) return [];
+        if (!profile.data.bag) profile.data.bag = [];
+        var bag = profile.data.bag;
+        for (var i = 0; i < drops.length && bag.length < EQUIP_BAG_CAP; i++) bag.push(drops[i]);
+        profile.save();
+        return drops;
+    },
+    /** 背包穿装(同槽互换: 旧装备回背包) */
+    equipFromBag: function(profile, uid) {
+        var bag = profile.data.bag || [];
+        var idx = -1;
+        for (var i = 0; i < bag.length; i++) if (bag[i].uid === uid) { idx = i; break; }
+        if (idx < 0) return { ok: false, reason: 'missing' };
+        var item = bag.splice(idx, 1)[0];
+        if (!profile.data.equipment) profile.data.equipment = {};
+        var old = profile.data.equipment[item.slot];
+        profile.data.equipment[item.slot] = item;
+        if (old && old.uid) bag.push(old); // 掉落装备互换回背包; 固定新手装被替换即退役
+        profile.save();
+        return { ok: true, slot: item.slot, replaced: !!(old && old.uid) };
+    },
+    /** 分解 → 金币 */
+    sellEquip: function(profile, uid) {
+        var bag = profile.data.bag || [];
+        for (var i = 0; i < bag.length; i++) {
+            if (bag[i].uid === uid) {
+                var it = bag[i];
+                var value = EQUIP_SELL_VALUE(it.quality, it.level);
+                bag.splice(i, 1);
+                profile.addCoins(value);
+                return { ok: true, value: value };
+            }
+        }
+        return { ok: false, reason: 'missing' };
+    },
+    /** 背包装备强化(词条×等级成长) */
+    upgradeBagEquip: function(profile, uid) {
+        var bag = profile.data.bag || [];
+        for (var i = 0; i < bag.length; i++) {
+            if (bag[i].uid === uid) {
+                var it = bag[i];
+                if (it.level >= 10) return { ok: false, reason: 'maxed' };
+                var cost = EQUIP_UPGRADE_COST(it.quality, it.level);
+                if (profile.coins < cost) return { ok: false, reason: 'insufficient', cost: cost };
+                if (!profile.spend(cost)) return { ok: false, reason: 'insufficient' };
+                it.level++;
+                it.isNew = false;
+                profile.save();
+                return { ok: true, level: it.level };
+            }
+        }
+        return { ok: false, reason: 'missing' };
+    }
+};
+
+// VNext: SoldierGrowth.stats 合并随机词条(×等级成长, 与固定装备一致)
+// (原 stats 已遍历 eq[slot].attrs — 此处扩展读取 affixes)
+(function() {
+    var baseStats = SoldierGrowth.stats;
+    SoldierGrowth.stats = function(profile) {
+        var out = baseStats.call(SoldierGrowth, profile);
+        var eq = profile.data.equipment || {};
+        for (var slot in eq) {
+            var piece = eq[slot];
+            if (!piece || !piece.affixes) continue;
+            var mul = piece.level || 1;
+            for (var k in piece.affixes) {
+                out[k] = (out[k] || 0) + piece.affixes[k] * mul;
+            }
+        }
+        return out;
+    };
+})();

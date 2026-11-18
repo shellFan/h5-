@@ -23,7 +23,9 @@ class GateSystem {
                 model.position.set(CONFIG.LANE_X[gd.lane], 0, seg.z);
                 this.scene.add(model);
                 this.gates.push({
-                    data: gd,
+                    // VNext修复: 克隆门数据 — 原实现按引用共享 LEVELS 配置对象,
+                    // resolveSkillGates 会把 value:'roll' 改写成具体技能并永久污染关卡常量(重玩不再随机)
+                    data: Object.assign({}, gd),
                     model: model,
                     z: seg.z,
                     x: CONFIG.LANE_X[gd.lane],
@@ -189,17 +191,32 @@ class GateSystem {
         }
     }
 
-    /** V6.0: 解析技能门 — 每排3个不同技能, 重建门模型 */
+    /** V6.0: 解析技能门 — 每排3个不同技能, 重建门模型 (VNext: 只认op, 每局重随机) */
     resolveSkillGates(squad) {
         if (typeof Skills === 'undefined') return;
         var rebuilt = [];
         for (var i = 0; i < this.gates.length; i++) {
             var g = this.gates[i];
-            if (!g.data || g.data.op !== 'skill' || g.data.value !== 'roll') continue;
+            if (!g.data || g.data.op !== 'skill') continue;
             if (rebuilt.indexOf(g.z) >= 0) continue;
             rebuilt.push(g.z);
-            var ids = Skills.rollChoices(squad) || ['rage', 'drone', 'venom'];
             var members = this.gates.filter(function(x) { return x.z === g.z && x.data && x.data.op === 'skill'; });
+            var ids = Skills.rollChoices(squad);
+            if (!ids || !ids.length) {
+                // VNext修复: 全技能满级时禁止重roll出无法生效的重复选项 — 整排转人数门(+30%)
+                for (var ci = 0; ci < members.length; ci++) {
+                    members[ci].data.op = 'addpct';
+                    members[ci].data.value = 30;
+                    members[ci].data.label = '+30%';
+                    members[ci].data.style = 'epic';
+                    this.scene.remove(members[ci].model);
+                    members[ci].model = V42Art.createGateModel(members[ci].data, CONFIG.LANE_WIDTH * 0.9);
+                    this.scene.add(members[ci].model);
+                    members[ci].triggered = false;
+                    members[ci].passed = false;
+                }
+                continue;
+            }
             for (var m = 0; m < members.length && m < ids.length; m++) {
                 var id = ids[m];
                 var def = SKILL_DEFS[id];

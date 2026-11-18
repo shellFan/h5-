@@ -149,7 +149,9 @@ class CombatSystem {
         for (var i = this.bullets.length - 1; i >= 0; i--) {
             var b = this.bullets[i];
             var oldZ = b.mesh.position.z;
-            var newZ = BattleKinematics.bulletZ(oldZ, CONFIG.BULLET_SPEED, dt); // V5.1: SHOOT_SIGN=-Z
+            // VNext: 职业弹速乘区(重装机枪手 +25%)
+            var bSpeed = CONFIG.BULLET_SPEED * (squad._classBulletSpeed || 1);
+            var newZ = BattleKinematics.bulletZ(oldZ, bSpeed, dt); // V5.1: SHOOT_SIGN=-Z
             b.mesh.position.z = newZ;
             b.life -= dt;
 
@@ -187,7 +189,12 @@ class CombatSystem {
                             e._venomDps = Math.max(e._venomDps || 0, b.damage * 0.2 * squad._skillVenom * venomMul);
                             if (e._venomStacks === 1) this.effects.burst(e.x, 0.6, e.z, 0x88CC44, 3, 1.5, 0.3);
                         }
-                        var died = e.takeDamage(b.damage, this.effects, b.mesh.position.x, b.crit);
+                        var hitDmg = b.damage;
+                        // VNext: 神射狙击 — 对精英/Boss ×1.25
+                        if (squad._classEliteMul && (e.isBoss || e.type === 'elite' || e.affixes)) {
+                            hitDmg = Math.round(hitDmg * squad._classEliteMul);
+                        }
+                        var died = e.takeDamage(hitDmg, this.effects, b.mesh.position.x, b.crit);
                         // V5.1: 爆炸弹 — 命中溅射(半径1.7, 50%伤害, 最多4个邻近目标)
                         if (squad.explosive > 0) {
                             var splashR = 1.2 + 0.5 * squad.explosive;
@@ -328,7 +335,7 @@ class CombatSystem {
             mesh: mesh, damage: damage, life: 1.2,
             target: target || null,
             crit: !!isCrit,
-            pierceLeft: 1 + (this._squad ? this._squad.pierce : 0),
+            pierceLeft: 1 + (this._squad ? this._squad.pierce + (this._squad._evPierce || 0) : 0),
             hitSet: null
         });
 

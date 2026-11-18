@@ -115,8 +115,19 @@ class Squad {
     /** 僵尸击杀士兵 (V3.3: 复活无敌期间免疫) */
     killSoldiers(n, effects) {
         if (this.invulnT > 0) return; // 复活无敌
+        var lethal = n >= this.count;
+        // VNext: 伤害减免(科技/职业/装备, 上限60%) — 只作用于非致命伤害, 致命一击保留护盾判定
+        // 概率化取整: 期望值精确且保持整数(避免小数人数破坏 setCount)
+        if (!lethal && this._totalDr > 0) {
+            var reduced = n * (1 - this._totalDr);
+            n = Math.floor(reduced) + (Math.random() < reduced % 1 ? 1 : 0);
+            if (n <= 0) {
+                if (effects) effects.floatText(this.x, 1.8, this.z, '减伤!', '#75DFFF', false);
+                return;
+            }
+        }
         // V6.0: 能量护盾技能 — 挡致命伤害, 冷却恢复
-        if (this._skillShieldMax && this._skillShield > 0 && n >= this.count && this._shieldCd <= 0) {
+        if (this._skillShieldMax && this._skillShield > 0 && lethal && this._shieldCd <= 0) {
             this._skillShield--;
             this._shieldCd = this._comboUndying ? 3 : 6; // V8.0: 不灭意志组合减冷却
             if (effects) effects.floatText(this.x, 2.2, this.z, '护盾格挡!', '#4DA8FF', true);
@@ -269,6 +280,27 @@ class Squad {
         if (this._evDmgMulT > 0) { this._evDmgMulT -= dt; if (this._evDmgMulT <= 0) this._evDmgMul = 0; }
         if (this._evRateMulT > 0) { this._evRateMulT -= dt; if (this._evRateMulT <= 0) this._evRateMul = 0; }
         if (this._evCritT > 0) { this._evCritT -= dt; if (this._evCritT <= 0) this._evCritBonus = 0; }
+        if (this._evPierceT > 0) { this._evPierceT -= dt; if (this._evPierceT <= 0) this._evPierce = 0; }
+        // VNext: 职业被动(战地回复) + 职业技能自动循环
+        var cls = this._gameRef && this._gameRef._classStats;
+        if (cls && this.count > 0) {
+            if (cls.regenN > 0) {
+                this._regenT = (this._regenT === undefined ? cls.regenInterval : this._regenT) - dt;
+                if (this._regenT <= 0) {
+                    this._regenT = cls.regenInterval;
+                    if (this.count < CONFIG.SQUAD_MAX_COUNT) {
+                        this.setCount(Math.min(CONFIG.SQUAD_MAX_COUNT, this.count + cls.regenN));
+                        if (this._gameRef.effects) this._gameRef.effects.floatText(this.x, 1.8, this.z, '+' + cls.regenN + ' 医疗', '#39D98A', false);
+                    }
+                }
+            }
+            this._classSkillT = (this._classSkillT === undefined ? cls.skill.firstCd : this._classSkillT) - dt;
+            if (this._classSkillT <= 0) {
+                this._classSkillT = cls.skill.cd;
+                cls.skill.apply(this, cls.tier);
+                if (this._gameRef.effects) this._gameRef.effects.floatText(this.x, 2.2, this.z, cls.skill.icon + ' ' + cls.skill.name + '!', cls.color, true);
+            }
+        }
         // V3.2: 换道倾斜(速度感) + 跑动前倾
         const tilt = clamp((this.x - this.targetX) * 0.28, -0.28, 0.28);
         // V5.1: 防守阵地时完全站立(无残余前倾漂移感)
@@ -332,6 +364,9 @@ class Squad {
             if (tech && tech.dmgBonus) dmg += tech.dmgBonus;
             var w = this._gameRef._weaponStats;
             if (w && w.dmgMul) dmg *= w.dmgMul;
+            // VNext: 职业伤害乘区
+            var c = this._gameRef._classStats;
+            if (c && c.dmgMul) dmg *= c.dmgMul;
         }
         return Math.min(99, Math.round(dmg * 10) / 10);
     }
@@ -348,6 +383,8 @@ class Squad {
         if (this._comboSwarmVenom && this._skillVenom) mul *= 1 + 0.08 * this._skillVenom;
         // V8.0: 随机事件射速buff
         if (this._evRateMul) mul *= this._evRateMul;
+        // VNext: 职业射速乘区
+        if (this._gameRef && this._gameRef._classStats && this._gameRef._classStats.rateMul) mul *= this._gameRef._classStats.rateMul;
         return Math.min(3.0, CONFIG.BULLET_FIRE_RATE_BASE * mul * (1 + this.fireRateBuff));
     }
 
@@ -382,7 +419,9 @@ class Squad {
         this._comboToxicWard = 0; this._comboFullBarrage = 0; this._comboVenomBounty = 0;
         this._comboGuardianFury = 0; this._toxicWardPulse = false;
         this._evDmgMul = 0; this._evDmgMulT = 0; this._evRateMul = 0; this._evRateMulT = 0;
-        this._evCritBonus = 0; this._evCritT = 0;
+        this._evCritBonus = 0; this._evCritT = 0; this._evPierce = 0; this._evPierceT = 0;
+        this._regenT = undefined; this._classSkillT = undefined;
+        this._totalDr = 0; this._classBulletSpeed = 1.0;
         this.alive = true;
         this.soldiers = [];
         this.count = 0; // 必须重置count, 否则setCount认为人数未变不补充士兵

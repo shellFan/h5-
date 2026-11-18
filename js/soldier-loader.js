@@ -24,7 +24,12 @@ var SoldierModelLoader = class SoldierModelLoader {
                         SoldierModelLoader._disposeScene(gltf && gltf.scene);
                         reject(err);
                     }
-                }, undefined, function(err) {
+                }, function(evt) {
+                    // VNext: 启动进度上报(文件级 loaded/total)
+                    if (window.__BootProgress && evt && evt.lengthComputable !== false) {
+                        window.__BootProgress.file(url, evt.loaded || 0, evt.total || 1);
+                    }
+                }, function(err) {
                     reject(new Error('Failed to load ' + label + ': ' + (err && err.message ? err.message : err)));
                 });
             });

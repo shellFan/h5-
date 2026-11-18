@@ -1,8 +1,16 @@
 # 当前开发进度
 
-> **V8.0/V8.0.1 交付完成（2026-11-19）** —— 十级战役 + 武器/科技/士兵成长 + 技能组合 + 随机事件 + 挑战模式 + 九页UI；V5.1/V6.0 历史见文末。
+> **VNext 追加交付完成（2026-11-19）** —— Boss多轮实战验证 + 四职业 + 装备掉落词条背包 + 真实加载进度条 + 本地排行榜；V8.0/V8.0.1 历史见下。
 
-## V8.0.1 检查点
+## VNext 检查点
+- 文档: docs/VNEXT_REPORT.md (含Boss审计/四职业/装备/进度条/排行榜全记录)
+- 新增: js/classes.js(四职业) / js/leaderboard.js(本地排行) / growth.js扩展(EquipmentLoot词条背包) / index.html启动进度条(26 GLB文件级真实进度)
+- 修复: 技能门满级空池转人数门 / LEVELS门配置引用污染(重玩不随机) / drBonus从未消费(killSoldiers减免)
+- 测试: 全旧套件绿 + VNext四套新E2E 183/183 (Boss124/职业23/装备20/排行+加载16) + 马拉松33/33 + 平衡L6-L10 15/15
+- 截图: docs/screenshots/vnext/ (启动进度/首页职业卡/排行页/训练背包)
+- 遗留: 职业专属外观/套装效果/平台排行真机 (见 VNEXT_REPORT §七)
+
+## V8.0.1 检查点（2026-11-19, 历史保留）
 - 文档: docs/V80_FINAL_REPORT.md / V80_SYSTEMS.md / V80_BALANCE.md / V80_TEST_REPORT.md / V80_RELEASE_CHECKLIST.md
 - 战役: 10关(L7巢穴/L8废土/L9双Boss/L10终极), 每关首行门含人数门(防软锁)
 - 修复: BOSS_NAMES未闭合吞关卡定义 / HP乘数L7+越界NaN / 武器dmgMul等属性未消费 / 双因子Boss血量恢复 / Boss火力优先 / _normalize白名单丢challengeBest·daily·soldier·equipment / L6乘数重标定

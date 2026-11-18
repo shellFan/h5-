@@ -89,7 +89,11 @@ class GameProfile {
             challengeBest: d.challengeBest || {},
             daily: d.daily || null,
             soldier: d.soldier || null,
-            equipment: d.equipment || {}
+            equipment: d.equipment || {},
+            // VNext: 职业/装备背包/排行榜战绩
+            classId: d.classId || 'rifleman',
+            bag: d.bag || [],
+            records: d.records || []
         };
     }
 
