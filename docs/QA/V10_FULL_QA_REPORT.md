@@ -173,11 +173,11 @@
 
 ## H. 遗留问题
 
-### H.1 未修复(P2×1)
-- **武器特殊属性 pellets/burn/dualLane 未进战斗**(weapons.js): 散弹枪实际经 dmgMul/rateMul 表达差异(V8.0 文档已注明"pellets由齐射曲线表达"的设计边界); hell_rocket.burn 与 storm_mg.dualLane 为纯展示词条。**未在本轮实现**: 属新战斗机制开发(超出质量验收范围), 且 v80 E2E 已断言现行为。建议下迭代实现或移除展示文案。
+### H.1 V10.1 追加修复(2026-11-19, 用户指令)
+- ~~武器特殊属性 pellets/burn/dualLane 未进战斗~~ → **已修复并实测**: 散弹枪 pellets 扇形多弹丸(getNearest 排除列表多目标铺散)、地狱火箭 burn 命中燃烧 DoT(3秒/每0.5s一跳25%弹丸伤害)、风暴机枪 dualLane 平行双弹道。探针 tools/qa-v10-weaponprobe.js 实测: 散弹多目标铺散✓ / 双弹道吞吐✓(峰值弹丸50) / 燃烧DoT✓(输出+467% 对基线) / 0 JS错误。
 
-### H.2 未修复(P3, 轻微/边缘, 共21项)
-- models.js 全文件(647行 createZombieModel 等)零引用死代码, index.html 仍加载(启动多耗~20KB解析); growth.js Arsenal 模块(6武器×20级)整模块未接线; world.js `_buildEnvironment`(190行)未调用; skills.js drone 描述与实现不符(无独立僚机实体); `var self` 重复声明; 双 three.min.js 源文件冗余(dist 已剔除); spitking GLB 下载但 BOSS_STYLES 未使用(启动多下载2文件); win 页双倍按钮文案; 签到第7天循环显示细节; 战地军医"每10s回复2人"在 count=0 时静止; 挑战模式 `DAILY_TASK_POOL_V2`/`startChallenge` 未接入(现行实现为 game.js 自有版本); V60UI.reportProgress 未调用; UpgradeShop.coinMul 未调用(后勤升级直接读 upgrades); utils.js transformGeo/atDefenseLine 未调用; pacing.js `Math.min(w.z+4, squad.z-11)` Boss出场点备注(复核无实际问题); soldier-renderer `_lastRoots` 只增不减(上限500, 影响可忽略); random-events 良性事件(空投/招募)未吃 recruitBonus 加成。
+### H.2 V10.1 死代码清除(2026-11-19)
+- 已移除: models.js 全文件(648行, index.html+双构建引用同步清除), growth.js Arsenal/EVOLUTIONS 死模块, world.js _buildEnvironment/World.render, challenge.js DAILY_TASK_POOL_V2/startChallenge, ui-v60.js reportProgress, upgrades.js coinMul, utils.js transformGeo/atDefenseLine, skills.js createSkillGateModels, gates.js hideUntriggered, game.js 重复 var self; drone 技能文案对齐实现; 空投事件接入 recruitBonus。相关单测契约同步更新(unit 92/92)。保留(有使用方): spitking GLB(挑战/Boss测试经 bossStyle 覆写使用), twinelite 分支, soldier-renderer _lastRoots。
 - 上述均为死代码/展示细节, 不影响可玩性与数据正确性。
 
 ### H.3 需要真实平台环境验证(本轮无法验证, 不宣称兼容)
@@ -187,7 +187,7 @@
 - **真机触控/刘海屏/性能**: headless 桌面模拟, 需真机复核。
 
 ### H.4 已知测试基础设施限制
-- **v51 五关套件固有非密闭波动**: 未种子化的真实随机(波次洗牌/事件掷点)+步骤间 rAF 实时演化, L3 重试 historically 即临界(V5.1 文档记载"L3 balanced 临界翻转")。本次实测基线(不含修改)6次中1次翻转; 已加确定性种子+转向AI对齐, 残余约1/5~1/6偶发(机器负载影响 rAF 帧数)。判定标准: 最多3次内出现1次全绿。**完全密闭需在步骤间暂停rAF循环(测试基建改造, 超出本轮范围)**。
+- ~~v51 五关套件固有非密闭波动~~ → **V10.1 已完全密闭化**: 固定种子 + `game._rafDisabled` 停用实时rAF循环 + 失败步骤手动驱动帧, 帧推进只由 fastForward 驱动 → 连续 5/5 全绿(确定性回归)。
 - 深度试玩 FPS 为 headless 无垂直同步数值, 60fps 真机封顶以帧预算余量推算(~3×)。
 
 ### H.5 难度曲线分析与调整记录
