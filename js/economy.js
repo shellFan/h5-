@@ -96,7 +96,8 @@ class GameProfile {
             // VNext: 职业/装备背包/排行榜战绩
             classId: d.classId || 'rifleman',
             bag: d.bag || [],
-            records: d.records || []
+            records: d.records || [],
+            weaponAffix: d.weaponAffix || null // V11.3: 武器词条持久化
         };
     }
 

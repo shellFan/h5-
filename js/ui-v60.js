@@ -506,6 +506,8 @@ var V60UI = {
                 if (wStats.evolvedName) evoLine = '<div class="v60-armory-evo">✅ 已进化: ' + wStats.evolvedName + '</div>';
                 else if (canEvo.ok) evoLine = '<div class="v60-armory-evo">⚡ 可进化: ' + EVOLUTION_DEFS[canEvo.evoId].name + '</div>';
                 else if (canEvo.reason === 'tech_required') evoLine = '<div class="v60-armory-evo">🔒 进化需科技: ' + canEvo.tech + ' ×' + canEvo.need + '</div>';
+                // V11.3: 武器词条行
+                if (wStats.affixName) evoLine += '<div class="v60-armory-evo" style="color:#FFC247">📝 词条: ' + wStats.affixName + '</div>';
             }
             var statText = '伤害 ×' + (st.dmgMul || 1) +
                 (st.rateMul ? ' · 射速 ×' + st.rateMul : '') +

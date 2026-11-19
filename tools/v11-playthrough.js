@@ -35,6 +35,34 @@ async function shot(page, name) {
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+/** V11: 贪心选门 — 观察最近门前排, 真实拖拽滑向最优门(人数优先, 模拟玩家策略) */
+async function steerToBestGate(page) {
+    const info = await page.evaluate(() => {
+        const g = window.__game;
+        if (!g.gates || g.state !== 'playing' || g.paused) return null;
+        const pending = g.gates.gates.filter(x => !x.triggered && !x.passed && x.model.visible);
+        if (!pending.length) return null;
+        const z = Math.max.apply(null, pending.map(x => x.z)); // z为负: 最大=最近前方
+        const row = pending.filter(x => x.z === z);
+        let best = null, bestScore = -1;
+        for (const gate of row) {
+            const d = gate.data;
+            const score = d.op === 'add' ? 100 + (d.value || 0) : (d.op === 'addpct' ? 90 : (d.op === 'buff' ? 60 : (d.op === 'skill' ? 50 : 20)));
+            if (score > bestScore) { bestScore = score; best = gate; }
+        }
+        if (!best) return null;
+        return { laneX: best.x, squadX: g.squad.x, laneIdx: best.data.lane, curLane: Math.round((g.squad.targetX + 1.8) / 1.8) };
+    });
+    if (!info || info.laneIdx === info.curLane) return false;
+    const dx = info.laneX > info.squadX ? 120 : -120;
+    const cx = VIEW.width / 2, cy = VIEW.height / 2;
+    await page.mouse.move(cx, cy);
+    await page.mouse.down();
+    await page.mouse.move(cx + dx, cy, { steps: 10 });
+    await page.mouse.up();
+    return true;
+}
+
 async function waitFor(page, fn, timeoutMs, pollMs, arg) {
     const t0 = Date.now();
     while (Date.now() - t0 < timeoutMs) {
@@ -80,19 +108,20 @@ async function sampleFps(page, ms) {
         await page.goto(harness.baseUrl + '/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
         const bootVisible = await page.evaluate(() => !document.getElementById('boot-loading').classList.contains('hidden'));
         assert('加载界面初始可见', bootVisible);
-        const pctTrail = [];
-        await page.evaluate(() => new Promise(resolve => {
+        // V11修复: trail收集必须在浏览器上下文内完成(闭包变量不可见)
+        const pctTrail = await page.evaluate(() => new Promise(resolve => {
+            const trail = [];
             const iv = setInterval(() => {
                 const el = document.getElementById('boot-pct');
-                if (el) pctTrail.push(el.textContent);
-                if (!document.getElementById('boot-loading').classList.contains('hidden')) { clearInterval(iv); resolve(); }
+                if (el) trail.push(el.textContent);
+                if (!document.getElementById('boot-loading').classList.contains('hidden')) { clearInterval(iv); resolve(trail); }
             }, 120);
-            setTimeout(() => { clearInterval(iv); resolve(); }, 30000);
+            setTimeout(() => { clearInterval(iv); resolve(trail); }, 30000);
         }));
         // V11: 缓存命中时加载可能在我们开始采样前就完成 — 进度有轨迹 OR 快速就绪均视为通过
         // (冷加载的进度单调性已由 vnext-rank E2E 断言覆盖)
         await waitForGameReady(page, 30000);
-        assert('加载进度推进', pctTrail.length >= 2 || pctTrail.length === 0, pctTrail.length ?
+        assert('加载进度推进', pctTrail.length >= 1, pctTrail.length ?
             pctTrail.slice(0, 3).join('→') + '…' + pctTrail.slice(-2).join('→') : '本地资源加载<120ms(瞬时完成), 冷加载进度断言见vnext-rank');
         pass('游戏就绪(window.__game)');
         await sleep(800);
@@ -175,40 +204,14 @@ async function sampleFps(page, ms) {
             pass('状态门观察(本局时序内未见新行, 后续关卡继续观察)');
         }
 
-        // ── Phase E: Boss战 ────────────────────────────────
-        console.log('▶ Phase E: Boss战');
-        // 实机推进: 等待关卡自然推进至Boss出场。200ms采样(桌面headless下战斗极快, 1s间隔可能错过)
-        const bossAppeared = await waitFor(page, () => {
-            const g = window.__game;
-            return g.state === 'playing' && !!g.enemies.boss;
-        }, 150000, 200);
-        assert('Boss出场', bossAppeared);
-        if (bossAppeared) {
-            const boss = await page.evaluate(() => ({
-                hp: window.__game.enemies.boss.hp, maxHp: window.__game.enemies.boss.maxHp,
-                barVisible: !document.getElementById('boss-bar-container').classList.contains('hidden')
-            }));
-            assert('Boss血条可见', boss.barVisible);
-            assert('Boss血量>0', boss.hp > 0, 'hp=' + boss.hp + '/' + boss.maxHp);
-            await shot(page, 'E1-boss-battle');
-            const hpDropped = await waitFor(page, startHp => window.__game.enemies.boss && window.__game.enemies.boss.hp < startHp, 60000, 500, boss.hp);
-            assert('Boss被真实输出掉血', hpDropped);
-            await shot(page, 'E2-boss-underattack');
-        }
-
-        // ── Phase F: 胜利结算 ──────────────────────────────
-        console.log('▶ Phase F: 胜利结算');
-        const won = await waitFor(page, () => window.__game.state === 'won', 120000, 300);
+        // ── Phase E: L1胜利结算 ────────────────────────────
+        // V11澄清: L1/L2 为教学关无Boss段(配置config.js L3起才有boss段) — Boss观测移至Phase G的L3
+        console.log('▶ Phase E: L1胜利结算');
+        const won = await waitFor(page, () => window.__game.state === 'won', 180000, 300);
         assert('L1胜利结算', won);
         if (won) {
             await sleep(700);
             await shot(page, 'F1-win-screen');
-            // Boss遭遇存证(桌面headless战斗极快, Boss出场窗口可能短于采样间隔; bossSeen为战斗系统真实记录)
-            const bossSeen = await page.evaluate(() => {
-                const seen = window.__game.profile.data.bossSeen || {};
-                return Object.keys(seen).filter(k => seen[k]).length;
-            });
-            assert('Boss遭遇记录(bossSeen)', bossSeen >= 1, 'encountered=' + bossSeen);
             const winStats = await page.evaluate(() => ({
                 coins: window.__game.profile.coins,
                 total: document.getElementById('wc-total') ? document.getElementById('wc-total').textContent : null,
@@ -216,6 +219,23 @@ async function sampleFps(page, ms) {
             }));
             assert('结算奖励入账', winStats.coins > 0, 'coins=' + winStats.coins + ' 显示=' + winStats.total);
             assert('统计击杀数显示', winStats.kills !== null, 'kills=' + winStats.kills);
+            // V11: 前5关尸潮×3(config ENEMY_WAVE_MULTIPLIER, V5.1玩家反馈加强) — 模拟真实玩家: 胜利后先买新兵再进下一关
+            await page.tap('#btn-open-shop-win');
+            const shopWin = await waitFor(page, () => !document.getElementById('shop-screen').classList.contains('hidden'), 5000);
+            assert('胜利页商店打开', shopWin);
+            const recruitAffordable = await page.evaluate(() => !document.getElementById('shop-buy-recruit').disabled);
+            if (recruitAffordable) {
+                const rcBefore = await page.evaluate(() => ({ coins: window.__game.profile.coins, count: window.__game.squad.count, lv: window.__game.profile.data.upgrades.recruit || 0 }));
+                await page.tap('#shop-buy-recruit');
+                await sleep(400);
+                const rcAfter = await page.evaluate(() => ({ coins: window.__game.profile.coins, lv: window.__game.profile.data.upgrades.recruit || 0 }));
+                assert('购买新兵招募(初始人数+1)', rcAfter.lv === rcBefore.lv + 1 && rcAfter.coins < rcBefore.coins,
+                    'lv=' + rcBefore.lv + '→' + rcAfter.lv + ' coins=' + rcBefore.coins + '→' + rcAfter.coins);
+            } else {
+                pass('胜利页商店(新兵不可负担, 跳过购买)');
+            }
+            await page.tap('#btn-close-shop');
+            await sleep(400);
 
             // ── Phase G: 真实点击下一关 ────────────────────
             console.log('▶ Phase G: 下一关');
@@ -241,15 +261,153 @@ async function sampleFps(page, ms) {
                 const fpsL2 = await sampleFps(page, 2000);
                 assert('L2战斗FPS≥30', fpsL2.fps >= 30, 'fps=' + fpsL2.fps);
                 summary.phases.level2Fps = fpsL2.fps;
+
+                // ── Phase G2: L2技能三选一门(真实拖拽选择) ────
+                console.log('▶ Phase G2: L2技能三选一门');
+                const skillGate = await waitFor(page, () => {
+                    const g = window.__game;
+                    if (g.levelIndex !== 1 || !g.gates || !g.gates.gates) return null;
+                    const pending = g.gates.gates.filter(x => !x.triggered && !x.passed && x.data.op === 'skill' && x.model.visible);
+                    return pending.length ? pending.map(x => x.data.label) : null;
+                }, 120000, 400);
+                if (skillGate) {
+                    pass('技能三选一门出现', 'labels=' + JSON.stringify(skillGate));
+                    await shot(page, 'G3-skill-gates');
+                    const skillsBefore = await page.evaluate(() => JSON.stringify(window.__game.squad._skills || {}));
+                    // 技能门触发 OR 战斗提前结束(全灭) 二者其一即退出等待
+                    const triggered = await waitFor(page, () => window.__game.gates.gates.some(x => x.triggered && x.data.op === 'skill') || window.__game.state !== 'playing', 120000, 300);
+                    const skillActuallyTriggered = await page.evaluate(() => window.__game.gates.gates.some(x => x.triggered && x.data.op === 'skill'));
+                    assert('技能门触发', skillActuallyTriggered);
+                    const skillsAfter = await page.evaluate(() => JSON.stringify(window.__game.squad._skills || {}));
+                    assert('技能获得(层数写入squad)', skillsAfter !== skillsBefore && skillsAfter !== '{}', skillsBefore + '→' + skillsAfter);
+                    await shot(page, 'G4-skill-acquired');
+                } else {
+                    fail('技能三选一门出现', 'L2推进120s内未观察到skill门(或已错过)');
+                }
+
+                // ── Phase G3: 进入L3观测Boss ──────────────────
+                console.log('▶ Phase G3: L2胜利→L3 Boss战');
+                const wonL2 = await waitFor(page, () => window.__game.state === 'won', 240000, 300);
+                assert('L2胜利结算', wonL2);
+                if (wonL2) {
+                    await sleep(600);
+                    await shot(page, 'F2-level2-win');
+                    // V11: 把能买的新兵招募全买上(真实UI, 模拟玩家局外成长)
+                    await page.tap('#btn-open-shop-win');
+                    await waitFor(page, () => !document.getElementById('shop-screen').classList.contains('hidden'), 5000);
+                    for (let i = 0; i < 6; i++) {
+                        const can = await page.evaluate(() => { const b = document.getElementById('shop-buy-recruit'); return b && !b.disabled; });
+                        if (!can) break;
+                        await page.tap('#shop-buy-recruit');
+                        await sleep(350);
+                    }
+                    const rcLv = await page.evaluate(() => window.__game.profile.data.upgrades.recruit || 0);
+                    pass('局外成长(招募等级累计)', 'recruitLv=' + rcLv);
+                    await page.tap('#btn-close-shop');
+                    await sleep(400);
+                    await page.tap('#btn-next-level');
+                    const nextL3 = await waitFor(page, () => window.__game.state === 'playing' && window.__game.levelIndex === 2, 8000);
+                    assert('进入第3关', nextL3);
+
+                    // ── L3 Boss观测(真实meta循环: 失败→击杀币保留→购买→重试) ──
+                    const attemptL3 = async () => {
+                        // 贪心选门推进: 2.3s间隔真实拖拽, 直到Boss出场或战斗结束
+                        let appeared = false;
+                        const deadline = Date.now() + 240000;
+                        while (Date.now() < deadline) {
+                            const st = await page.evaluate(() => ({ s: window.__game.state, boss: !!window.__game.enemies.boss }));
+                            if (st.s !== 'playing') break;
+                            if (st.boss) { appeared = true; break; }
+                            await steerToBestGate(page);
+                            await sleep(2300);
+                        }
+                        return appeared;
+                    };
+                    let bossAppeared = await attemptL3();
+                    if (!bossAppeared) {
+                        const lostL3 = await page.evaluate(() => window.__game.state === 'lost');
+                        if (lostL3) {
+                            pass('L3第1次尝试失败(击杀币保留机制生效)', 'coins=' + (await page.evaluate(() => window.__game.profile.coins)));
+                            await shot(page, 'G5-l3-lose');
+                            await page.tap('#btn-restart-lose');
+                            await waitFor(page, () => window.__game.state === 'playing', 8000);
+                            await page.tap('#btn-pause');
+                            await waitFor(page, () => window.__game.paused === true, 4000);
+                            await page.tap('#btn-pause-menu');
+                            await waitFor(page, () => !document.getElementById('start-screen').classList.contains('hidden'), 6000);
+                            // 失败后局外成长: 招募+枪械全买满(真实UI)
+                            await page.tap('#btn-open-shop');
+                            await waitFor(page, () => !document.getElementById('shop-screen').classList.contains('hidden'), 5000);
+                            for (const id of ['recruit', 'gun']) {
+                                for (let i = 0; i < 5; i++) {
+                                    const can = await page.evaluate(bid => { const b = document.getElementById('shop-buy-' + bid); return b && !b.disabled; }, id);
+                                    if (!can) break;
+                                    await page.tap('#shop-buy-' + id);
+                                    await sleep(350);
+                                }
+                            }
+                            const meta = await page.evaluate(() => ({
+                                rc: window.__game.profile.data.upgrades.recruit || 0,
+                                gun: window.__game.profile.data.upgrades.gun || 0,
+                                coins: window.__game.profile.coins
+                            }));
+                            pass('失败后局外成长购买', 'recruitLv=' + meta.rc + ' gunLv=' + meta.gun + ' coinsLeft=' + meta.coins);
+                            await page.tap('#btn-close-shop');
+                            await sleep(400);
+                            // 关卡选择: 第3个按钮=L3(index 2)
+                            await page.evaluate(() => { const b = document.querySelectorAll('#level-select button')[2]; if (b && !b.disabled) b.click(); });
+                            await waitFor(page, () => window.__game.state === 'playing' && window.__game.levelIndex === 2, 8000);
+                            bossAppeared = await attemptL3();
+                        }
+                    }
+                    assert('Boss出场(L3)', bossAppeared);
+                    if (bossAppeared) {
+                        const boss = await page.evaluate(() => ({
+                            hp: window.__game.enemies.boss.hp, maxHp: window.__game.enemies.boss.maxHp,
+                            barVisible: !document.getElementById('boss-bar-container').classList.contains('hidden'),
+                            style: window.__game.enemies.boss.artStyle
+                        }));
+                        assert('Boss血条可见', boss.barVisible);
+                        assert('Boss血量>0', boss.hp > 0, 'hp=' + boss.hp + '/' + boss.maxHp + ' style=' + boss.style);
+                        await shot(page, 'E1-boss-battle');
+                        const hpDropped = await waitFor(page, startHp => window.__game.enemies.boss && window.__game.enemies.boss.hp < startHp, 90000, 200, boss.hp);
+                        assert('Boss被真实输出掉血', hpDropped);
+                        await shot(page, 'E2-boss-underattack');
+                        // Boss技能预警阶段
+                        const bossMeta = await page.evaluate(() => ({
+                            phase: window.__game.enemies.boss.phaseIndex,
+                            attackT: window.__game.enemies.boss.attackT || 0,
+                            chargeT: window.__game.enemies.boss.chargeT || 0
+                        }));
+                        pass('Boss行为状态采样', 'phase=' + bossMeta.phase + ' attackT=' + bossMeta.attackT.toFixed(2) + ' chargeT=' + bossMeta.chargeT.toFixed(2));
+                    }
+                }
             }
         }
 
         // ── Phase H: 升级商店(真实点击购买) ─────────────────
         console.log('▶ Phase H: 升级商店');
-        // 暂停中从暂停菜单回主菜单 → 打开商店
-        await page.tap('#btn-pause');
-        await waitFor(page, () => window.__game.paused === true, 4000);
-        await page.tap('#btn-pause-menu');
+        // V11: 自适应归位 — 可能在战斗中(暂停→主菜单)、失败界面(直接重新挑战→主菜单不可用, 走重新挑战再暂停)或已在家
+        const atHome0 = await page.evaluate(() => !document.getElementById('start-screen').classList.contains('hidden'));
+        if (!atHome0) {
+            const lostNow = await page.evaluate(() => window.__game.state === 'lost');
+            if (lostNow) {
+                // 失败结算也要验一遍(真实全灭结局)
+                const loseStats = await page.evaluate(() => ({
+                    reason: document.getElementById('lose-reason') ? document.getElementById('lose-reason').textContent : '',
+                    killCoin: document.getElementById('lc-kills-coin') ? document.getElementById('lc-kills-coin').textContent : '',
+                    coins: window.__game.profile.coins
+                }));
+                pass('失败结算可见(击杀金币保留)', JSON.stringify(loseStats));
+                await shot(page, 'L1-lose-screen');
+                await page.tap('#btn-restart-lose');
+                await waitFor(page, () => window.__game.state === 'playing', 8000);
+            }
+            // 重新挑战后处于playing → 暂停 → 回主菜单
+            await page.tap('#btn-pause');
+            await waitFor(page, () => window.__game.paused === true, 4000);
+            await page.tap('#btn-pause-menu');
+        }
         const backHome = await waitFor(page, () => !document.getElementById('start-screen').classList.contains('hidden'), 6000);
         assert('返回主菜单', backHome);
         // 商店入口: 开始界面按钮(v51升级商店)

@@ -85,6 +85,31 @@ var EVOLUTION_DEFS = {
         name: '雷霆链式炮', icon: '⚡',
         desc: '连锁+暴击率+15%',
         effect: { chain: 8, critBonus: 0.15, dmgMul: 1 }
+    },
+    // ===== V11.3: 补齐步枪/散弹/狙击/火焰四条进化 =====
+    twin_rifle: {
+        base: 'rifle', req: { pierce: 1 },
+        name: '双管步枪', icon: '🔫',
+        desc: '伤害×2.8 + 射速×1.15',
+        effect: { dmgMul: 2.8, rateMul: 1.15 }
+    },
+    storm_shotgun: {
+        base: 'shotgun', req: { pierce: 1 },
+        name: '散弹风暴', icon: '🌪️',
+        desc: '弹丸+2 + 伤害×1.4',
+        effect: { pellets: 2, dmgMul: 1.4 }
+    },
+    phantom_sniper: {
+        base: 'sniper', req: { crit: 2 },
+        name: '幻影狙击', icon: '👁️',
+        desc: '暴击率+20% + 穿透+2',
+        effect: { critBonus: 0.2, pierceBonus: 2, dmgMul: 1.3 }
+    },
+    inferno_thrower: {
+        base: 'flamethrower', req: { crit: 2 },
+        name: '炼狱喷射', icon: '🌋',
+        desc: '范围+0.8 + 伤害×1.6',
+        effect: { radius: 2.8, dmgMul: 1.6 }
     }
 };
 
@@ -107,6 +132,15 @@ var WeaponSystem = {
             for (var k in e) base[k] = e[k];
             base.evolvedName = evoDef.name;
             base.evolvedId = evo;
+        }
+        // V11.3: 武器词条合并(伤害/射速乘区, 暴击/穿透加值)
+        var affix = profile.data.weaponAffix;
+        if (affix) {
+            base.affixName = affix.name;
+            if (affix.k === 'dmg') base.dmgMul = (base.dmgMul || 1) * (1 + affix.v);
+            else if (affix.k === 'rate') base.rateMul = (base.rateMul || 1) * (1 + affix.v);
+            else if (affix.k === 'crit') base.critBonus = (base.critBonus || 0) + affix.v;
+            else if (affix.k === 'pierce') base.pierceBonus = (base.pierceBonus || 0) + affix.v;
         }
         base.weaponId = id;
         base.weaponLevel = lv;
@@ -135,8 +169,11 @@ var WeaponSystem = {
         if (profile.coins < cost) return { ok: false, reason: 'insufficient' };
         if (!profile.spend(cost)) return { ok: false, reason: 'insufficient' };
         profile.data.weaponLevel = (profile.data.weaponLevel || 0) + 1;
+        // V11.3: 3级首次掉落武器词条
+        var affix = null;
+        if (profile.data.weaponLevel === 3 && !profile.data.weaponAffix) affix = this.rollAffix(profile);
         profile.save();
-        return { ok: true, level: profile.data.weaponLevel };
+        return { ok: true, level: profile.data.weaponLevel, affix: affix };
     },
     /** 进化: 检查前置科技 */
     canEvolve: function(profile) {
@@ -156,7 +193,26 @@ var WeaponSystem = {
         var check = this.canEvolve(profile);
         if (!check.ok) return check;
         profile.data.weaponEvolved = check.evoId;
+        // V11.3: 进化时重roll词条
+        this.rollAffix(profile);
         profile.save();
         return { ok: true, evolved: check.evoId };
+    },
+
+    // ===== V11.3: 武器词条 (升至3级随机掉落1条; 进化重roll; 全部真实进战斗) =====
+    AFFIX_POOL: [
+        { k: 'dmg', v: 0.10, name: '伤害 +10%' },
+        { k: 'rate', v: 0.08, name: '射速 +8%' },
+        { k: 'crit', v: 0.05, name: '暴击 +5%' },
+        { k: 'pierce', v: 1, name: '穿透 +1' }
+    ],
+    rollAffix: function(profile) {
+        var pool = this.AFFIX_POOL;
+        var affix = pool[Math.floor(Math.random() * pool.length)];
+        profile.data.weaponAffix = { k: affix.k, v: affix.v, name: affix.name };
+        return profile.data.weaponAffix;
+    },
+    affix: function(profile) {
+        return profile.data.weaponAffix || null;
     }
 };
