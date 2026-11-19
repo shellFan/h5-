@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-11-19T16:48:39.391Z",
+  "startedAt": "2026-11-19T17:25:04.680Z",
   "view": {
     "width": 390,
     "height": 844
@@ -7,11 +7,11 @@
   "dpr": 3,
   "seed": 18526693,
   "phases": {
-    "battleFps": 102.5,
-    "level2Fps": 104.5
+    "battleFps": 102,
+    "level2Fps": 104.8
   },
   "consoleErrors": [],
-  "finishedAt": "2026-11-19T16:54:13.858Z",
+  "finishedAt": "2026-11-19T17:36:01.025Z",
   "results": [
     {
       "name": "加载界面初始可见",
@@ -49,9 +49,9 @@
       "detail": ""
     },
     {
-      "name": "战斗FPS≥30(实测102.5)",
+      "name": "战斗FPS≥30(实测102)",
       "ok": true,
-      "detail": "fps=102.5"
+      "detail": "fps=102"
     },
     {
       "name": "战斗进行(状态playing)",
@@ -66,7 +66,7 @@
     {
       "name": "击杀/金币增长(真实战斗输出)",
       "ok": true,
-      "detail": "kills=23 coins=0"
+      "detail": "kills=25 coins=0"
     },
     {
       "name": "状态门出现",
@@ -96,7 +96,7 @@
     {
       "name": "统计击杀数显示",
       "ok": true,
-      "detail": "kills=792"
+      "detail": "kills=800"
     },
     {
       "name": "胜利页商店打开",
@@ -131,32 +131,82 @@
     {
       "name": "L2战斗FPS≥30",
       "ok": true,
-      "detail": "fps=104.5"
+      "detail": "fps=104.8"
     },
     {
-      "name": "技能三选一门出现",
-      "ok": true,
-      "detail": "labels=true"
-    },
-    {
-      "name": "技能门触发",
+      "name": "L2技能三选一门出现",
       "ok": true,
       "detail": ""
-    },
-    {
-      "name": "技能获得(层数写入squad)",
-      "ok": true,
-      "detail": "{}→{\"venom\":1}"
     },
     {
       "name": "L2胜利结算",
-      "ok": false,
+      "ok": true,
       "detail": ""
     },
     {
-      "name": "失败结算可见(击杀金币保留)",
+      "name": "局外成长购买",
       "ok": true,
-      "detail": "{\"reason\":\"被怪潮吞噬 · 人数不足\",\"killCoin\":\"+70\",\"coins\":190}"
+      "detail": "recruitLv=2 gunLv=0 coinsLeft=60"
+    },
+    {
+      "name": "局外成长购买",
+      "ok": true,
+      "detail": "recruitLv=3 gunLv=1 coinsLeft=125"
+    },
+    {
+      "name": "局外成长购买",
+      "ok": true,
+      "detail": "recruitLv=4 gunLv=2 coinsLeft=65"
+    },
+    {
+      "name": "Boss出场(L5)",
+      "ok": true,
+      "detail": "style=overlord"
+    },
+    {
+      "name": "Boss血条可见",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Boss血量>0",
+      "ok": true,
+      "detail": "16913/17593"
+    },
+    {
+      "name": "Boss被真实输出掉血",
+      "ok": true,
+      "detail": "16913/17593"
+    },
+    {
+      "name": "Boss阶段状态",
+      "ok": true,
+      "detail": "phase=1"
+    },
+    {
+      "name": "局外成长购买",
+      "ok": true,
+      "detail": "recruitLv=5 gunLv=3 coinsLeft=135"
+    },
+    {
+      "name": "L3通关",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L4通关",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L5通关",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L5 Boss战完整观测(出场+血条+掉血)",
+      "ok": true,
+      "detail": "style=overlord maxHp=17593"
     },
     {
       "name": "返回主菜单",
@@ -174,19 +224,19 @@
       "detail": ""
     },
     {
-      "name": "购买扣费",
+      "name": "购买扣费(rapid)",
       "ok": true,
-      "detail": "190→70"
+      "detail": "135→15"
     },
     {
-      "name": "伤害提升",
+      "name": "升级生效(rapid lv+1)",
       "ok": true,
-      "detail": "1→2 gunLv=1"
+      "detail": "lv=0→1"
     },
     {
-      "name": "余额不足按钮禁用(防护生效)",
+      "name": "余额防护(不足即禁用, 余额≥0)",
       "ok": true,
-      "detail": "coins=70 gunDisabled=true"
+      "detail": "coins=15 anyAffordable=false"
     },
     {
       "name": "商店关闭",
@@ -194,7 +244,7 @@
       "detail": ""
     }
   ],
-  "pass": 35,
-  "fail": 1,
+  "pass": 46,
+  "fail": 0,
   "consoleErrorCount": 0
 }

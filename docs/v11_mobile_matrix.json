@@ -1,0 +1,59 @@
+{
+  "startedAt": "2026-11-19T17:36:39.319Z",
+  "resolutions": [
+    "360x640-小屏",
+    "360x800-安卓",
+    "375x812-iPhone",
+    "390x844-iPhone",
+    "393x852-iPhone",
+    "402x874-iPhone",
+    "414x896-大屏",
+    "430x932-大屏",
+    "440x960-超长屏",
+    "768x1024-平板"
+  ],
+  "results": [
+    {
+      "name": "360x640-小屏",
+      "ok": true
+    },
+    {
+      "name": "360x800-安卓",
+      "ok": true
+    },
+    {
+      "name": "375x812-iPhone",
+      "ok": true
+    },
+    {
+      "name": "390x844-iPhone",
+      "ok": true
+    },
+    {
+      "name": "393x852-iPhone",
+      "ok": true
+    },
+    {
+      "name": "402x874-iPhone",
+      "ok": true
+    },
+    {
+      "name": "414x896-大屏",
+      "ok": true
+    },
+    {
+      "name": "430x932-大屏",
+      "ok": true
+    },
+    {
+      "name": "440x960-超长屏",
+      "ok": true
+    },
+    {
+      "name": "768x1024-平板",
+      "ok": true
+    }
+  ],
+  "pass": 160,
+  "fail": 0
+}

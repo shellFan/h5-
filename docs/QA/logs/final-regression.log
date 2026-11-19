@@ -1,0 +1,46 @@
+═══ test:unit ═══
+
+======================
+通过 92 / 失败 0 / 共 92
+═══ test:h5-build ═══
+> node tests/e2e/h5-build.js
+
+PASS built H5 deployment: every script exists, local GLBs loaded, game starts without external requests
+═══ test:v51 ═══
+失败明细:
+  
+  仅击杀币(实际70)
+═══ test:v80 ═══
+
+========================
+V8.0 功能E2E: 通过 37 / 失败 0 / 耗时 3s
+═══ test:e2e ═══
+
+======================
+E2E 通过 29 / 失败 0
+═══ test:mobile ═══
+
+========================
+V10.1 移动端+性能E2E: 通过 29 / 失败 0
+═══ test:soldier ═══
+  ✓ successful soldier boot is free of browser errors
+
+Soldier E2E: 11 passed / 0 failed
+═══ test:model ═══
+> node tests/unit/soldier-asset.js
+
+PASS GLB structure, embedded PNGs, PBR, UVs, parts, shared material, triangles: { hero: 13042, lod: 3908 }
+═══ test:v41 ═══
+PASS built H5 deployment: every script exists, local GLBs loaded, game starts without external requests
+
+V4.1 verification PASS (7/7 commands)
+═══ test:vnext ═══
+Boss实战E2E: 通过 124 / 失败 0
+职业系统E2E: 通过 23 / 失败 0
+装备系统E2E: 通过 20 / 失败 0
+排行榜+加载进度E2E: 通过 16 / 失败 0
+═══ test:visual ═══
+
+======================
+视觉检查 通过 32 / 失败 0
+ALL-DONE

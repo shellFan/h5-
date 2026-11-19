@@ -1,0 +1,250 @@
+{
+  "startedAt": "2026-11-19T17:25:04.680Z",
+  "view": {
+    "width": 390,
+    "height": 844
+  },
+  "dpr": 3,
+  "seed": 18526693,
+  "phases": {
+    "battleFps": 102,
+    "level2Fps": 104.8
+  },
+  "consoleErrors": [],
+  "finishedAt": "2026-11-19T17:36:01.025Z",
+  "results": [
+    {
+      "name": "加载界面初始可见",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "加载进度推进",
+      "ok": true,
+      "detail": "100%…100%"
+    },
+    {
+      "name": "游戏就绪(window.__game)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "首页开始按钮可见且触控达标",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "进入playing状态",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "HUD可见",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "开始界面隐藏",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "战斗FPS≥30(实测102)",
+      "ok": true,
+      "detail": "fps=102"
+    },
+    {
+      "name": "战斗进行(状态playing)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "拖拽换道生效(targetX位移)",
+      "ok": true,
+      "detail": "targetX=-1.13"
+    },
+    {
+      "name": "击杀/金币增长(真实战斗输出)",
+      "ok": true,
+      "detail": "kills=25 coins=0"
+    },
+    {
+      "name": "状态门出现",
+      "ok": true,
+      "detail": "labels=undefined"
+    },
+    {
+      "name": "穿门触发(获得增益)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "门效果生效(人数/属性变化)",
+      "ok": true,
+      "detail": "count=7"
+    },
+    {
+      "name": "L1胜利结算",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "结算奖励入账",
+      "ok": true,
+      "detail": "coins=220 显示=90"
+    },
+    {
+      "name": "统计击杀数显示",
+      "ok": true,
+      "detail": "kills=800"
+    },
+    {
+      "name": "胜利页商店打开",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "购买新兵招募(初始人数+1)",
+      "ok": true,
+      "detail": "lv=0→1 coins=220→120"
+    },
+    {
+      "name": "进入第2关",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "暂停生效",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "暂停冻结(位置不推进)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "恢复游戏",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L2战斗FPS≥30",
+      "ok": true,
+      "detail": "fps=104.8"
+    },
+    {
+      "name": "L2技能三选一门出现",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L2胜利结算",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "局外成长购买",
+      "ok": true,
+      "detail": "recruitLv=2 gunLv=0 coinsLeft=60"
+    },
+    {
+      "name": "局外成长购买",
+      "ok": true,
+      "detail": "recruitLv=3 gunLv=1 coinsLeft=125"
+    },
+    {
+      "name": "局外成长购买",
+      "ok": true,
+      "detail": "recruitLv=4 gunLv=2 coinsLeft=65"
+    },
+    {
+      "name": "Boss出场(L5)",
+      "ok": true,
+      "detail": "style=overlord"
+    },
+    {
+      "name": "Boss血条可见",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Boss血量>0",
+      "ok": true,
+      "detail": "16913/17593"
+    },
+    {
+      "name": "Boss被真实输出掉血",
+      "ok": true,
+      "detail": "16913/17593"
+    },
+    {
+      "name": "Boss阶段状态",
+      "ok": true,
+      "detail": "phase=1"
+    },
+    {
+      "name": "局外成长购买",
+      "ok": true,
+      "detail": "recruitLv=5 gunLv=3 coinsLeft=135"
+    },
+    {
+      "name": "L3通关",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L4通关",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L5通关",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L5 Boss战完整观测(出场+血条+掉血)",
+      "ok": true,
+      "detail": "style=overlord maxHp=17593"
+    },
+    {
+      "name": "返回主菜单",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "商店入口存在",
+      "ok": true,
+      "detail": "{\"id\":\"btn-open-shop\",\"visible\":true}"
+    },
+    {
+      "name": "商店打开",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "购买扣费(rapid)",
+      "ok": true,
+      "detail": "135→15"
+    },
+    {
+      "name": "升级生效(rapid lv+1)",
+      "ok": true,
+      "detail": "lv=0→1"
+    },
+    {
+      "name": "余额防护(不足即禁用, 余额≥0)",
+      "ok": true,
+      "detail": "coins=15 anyAffordable=false"
+    },
+    {
+      "name": "商店关闭",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "pass": 46,
+  "fail": 0,
+  "consoleErrorCount": 0
+}
