@@ -143,9 +143,15 @@ async function fastForward(page, maxGameSec, stepDt) {
         assert(shown, '胜利页金币明细可见');
     });
     await step('重复结算保护: 再开L1通关不加关卡奖励', async () => {
-        await page.evaluate(() => { window.__game.levelIndex = 0; window.__game.start(); });
-        const r = await fastForward(page, 400);
-        assert(r.state === 'won');
+        // V11 QA: V11.x新系统(技能门roll等)改变了RNG序列, 固定种子下重复局可能落败(游戏设计的合法结局)。
+        // 失败时按游戏自身meta循环重试(击杀币保留→重开), 重建"重复通关"前置条件; 断言本意(重复胜利不发关卡奖励)不变。
+        let r = null;
+        for (let attempt = 0; attempt < 3; attempt++) {
+            await page.evaluate(() => { window.__game.levelIndex = 0; window.__game.start(); });
+            r = await fastForward(page, 400);
+            if (r.state === 'won') break;
+        }
+        assert(r.state === 'won', '重复局胜利(3次尝试内, 实际' + r.state + ')');
         const s = await page.evaluate(() => ({ lr: window.__game._settlement.levelReward, total: window.__game._settlement.total }));
         assert(s.lr === 0, '重复通关无关卡奖励(实际' + s.lr + ')');
         assert(s.total <= 30, '仅击杀币(实际' + s.total + ')'); // L1击杀币上限=60×50%
