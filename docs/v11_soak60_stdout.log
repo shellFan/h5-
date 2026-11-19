@@ -1,0 +1,292 @@
+soak start: 60min
+[t+0min cycle1] heap=16.9MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+0.2min cycle2] heap=25.5MB errors=0 | start L3 / sim 31s state=lost / restart / modals x2 / challenge sim state=playing
+[t+0.4min cycle3] heap=31MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+0.6min cycle4] heap=31.7MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+0.9min cycle5] heap=33.9MB errors=0 | start L6 / sim 20s state=lost / restart / modals x2 / challenge sim state=playing
+[t+1.1min cycle6] heap=32.6MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+1.3min cycle7] heap=33.7MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+1.5min cycle8] heap=33.9MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+1.7min cycle9] heap=34.8MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+1.9min cycle10] heap=33.8MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+2.1min cycle11] heap=32.7MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+2.3min cycle12] heap=39.7MB errors=0 | start L3 / sim 35s state=lost / restart / modals x2 / challenge sim state=playing
+[t+2.5min cycle13] heap=33.3MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+2.7min cycle14] heap=33.1MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+3min cycle15] heap=32.7MB errors=0 | start L6 / sim 21s state=lost / restart / modals x2 / challenge sim state=playing
+[t+3.2min cycle16] heap=33.3MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+3.4min cycle17] heap=34.6MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+3.6min cycle18] heap=21.6MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+3.8min cycle19] heap=44.8MB errors=0 | start L10 / sim 25s state=lost / restart / modals x2 / challenge sim state=playing
+[t+4min cycle20] heap=30.8MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+4.2min cycle21] heap=31.2MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+4.4min cycle22] heap=34.4MB errors=0 | start L3 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+4.6min cycle23] heap=33.7MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+4.9min cycle24] heap=33.1MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+5.1min cycle25] heap=44.7MB errors=0 | start L6 / sim 23s state=lost / restart / modals x2 / challenge sim state=playing
+[t+5.3min cycle26] heap=31.7MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+5.5min cycle27] heap=47MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+5.7min cycle28] heap=33.7MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+5.9min cycle29] heap=32.5MB errors=0 | start L10 / sim 24s state=lost / restart / modals x2 / challenge sim state=playing
+[t+6.1min cycle30] heap=33.5MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+6.3min cycle31] heap=33.7MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+6.5min cycle32] heap=34.5MB errors=0 | start L3 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+6.8min cycle33] heap=31MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+7min cycle34] heap=35.5MB errors=0 | start L5 / sim 26s state=lost / restart / modals x2 / challenge sim state=playing
+[t+7.2min cycle35] heap=33.6MB errors=0 | start L6 / sim 20s state=lost / restart / modals x2 / challenge sim state=playing
+[t+7.4min cycle36] heap=33.7MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+7.6min cycle37] heap=35MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+7.8min cycle38] heap=32.8MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+8min cycle39] heap=34.4MB errors=0 | start L10 / sim 23s state=lost / restart / modals x2 / challenge sim state=playing
+[t+8.2min cycle40] heap=34.3MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+8.4min cycle41] heap=33.7MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+8.6min cycle42] heap=34.3MB errors=0 | start L3 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+8.8min cycle43] heap=32.5MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+9.1min cycle44] heap=33.1MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+9.3min cycle45] heap=31.5MB errors=0 | start L6 / sim 23s state=lost / restart / modals x2 / challenge sim state=playing
+[t+9.5min cycle46] heap=33.8MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+9.7min cycle47] heap=35MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+9.9min cycle48] heap=31.3MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+10.1min cycle49] heap=31.9MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+10.3min cycle50] heap=33.4MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+10.5min cycle51] heap=32.6MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+10.7min cycle52] heap=34.6MB errors=0 | start L3 / sim 34s state=lost / restart / modals x2 / challenge sim state=playing
+[t+11min cycle53] heap=31.9MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+11.2min cycle54] heap=31.3MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+11.4min cycle55] heap=31MB errors=0 | start L6 / sim 21s state=lost / restart / modals x2 / challenge sim state=playing
+[t+11.6min cycle56] heap=31.1MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+11.8min cycle57] heap=35MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+12min cycle58] heap=34.8MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+12.2min cycle59] heap=33.2MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+12.4min cycle60] heap=31.2MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+12.6min cycle61] heap=33.3MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+12.8min cycle62] heap=33.2MB errors=0 | start L3 / sim 35s state=lost / restart / modals x2 / challenge sim state=playing
+[t+13min cycle63] heap=31.8MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+13.3min cycle64] heap=32.9MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+13.5min cycle65] heap=33.9MB errors=0 | start L6 / sim 22s state=lost / restart / modals x2 / challenge sim state=playing
+[t+13.7min cycle66] heap=32.9MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+13.9min cycle67] heap=34.6MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+14.1min cycle68] heap=31.6MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+14.3min cycle69] heap=32MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+14.5min cycle70] heap=34.2MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+14.7min cycle71] heap=33.7MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+14.9min cycle72] heap=26.8MB errors=0 | start L3 / sim 32s state=lost / restart / modals x2 / challenge sim state=playing
+[t+15.1min cycle73] heap=22.9MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+15.4min cycle74] heap=31.9MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+15.6min cycle75] heap=33.9MB errors=0 | start L6 / sim 23s state=lost / restart / modals x2 / challenge sim state=playing
+[t+15.8min cycle76] heap=21.2MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+16min cycle77] heap=44.9MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+16.2min cycle78] heap=31.3MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+16.4min cycle79] heap=31.3MB errors=0 | start L10 / sim 24s state=lost / restart / modals x2 / challenge sim state=playing
+[t+16.6min cycle80] heap=32MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+16.8min cycle81] heap=34.4MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+17min cycle82] heap=33.3MB errors=0 | start L3 / sim 38s state=lost / restart / modals x2 / challenge sim state=playing
+[t+17.2min cycle83] heap=25.6MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+17.5min cycle84] heap=31.2MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+17.7min cycle85] heap=32.1MB errors=0 | start L6 / sim 23s state=lost / restart / modals x2 / challenge sim state=playing
+[t+17.9min cycle86] heap=31.7MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+18.1min cycle87] heap=46.3MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+18.3min cycle88] heap=34.4MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+18.5min cycle89] heap=31.5MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+18.7min cycle90] heap=31.8MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+18.9min cycle91] heap=31.9MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+19.1min cycle92] heap=32.1MB errors=0 | start L3 / sim 35s state=lost / restart / modals x2 / challenge sim state=playing
+[t+19.4min cycle93] heap=34.1MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+19.6min cycle94] heap=31.7MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+19.8min cycle95] heap=32.3MB errors=0 | start L6 / sim 20s state=lost / restart / modals x2 / challenge sim state=playing
+[t+20min cycle96] heap=33.8MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+20.2min cycle97] heap=46.3MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+20.4min cycle98] heap=34.2MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+20.6min cycle99] heap=35.2MB errors=0 | start L10 / sim 24s state=lost / restart / modals x2 / challenge sim state=playing
+[t+20.8min cycle100] heap=37MB errors=0 | start L1 / sim 39s state=won / restart / modals x2 / challenge sim state=playing
+[t+21min cycle101] heap=35MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+21.3min cycle102] heap=33.8MB errors=0 | start L3 / sim 35s state=lost / restart / modals x2 / challenge sim state=playing
+[t+21.5min cycle103] heap=32.6MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+21.7min cycle104] heap=26MB errors=0 | start L5 / sim 28s state=lost / restart / modals x2 / challenge sim state=playing
+[t+21.9min cycle105] heap=36.1MB errors=0 | start L6 / sim 20s state=lost / restart / modals x2 / challenge sim state=playing
+[t+22.1min cycle106] heap=32.2MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+22.3min cycle107] heap=33.7MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+22.5min cycle108] heap=34.5MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+22.7min cycle109] heap=34.2MB errors=0 | start L10 / sim 38s state=lost / restart / modals x2 / challenge sim state=playing
+[t+22.9min cycle110] heap=32.8MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+23.1min cycle111] heap=31.3MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+23.4min cycle112] heap=32.3MB errors=0 | start L3 / sim 31s state=lost / restart / modals x2 / challenge sim state=playing
+[t+23.6min cycle113] heap=33.1MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+23.8min cycle114] heap=33.8MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+24min cycle115] heap=39.5MB errors=0 | start L6 / sim 20s state=lost / restart / modals x2 / challenge sim state=playing
+[t+24.2min cycle116] heap=34.6MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+24.4min cycle117] heap=34MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+24.6min cycle118] heap=31.6MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+24.8min cycle119] heap=32.7MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+25min cycle120] heap=36MB errors=0 | start L1 / sim 40s state=won / restart / modals x2 / challenge sim state=playing
+[t+25.3min cycle121] heap=32.1MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+25.5min cycle122] heap=34.9MB errors=0 | start L3 / sim 40s state=lost / restart / modals x2 / challenge sim state=playing
+[t+25.7min cycle123] heap=32.4MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+25.9min cycle124] heap=32.5MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+26.1min cycle125] heap=32.5MB errors=0 | start L6 / sim 20s state=lost / restart / modals x2 / challenge sim state=playing
+[t+26.3min cycle126] heap=34.5MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+26.5min cycle127] heap=35.4MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+26.7min cycle128] heap=28.9MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+26.9min cycle129] heap=33.5MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+27.2min cycle130] heap=35.7MB errors=0 | start L1 / sim 39s state=won / restart / modals x2 / challenge sim state=playing
+[t+27.4min cycle131] heap=31.5MB errors=0 | start L2 / sim 18s state=lost / restart / modals x2 / challenge sim state=playing
+[t+27.6min cycle132] heap=39.7MB errors=0 | start L3 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+27.8min cycle133] heap=24.2MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+28min cycle134] heap=34.8MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+28.2min cycle135] heap=27.8MB errors=0 | start L6 / sim 22s state=lost / restart / modals x2 / challenge sim state=playing
+[t+28.4min cycle136] heap=32.8MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+28.6min cycle137] heap=33.7MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+28.8min cycle138] heap=32.1MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+29min cycle139] heap=34.8MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+29.3min cycle140] heap=31.8MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+29.5min cycle141] heap=34.5MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+29.7min cycle142] heap=31.8MB errors=0 | start L3 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+29.9min cycle143] heap=34.2MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+30.1min cycle144] heap=34.4MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+30.3min cycle145] heap=32.4MB errors=0 | start L6 / sim 20s state=lost / restart / modals x2 / challenge sim state=playing
+[t+30.5min cycle146] heap=34.8MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+30.7min cycle147] heap=32.8MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+30.9min cycle148] heap=34.7MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+31.2min cycle149] heap=34.3MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+31.4min cycle150] heap=33.4MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+31.6min cycle151] heap=32.2MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+31.8min cycle152] heap=32.6MB errors=0 | start L3 / sim 36s state=lost / restart / modals x2 / challenge sim state=playing
+[t+32min cycle153] heap=33MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+32.2min cycle154] heap=32.9MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+32.4min cycle155] heap=34.3MB errors=0 | start L6 / sim 20s state=lost / restart / modals x2 / challenge sim state=playing
+[t+32.6min cycle156] heap=33.1MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+32.8min cycle157] heap=31.4MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+33min cycle158] heap=33MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+33.3min cycle159] heap=34.8MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+33.5min cycle160] heap=32MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+33.7min cycle161] heap=32.3MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+33.9min cycle162] heap=54MB errors=0 | start L3 / sim 30s state=lost / restart / modals x2 / challenge sim state=playing
+[t+34.1min cycle163] heap=32MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+34.3min cycle164] heap=35.4MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+34.5min cycle165] heap=32.3MB errors=0 | start L6 / sim 20s state=lost / restart / modals x2 / challenge sim state=playing
+[t+34.7min cycle166] heap=35.4MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+34.9min cycle167] heap=35.4MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+35.2min cycle168] heap=31.4MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+35.4min cycle169] heap=45.9MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+35.6min cycle170] heap=36.6MB errors=0 | start L1 / sim 40s state=won / restart / modals x2 / challenge sim state=playing
+[t+35.8min cycle171] heap=32.5MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+36min cycle172] heap=33.6MB errors=0 | start L3 / sim 35s state=lost / restart / modals x2 / challenge sim state=playing
+[t+36.2min cycle173] heap=31.8MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+36.4min cycle174] heap=32.8MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+36.6min cycle175] heap=31.5MB errors=0 | start L6 / sim 20s state=lost / restart / modals x2 / challenge sim state=playing
+[t+36.8min cycle176] heap=34.5MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+37min cycle177] heap=32.3MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+37.3min cycle178] heap=28.9MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+37.5min cycle179] heap=34.9MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+37.7min cycle180] heap=32.8MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+37.9min cycle181] heap=29MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+38.1min cycle182] heap=31.6MB errors=0 | start L3 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+38.3min cycle183] heap=32.3MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+38.5min cycle184] heap=31.5MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+38.7min cycle185] heap=39.3MB errors=0 | start L6 / sim 20s state=lost / restart / modals x2 / challenge sim state=playing
+[t+38.9min cycle186] heap=33.5MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+39.1min cycle187] heap=36.2MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+39.4min cycle188] heap=34.8MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+39.6min cycle189] heap=35MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+39.8min cycle190] heap=34.1MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+40min cycle191] heap=32.7MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+40.2min cycle192] heap=35MB errors=0 | start L3 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+40.4min cycle193] heap=31.8MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+40.6min cycle194] heap=34.7MB errors=0 | start L5 / sim 21s state=lost / restart / modals x2 / challenge sim state=playing
+[t+40.8min cycle195] heap=34.3MB errors=0 | start L6 / sim 22s state=lost / restart / modals x2 / challenge sim state=playing
+[t+41min cycle196] heap=33.7MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+41.3min cycle197] heap=22.3MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+41.5min cycle198] heap=33.5MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+41.7min cycle199] heap=36.1MB errors=0 | start L10 / sim 24s state=lost / restart / modals x2 / challenge sim state=playing
+[t+41.9min cycle200] heap=37.8MB errors=0 | start L1 / sim 39s state=won / restart / modals x2 / challenge sim state=playing
+[t+42.1min cycle201] heap=33.1MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+42.3min cycle202] heap=22.2MB errors=0 | start L3 / sim 28s state=lost / restart / modals x2 / challenge sim state=playing
+[t+42.5min cycle203] heap=33.7MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+42.7min cycle204] heap=33.9MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+42.9min cycle205] heap=41.7MB errors=0 | start L6 / sim 22s state=lost / restart / modals x2 / challenge sim state=playing
+[t+43.2min cycle206] heap=34.7MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+43.4min cycle207] heap=33.8MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+43.6min cycle208] heap=44.7MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+43.8min cycle209] heap=34.5MB errors=0 | start L10 / sim 24s state=lost / restart / modals x2 / challenge sim state=playing
+[t+44min cycle210] heap=33.7MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+44.2min cycle211] heap=32.2MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+44.4min cycle212] heap=32.3MB errors=0 | start L3 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+44.6min cycle213] heap=34.5MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+44.8min cycle214] heap=33.7MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+45.1min cycle215] heap=33.8MB errors=0 | start L6 / sim 24s state=lost / restart / modals x2 / challenge sim state=playing
+[t+45.3min cycle216] heap=32.1MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+45.5min cycle217] heap=32.9MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+45.7min cycle218] heap=21.5MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+45.9min cycle219] heap=35.6MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+46.1min cycle220] heap=33.5MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+46.3min cycle221] heap=32.4MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+46.5min cycle222] heap=31.7MB errors=0 | start L3 / sim 31s state=lost / restart / modals x2 / challenge sim state=playing
+[t+46.7min cycle223] heap=33.6MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+46.9min cycle224] heap=32.8MB errors=0 | start L5 / sim 17s state=lost / restart / modals x2 / challenge sim state=playing
+[t+47.2min cycle225] heap=34.7MB errors=0 | start L6 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+47.4min cycle226] heap=31.4MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+47.6min cycle227] heap=37.8MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+47.8min cycle228] heap=33.6MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+48min cycle229] heap=33.5MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+48.2min cycle230] heap=34.5MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+48.4min cycle231] heap=31.5MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+48.6min cycle232] heap=34.4MB errors=0 | start L3 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+48.8min cycle233] heap=33MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+49.1min cycle234] heap=32MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+49.3min cycle235] heap=49.8MB errors=0 | start L6 / sim 20s state=lost / restart / modals x2 / challenge sim state=playing
+[t+49.5min cycle236] heap=32.2MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+49.7min cycle237] heap=32.9MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+49.9min cycle238] heap=33.6MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+50.1min cycle239] heap=33.4MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+50.3min cycle240] heap=34.2MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+50.5min cycle241] heap=34.8MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+50.7min cycle242] heap=31.7MB errors=0 | start L3 / sim 37s state=lost / restart / modals x2 / challenge sim state=playing
+[t+51min cycle243] heap=34MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+51.2min cycle244] heap=33.7MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+51.4min cycle245] heap=34MB errors=0 | start L6 / sim 23s state=lost / restart / modals x2 / challenge sim state=playing
+[t+51.6min cycle246] heap=34.3MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+51.8min cycle247] heap=34.2MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+52min cycle248] heap=34.9MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+52.2min cycle249] heap=34.9MB errors=0 | start L10 / sim 24s state=lost / restart / modals x2 / challenge sim state=playing
+[t+52.4min cycle250] heap=35MB errors=0 | start L1 / sim 26s state=lost / restart / modals x2 / challenge sim state=playing
+[t+52.6min cycle251] heap=32.8MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+52.8min cycle252] heap=25MB errors=0 | start L3 / sim 35s state=lost / restart / modals x2 / challenge sim state=playing
+[t+53.1min cycle253] heap=32.1MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+53.3min cycle254] heap=31.8MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+53.5min cycle255] heap=53.8MB errors=0 | start L6 / sim 20s state=lost / restart / modals x2 / challenge sim state=playing
+[t+53.7min cycle256] heap=33.1MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+53.9min cycle257] heap=33.1MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+54.1min cycle258] heap=40.7MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+54.3min cycle259] heap=35.4MB errors=0 | start L10 / sim 27s state=lost / restart / modals x2 / challenge sim state=playing
+[t+54.5min cycle260] heap=33.3MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+54.7min cycle261] heap=32.3MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+54.9min cycle262] heap=56.9MB errors=0 | start L3 / sim 25s state=lost / restart / modals x2 / challenge sim state=playing
+[t+55.2min cycle263] heap=32.1MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+55.4min cycle264] heap=33.6MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+55.6min cycle265] heap=46.2MB errors=0 | start L6 / sim 20s state=lost / restart / modals x2 / challenge sim state=playing
+[t+55.8min cycle266] heap=34.4MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+56min cycle267] heap=35MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+56.2min cycle268] heap=24.3MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+56.4min cycle269] heap=48.2MB errors=0 | start L10 / sim 25s state=lost / restart / modals x2 / challenge sim state=playing
+[t+56.6min cycle270] heap=33.4MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+56.8min cycle271] heap=34.1MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+57.1min cycle272] heap=28.7MB errors=0 | start L3 / sim 35s state=lost / restart / modals x2 / challenge sim state=playing
+[t+57.3min cycle273] heap=31.6MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+57.5min cycle274] heap=33.6MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+57.7min cycle275] heap=31.9MB errors=0 | start L6 / sim 20s state=lost / restart / modals x2 / challenge sim state=playing
+[t+57.9min cycle276] heap=32.8MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+58.1min cycle277] heap=28.1MB errors=0 | start L8 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+58.3min cycle278] heap=34.6MB errors=0 | start L9 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+58.5min cycle279] heap=33.6MB errors=0 | start L10 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+58.7min cycle280] heap=33.5MB errors=0 | start L1 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+59min cycle281] heap=33.1MB errors=0 | start L2 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+59.2min cycle282] heap=33MB errors=0 | start L3 / sim 29s state=lost / restart / modals x2 / challenge sim state=playing
+[t+59.4min cycle283] heap=33.7MB errors=0 | start L4 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+59.6min cycle284] heap=24.1MB errors=0 | start L5 / sim 40s state=playing / modals x2 / challenge sim state=playing
+[t+59.8min cycle285] heap=35.3MB errors=0 | start L6 / sim 21s state=lost / restart / modals x2 / challenge sim state=playing
+[t+60min cycle286] heap=31.9MB errors=0 | start L7 / sim 40s state=playing / modals x2 / challenge sim state=playing
+
+==== 长跑汇总 ====
+cycles=286 samples=286 pageErrors=0
+heap: 16.9MB → 31.9MB (trend +15.0MB)
+✓ 内存平稳无泄漏趋势, 无页面错误

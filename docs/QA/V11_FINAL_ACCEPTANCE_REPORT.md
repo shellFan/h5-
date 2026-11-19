@@ -42,7 +42,7 @@
 | **V11 实机试玩** | `node tools/v11-playthrough.js` | 46 | 46 | 0 | 真实触摸输入+实时战斗 |
 | **V11 移动矩阵** | `node tools/v11-mobile-matrix.js` | 160 | 160 | 0 | 10分辨率×16项 |
 
-**合计: 733 项编号断言全部 PASS，0 FAIL，0 SKIP。** 无未执行项。测试覆盖范围见第 4-9 章。
+**合计: 667 项编号断言全部 PASS，0 FAIL，0 SKIP**（既有套件 452 + V11 新harness 206 + 工具校验 9）。无未执行项。测试覆盖范围见第 4-9 章。
 
 ## 3. BUG 统计
 
@@ -51,8 +51,10 @@
 | P0 (阻断) | 0 | 0 | 0 |
 | P1 (严重) | 1 | 1 | 0 |
 | P2 (一般) | 2 | 2 | 0 |
-| P3 (优化) | 7 | 6 | 1 |
-| 合计 | 10 | 9 | 1 |
+| P3 (优化) | 13 | 13 | 0 |
+| 合计 | 16 | 16 | 0 |
+
+（另有清理项: 死代码 `_buildCitySkyline`/shop-effect死语句移除、失效测试页 test_boss_visual.html/test_projection.html 删除——引用已不存在的 js/models.js，加载即404。）
 
 ### 已修复清单（均有回归验证）
 
@@ -67,12 +69,16 @@
 | V11-007 | P3 | 视觉回归截图写入间歇性 EBUSY→UNKNOWN 失败(Windows杀软锁) | 同步覆盖写无重试 | tests/e2e/visual.js | visual 32/32 稳定 |
 | V11-008 | P3 | 首页品牌栏硬编码"V8.0.1 正式版"与实际版本不符 | 版本未随迭代更新 | js/art-v42.js + index.html(注入 `__GAME_VERSION`) | 浏览器实测显示"V11.3 正式版"，0错误 |
 | V11-009 | P3 | v51"重复结算保护"确定性失败(RNG漂移→重复局落败→落败结算70) | V11.x新系统改变随机数消耗序列；v51贪心策略越过L1胜负阈值；并发会话回归清单未含v51 | tests/e2e/v51.js(失败按游戏meta循环重试重建前置，断言本意不变) | v51 39/39 连续3次 |
+| V11-010 | P3 | `douyin-ad.js` 展示失败重试链二次重读 `this._rewardAd`（dispose竞态） | 重试链捕获广告实例引用即可消除二次读取 | js/ads/douyin-ad.js | 语法校验+平台代码审阅（真机联调仍待真实开发者环境） |
+| V11-011 | P3 | Mock广告 `auto_abandon` 场景 800ms 定时器未跟踪：广告被他路提前结算且新广告开启后，旧定时器会把新广告覆盖层藏掉 | `_handleClose` 无归属校验 + 定时器未跟踪 | js/ads/web-mock-ad.js(跟踪+`_current === opts`归属校验+`_hideOverlay`一并清理) | e2e广告场景 29/29 |
+| V11-012 | P3 | `_autoTimer` 承载 setTimeout/setInterval 两种句柄却只用 clearInterval 清理 | clear API 误用 | js/ads/web-mock-ad.js(_hideTimer 双API清理) | e2e 29/29 |
+| V11-013 | P3 | Game 构造中途抛错后点"重新加载"会在同一 canvas 二次构造 → 输入监听器重复注册 | 构造异常与资源加载异常共用重试路径 | js/game.js(构造失败改引导刷新页面，不提供同页重建) | 启动路径 e2e 29/29 |
+| V11-014 | P3 | `#game-container` 缺失时每帧对 null 取 classList；`resize()` 未守卫 canvas 容器缺失 | 守卫缺失 | js/game.js(_containerEl 只查一次+空判) / js/world.js(resize 双守卫) | e2e 29/29 |
+| V11-015 | P3 | `_buildCitySkyline` 全库零调用(死代码54行)；`row.querySelector('.shop-effect')` 死语句 | V4.2环境由art-v42接管后遗留 | js/world.js(移除方法，buildings数组保留) / js/game.js(移除语句) | unit 92 + h5-build PASS |
 
 ### 遗留问题
 
-| ID | 级别 | 描述 | 不修原因 |
-|---|---|---|---|
-| V11-010 | P3 | `douyin-ad.js` 重试链二次重读 `_rewardAd`（dispose竞态理论缺陷） | 抖音平台SDK代码无真实开发者环境可验证；修改未验证的平台代码风险大于收益，标记遗留待真机联调时处理 |
+**无未修复缺陷。** 平台适配说明: 抖音/微信真实平台验收（启动/生命周期/广告SDK/分享/包体）仍需真实开发者环境，H5 浏览器验证不替代——V11-010 的修复为代码级审阅修复，真机联调时建议复验。
 
 ### 观察记录（非缺陷）
 
@@ -144,9 +150,11 @@
 
 **结论: 达标** —— 高性能设备 60FPS ✓；中端(4x节流)全场景 ≥68FPS（目标45-60）✓；压力规模实测 500 人团战（项目设计上限）+ 大量弹道/粒子。
 
-### 6.3 30分钟稳定性 soak
+### 6.3 长时间稳定性 soak（30分钟 + 60分钟双档）
 
-139 个开局/战斗/弹窗/Boss循环周期，heap 均值 31.9→33.7→33.0→33.9→33.5→32.7MB（平台期，无泄漏趋势），**0 页面错误**。数据: docs/QA/performance/v11_soak_30min.json
+**60 分钟压力 soak**（第二轮补充执行）: 286 个开局/战斗/弹窗/Boss 循环周期，**0 页面错误**；heap 按每10分钟分桶均值 33.4→32.5→33.6→34.0→33.7→34.4MB（全程平台期，峰值 47-57MB 有界，无泄漏趋势）。数据: docs/QA/performance/v11_soak_60min.json
+
+**30 分钟 soak**（首轮）: 139 周期，0 错误，heap 均值 31.9→32.7MB 平台期。数据: docs/QA/performance/v11_soak_30min.json
 
 ### 6.4 卡顿专项
 
@@ -193,7 +201,7 @@
 
 并发会话的代码修复已于 `ea16586` 先行合入。工作区在提交后保持干净（0 未提交文件）。
 
-**推送状态**: 2026-11-20 01:52-01:58 共 9 次推送尝试均失败（github.com:443 连接超时/SSL reset——期间该主机与 GitHub 的链路中断，此前 `dc4fdbe` 曾由并发会话成功推送）。**3 个本地提交已保留在 master（领先 origin/master 3 个提交）**，网络恢复后执行 `git push origin master` 即可，无需强推（fast-forward）。此为环境阻塞项，非权限问题。
+**推送状态**: **已成功**。首轮因 github.com:443 链路中断失败 10 次（01:52-01:58），网络恢复后于 02:10 成功推送 `dc4fdbe..e8f0e92 master -> master`（fast-forward，无强推）。远程分支: origin/master @ `e8f0e92`。
 
 ## 12. 最终验收门槛核对
 
@@ -204,21 +212,21 @@
 - [x] 前五关实际流程测试（含失败meta循环）
 - [x] 存档正常
 - [x] 手机适配通过（10分辨率矩阵 160/160）
-- [x] 无未解决 P0；无未解决 P1；P2 全清；P3 遗留 1 项(平台SDK代码，已记录)
-- [x] 全量自动化测试完成（733 断言 0F）
+- [x] 无未解决 P0 / P1 / P2 / P3（16项缺陷全部修复闭环）
+- [x] 全量自动化测试完成（667 断言 0F + 第二轮加固回归）
 - [x] 实际浏览器试玩完成（46/46，真实输入）
 - [x] 性能测试完成（4x节流≥68fps / 500人72.7fps）
-- [x] 长时间测试完成（30min soak 0错误无泄漏；60min 未执行——如实标记）
+- [x] 长时间测试完成（30min + 60min 双档 soak）
 - [x] 最终构建成功（h5-build PASS）
 - [x] QA 报告生成
 - [x] Git 提交成功
-- [ ] 远程推送成功 —— **明确记录阻塞原因**: github.com:443 网络中断（9次尝试超时/reset），3个本地提交已保留，恢复后 fast-forward 推送即可
+- [x] 远程推送成功（`e8f0e92`，网络中断恢复后 fast-forward 推送）
 
 ## 13. 最终状态
 
 # **PASS — 通过**
 
-（Git 推送因 GitHub 网络中断暂未完成，本地提交已保留——见第11章；除此之外全部门槛达成。）
+（全部门槛达成，含远程推送。）
 
 遗留事项（不阻断验收）:
 1. 抖音/微信小游戏真机验收与 douyin-ad.js 竞态修复（需真实开发者环境）。
@@ -228,8 +236,8 @@
 
 ## 附录: 证据索引
 
-- 回归日志: docs/QA/logs/final-regression.log
+- 回归日志: docs/QA/logs/final-regression.log（首轮）+ docs/QA/logs/final-regression-2.log（第二轮加固回归）
 - 试玩结果: docs/QA/logs/v11_playthrough.json（46项明细）
 - 移动矩阵: docs/QA/logs/v11_mobile_matrix.json（160项明细）
-- 性能数据: docs/QA/performance/v11_perf_final.json / v11_perf_baseline.json / v11_soak_30min.json
+- 性能数据: docs/QA/performance/v11_perf_final.json / v11_perf_baseline.json / v11_soak_30min.json / v11_soak_60min.json
 - 截图: docs/QA/screenshots/（13张关键流程）+ docs/screenshots/v11-matrix/（30张）+ docs/screenshots/v11-playthrough/（15张）
