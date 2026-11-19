@@ -1,5 +1,7 @@
 # 当前开发进度
 
+> **V11 长期迭代 V11.1~V11.5 交付（2026-11-20）** —— 门系统深化(金币门+6门组合) / 肉鸽技能12种+品质+职业倾向+3流派 / 武器8进化+词条 / 职业专精 / 爆炸僵尸。报告: docs/V11_LONG_TERM_DEVELOPMENT_REPORT.md。新增E2E 54断言(v111/v112/v113/v114)全绿, 全量回归绿。关键修复: Squad._gameRef 惰性挂载导致首帧前乘区失效。未完成: V11.6~V11.10(数值收纳/BGM/引导层/事件统计/真机)。
+
 > **V10.1 专项优化完成（2026-11-19, 专项指令）** —— 移动端十分辨率适配(19问题→0) + CDP剖析驱动性能优化(HUD脏检查/飘字池化/阴影分档, battle300 +17%FPS/特效+15%) + 统一设计令牌与触控反馈。报告: docs/V10_1_MOBILE_PERFORMANCE_UI_REPORT.md。工具: tools/v101-matrix-audit.js / v101-perf-probe.js / v101-soak.js + tests/e2e/v101-mobile.js(29断言)。回归全绿。
 
 > **V10.1 遗留清零（2026-11-19, 用户指令）** —— 武器特殊属性接线实测(pellets/burn/dualLane) + v51 完全密闭化(种子+rAF停用, 5/5确定性全绿) + 死代码清除(models.js等11处, -1082行) + 空投recruitBonus接线。回归: unit92/e2e29/v51×3全39/v80 37/vnext 183/visual 32/soldier 11/model/v41 7+冒烟/双构建 全绿。
