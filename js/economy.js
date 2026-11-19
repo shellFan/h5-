@@ -151,9 +151,10 @@ class GameProfile {
 
 /**
  * 一局结算(唯一入账入口, 幂等):
+ * @param magnetBonus 磁力吸附技能击杀币加成(V11 QA修复[P3]: 原经 arguments[6] 隐式传参, 现入正式签名)
  * @returns {levelReward, killReward, doubled, total} — total 为本局实际入账金币
  */
-function settleRunEconomy(profile, level, levelIndex, kills, won, useDoubleAd) {
+function settleRunEconomy(profile, level, levelIndex, kills, won, useDoubleAd, magnetBonus) {
     // V10 QA: 科技后勤线接线(原 log_coin/log_supply 科技购买后无任何效果)
     var tech = (typeof TechTree !== 'undefined' && profile) ? TechTree.combatStats(profile) : null;
     var coinMul = tech ? tech.coinMul : 1;
@@ -171,8 +172,8 @@ function settleRunEconomy(profile, level, levelIndex, kills, won, useDoubleAd) {
         ? Math.round(reward * ECONOMY_RULES.KILL_COIN_WIN_CAP_RATIO)
         : ECONOMY_RULES.KILL_COIN_LOSE_CAP;
     var killReward = Math.min(cap, Math.floor(kills * (ECONOMY_RULES.KILL_COIN_RATE + coinPerKill)));
-    // V6.0: 磁力吸附技能 — 击杀币加成(settleRunEconomy 外部注入 squad._skillMagnet)
-    if (typeof arguments !== 'undefined' && arguments[6]) killReward = Math.min(cap * 2, Math.floor(killReward * (1 + 0.5 * arguments[6])));
+    // V6.0: 磁力吸附技能 — 击杀币加成(V11 QA: arguments[6] 隐式传参已入正式签名 magnetBonus)
+    if (magnetBonus) killReward = Math.min(cap * 2, Math.floor(killReward * (1 + 0.5 * magnetBonus)));
     var base = levelReward + killReward;
     var total = base;
     if (won && useDoubleAd && levelReward > 0) {

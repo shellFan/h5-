@@ -1,0 +1,1160 @@
+{
+  "startedAt": "2026-11-19T16:11:58.907Z",
+  "view": {
+    "width": 390,
+    "height": 844
+  },
+  "dpr": 3,
+  "seed": 18526693,
+  "phases": {
+    "battleFps": 103.2,
+    "level2Fps": 104.3
+  },
+  "consoleErrors": [
+    {
+      "at": 1795104719682,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104720181,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104720193,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104720316,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104720435,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104720553,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104720679,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104720795,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104720913,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104721037,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104721158,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104721279,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104721395,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104721514,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104721639,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104721757,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104721875,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104721996,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104722120,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104722236,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104722355,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104722473,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104722593,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104722713,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104722838,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104722959,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104723073,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104723200,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104723321,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104723436,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104723558,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104723675,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104723793,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104723913,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104724041,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104724153,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104724276,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104724399,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104724516,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104724635,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104724753,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104724882,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104724995,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104725118,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104725238,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104725355,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104725474,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104725595,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104725712,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104725834,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104725956,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104726082,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104726193,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104726318,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104726440,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104726559,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104726675,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104726798,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104726916,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104727035,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104727153,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104727280,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104727394,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104727513,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104727634,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104727758,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104727877,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104727994,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104728122,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104728237,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104728355,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104728482,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104728595,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104728716,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104728836,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104728954,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104729078,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104729198,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104729316,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104729433,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104729560,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104729679,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104729796,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104729916,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104730033,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104730156,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104730277,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104730394,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104730513,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104730634,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104730760,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104730875,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104730993,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104731118,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104731237,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104731356,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104731481,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104731601,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104731714,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104731837,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104731953,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104732079,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104732197,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104732316,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104732432,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104732553,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104732677,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104732795,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104732914,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104733035,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104733162,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104733274,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104733397,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104733513,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104733634,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104733757,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104733876,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104733995,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104734114,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104734238,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104734359,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104734477,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104734597,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104734713,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104734841,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104734955,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104735077,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104735195,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104735312,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104735438,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104735556,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104735674,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104735798,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104735918,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104736035,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104736156,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104736278,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104736394,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104736515,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104736635,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104736763,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104736878,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104736996,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104737117,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104737234,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104737353,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104737481,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104737599,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104737716,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104737835,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104737954,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104738080,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104738199,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104738317,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104738434,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104738553,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104738680,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104738798,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104738915,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104739041,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104739161,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104739276,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104739401,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104739517,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104739634,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104739758,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104739876,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104739993,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104740116,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104740237,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104740353,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104740474,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104740595,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104740722,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104740834,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104740957,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104741074,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104741200,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104741316,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104741433,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104741553,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104741674,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104741795,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104741921,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104742039,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104742158,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104742278,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104742396,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104742514,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104742633,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104742754,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104742873,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104743000,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104743114,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104743239,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104743359,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104743476,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104743593,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104743716,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104743835,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104743953,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104744076,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104744195,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104744314,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104744435,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104744560,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104744677,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104744794,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104744920,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104745041,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104745153,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104745277,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104745397,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104745515,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104745639,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104745758,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104745877,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104745996,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104746121,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104746237,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104746356,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104746473,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104746592,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104746715,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104746841,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104746958,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104747074,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104747194,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104747314,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104747443,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104747557,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104747679,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104747796,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104747914,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104748036,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104748155,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104748274,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104748393,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104748514,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104748641,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104748754,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104748876,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104748998,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104749113,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104749235,
+      "text": "PAGEERROR: pctTrail is not defined"
+    },
+    {
+      "at": 1795104749355,
+      "text": "PAGEERROR: pctTrail is not defined"
+    }
+  ],
+  "finishedAt": "2026-11-19T16:15:27.623Z",
+  "results": [
+    {
+      "name": "加载界面初始可见",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "加载进度推进",
+      "ok": true,
+      "detail": "本地资源加载<120ms(瞬时完成), 冷加载进度断言见vnext-rank"
+    },
+    {
+      "name": "游戏就绪(window.__game)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "首页开始按钮可见且触控达标",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "进入playing状态",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "HUD可见",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "开始界面隐藏",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "战斗FPS≥30(实测103.2)",
+      "ok": true,
+      "detail": "fps=103.2"
+    },
+    {
+      "name": "战斗进行(状态playing)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "拖拽换道生效(targetX位移)",
+      "ok": true,
+      "detail": "targetX=-1.13"
+    },
+    {
+      "name": "击杀/金币增长(真实战斗输出)",
+      "ok": true,
+      "detail": "kills=24 coins=0"
+    },
+    {
+      "name": "状态门出现",
+      "ok": true,
+      "detail": "labels=undefined"
+    },
+    {
+      "name": "穿门触发(获得增益)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "门效果生效(人数/属性变化)",
+      "ok": true,
+      "detail": "count=7"
+    },
+    {
+      "name": "Boss出场",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "L1胜利结算",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Boss遭遇记录(bossSeen)",
+      "ok": false,
+      "detail": "encountered=0"
+    },
+    {
+      "name": "结算奖励入账",
+      "ok": true,
+      "detail": "coins=220 显示=90"
+    },
+    {
+      "name": "统计击杀数显示",
+      "ok": true,
+      "detail": "kills=792"
+    },
+    {
+      "name": "进入第2关",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "暂停生效",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "暂停冻结(位置不推进)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "恢复游戏",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "L2战斗FPS≥30",
+      "ok": true,
+      "detail": "fps=104.3"
+    },
+    {
+      "name": "返回主菜单",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "商店入口存在",
+      "ok": true,
+      "detail": "{\"id\":\"btn-open-shop\",\"visible\":true}"
+    },
+    {
+      "name": "商店打开",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "购买扣费",
+      "ok": true,
+      "detail": "220→100"
+    },
+    {
+      "name": "伤害提升",
+      "ok": true,
+      "detail": "1→2 gunLv=1"
+    },
+    {
+      "name": "余额不足按钮禁用(防护生效)",
+      "ok": true,
+      "detail": "coins=100 gunDisabled=true"
+    },
+    {
+      "name": "商店关闭",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "pass": 29,
+  "fail": 2,
+  "consoleErrorCount": 246
+}

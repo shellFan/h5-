@@ -24,7 +24,9 @@ var EnemyModelLoader = class EnemyModelLoader {
                     loaded.push(g.scene);
                     resolve({key,lod,bank});
                 }catch(e){SoldierModelLoader._disposeScene(g.scene);reject(e);}
-            },undefined,ev=>{
+            // V11 QA修复[P1]: GLTFLoader.load签名是(url,onLoad,onProgress,onError) —
+            // 原实现把进度回调传到了onError槽位、错误回调落在第5参被忽略, 任何GLB失败时Promise永不settle→启动永久卡加载界面
+            },ev=>{
                 // VNext: 启动进度上报(文件级 loaded/total)
                 if (window.__BootProgress && ev) window.__BootProgress.file(url, ev.loaded || 0, ev.total || 1);
             },e=>reject(Error('Enemy asset failed: '+url+' '+(e.message||e))));

@@ -7,6 +7,19 @@
 const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright-core');
+
+// V11 QA: Windows下刚写入的大PNG可能被杀软/索引器瞬时锁定(EBUSY→UNKNOWN), 写入失败自动退避重试
+async function writeFileRetry(file, bytes) {
+    for (let attempt = 0; attempt < 5; attempt++) {
+        try {
+            fs.writeFileSync(file, bytes);
+            return;
+        } catch (e) {
+            if (attempt === 4) throw e;
+            await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
+        }
+    }
+}
 const ROOT = path.join(__dirname, '..', '..');
 const OUT_DIR = path.join(ROOT, 'tests', 'screenshots', 'v3-visual');
 
@@ -200,7 +213,7 @@ const STATE_SETUPS = {
                 // 截图
                 const file = path.join(OUT_DIR, res.name + '_' + stateName + '.png');
                 const bytes = await page.screenshot();
-                fs.writeFileSync(file, bytes);
+                await writeFileRetry(file, bytes);
             }
             await ctx.close();
         }

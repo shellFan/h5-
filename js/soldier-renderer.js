@@ -6,13 +6,16 @@ var SoldierRenderer = class SoldierRenderer {
         this.data = SoldierModelLoader.get();
         if (!this.data) throw new Error('Soldier model data is not loaded');
         this.parts = this.data.parts.slice();
-        this.capacity = CONFIG.SQUAD_MAX_COUNT + SoldierRenderer.MAX_GHOSTS;
+        // V11 QA修复[P2]: 容量必须含科技"军团上限"加成(army_limit max2 × 50 = +100),
+        // 原实现固定500+16, 科技买满后600人 → setMatrixAt越界丢弃 + instanceCount超缓冲 → WebGL渲染异常
+        var techLimitBonus = (typeof TECH_DEFS !== 'undefined' && TECH_DEFS.army_limit) ? 50 * TECH_DEFS.army_limit.max : 0;
+        this.capacity = CONFIG.SQUAD_MAX_COUNT + techLimitBonus + SoldierRenderer.MAX_GHOSTS;
         this.banks = {};
         this.activeBank = 'hero';
         this.state = null;
         this._stateAge = 0;
         this.ghosts = [];
-        this._shootT = new Float32Array(CONFIG.SQUAD_MAX_COUNT);
+        this._shootT = new Float32Array(this.capacity);
         this._debugPoses = [];
         this._cycleSamples = [];
         this._lastRoots = [];

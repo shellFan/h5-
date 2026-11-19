@@ -435,7 +435,8 @@ var V60UI = {
                     wearBtn.className = 'v60-bag-btn';
                     wearBtn.textContent = '穿戴';
                     wearBtn.onclick = function() {
-                        var r = SoldierGrowth ? EquipmentLoot.equipFromBag(game.profile, item.uid) : { ok: false };
+                        // V11 QA修复[P3]: 原守卫判的是SoldierGrowth却调用EquipmentLoot, 守卫与被调对象不一致
+                        var r = EquipmentLoot ? EquipmentLoot.equipFromBag(game.profile, item.uid) : { ok: false };
                         if (r.ok) { game._sfx('gate'); game._refreshCoinDisplays(); self.renderTraining(game); }
                     };
                     actions.appendChild(wearBtn);
@@ -615,6 +616,8 @@ var V60UI = {
             bossesEl.appendChild(card);
         }
         // —— 武器收藏 ——
+        // V11 QA修复[P3]: renderCodex 补 WeaponSystem 守卫(与 renderArmory 等处一致)
+        if (typeof WeaponSystem === 'undefined') return;
         weaponsEl.innerHTML = '';
         var wLv = WeaponSystem.level(game.profile);
         var wStats = WeaponSystem.stats(game.profile);

@@ -54,7 +54,13 @@ class GameAdCoordinator {
         return this._ads.showRewarded(placement).then(function(result) {
             var granted = false;
             if (result.status === 'completed' && result.transactionId) {
-                granted = self._ads.grantReward(result.transactionId, grantFn);
+                // V11 QA修复[P2]: 发奖回调抛错时仍必须 resumeGame + 复位_busy,
+                // 否则游戏永久暂停且广告系统卡死(上游调用点无.catch兜底)
+                try {
+                    granted = self._ads.grantReward(result.transactionId, grantFn);
+                } catch (e) {
+                    console.error('[AdCoordinator] grant callback failed:', e);
+                }
             }
             if (self._hooks.resumeGame) self._hooks.resumeGame();
             self._busy = false;
