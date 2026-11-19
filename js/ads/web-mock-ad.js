@@ -40,7 +40,13 @@ class WebMockAdService extends AdService {
         if (this._scenario === 'auto_abandon') {
             this._showOverlay(opts, this._autoDuration, false, function() {
                 // 播放中自动"提前关闭"
-                setTimeout(function() { self._handleClose(opts, false); }, 800);
+                // V11 QA修复[P3]: 跟踪定时器并做归属校验 — 原实现未跟踪,
+                // 若800ms内广告已被他路结算且新广告开启, 旧定时器会把新广告覆盖层藏掉
+                if (self._abandonTimer) clearTimeout(self._abandonTimer);
+                self._abandonTimer = setTimeout(function() {
+                    self._abandonTimer = null;
+                    if (self._current === opts) self._handleClose(opts, false);
+                }, 800);
             });
             return;
         }
@@ -136,11 +142,14 @@ class WebMockAdService extends AdService {
     }
 
     _hideTimer() {
-        if (this._autoTimer) { clearInterval(this._autoTimer); this._autoTimer = null; }
+        // V11 QA修复[P3]: _autoTimer 可能承载 setTimeout(无DOM兜底路径)或 setInterval(DOM倒计时),
+        // 原实现只用clearInterval — 两者同时调用确保两种句柄都能正确清除
+        if (this._autoTimer) { clearTimeout(this._autoTimer); clearInterval(this._autoTimer); this._autoTimer = null; }
     }
 
     _hideOverlay() {
         this._hideTimer();
+        if (this._abandonTimer) { clearTimeout(this._abandonTimer); this._abandonTimer = null; } // V11 QA: 一并清理提前关闭定时器
         if (this._overlay) this._overlay.style.display = 'none';
         this._current = null;
     }

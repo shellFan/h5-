@@ -639,7 +639,6 @@ class Game {
                 btn.disabled = self.profile.coins < price;
                 btn.classList.toggle('affordable', self.profile.coins >= price);
             }
-            row.querySelector('.shop-effect');
         });
         if (this.ui.shopCoins) this.ui.shopCoins.textContent = this.profile.coins;
     }
@@ -1283,9 +1282,10 @@ class Game {
     /** V10.1: HUD刷新脏检查 — 原实现每帧 getElementById+无条件DOM写(剖析占17.3%主线程) */
     _updateUI() {
         var bossActive = !!this.enemies.boss && this.state === 'playing';
-        if (this._cachedBossActive !== bossActive) {
+        if (this._containerEl === undefined) this._containerEl = document.getElementById('game-container'); // V11 QA: 只查一次, 容器缺失时不逐帧取null调用
+        if (this._containerEl && this._cachedBossActive !== bossActive) {
             this._cachedBossActive = bossActive;
-            (this._containerEl || (this._containerEl = document.getElementById('game-container'))).classList.toggle('boss-active', bossActive);
+            this._containerEl.classList.toggle('boss-active', bossActive);
         }
         var level = LEVELS[this.levelIndex];
         var progress = clamp(-this.squad.z / -level.totalZ, 0, 1);
@@ -1625,7 +1625,16 @@ class Game {
         if (error) error.remove();
         Promise.all([SoldierModelLoader.load(), EnemyModelLoader.load()]).then(function() {
             window.__BootProgress && window.__BootProgress.stage('构建战场与渲染管线…', 99);
-            if (!window.__game) window.__game = new Game();
+            // V11 QA修复[P3]: 构造失败(如WebGL上下文异常)不再走"重建"重试 —
+            // 同canvas二次new Game()会重复注册输入监听; 此路径引导用户刷新页面整体重置
+            try {
+                if (!window.__game) window.__game = new Game();
+            } catch (e) {
+                starting = false;
+                showError('游戏初始化失败：' + e.message + '\n请刷新页面重试。');
+                window.__BootProgress && window.__BootProgress.stage('初始化失败', 0);
+                return;
+            }
             window.__BootProgress && window.__BootProgress.done();
             window.__BootProgress && window.__BootProgress.stage('准备完毕!', 100);
             setTimeout(function() { loading.classList.add('boot-hidden'); }, 260);

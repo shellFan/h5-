@@ -214,60 +214,8 @@ class World {
     }
 
 
-    /** 远景城市天际线(低多边形建筑群) V3.5: 窗户合并为单mesh降低drawCalls */
-    _buildCitySkyline() {
-        var buildingMats = [
-            new THREE.MeshLambertMaterial({ color: 0x8A94A8 }),
-            new THREE.MeshLambertMaterial({ color: 0x7A8498 }),
-            new THREE.MeshLambertMaterial({ color: 0x9AA4B8 }),
-            new THREE.MeshLambertMaterial({ color: 0x6A7488 })
-        ];
-        var windowMat = new THREE.MeshLambertMaterial({ color: 0xFFF8C8, emissive: 0x888040, emissiveIntensity: 0.35 });
-
-        for (var side = -1; side <= 1; side += 2) {
-            for (var i = 0; i < 12; i++) {
-                var b = new THREE.Group();
-                var w = randRange(1.5, 3.0);
-                var h = randRange(3, 8);
-                var d = randRange(1.5, 2.5);
-                var mat = buildingMats[i % 4];
-                var box = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
-                box.position.y = h / 2;
-                b.add(box);
-                // 屋顶细节
-                var roofMat = new THREE.MeshLambertMaterial({ color: 0x5A6478 });
-                var roof = new THREE.Mesh(new THREE.BoxGeometry(w * 0.6, 0.3, d * 0.6), roofMat);
-                roof.position.y = h + 0.15;
-                b.add(roof);
-                // 窗户(V3.5: 收集到数组, 合并为单个mesh — 原每建筑10-30个独立面片)
-                var rows = Math.floor(h / 1.2);
-                var cols = Math.floor(w / 0.6);
-                var winGeos = [];
-                for (var r = 0; r < rows; r++) {
-                    for (var c = 0; c < cols; c++) {
-                        if (Math.random() < 0.4) continue; // 部分窗户亮
-                        var wg = new THREE.PlaneGeometry(0.2, 0.3);
-                        wg.translate(
-                            (c - (cols - 1) / 2) * 0.55,
-                            0.8 + r * 1.1,
-                            d / 2 + 0.01
-                        );
-                        winGeos.push(wg);
-                    }
-                }
-                if (winGeos.length) {
-                    b.add(new THREE.Mesh(mergeGeometries(winGeos), windowMat));
-                }
-                // 位置: 远景两侧(距离建筑群)
-                var bx = side * randRange(10, 16);
-                var bz = -i * 14 - randRange(2, 8);
-                b.position.set(bx, 0, bz);
-                b.userData.artSource = 'js/world.js:_buildCitySkyline() 程序化低多边形建筑+发光窗';
-                this.scene.add(b);
-                this.buildings.push(b);
-            }
-        }
-    }
+    // V11 QA: 移除无调用的 _buildCitySkyline()(V4.2环境由art-v42.js接管, 此方法全库零引用成为死代码;
+    // this.buildings 仍保留 — art-v42.js重置它, 滚动循环遍历空数组无副作用)
 
     /**
      * 道路/装饰无限滚动 (V3.1: 无状态平铺)
@@ -414,9 +362,12 @@ class World {
     }
 
     resize() {
+        // V11 QA修复[P3]: 容器缺失守卫(canvas未挂载时parentElement为null)
         const container = this.canvas.parentElement;
+        if (!container) return;
         const w = container.clientWidth;
         const h = container.clientHeight;
+        if (!w || !h) return;
         this.renderer.setSize(w, h, false);
         this.camera.aspect = w / h;
         this.camera.updateProjectionMatrix();

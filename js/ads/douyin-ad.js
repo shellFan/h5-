@@ -83,11 +83,14 @@ class DouyinAdService extends AdService {
         }
         this._current = { opts: opts };
         this._showing = true;
-        this._rewardAd.show()
+        // V11 QA修复[P3]: 捕获广告实例引用 — 原重试链二次重读 this._rewardAd,
+        // 若期间被dispose()置null则重试路径抛错(虽被catch兜底, 但语义混乱且依赖隐式null检查)
+        var ad = this._rewardAd;
+        ad.show()
             .catch(function(err) {
                 // 展示失败: 尝试二次load后重试一次
-                self._rewardAd.load()
-                    .then(function() { return self._rewardAd.show(); })
+                ad.load()
+                    .then(function() { return ad.show(); })
                     .catch(function() {
                         self._showing = false;
                         self._current = null;
