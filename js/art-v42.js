@@ -726,7 +726,9 @@
 
         var startPanel = document.querySelector('#start-screen .title-panel');
         if (startPanel && !document.getElementById('v42-brand')) {
-            var brand = makeElement('div', 'v42-brand', '膨胀小队 · V8.0.1 正式版'); // V10 QA: 版本标识与当前发布一致
+            // V11 QA修复[P3]: 版本标识原硬编码V8.0.1, 改读package.json版本号(构建内联)并回退
+            var gameVersion = (window.__GAME_VERSION || 'V11').toUpperCase();
+            var brand = makeElement('div', 'v42-brand', '膨胀小队 · ' + gameVersion + ' 正式版');
             brand.id = 'v42-brand';
             startPanel.insertBefore(brand, startPanel.firstChild);
         }

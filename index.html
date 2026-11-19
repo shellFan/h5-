@@ -21,6 +21,8 @@
         <div id="boot-actions"></div>
     </div>
     <script>
+        // V11 QA: 游戏版本标识(首页品牌栏读取; 与package.json同步维护)
+        window.__GAME_VERSION = 'v11.3';
         // VNext: 加载进度追踪器(被 soldier-loader / enemy-models 调用; 仅统计真实文件进度, 无定时器伪造)
         window.__BootProgress = {
             files: {}, total: 26, // 2士兵 + 12×2 僵尸/Boss GLB
