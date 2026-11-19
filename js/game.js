@@ -1419,7 +1419,8 @@ class Game {
             if (this._stars > prevStars) this.profile.data.stars[starKey] = this._stars;
             if (this.enemies.bossKills) this.profile.data.stats.bossKills = (this.profile.data.stats.bossKills || 0) + this.enemies.bossKills;
             // V10 QA: 科技"训练手册"经验加成接线(原 log_xp 购买后无效果)
-            var xpMul = (this._techStats && this._techStats.xpMul) ? this._techStats.xpMul : 1;
+            // V11.2: 实战经验技能 — XP ×(1+0.15×层) 叠乘
+            var xpMul = ((this._techStats && this._techStats.xpMul) ? this._techStats.xpMul : 1) * (1 + 0.15 * (this.squad._skillFortune || 0));
             this.profile.data.xp = (this.profile.data.xp || 0) + (typeof Progression !== 'undefined' ? Math.round(Progression.computeXp(this.enemies.killCount, true, this.levelIndex, this._newStars) * xpMul) : 0);
             this.profile.data.playerLevel = Progression ? Progression.levelFromXp(this.profile.data.xp).level : this.profile.data.playerLevel;
             // V10 QA修复: 胜利上报每日任务(wins类型此前无任何调用方, 通关N关任务永远0进度)

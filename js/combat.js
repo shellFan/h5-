@@ -139,7 +139,10 @@ class CombatSystem {
                         dmgFinal = Math.round(dmgFinal * (1 + 0.5 * squad._skillBerserk));
                     }
                     var isCrit = Math.random() < Math.min(0.8, squad.critChance + (squad._evCritBonus || 0)); // V8.0: 事件暴击buff
-                    if (isCrit) dmgFinal = Math.round(dmgFinal * 2); // V10 QA修复: 原为 dmg*2 直接覆盖, 暴击瞬间丢失狂暴/守护之怒/事件/背水全部乘区
+                    // V11.2: 处决者 — 暴击伤害乘区(2 + 0.25×层), 火力流派 +15%
+                    var critMul = 2 + (squad._critMul || 0);
+                    if (isCrit) dmgFinal = Math.round(dmgFinal * critMul);
+                    if (squad._comboFireFlow) dmgFinal = Math.round(dmgFinal * 1.15);
                     this._fire(positions[k], dmgFinal, target, isCrit);
                     // V10.1: 散弹枪 pellets — 多发弹丸扇形铺散(其余弹丸依次瞄准相邻目标, 多目标AOE; 单目标时自然衰减)
                     var wpnPellets = squad._wpnPellets || 1;
@@ -267,6 +270,14 @@ class CombatSystem {
                                 squad.setCount(squad.count + 1);
                                 this.effects.floatText(squad.x, 1.4, squad.z, '回收+1', '#4DA8FF', false);
                             }
+                            // V11.2: 亡者征召 — 5%×层概率补员(虫群流派×1.5)
+                            if (squad._skillHarvest && squad.count > 0 && squad.count < CONFIG.SQUAD_MAX_COUNT) {
+                                var harvProb = 0.05 * squad._skillHarvest * (squad._comboSwarmFlow ? 1.5 : 1);
+                                if (Math.random() < harvProb) {
+                                    squad.setCount(squad.count + 1);
+                                    this.effects.floatText(squad.x, 1.6, squad.z, '征召+1', '#39D98A', false);
+                                }
+                            }
                         }
                         hit = true;
                         // V3.3: 穿透 — 命中后不消失, 继续飞行
@@ -369,7 +380,8 @@ class CombatSystem {
             mesh: mesh, damage: damage, life: 1.2,
             target: target || null,
             crit: !!isCrit,
-            pierceLeft: 1 + (this._squad ? this._squad.pierce + (this._squad._evPierce || 0) : 0),
+            // V11.2: 穿透流派 +1
+            pierceLeft: 1 + (this._squad ? this._squad.pierce + (this._squad._evPierce || 0) + (this._squad._comboPierceFlow ? 1 : 0) : 0),
             hitSet: null
         });
 

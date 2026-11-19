@@ -395,6 +395,10 @@ class Squad {
         if (this._gameRef && this._gameRef._techStats && this._gameRef._techStats.rateBonus) mul *= (1 + this._gameRef._techStats.rateBonus);
         // V6.0: 无人机技能 — 每层+15%射速 (V8.0: 火力全开组合+25%/层)
         if (this._skillDrones) mul *= 1 + (this._comboFullBarrage ? 0.25 : 0.15) * this._skillDrones;
+        // V11.2: 迅捷弹幕 — 每层+12%射速
+        if (this._skillSwiftness) mul *= 1 + 0.12 * this._skillSwiftness;
+        // V11.2: 火力流派 — 射速 +10%
+        if (this._comboFireFlow) mul *= 1.1;
         // V8.0: 毒雾僚机组合 — 毒液层附带射速
         if (this._comboSwarmVenom && this._skillVenom) mul *= 1 + 0.08 * this._skillVenom;
         // V8.0: 随机事件射速buff
@@ -436,6 +440,9 @@ class Squad {
         this._comboGuardianFury = 0; this._toxicWardPulse = false;
         this._evDmgMul = 0; this._evDmgMulT = 0; this._evRateMul = 0; this._evRateMulT = 0;
         this._evCritBonus = 0; this._evCritT = 0; this._evPierce = 0; this._evPierceT = 0;
+        this._skillSwiftness = 0; this._skillDeadly = 0; this._critMul = 0;
+        this._skillHarvest = 0; this._skillFortune = 0;
+        this._comboFireFlow = 0; this._comboPierceFlow = 0; this._comboSwarmFlow = 0;
         this._regenT = undefined; this._classSkillT = undefined;
         this._totalDr = 0; this._classBulletSpeed = 1.0;
         this.alive = true;

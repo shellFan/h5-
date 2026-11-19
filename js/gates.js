@@ -218,7 +218,8 @@ class GateSystem {
                 var def = SKILL_DEFS[id];
                 var lv = squad._skills ? (squad._skills[id] || 0) : 0;
                 members[m].data.value = id;
-                members[m].data.label = def.icon + ' ' + def.name + (lv > 0 ? ' Lv' + (lv + 1) : '');
+                // V11.2: 门标签带技能品质(普通/稀有/史诗)
+                members[m].data.label = def.icon + ' ' + def.name + '[' + Skills.qualityName(id) + ']' + (lv > 0 ? ' Lv' + (lv + 1) : '');
                 this.scene.remove(members[m].model);
                 members[m].model = V42Art.createGateModel(members[m].data, CONFIG.LANE_WIDTH * 0.9);
                 this.scene.add(members[m].model);
