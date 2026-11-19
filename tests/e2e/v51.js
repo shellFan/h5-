@@ -83,7 +83,20 @@ async function fastForward(page, maxGameSec, stepDt) {
 (async () => {
     const server = await startServer();
     const browser = await launch();
-    const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    // V10 QA: 固定随机种子(五关模拟含真实随机波次洗牌/事件掷点, L3历史上即"临界翻转"套件,
+    // 未加种子时约1/6运行偶发翻转 — 与项目 v42-browser seededContext 同一做法, 使本套件确定性可回归)
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    await context.addInitScript(function(seed) {
+        let state = seed >>> 0;
+        Math.random = function() {
+            state += 0x6D2B79F5;
+            let value = state;
+            value = Math.imul(value ^ (value >>> 15), value | 1);
+            value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+            return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+        };
+    }, 0x51caeefd);
+    const page = await context.newPage();
     const errors = [];
     page.on('pageerror', e => errors.push('STACK>> ' + String(e.stack || e.message).split('\n').slice(0, 5).join(' || ')));
     await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded' });

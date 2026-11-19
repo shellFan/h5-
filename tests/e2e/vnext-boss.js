@@ -47,7 +47,7 @@ async function main() {
         g._showBossWarning(true);
         var warningShown = warning && !warning.classList.contains('hidden');
         var boss = g.pacing.spawnFn('boss', CONFIG.LANE_X[1], g.squad.z - 14, 0);
-        var out = { warningShown: warningShown, spawnT0: boss.spawnT, style: boss.artStyle };
+        var out = { warningShown: warningShown, spawnT0: boss.spawnT, style: boss.artStyle, bk0: g.enemies.bossKills || 0 }; // V10 QA: 每局clear()复位后按增量断言
         var observations = {
           spawnAnimDone: false, hpBarSynced: false, soldierLost: false,
           phaseSeen: 1, shieldSeen: false, summonSeen: false, spitSeen: false,
@@ -104,7 +104,7 @@ async function main() {
       assert(r.obs.repeatDamageBlocked, label + ' 尸体不可重复受伤');
       assert(r.obs.corpseRemoved, label + ' 尸体动画后移除');
       assert(r.obs.bossRefCleared, label + ' boss引用清空');
-      assert(r.obs.bossKills >= round, label + ' bossKills计数(' + r.obs.bossKills + ')');
+      assert(r.obs.bossKills >= r.bk0 + 1, label + ' bossKills计数(本局+' + (r.obs.bossKills - r.bk0) + ')');
       // 体格特征
       if (style === 'bulwark' || style === 'overlord') assert(r.obs.shieldSeen, label + ' 护盾技能');
       if (style === 'hivelord') assert(r.obs.summonSeen, label + ' 召唤技能');

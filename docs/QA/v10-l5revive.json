@@ -1,0 +1,26 @@
+{
+  "l5": {
+    "state": "won",
+    "t": 143,
+    "cnt": 32,
+    "kills": 2899,
+    "boss": false,
+    "bossHp": 0,
+    "enemies": 1
+  },
+  "revive": {
+    "lostTriggered": true,
+    "buttonVisible": true,
+    "mockAdShown": true,
+    "applied": {
+      "cnt": 10,
+      "coins": 1220,
+      "invuln": 2.4941000000000058
+    },
+    "coinDelta": 0,
+    "secondTimeHidden": true,
+    "backHome": true
+  },
+  "errors": [],
+  "pageErrors": []
+}

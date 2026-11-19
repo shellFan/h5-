@@ -1,0 +1,145 @@
+{
+  "soldier": {
+    "dpsBefore": {
+      "dealt": 990,
+      "kills": 0,
+      "hp0": 100000
+    },
+    "before": {
+      "lv": 1,
+      "stats": {
+        "dmgBonus": 0,
+        "hpBonus": 2,
+        "rateBonus": 0.008,
+        "critBonus": 0.005,
+        "drBonus": 0.006,
+        "recruitBonus": 0
+      },
+      "dmg": 1,
+      "rate": 2.2,
+      "coins": 3000
+    },
+    "after": {
+      "lv": 6,
+      "stats": {
+        "dmgBonus": 1,
+        "hpBonus": 12,
+        "rateBonus": 0.048,
+        "critBonus": 0.03,
+        "drBonus": 0.036000000000000004,
+        "recruitBonus": 0
+      },
+      "dmg": 2,
+      "rate": 2.2,
+      "coins": 2664
+    },
+    "click": {
+      "ok": true,
+      "clicks": 5
+    },
+    "dpsAfter": {
+      "dealt": 1026,
+      "kills": 0,
+      "hp0": 100000
+    },
+    "persistLv": 6
+  },
+  "weapon": {
+    "dpsBefore": {
+      "dealt": 1026,
+      "kills": 0,
+      "hp0": 100000
+    },
+    "before": {
+      "w": "rifle",
+      "lv": 0,
+      "stats": {
+        "dmgMul": 1,
+        "weaponId": "rifle",
+        "weaponLevel": 0
+      },
+      "dmg": 1,
+      "rate": 2.2
+    },
+    "after": {
+      "w": "rifle",
+      "lv": 1,
+      "stats": {
+        "dmgMul": 1.3,
+        "weaponId": "rifle",
+        "weaponLevel": 1
+      },
+      "dmg": 2,
+      "rate": 2.2,
+      "coins": 5464
+    },
+    "click": {
+      "ok": true,
+      "wasDisabled": false
+    },
+    "dpsAfter": {
+      "dealt": 1344,
+      "kills": 0,
+      "hp0": 100000
+    },
+    "persist": {
+      "lv": 1,
+      "w": "rifle"
+    }
+  },
+  "equip": {
+    "item": {
+      "uid": "mwmqklfj_1",
+      "slot": "weapon",
+      "name": "哨兵主武器",
+      "quality": 1,
+      "affixes": {
+        "dmgBonus": 1,
+        "hpBonus": 10
+      },
+      "affixLines": [
+        "伤害 +1",
+        "生命 +10"
+      ],
+      "level": 1,
+      "ts": 1795043531647,
+      "isNew": true
+    },
+    "before": {
+      "dmg": 1
+    },
+    "after": {
+      "eq": {
+        "weapon": {
+          "uid": "mwmqklfj_1",
+          "slot": "weapon",
+          "name": "哨兵主武器",
+          "quality": 1,
+          "affixes": {
+            "dmgBonus": 1,
+            "hpBonus": 10
+          },
+          "affixLines": [
+            "伤害 +1",
+            "生命 +10"
+          ],
+          "level": 1,
+          "ts": 1795043531647,
+          "isNew": true
+        }
+      },
+      "dmg": 1,
+      "dr": 0.036000000000000004,
+      "crit": 0.03
+    },
+    "wear": {
+      "ok": true
+    },
+    "persist": {
+      "eq": true,
+      "bag": 2
+    }
+  },
+  "errors": [],
+  "pageErrors": []
+}

@@ -1,0 +1,378 @@
+{
+  "boot": {
+    "bootMs": 1170,
+    "progressHidden": true,
+    "failedRequests": [],
+    "freshProfile": {
+      "coins": 0,
+      "ul": 1
+    }
+  },
+  "home": {
+    "pages": {
+      "map": {
+        "open": "v60-map-page",
+        "backToHome": true
+      },
+      "train": {
+        "open": "v60-train-page",
+        "backToHome": true
+      },
+      "armory": {
+        "open": "v60-armory-page",
+        "backToHome": true
+      },
+      "tech": {
+        "open": "v60-tech-page",
+        "backToHome": true
+      },
+      "codex": {
+        "open": "v60-codex-page",
+        "backToHome": true
+      },
+      "challenge": {
+        "open": "v60-challenge-page",
+        "backToHome": true
+      },
+      "rank": {
+        "open": "v60-rank-page",
+        "backToHome": true
+      },
+      "ach": {
+        "open": "v60-ach-page",
+        "backToHome": true
+      },
+      "daily": {
+        "open": "v60-daily-page",
+        "backToHome": true
+      },
+      "set": {
+        "open": "v60-settings-page",
+        "backToHome": true
+      }
+    },
+    "classes": {
+      "n": 4,
+      "names": [
+        "枪械步兵",
+        "重装机枪手",
+        "神射狙击",
+        "战地军医"
+      ]
+    }
+  },
+  "levels": [
+    {
+      "level": 2,
+      "label": "L2",
+      "t0": 1795039891710,
+      "startCoin": 700,
+      "endCoin": 820,
+      "startCount": 1,
+      "skillsBefore": "{}",
+      "memPeak": {
+        "heap": 36.5,
+        "limit": 4192
+      },
+      "fpsCombat": 177.2,
+      "fpsHorde": 177.1,
+      "end": {
+        "state": "won",
+        "t": 81.3,
+        "cnt": 15,
+        "kills": 1170,
+        "boss": false,
+        "bossName": null,
+        "bossHp": 0,
+        "bossMax": 0,
+        "enemies": 5,
+        "bullets": 11,
+        "coins": 820,
+        "skills": {},
+        "lr": 80,
+        "gateEvents": 0
+      },
+      "durSec": 81.7,
+      "bossSeen": false,
+      "coinGain": 120,
+      "kills": 1170,
+      "finalCount": 15,
+      "result": "won"
+    },
+    {
+      "level": 3,
+      "label": "L3",
+      "t0": 1795039975252,
+      "startCoin": 820,
+      "endCoin": 1425,
+      "startCount": 1,
+      "skillsBefore": "{}",
+      "memPeak": {
+        "heap": 41,
+        "limit": 4192
+      },
+      "fpsCombat": 177.8,
+      "fpsHorde": 177.2,
+      "end": {
+        "state": "won",
+        "t": 89.1,
+        "cnt": 50,
+        "kills": 1809,
+        "boss": false,
+        "bossName": null,
+        "bossHp": 0,
+        "bossMax": 0,
+        "enemies": 18,
+        "bullets": 55,
+        "coins": 1425,
+        "skills": {},
+        "lr": 110,
+        "gateEvents": 0
+      },
+      "durSec": 89.7,
+      "bossSeen": false,
+      "coinGain": 605,
+      "kills": 1809,
+      "finalCount": 50,
+      "result": "won"
+    },
+    {
+      "level": 4,
+      "label": "L4",
+      "t0": 1795040066861,
+      "startCoin": 1425,
+      "endCoin": 1675,
+      "startCount": 1,
+      "skillsBefore": "{}",
+      "memPeak": {
+        "heap": 39.8,
+        "limit": 4192
+      },
+      "fpsCombat": 177,
+      "fpsHorde": 175.3,
+      "end": {
+        "state": "won",
+        "t": 146.4,
+        "cnt": 42,
+        "kills": 4437,
+        "boss": false,
+        "bossName": null,
+        "bossHp": 0,
+        "bossMax": 0,
+        "enemies": 4,
+        "bullets": 32,
+        "coins": 1675,
+        "skills": {},
+        "lr": 140,
+        "gateEvents": 0
+      },
+      "durSec": 147.1,
+      "bossSeen": false,
+      "coinGain": 250,
+      "kills": 4437,
+      "finalCount": 42,
+      "result": "won"
+    },
+    {
+      "level": 5,
+      "label": "L5",
+      "t0": 1795040215784,
+      "startCoin": 1675,
+      "endCoin": 2285,
+      "startCount": 1,
+      "skillsBefore": "{}",
+      "memPeak": {
+        "heap": 43.5,
+        "limit": 4192
+      },
+      "fpsCombat": 177.1,
+      "fpsHorde": 177.3,
+      "end": {
+        "state": "lost",
+        "t": 120,
+        "cnt": 0,
+        "kills": 940,
+        "boss": false,
+        "bossName": null,
+        "bossHp": 0,
+        "bossMax": 0,
+        "enemies": 6,
+        "bullets": 3,
+        "coins": 2285,
+        "skills": {},
+        "lr": 0,
+        "gateEvents": 0
+      },
+      "durSec": 120.3,
+      "bossSeen": false,
+      "coinGain": 610,
+      "kills": 940,
+      "finalCount": 0,
+      "result": "lost"
+    }
+  ],
+  "bossRounds": [
+    {
+      "level": 1,
+      "label": "L1-BossRound1",
+      "t0": 1795039758203,
+      "startCoin": 0,
+      "endCoin": 460,
+      "startCount": 1,
+      "skillsBefore": "{}",
+      "memPeak": {
+        "heap": 28.9,
+        "limit": 4192
+      },
+      "fpsCombat": 169.1,
+      "fpsHorde": 176.9,
+      "end": {
+        "state": "won",
+        "t": 43.6,
+        "cnt": 25,
+        "kills": 792,
+        "boss": false,
+        "bossName": null,
+        "bossHp": 0,
+        "bossMax": 0,
+        "enemies": 6,
+        "bullets": 26,
+        "coins": 460,
+        "skills": {},
+        "lr": 60,
+        "gateEvents": 0
+      },
+      "durSec": 43.9,
+      "bossSeen": false,
+      "coinGain": 460,
+      "kills": 792,
+      "finalCount": 25,
+      "result": "won"
+    },
+    {
+      "level": 1,
+      "label": "L1-BossRound2",
+      "t0": 1795039803711,
+      "startCoin": 460,
+      "endCoin": 490,
+      "startCount": 1,
+      "skillsBefore": "{}",
+      "memPeak": {
+        "heap": 29.8,
+        "limit": 4192
+      },
+      "fpsCombat": 176.2,
+      "fpsHorde": 176.4,
+      "end": {
+        "state": "won",
+        "t": 43.1,
+        "cnt": 26,
+        "kills": 792,
+        "boss": false,
+        "bossName": null,
+        "bossHp": 0,
+        "bossMax": 0,
+        "enemies": 10,
+        "bullets": 23,
+        "coins": 490,
+        "skills": {},
+        "lr": 0,
+        "gateEvents": 0
+      },
+      "durSec": 43.6,
+      "bossSeen": false,
+      "coinGain": 30,
+      "kills": 792,
+      "finalCount": 26,
+      "result": "won"
+    },
+    {
+      "level": 1,
+      "label": "L1-BossRound3",
+      "t0": 1795039848874,
+      "startCoin": 490,
+      "endCoin": 700,
+      "startCount": 1,
+      "skillsBefore": "{}",
+      "memPeak": {
+        "heap": 30.9,
+        "limit": 4192
+      },
+      "fpsCombat": 177.2,
+      "fpsHorde": 174.7,
+      "end": {
+        "state": "won",
+        "t": 40.7,
+        "cnt": 25,
+        "kills": 792,
+        "boss": false,
+        "bossName": null,
+        "bossHp": 0,
+        "bossMax": 0,
+        "enemies": 4,
+        "bullets": 28,
+        "coins": 700,
+        "skills": {},
+        "lr": 0,
+        "gateEvents": 0
+      },
+      "durSec": 41.1,
+      "bossSeen": false,
+      "coinGain": 210,
+      "kills": 792,
+      "finalCount": 25,
+      "result": "won"
+    }
+  ],
+  "revive": {},
+  "save": {
+    "afterReload": {
+      "before": {
+        "coins": 2285,
+        "ul": 5,
+        "xp": 12272
+      },
+      "after": {
+        "coins": 2285,
+        "ul": 5,
+        "xp": 12272
+      },
+      "match": true
+    },
+    "midBattleQuit": {
+      "mid": {
+        "coins": 2285,
+        "ul": 5,
+        "state": "playing"
+      },
+      "post": {
+        "coins": 2285,
+        "ul": 5,
+        "state": "idle"
+      }
+    }
+  },
+  "perf": {
+    "fpsHome": 170.4,
+    "memHome": {
+      "heap": 18.8,
+      "limit": 4192
+    },
+    "fpsFinal": 170.6,
+    "memFinal": {
+      "heap": 41.4,
+      "limit": 4192
+    }
+  },
+  "errors": [
+    "L5未胜利: lost"
+  ],
+  "notes": [
+    "失败/复活: 未能自然触发失败(队伍存活)"
+  ],
+  "pageErrors": [
+    "[console] Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "[console] Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "[console] Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ]
+}

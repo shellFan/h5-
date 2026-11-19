@@ -39,12 +39,13 @@ module.exports.run = function(ctx) {
             assert(CONFIG.PACING.batchSizeBase >= 4, '批量≥4成堆涌现');
             
         });
-        test('MAX_ALIVE尸潮矩阵覆盖五关且非递减(V5.1.5: L1=70, L4/L5=260 Boss关)', () => {
+        test('MAX_ALIVE尸潮矩阵覆盖十关且非递减(V5.1.5: L1=70; V10 QA: 随V8扩关补齐L6-L10)', () => {
             assertEq(CONFIG.MAX_ALIVE[0], 70, 'L1=70');
             assertEq(CONFIG.MAX_ALIVE[4], 240, 'L5=240(Boss关竞速校准, ≤L4的260)');
-            assertEq(CONFIG.MAX_ALIVE.length, 5, '五关');
+            assertEq(CONFIG.MAX_ALIVE.length, LEVELS.length, '覆盖全部关卡(原5项靠钳制使L6-L10复用L5)');
             for (var i = 1; i < CONFIG.MAX_ALIVE.length; i++) {
-                if (i < CONFIG.MAX_ALIVE.length - 1) assert(CONFIG.MAX_ALIVE[i] >= CONFIG.MAX_ALIVE[i - 1], 'L' + (i + 1) + '上限非递减'); // L5=240 Boss关压力校准特例
+                if (i === 4) continue; // L4=260→L5=240 Boss关竞速校准特例(V5.1.5)
+                assert(CONFIG.MAX_ALIVE[i] >= CONFIG.MAX_ALIVE[i - 1], 'L' + (i + 1) + '上限非递减');
             }
         });
         test('怪群生成于军团前方(行进中迎面相遇)', () => {

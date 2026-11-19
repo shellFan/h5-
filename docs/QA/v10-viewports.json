@@ -1,0 +1,161 @@
+{
+  "viewports": {
+    "360x800": {
+      "vp": "360x800",
+      "errs": [],
+      "home": {
+        "overflowX": false,
+        "overflowY": false,
+        "sw": 360,
+        "iw": 360,
+        "sh": 800,
+        "ih": 800,
+        "btnCount": 28,
+        "tiny": [],
+        "titleVisible": true
+      },
+      "combat": {
+        "overflowX": false,
+        "hudVisible": true,
+        "hudInBounds": true,
+        "countText": "7",
+        "safeTop": 0
+      },
+      "trainPage": {
+        "open": "v60-train-page",
+        "inBounds": true
+      }
+    },
+    "375x812": {
+      "vp": "375x812",
+      "errs": [],
+      "home": {
+        "overflowX": false,
+        "overflowY": false,
+        "sw": 375,
+        "iw": 375,
+        "sh": 812,
+        "ih": 812,
+        "btnCount": 28,
+        "tiny": [],
+        "titleVisible": true
+      },
+      "combat": {
+        "overflowX": false,
+        "hudVisible": true,
+        "hudInBounds": true,
+        "countText": "7",
+        "safeTop": 0
+      },
+      "trainPage": {
+        "open": "v60-train-page",
+        "inBounds": true
+      }
+    },
+    "390x844": {
+      "vp": "390x844",
+      "errs": [],
+      "home": {
+        "overflowX": false,
+        "overflowY": false,
+        "sw": 390,
+        "iw": 390,
+        "sh": 844,
+        "ih": 844,
+        "btnCount": 28,
+        "tiny": [],
+        "titleVisible": true
+      },
+      "combat": {
+        "overflowX": false,
+        "hudVisible": true,
+        "hudInBounds": true,
+        "countText": "7",
+        "safeTop": 0
+      },
+      "trainPage": {
+        "open": "v60-train-page",
+        "inBounds": true
+      }
+    },
+    "414x896": {
+      "vp": "414x896",
+      "errs": [],
+      "home": {
+        "overflowX": false,
+        "overflowY": false,
+        "sw": 414,
+        "iw": 414,
+        "sh": 896,
+        "ih": 896,
+        "btnCount": 28,
+        "tiny": [],
+        "titleVisible": true
+      },
+      "combat": {
+        "overflowX": false,
+        "hudVisible": true,
+        "hudInBounds": true,
+        "countText": "7",
+        "safeTop": 0
+      },
+      "trainPage": {
+        "open": "v60-train-page",
+        "inBounds": true
+      }
+    },
+    "430x932": {
+      "vp": "430x932",
+      "errs": [],
+      "home": {
+        "overflowX": false,
+        "overflowY": false,
+        "sw": 430,
+        "iw": 430,
+        "sh": 932,
+        "ih": 932,
+        "btnCount": 28,
+        "tiny": [],
+        "titleVisible": true
+      },
+      "combat": {
+        "overflowX": false,
+        "hudVisible": true,
+        "hudInBounds": true,
+        "countText": "7",
+        "safeTop": 0
+      },
+      "trainPage": {
+        "open": "v60-train-page",
+        "inBounds": true
+      }
+    },
+    "1920x1080": {
+      "vp": "1920x1080",
+      "errs": [],
+      "home": {
+        "overflowX": false,
+        "overflowY": false,
+        "sw": 1920,
+        "iw": 1920,
+        "sh": 1080,
+        "ih": 1080,
+        "btnCount": 28,
+        "tiny": [],
+        "titleVisible": true
+      },
+      "combat": {
+        "overflowX": false,
+        "hudVisible": true,
+        "hudInBounds": true,
+        "countText": "7",
+        "safeTop": 0
+      },
+      "trainPage": {
+        "open": "v60-train-page",
+        "inBounds": true
+      }
+    }
+  },
+  "errors": []
+}

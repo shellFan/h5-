@@ -1,0 +1,90 @@
+{
+  "classes": {
+    "rifleman": {
+      "gate": {
+        "found": true,
+        "locked": false
+      },
+      "sel": {
+        "ok": true,
+        "classId": "rifleman"
+      },
+      "probe": {
+        "dealt": 1008,
+        "dmg": 2,
+        "rate": 2.2,
+        "dr": 0.006,
+        "cntEnd": 30,
+        "cntStart": 30,
+        "skillCast": false,
+        "pierce": 0
+      },
+      "persisted": "rifleman"
+    },
+    "gunner": {
+      "gate": {
+        "found": true,
+        "locked": true
+      },
+      "sel": {
+        "ok": true,
+        "classId": "gunner"
+      },
+      "probe": {
+        "dealt": 1170,
+        "dmg": 1.6,
+        "rate": 2.86,
+        "dr": 0.086,
+        "cntEnd": 30,
+        "cntStart": 30,
+        "skillCast": false,
+        "pierce": 0
+      },
+      "persisted": "gunner"
+    },
+    "marksman": {
+      "gate": {
+        "found": true,
+        "locked": true
+      },
+      "sel": {
+        "ok": true,
+        "classId": "marksman"
+      },
+      "probe": {
+        "dealt": 1276,
+        "dmg": 3,
+        "rate": 1.65,
+        "dr": 0.006,
+        "cntEnd": 30,
+        "cntStart": 30,
+        "skillCast": false,
+        "pierce": 0
+      },
+      "persisted": "marksman"
+    },
+    "medic": {
+      "gate": {
+        "found": true,
+        "locked": true
+      },
+      "sel": {
+        "ok": true,
+        "classId": "medic"
+      },
+      "probe": {
+        "dealt": 936,
+        "dmg": 1.7,
+        "rate": 2.2,
+        "dr": 0.106,
+        "cntEnd": 30,
+        "cntStart": 30,
+        "skillCast": false,
+        "pierce": 0
+      },
+      "persisted": "medic"
+    }
+  },
+  "errors": [],
+  "pageErrors": []
+}
