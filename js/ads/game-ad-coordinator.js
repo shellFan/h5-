@@ -109,7 +109,7 @@ class GameAdCoordinator {
  * 广告服务装配: 按平台选择实现
  *   抖音=真实SDK(需构建期注入广告位ID) / 微信=预留 / H5=仅开发测试环境装配Mock
  * V5.0 生产隔离: H5 生产部署没有真实广告SDK, 不得把"测试广告模拟器"当商业广告发放奖励 —
- *   仅 localhost/file/显式 ?adtest= 环境装配 WebMock; 其余H5环境广告如实降级不可用(按钮自动隐藏)。
+ *   仅 localhost/file 环境装配 WebMock(?adtest= 场景注入同样仅限本地, V10 QA 收紧); 其余H5环境广告如实降级不可用(按钮自动隐藏)。
  * 供 Platform.initialize() 后的引导脚本调用。
  */
 function isLocalDevHost() {
@@ -125,7 +125,7 @@ function setupAdService() {
         svc = new DouyinAdService(Platform.storage, Platform.lifecycle);
     } else if (Platform.id === 'wechat') {
         svc = new WechatAdService(Platform.storage, Platform.lifecycle);
-    } else if (isLocalDevHost() || (typeof window !== 'undefined' && window.__AD_TEST_SCENARIO)) {
+    } else if (isLocalDevHost()) { // V10 QA修复: ?adtest= 场景注入收紧到本地开发环境(原条件让线上用户可用URL参数激活自动完成测试广告)
         // H5 开发/测试环境: 明确标注的测试广告模拟器(支持 ?adtest= 场景注入)
         svc = new WebMockAdService(Platform.storage, Platform.lifecycle, {
             scenario: (typeof window !== 'undefined' && window.__AD_TEST_SCENARIO) || 'normal'

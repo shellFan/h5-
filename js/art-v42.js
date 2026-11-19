@@ -726,7 +726,7 @@
 
         var startPanel = document.querySelector('#start-screen .title-panel');
         if (startPanel && !document.getElementById('v42-brand')) {
-            var brand = makeElement('div', 'v42-brand', '膨胀小队 · V5.0 正式版');
+            var brand = makeElement('div', 'v42-brand', '膨胀小队 · V8.0.1 正式版'); // V10 QA: 版本标识与当前发布一致
             brand.id = 'v42-brand';
             startPanel.insertBefore(brand, startPanel.firstChild);
         }

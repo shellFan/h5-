@@ -72,12 +72,14 @@ var ChallengeDaily = {
         return d.daily;
     },
 
-    /** 战斗内进度上报 */
+    /** 战斗内进度上报(V10 QA: 仅在进度实际变化时落盘, 原实现每次调用无条件save) */
     report: function(profile, type, amount) {
         var daily = this.ensureDaily(profile);
         var g = this._gameRef;
+        var dirty = false;
         daily.tasks.forEach(function(t) {
             if (t.claimed) return;
+            var before = t.progress;
             if (t.type === 'kills' && type === 'kills') t.progress = Math.min(t.target, g ? (g.enemies ? g.enemies.killCount : t.progress) : t.progress + amount);
             else if (t.type === 'squad' && type === 'squad' && g) t.progress = Math.min(t.target, Math.max(t.progress, g.maxCount || 0));
             else if (t.type === 'gates' && type === 'gates' && g) t.progress = Math.min(t.target, g.gates.chosenRows.size);
@@ -85,8 +87,9 @@ var ChallengeDaily = {
             else if (t.type === 'boss' && type === 'boss' && g) t.progress = Math.min(t.target, g.enemies.bossKills || 0);
             else if (t.type === 'wins' && type === 'wins') t.progress = Math.min(t.target, t.progress + amount);
             else if (t.type === 'clear' && type === 'wins') t.progress = Math.min(t.target, t.progress + amount);
+            if (t.progress !== before) dirty = true;
         });
-        profile.save();
+        if (dirty) profile.save();
     },
 
     /** 领取奖励(幂等) */

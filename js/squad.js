@@ -32,9 +32,16 @@ class Squad {
         this._tilt = 0;
     }
 
+    /** V10 QA: 小队人数上限 = 基础上限 + 科技"军团上限"加成(原科技 army_limit 定义后从未生效) */
+    _maxLimit() {
+        var g = this._gameRef;
+        var bonus = (g && g._techStats && g._techStats.limitBonus) || 0;
+        return CONFIG.SQUAD_MAX_COUNT + bonus;
+    }
+
     /** 设置小队人数(自动处理增减与弹出动画) */
     setCount(n) {
-        n = clamp(Math.floor(n), 0, CONFIG.SQUAD_MAX_COUNT);
+        n = clamp(Math.floor(n), 0, this._maxLimit());
         const old = this.count;
         this.count = n;
 
@@ -230,10 +237,10 @@ class Squad {
             if (isBuff || isRisk) {
                 var texts = {
                     damage:  ['输出+1', '#FFE66D'],
-                    damage2: ['输出×2', '#FFE66D'],
+                    damage2: ['输出+2', '#FFE66D'],
                     firerate:['射速+20%', '#66D68F'],
                     pierce:  ['穿透+1', '#75DFFF'],
-                    crit:    ['暴击+10%', '#FFC247'],
+                    crit:    ['暴击+5%', '#FFC247'],
                     freeze:  ['冰冻弹', '#9AD8FF'],
                     vamp:    ['吸血', '#66D68F'],
                     risk:    ['输出+2', '#FF5B58']
@@ -281,19 +288,23 @@ class Squad {
         if (this._evRateMulT > 0) { this._evRateMulT -= dt; if (this._evRateMulT <= 0) this._evRateMul = 0; }
         if (this._evCritT > 0) { this._evCritT -= dt; if (this._evCritT <= 0) this._evCritBonus = 0; }
         if (this._evPierceT > 0) { this._evPierceT -= dt; if (this._evPierceT <= 0) this._evPierce = 0; }
-        // VNext: 职业被动(战地回复) + 职业技能自动循环
+        // VNext: 职业被动(战地回复) + V10 QA: 科技"战地医疗"回血接线 + 职业技能自动循环
         var cls = this._gameRef && this._gameRef._classStats;
-        if (cls && this.count > 0) {
-            if (cls.regenN > 0) {
-                this._regenT = (this._regenT === undefined ? cls.regenInterval : this._regenT) - dt;
-                if (this._regenT <= 0) {
-                    this._regenT = cls.regenInterval;
-                    if (this.count < CONFIG.SQUAD_MAX_COUNT) {
-                        this.setCount(Math.min(CONFIG.SQUAD_MAX_COUNT, this.count + cls.regenN));
-                        if (this._gameRef.effects) this._gameRef.effects.floatText(this.x, 1.8, this.z, '+' + cls.regenN + ' 医疗', '#39D98A', false);
-                    }
+        var techRegen = (this._gameRef && this._gameRef._techStats && this._gameRef._techStats.regen) || 0;
+        var regenN = ((cls && cls.regenN) || 0) + techRegen;
+        if (regenN > 0 && this.count > 0) {
+            var regenIv = (cls && cls.regenN) ? cls.regenInterval : 10; // 科技战地医疗: 每10秒
+            this._regenT = (this._regenT === undefined ? regenIv : this._regenT) - dt;
+            if (this._regenT <= 0) {
+                this._regenT = regenIv;
+                var cap = this._maxLimit();
+                if (this.count < cap) {
+                    this.setCount(Math.min(cap, this.count + regenN));
+                    if (this._gameRef.effects) this._gameRef.effects.floatText(this.x, 1.8, this.z, '+' + regenN + ' 医疗', '#39D98A', false);
                 }
             }
+        }
+        if (cls && this.count > 0) {
             this._classSkillT = (this._classSkillT === undefined ? cls.skill.firstCd : this._classSkillT) - dt;
             if (this._classSkillT <= 0) {
                 this._classSkillT = cls.skill.cd;

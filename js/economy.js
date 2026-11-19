@@ -90,6 +90,9 @@ class GameProfile {
             daily: d.daily || null,
             soldier: d.soldier || null,
             equipment: d.equipment || {},
+            // V10 QA修复: pendingSupply(免费补给待领标记, 原刷新后广告奖励蒸发) / bossSeen(Boss图鉴遭遇标记)
+            pendingSupply: d.pendingSupply || null,
+            bossSeen: d.bossSeen || {},
             // VNext: 职业/装备背包/排行榜战绩
             classId: d.classId || 'rifleman',
             bag: d.bag || [],
@@ -151,11 +154,15 @@ class GameProfile {
  * @returns {levelReward, killReward, doubled, total} — total 为本局实际入账金币
  */
 function settleRunEconomy(profile, level, levelIndex, kills, won, useDoubleAd) {
+    // V10 QA: 科技后勤线接线(原 log_coin/log_supply 科技购买后无任何效果)
+    var tech = (typeof TechTree !== 'undefined' && profile) ? TechTree.combatStats(profile) : null;
+    var coinMul = tech ? tech.coinMul : 1;
+    var coinPerKill = tech ? tech.coinPerKill : 0;
     var reward = level.rewardCoins || 60;
     var levelReward = 0;
     if (won) {
         // 胜利奖励每关一次(幂等键), 后勤加成只作用于首次发放
-        var gain = Math.round(reward * (1 + 0.10 * (profile.data.upgrades.logistics || 0)));
+        var gain = Math.round(reward * (1 + 0.10 * (profile.data.upgrades.logistics || 0)) * coinMul);
         if (profile.claimReward('win:L' + levelIndex, 0)) {
             levelReward = gain; // 先记账, 金币在下方统一入账
         }
@@ -163,7 +170,7 @@ function settleRunEconomy(profile, level, levelIndex, kills, won, useDoubleAd) {
     var cap = won
         ? Math.round(reward * ECONOMY_RULES.KILL_COIN_WIN_CAP_RATIO)
         : ECONOMY_RULES.KILL_COIN_LOSE_CAP;
-    var killReward = Math.min(cap, Math.floor(kills * ECONOMY_RULES.KILL_COIN_RATE));
+    var killReward = Math.min(cap, Math.floor(kills * (ECONOMY_RULES.KILL_COIN_RATE + coinPerKill)));
     // V6.0: 磁力吸附技能 — 击杀币加成(settleRunEconomy 外部注入 squad._skillMagnet)
     if (typeof arguments !== 'undefined' && arguments[6]) killReward = Math.min(cap * 2, Math.floor(killReward * (1 + 0.5 * arguments[6])));
     var base = levelReward + killReward;

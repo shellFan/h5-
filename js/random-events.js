@@ -2,6 +2,16 @@
 // 战斗中每 18~32 秒掷一次事件(65%良性/35%恶性), 全部效果真实生效。
 // 应用入口: RandomEvents.update(dt, game);  reset 在每局 start() 时调用。
 
+// V10 QA: 事件怪HP = 基础×关卡乘数×0.5(事件为瞬时批量增援, 低于常规波次单位压力)
+function evHp(game, type) {
+    var li = game.levelIndex || 0;
+    // V10 QA: L1-L5保持历史基线HP(事件为瞬时批量压力, 全部历史平衡/测试以此校准);
+    // L6+采用与常规波次相同的关卡HP乘数(修复事件怪基础HP在后期一枪秒的问题)
+    if (li < 5) return (CONFIG.ZOMBIE[type] || CONFIG.ZOMBIE.normal).hp;
+    var mul = CONFIG.ENEMY_HP_MULTIPLIER[Math.min(li, CONFIG.ENEMY_HP_MULTIPLIER.length - 1)] || 1.7;
+    return Math.max(1, Math.round((CONFIG.ZOMBIE[type] || CONFIG.ZOMBIE.normal).hp * mul));
+}
+
 var RANDOM_EVENT_DEFS = [
     // —— 良性 (weight 65) ——
     { id: 'airdrop',   name: '空投补给',   icon: '📦', weight: 12, type: 'good',
@@ -43,7 +53,7 @@ var RANDOM_EVENT_DEFS = [
           var laneCount = 8 + Math.floor(game.elapsedTime / 60) * 3;
           for (var i = 0; i < laneCount; i++) {
               var x = CONFIG.LANE_X[i % 3] + (Math.random() - 0.5) * 1.6;
-              game.enemies.spawnEnemy('normal', x, game.squad.z - CONFIG.BULLET_RANGE * 0.9, 0);
+              game.pacing.spawnFn('normal', x, game.squad.z - CONFIG.BULLET_RANGE * 0.9, null); // V10 QA修复: 走spawnFn吃关卡HP乘数(原直调基础HP, L6+一枪秒)
           }
           return true;
       } },
@@ -52,7 +62,7 @@ var RANDOM_EVENT_DEFS = [
       apply: function(game) {
           for (var i = 0; i < 2; i++) {
               var x = CONFIG.LANE_X[i] + (Math.random() - 0.5) * 1.2;
-              game.enemies.spawnEnemy('elite', x, game.squad.z - CONFIG.BULLET_RANGE * 0.9, 0);
+              game.pacing.spawnFn('elite', x, game.squad.z - CONFIG.BULLET_RANGE * 0.9, null); // V10 QA修复: 同上
           }
           return true;
       } },
@@ -69,7 +79,7 @@ var RANDOM_EVENT_DEFS = [
       apply: function(game) {
           for (var i = 0; i < 7; i++) {
               var x = CONFIG.LANE_X[i % 3] + (Math.random() - 0.5) * 1.6;
-              game.enemies.spawnEnemy(i % 3 === 2 ? 'fast' : 'normal', x, game.squad.z + 3 + Math.random() * 2, 0);
+              game.pacing.spawnFn(i % 3 === 2 ? 'fast' : 'normal', x, game.squad.z + 3 + Math.random() * 2, null); // V10 QA修复: 同上
           }
           return true;
       } }

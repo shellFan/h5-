@@ -579,6 +579,10 @@ class World {
 
     /** V4.0: 触发屏幕震动(amp≈世界单位幅度) */
     shake(amp, duration) {
+        if (this._shakeDisabled === undefined) {
+            try { this._shakeDisabled = localStorage.getItem('pz_shake_off') === '1'; } catch (e) { this._shakeDisabled = false; } // V10 QA: 启动时恢复震动偏好(原仅设置页渲染时恢复)
+        }
+        if (this._shakeDisabled) return; // V10 QA修复: 设置页屏幕震动开关此前只写不读
         var strength = amp || 0.3;
         if ((this._shakeAmp || 0) * (this._shakeT || 0) > strength) return;
         this._shakeT = 1;

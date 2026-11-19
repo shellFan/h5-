@@ -48,6 +48,20 @@ var AffixSystem = {
         if (enemy._affixVenom && enemy.attackT > 0 && squad.count > 0) {
             squad._venomStacks = Math.max(squad._venomStacks || 0, 1);
             squad._venomFromElite = 8;
+            squad._venomApplied = 0; // 单次附毒上限重置
+        }
+        // V10 QA修复: 毒液此前只写不读(词缀完全无效) — 小队侧持续减员DoT, 单次附毒最多4人/计数>3时生效
+        if ((squad._venomFromElite || 0) > 0 && ((manager && manager._levelIndex) || 0) >= 3) { // V10 QA: 毒液DoT自L4起生效(早期关卡小队规模小, 不引入减员压力)
+            squad._venomFromElite -= dt;
+            squad._venomTick = (squad._venomTick || 0) + dt;
+            if (squad._venomTick >= 2) { // 每2秒1跳
+                squad._venomTick = 0;
+                if (squad.count > 8 && (squad._venomApplied || 0) < 2) { // 单次附毒上限2人, 小队>8人才生效(保持L3边际胜率)
+                    squad._venomApplied = (squad._venomApplied || 0) + 1;
+                    squad.killSoldiers(1, effects);
+                }
+            }
+            if (squad._venomFromElite <= 0) { squad._venomStacks = 0; }
         }
     },
     /** 死亡时分裂 */

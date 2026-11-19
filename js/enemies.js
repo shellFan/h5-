@@ -273,6 +273,7 @@ class EnemyManager {
         this.spits = [];
         this.pendingSpawns = [];
         this.boss = null;
+        this.bossKills = 0; // V10 QA修复: 原漏复位导致Boss击杀数跨关卡累计重复入账
         this.splitQueue = [];
         this.killCount = 0;
         this.renderer.clear();this._spitInstances.count=0;
@@ -330,7 +331,8 @@ class EnemyManager {
                 }
                 // V6.0: 分裂词缀
                 if (e.affixes && typeof AffixSystem !== 'undefined') AffixSystem.onDeath(e, this);
-                if (e === this.boss) {
+                // V10 QA修复: 按 isBoss 标记计数(原判定 e===this.boss 在多Boss并存时, 先生成新Boss后旧Boss被击杀会漏记)
+                if (e.isBoss) {
                     this.bossKills = (this.bossKills || 0) + 1;
                     this.boss = this.enemies.find(other=>other!==e && other.isBoss && other.alive) || null;
                     // Boss死亡大爆炸 + 金色粒子

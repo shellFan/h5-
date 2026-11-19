@@ -8,7 +8,12 @@ var STAR_RULES = {
     L3: { star2Count: 45, star3Kills: 200 },
     L4: { star2Count: 60, star3Kills: 260 },
     L5: { star2Count: 90, star3Kills: 350 },
-    L6: { star2Count: 110, star3Kills: 500 }
+    L6: { star2Count: 110, star3Kills: 500 },
+    // V10 QA修复: 补齐 L7-L10(原回退 L1 阈值25/80 → 后期关卡星级全面通胀)
+    L7: { star2Count: 130, star3Kills: 650 },
+    L8: { star2Count: 150, star3Kills: 800 },
+    L9: { star2Count: 170, star3Kills: 950 },
+    L10: { star2Count: 200, star3Kills: 1200 }
 };
 
 var XP_RULES = {

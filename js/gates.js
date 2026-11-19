@@ -229,6 +229,19 @@ class GateSystem {
                 members[m].triggered = false;
                 members[m].passed = false;
             }
+            // V10 QA修复: 技能池剩余不足3个时, 未重写的门仍保留 value:'roll' → 穿过时 Skills.apply('roll') 静默无效
+            // (玩家白选一扇门) — 与上方空池分支同策略, 转为人数门
+            for (var r = ids.length; r < members.length; r++) {
+                members[r].data.op = 'addpct';
+                members[r].data.value = 30;
+                members[r].data.label = '+30%';
+                members[r].data.style = 'epic';
+                this.scene.remove(members[r].model);
+                members[r].model = V42Art.createGateModel(members[r].data, CONFIG.LANE_WIDTH * 0.9);
+                this.scene.add(members[r].model);
+                members[r].triggered = false;
+                members[r].passed = false;
+            }
         }
     }
 

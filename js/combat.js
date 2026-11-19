@@ -139,7 +139,7 @@ class CombatSystem {
                         dmgFinal = Math.round(dmgFinal * (1 + 0.5 * squad._skillBerserk));
                     }
                     var isCrit = Math.random() < Math.min(0.8, squad.critChance + (squad._evCritBonus || 0)); // V8.0: 事件暴击buff
-                    if (isCrit) dmgFinal = dmg * 2;
+                    if (isCrit) dmgFinal = Math.round(dmgFinal * 2); // V10 QA修复: 原为 dmg*2 直接覆盖, 暴击瞬间丢失狂暴/守护之怒/事件/背水全部乘区
                     this._fire(positions[k], dmgFinal, target, isCrit);
                 }
             }

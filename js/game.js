@@ -118,6 +118,7 @@ class Game {
         this._setupUI();
         this._setupDebugPanel(); // V3.7: ?debug=1 显示运行时美术/性能面板
         V42Art.installUI(this);
+        this._bindHomeButtons(); // V10 QA: 动态首页按钮绑定(依赖 installUI 创建的 DOM)
         if (typeof V60UI !== 'undefined') V60UI.install(this);
 
         this._loop = this._loop.bind(this);
@@ -258,24 +259,14 @@ class Game {
         if (this.ui.btnDouble) this.ui.btnDouble.addEventListener('click', function() { self._doubleRewardViaAd(); });
         if (this.ui.btnRefreshGates) this.ui.btnRefreshGates.addEventListener('click', function() { self._refreshGatesViaAd(); });
         if (this.ui.btnSound) this.ui.btnSound.addEventListener('click', function() { self._toggleSound(); });
-        // V5.0: 首页音效开关(与暂停菜单开关同一逻辑)
-        if (this.ui.homeSound) this.ui.homeSound.addEventListener('click', function() { self._toggleSound(); });
-        // V5.1.4: 胜利页商店入口(关卡之间购升级, 用户反馈)
+        // V5.0: 首页音效开关/免费补给/升级商店按钮由 V42Art.installUI 动态创建,
+        // 必须在 installUI 之后绑定(此前在此处绑定时元素尚不存在, 监听从未挂上 → 死按钮)
+        // V5.1.4: 胜利页商店入口(静态元素, 此处可绑)
         var btnShopWin = document.getElementById('btn-open-shop-win');
         if (btnShopWin) btnShopWin.addEventListener('click', function() { self._sfx('click'); self._openShop(); });
-        // V5.1: 首页每日免费补给(广告)
-        var btnSupply = document.getElementById('btn-free-supply');
-        if (btnSupply) btnSupply.addEventListener('click', function() { self._freeSupplyViaAd(); });
         // V5.1: 商店UI装配
         this._setupShopUI();
         this._refreshCoinDisplays();
-        // V5.1: 免费补给今日状态标签
-        if (this.profile) {
-            var d = new Date();
-            var key = 'supply:' + d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
-            var btnSupplyEl = document.getElementById('btn-free-supply');
-            if (btnSupplyEl && this.profile.hasClaimed(key)) btnSupplyEl.classList.add('claimed');
-        }
         // V3.3: 下一关按钮
         if (this.ui.btnNextLevel) {
             this.ui.btnNextLevel.addEventListener('click', function() {
@@ -416,6 +407,8 @@ class Game {
         if (this.ui.startScreen) this.ui.startScreen.classList.remove('hidden');
         // V5.0: 恢复首页待机军团展示
         this._setupIdleShowcase();
+        // V10 QA修复: 返回主页时销毁能源核心(原滞留场景)
+        if (this.energyCore) { this.energyCore.destroy(this.world.scene); this.energyCore = null; }
         this.gates.clear();
         this.enemies.clear();
         this.pacing.clear();
@@ -510,7 +503,7 @@ class Game {
         if (loseBox && st && this.state === 'lost') {
             document.getElementById('lc-kills-coin').textContent = '+' + st.killReward;
             var xpEl = document.getElementById('lc-xp');
-            if (xpEl) xpEl.textContent = '+' + this.enemies.killCount;
+            if (xpEl) xpEl.textContent = '+' + (this.enemies.killCount * ((typeof XP_RULES !== 'undefined' && XP_RULES.perKill) || 1)); // V10 QA修复: 与实际入账公式一致
             loseBox.classList.remove('hidden');
         }
         // VNext: 装备掉落展示(胜利/失败面板共用逻辑)
@@ -565,14 +558,32 @@ class Game {
         this._supplyTipT = setTimeout(function() { tip.classList.add('hidden'); }, 2600);
     }
 
+    /** V10 QA: 首页动态按钮绑定(V42Art.installUI 创建的元素, 原绑定时机过早成死按钮) */
+    _bindHomeButtons() {
+        var self = this;
+        var btnOpen = document.getElementById('btn-open-shop');
+        if (btnOpen) btnOpen.addEventListener('click', function() { self._sfx('click'); self._openShop(); });
+        var btnSupply = document.getElementById('btn-free-supply');
+        if (btnSupply) btnSupply.addEventListener('click', function() { self._sfx('click'); self._freeSupplyViaAd(); });
+        var homeSound = document.getElementById('btn-home-sound');
+        if (homeSound) {
+            this.ui.homeSound = homeSound;
+            homeSound.addEventListener('click', function() { self._toggleSound(); });
+        }
+        // 免费补给今日已领标签(原在 _setupUI 中查询时元素尚不存在)
+        if (this.profile) {
+            var d = new Date();
+            var key = 'supply:' + d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+            if (btnSupply && this.profile.hasClaimed(key)) btnSupply.classList.add('claimed');
+        }
+    }
+
     /** V5.1: 升级商店UI(渲染/购买/刷新) */
     _setupShopUI() {
         var self = this;
         this.ui.shopCoins = document.getElementById('shop-coins-num');
         var listEl = document.getElementById('shop-list');
-        var btnOpen = document.getElementById('btn-open-shop');
         var btnClose = document.getElementById('btn-close-shop');
-        if (btnOpen) btnOpen.addEventListener('click', function() { self._sfx('click'); self._openShop(); });
         if (btnClose) btnClose.addEventListener('click', function() { self._sfx('click'); self._closeShop(); });
         this._shopRows = {};
         if (listEl) {
@@ -858,8 +869,8 @@ class Game {
         div.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:99998;background:rgba(10,20,40,0.82);color:#7FE0FF;font:11px/1.5 monospace;padding:8px 10px;border-radius:8px;pointer-events:none;white-space:pre;max-width:46vw;';
         document.body.appendChild(div);
         this._debugPanel = div;
-        setInterval(function() {
-            if (!self._debugPanel) return;
+        this._debugPanelIv = setInterval(function() {
+            if (!self._debugPanel) { clearInterval(self._debugPanelIv); return; } // V10 QA: 面板移除后停止轮询
             var p = self.getPerf();
             var src = [
                 '士兵: GLB / PBR / 分部件实例化 / ' + (self.squad.count > 100 ? 'LOD' : '完整模型'),
@@ -885,6 +896,10 @@ class Game {
             this._weaponStats = (typeof WeaponSystem !== 'undefined' && this.profile) ? WeaponSystem.stats(this.profile) : {};
             this._techStats = (typeof TechTree !== 'undefined' && this.profile) ? TechTree.combatStats(this.profile) : {};
             if (this._techStats.startBonus) this.squad.setCount(this.squad.count + this._techStats.startBonus);
+            // V10 QA: 科技"战术储备"开局金币接线(每关一次幂等发放, 防重开刷币)
+            if (this._techStats.startCoins && this.profile) {
+                this.profile.claimReward('startcoins:L' + this.levelIndex, this._techStats.startCoins);
+            }
             if (this._techStats.pierceBonus) this.squad.pierce = Math.min(3, this.squad.pierce + this._techStats.pierceBonus);
             if (this._techStats.critBonus) this.squad.critChance = Math.min(0.5, this.squad.critChance + this._techStats.critBonus);
             if (this._techStats.explosive) this.squad.explosive = Math.max(this.squad.explosive, 1); // 爆炸弹头科技
@@ -1145,12 +1160,17 @@ class Game {
         this.combat._syncInstances();
         this.effects.update(dt);
 
+        // V10 QA: 每日任务进度轮询从每帧5次降为每0.5秒1次(原实现每帧5次全量profile.save ≈300次/s的localStorage写入)
         if (typeof ChallengeDaily !== 'undefined' && this.profile) {
-            ChallengeDaily.report(this.profile, 'kills', 0);
-            ChallengeDaily.report(this.profile, 'squad', 0);
-            ChallengeDaily.report(this.profile, 'gates', 0);
-            ChallengeDaily.report(this.profile, 'skills', 0);
-            ChallengeDaily.report(this.profile, 'boss', 0);
+            this._dailyPollT = (this._dailyPollT || 0) + dt;
+            if (this._dailyPollT >= 0.5) {
+                this._dailyPollT = 0;
+                ChallengeDaily.report(this.profile, 'kills', 0);
+                ChallengeDaily.report(this.profile, 'squad', 0);
+                ChallengeDaily.report(this.profile, 'gates', 0);
+                ChallengeDaily.report(this.profile, 'skills', 0);
+                ChallengeDaily.report(this.profile, 'boss', 0);
+            }
         }
         // V8.0: 随机事件 + 挑战模式波次驱动
         if (typeof RandomEvents !== 'undefined') RandomEvents.update(dt, this);
@@ -1199,12 +1219,22 @@ class Game {
             this.bossSpawned = true;
             if (this.ui.bossBar) this.ui.bossBar.classList.remove('hidden');
             var bosses=this.enemies.enemies.filter(e=>e.isBoss&&e.alive);
-            var ratio = Math.max(0,bosses.reduce((n,e)=>n+e.hp,0)/bosses.reduce((n,e)=>n+e.maxHp,0));
+            // V10 QA修复: Boss死亡瞬间 bosses 可为空数组 → 0/0=NaN 血条, 加空值守卫
+            var hpSum=bosses.reduce((n,e)=>n+e.hp,0), maxSum=bosses.reduce((n,e)=>n+(e.maxHp||0),0);
+            var ratio = maxSum>0 ? Math.max(0,hpSum/maxSum) : 0;
             var bossNameNode=document.getElementById('boss-name');
-            if(bossNameNode && bossNameNode.firstChild && bossNameNode.firstChild.nodeType===3)bossNameNode.firstChild.nodeValue=CONFIG.BOSS_NAMES[this.levelIndex];
+            // V10 QA修复: L9双Boss各自显示自己的title(按 artStyle 匹配段配置, 原固定读 BOSS_NAMES[levelIndex])
+            var segBoss=(LEVELS[this.levelIndex].segments||[]).find(s=>s.type==='boss'&&s.boss&&s.boss.style===(this.enemies.boss&&this.enemies.boss.artStyle));
+            var bossTitle=(segBoss&&segBoss.boss&&segBoss.boss.title)||CONFIG.BOSS_NAMES[this.levelIndex];
+            if(bossNameNode && bossNameNode.firstChild && bossNameNode.firstChild.nodeType===3)bossNameNode.firstChild.nodeValue=bossTitle;
             var phaseLabel=document.getElementById('boss-phase');
             if(phaseLabel)phaseLabel.textContent='阶段 '+(this.enemies.boss.phaseIndex||1)+(this.enemies.boss.shieldT>0?' · 护盾':'');
             if (this.ui.bossFill) this.ui.bossFill.style.width = (ratio * 100) + '%';
+            // V10 QA修复: Boss图鉴"遭遇过"标记(原 d.bossSeen 从未写入, 只靠fallback)
+            if (this.profile && typeof this.profile.data.bossSeen === 'object') {
+                var bk=(this.enemies.boss && this.enemies.boss.artStyle)||CONFIG.BOSS_NAMES[this.levelIndex];
+                if (!this.profile.data.bossSeen[bk]) { this.profile.data.bossSeen[bk] = true; this.profile.save(); }
+            }
         }
 
         // V5.1 胜利判定(阵地防守): 全部波次排空 + 场上无敌(含Boss已亡+召唤清完) → 通关
@@ -1341,8 +1371,14 @@ class Game {
             this._newStars = Math.max(0, this._stars - prevStars);
             if (this._stars > prevStars) this.profile.data.stars[starKey] = this._stars;
             if (this.enemies.bossKills) this.profile.data.stats.bossKills = (this.profile.data.stats.bossKills || 0) + this.enemies.bossKills;
-            this.profile.data.xp = (this.profile.data.xp || 0) + (typeof Progression !== 'undefined' ? Progression.computeXp(this.enemies.killCount, true, this.levelIndex, this._newStars) : 0);
+            // V10 QA: 科技"训练手册"经验加成接线(原 log_xp 购买后无效果)
+            var xpMul = (this._techStats && this._techStats.xpMul) ? this._techStats.xpMul : 1;
+            this.profile.data.xp = (this.profile.data.xp || 0) + (typeof Progression !== 'undefined' ? Math.round(Progression.computeXp(this.enemies.killCount, true, this.levelIndex, this._newStars) * xpMul) : 0);
             this.profile.data.playerLevel = Progression ? Progression.levelFromXp(this.profile.data.xp).level : this.profile.data.playerLevel;
+            // V10 QA修复: 胜利上报每日任务(wins类型此前无任何调用方, 通关N关任务永远0进度)
+            if (typeof ChallengeDaily !== 'undefined') ChallengeDaily.report(this.profile, 'wins', 1);
+            // V10 QA修复: 科技点发放(原 grantTech 全库零调用 → 科研站永远0点, 科技树不可用)
+            if (typeof TechTree !== 'undefined') TechTree.grantTech(this.profile, 1 + (this.enemies.bossKills || 0));
             this.profile.save();
             this._newAchievements = typeof Progression !== 'undefined' ? Progression.checkAchievements(this.profile) : [];
         }
@@ -1357,7 +1393,6 @@ class Game {
                 classId: this.profile.data.classId
             });
         }
-        if (this.ui && this.ui.winStars !== undefined) {}
         var starsEl = document.getElementById('win-stars');
         if (starsEl && this._stars !== undefined) {
             starsEl.innerHTML = '★'.repeat(this._stars) + '☆'.repeat(3 - this._stars);
