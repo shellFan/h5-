@@ -14,7 +14,7 @@ const COPY_LIST = [
     'style.css',
     'style-v42.css',
     'style-v51.css',
-    'libs/three.min.js',
+    'style-v60.css', // V10 QA修复: V6.0 UI样式此前未入包, 生产构建中九页界面全部无样式
     'js/vendor/three.min.js',
     'js/vendor/GLTFLoader.js',
     'js/vendor/THREE-LICENSE.txt',
@@ -99,7 +99,7 @@ function main() {
     fs.writeFileSync(path.join(OUT, 'BUILD_INFO.txt'),
         '膨胀小队 H5 构建\n' +
         '构建时间: ' + new Date().toISOString() + '\n' +
-        '说明: 纯静态部署, Three.js已本地化(libs/), 无CDN依赖\n' +
+        '说明: 纯静态部署, Three.js已本地化(js/vendor/), 无CDN依赖\n' +
         '部署: 任意静态服务器指向本目录, 入口 index.html\n');
 
     // 校验: index.html 不应再引用外部CDN
@@ -108,6 +108,15 @@ function main() {
         const script = match[1].split('?')[0];
         if (/^https?:/.test(script) || !fs.existsSync(path.join(OUT, script))) {
             throw new Error('[build:h5] 入口脚本未打包: ' + script);
+        }
+    }
+    // V10 QA修复: 同步校验 <link rel="stylesheet"> (style-v60.css 漏打包正是从这条缝隙漏掉的)
+    for (const match of html.matchAll(/<link[^>]*\bhref=["']([^"']+)["'][^>]*>/g)) {
+        const tag = match[0];
+        if (!/rel=["']stylesheet["']/i.test(tag)) continue;
+        const href = match[1].split('?')[0];
+        if (/^https?:/.test(href) || !fs.existsSync(path.join(OUT, href))) {
+            throw new Error('[build:h5] 样式表未打包: ' + href);
         }
     }
     const cdnRefs = html.match(/https?:\/\/[^"']+\.js/g) || [];

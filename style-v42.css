@@ -473,8 +473,8 @@
 }
 
 #game-container.v42-ui #level-select .lv-btn {
-    width: 29px;
-    height: 29px;
+    width: 36px; /* V10 QA: 29px低于移动端触控最小目标(32px), 提升至36px */
+    height: 36px;
     border-width: 1px;
     border-radius: 9px;
     font-size: 11px;
