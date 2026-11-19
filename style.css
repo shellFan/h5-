@@ -20,10 +20,16 @@ html, body {
     position: relative;
     width: 100%;
     height: 100%;
-    max-width: calc(100vh * 9 / 16);
     margin: 0 auto;
     overflow: hidden;
     background: #87CEEB;
+}
+
+/* V10.1: 竖屏设备(含平板)铺满全宽 — 9:16信箱化只用于横屏, 修复平板Canvas只铺576px */
+@media (orientation: landscape) {
+    #game-container {
+        max-width: calc(100vh * 9 / 16);
+    }
 }
 
 #game-canvas {
@@ -963,3 +969,20 @@ html, body {
 #boot-loading .boot-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4DA8FF, #75DFFF); border-radius: 999px; transition: width .18s ease-out; }
 #boot-loading .boot-meta { display: flex; justify-content: space-between; width: min(72vw, 340px); font-size: 12px; color: #9DB8CF; font-weight: 700; }
 #boot-loading #btn-retry-model { margin-top: 10px; border: none; border-radius: 12px; background: #1A6FD4; color: #fff; font-size: 14px; font-weight: 900; padding: 10px 26px; cursor: pointer; }
+
+/* ===== V10.1: 移动端触摸卫生(全局) ===== */
+/* 防双击缩放/长按选中/点击高亮; canvas已有touch-action:none */
+html, body {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    overscroll-behavior: none;
+}
+button { touch-action: manipulation; -webkit-tap-highlight-color: rgba(0,0,0,0); }
+/* 弹窗/面板内部允许内容滚动, 但不影响页面本身 */
+.title-panel, .v60-panel, .v60-ach-list, .v60-armory-list, .v60-tech-list,
+.v60-codex-list, .v60-rank-list, .v60-bag-list, #shop-panel, #tech-tree-panel {
+    touch-action: pan-y;
+    overscroll-behavior: contain;
+}

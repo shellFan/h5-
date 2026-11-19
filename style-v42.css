@@ -473,11 +473,11 @@
 }
 
 #game-container.v42-ui #level-select .lv-btn {
-    width: 36px; /* V10 QA: 29px低于移动端触控最小目标(32px), 提升至36px */
-    height: 36px;
+    width: 42px; /* V10.1: 36px低于44px触控最小目标, 提升至42(+1px边框=44) */
+    height: 42px;
     border-width: 1px;
-    border-radius: 9px;
-    font-size: 11px;
+    border-radius: 10px;
+    font-size: 13px;
 }
 
 #game-container.v42-ui #pause-screen,
