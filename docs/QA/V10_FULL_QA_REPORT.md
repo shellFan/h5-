@@ -166,9 +166,9 @@
 | 提交组织 | 3个模块化提交(游戏逻辑修复 / 打包与UI / 测试与报告) |
 | Commit 1 | `3d4b985` fix: repair combat, boss, progression, economy and UI wiring bugs (15 files, +161/-57) |
 | Commit 2 | `ad8be86` fix: packaging and UI polish (3 files, +17/-4) |
-| Commit 3 | 本提交(test + report) — `git log -3 --oneline` 查看最终 HEAD |
-| 最终 HEAD | 推送后以 `git rev-parse HEAD` 为准 |
-| Push 状态 | 推送至 origin/master (非强制, 见下文推送记录) |
+| Commit 3 | `8e9996b` test: add V10 full QA coverage (tests + 6 QA工具 + 报告 + 60截图) |
+| 最终 HEAD | **`8e9996bbc60428f016db68d2240a96dceccc507b`** |
+| Push 状态 | **成功** — `5914edb..8e9996b master -> master`(非强制; 首推因网络 SSL_read reset/timeout 失败3次, 等待后重试成功, 全程未使用 force) |
 | 远程分支 | origin/master (基线 5914edb 之上快进) |
 
 ## H. 遗留问题
