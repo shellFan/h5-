@@ -662,7 +662,19 @@ class Game {
     _refreshCoinDisplays() {
         var coins = this.profile ? this.profile.coins : 0;
         var els = document.querySelectorAll('[data-coin-display]');
-        for (var i = 0; i < els.length; i++) els[i].textContent = coins;
+        for (var i = 0; i < els.length; i++) {
+            // V10.1: 数值变化时触发脉冲动画(视觉反馈)
+            var el = els[i];
+            if (el.textContent !== String(coins)) {
+                el.textContent = coins;
+                var pill = el.closest('.v51-coin-pill, .shop-coins, .v42-best-record');
+                if (pill) {
+                    pill.classList.remove('coin-pulse');
+                    void pill.offsetWidth;
+                    pill.classList.add('coin-pulse');
+                }
+            }
+        }
         if (this.ui && this.ui.shopCoins) this.ui.shopCoins.textContent = coins;
     }
 
@@ -974,6 +986,13 @@ class Game {
             if (this.ui.comboBox) this.ui.comboBox.classList.add('hidden');
             this._prevDamage = this.squad.getDamage();
             this._prevFireRate = this.squad.getFireRate();
+            // V10.1: HUD脏检查缓存复位(新一局强制全量刷新)
+            this._cachedBossActive = undefined; this._cachedProgress = undefined;
+            this._cachedBadgeX = undefined; this._cachedBadgeY = undefined; this._cachedBadgeShown = undefined;
+            this._cachedComboShown = undefined; this._cachedCombo = undefined; this._cachedComboHot = undefined;
+            this._cachedStatCount = undefined; this._cachedStatDamage = undefined; this._cachedStatFr = undefined;
+            for (var pn = 0; pn < this.progressNodes.length; pn++) this.progressNodes[pn]._lastCls = undefined;
+            this._adBtnT = 0;
 
             // V8.0: 随机事件系统每局重置
             if (typeof RandomEvents !== 'undefined') RandomEvents.reset();
@@ -1260,12 +1279,21 @@ class Game {
         }
     }
 
+    /** V10.1: HUD刷新脏检查 — 原实现每帧 getElementById+无条件DOM写(剖析占17.3%主线程) */
     _updateUI() {
-        document.getElementById('game-container').classList.toggle('boss-active',!!this.enemies.boss && this.state==='playing');
+        var bossActive = !!this.enemies.boss && this.state === 'playing';
+        if (this._cachedBossActive !== bossActive) {
+            this._cachedBossActive = bossActive;
+            (this._containerEl || (this._containerEl = document.getElementById('game-container'))).classList.toggle('boss-active', bossActive);
+        }
         var level = LEVELS[this.levelIndex];
         var progress = clamp(-this.squad.z / -level.totalZ, 0, 1);
-        if (this.ui.progressFill) this.ui.progressFill.style.width = (progress * 100) + '%';
-        if (this.ui.progressFlag) this.ui.progressFlag.style.left = (progress * 100) + '%';
+        var progPct = (progress * 100).toFixed(1);
+        if (this._cachedProgress !== progPct) {
+            this._cachedProgress = progPct;
+            if (this.ui.progressFill) this.ui.progressFill.style.width = progPct + '%';
+            if (this.ui.progressFlag) this.ui.progressFlag.style.left = progPct + '%';
+        }
 
         // 进度节点
         this._updateProgressNodes();
@@ -1283,10 +1311,15 @@ class Game {
                 sx = clamp(sx, 46, cw - 46);
                 sy = clamp(sy, 150, ch - 40);
                 if (sy < 200 && sx < 145) sx = 145; // 避让左上属性面板
-                this.ui.countBadge.style.left = sx + 'px';
-                this.ui.countBadge.style.top = (sy - 18) + 'px';
-                this.ui.countBadge.style.display = 'flex';
-            } else {
+                var sxR = Math.round(sx), syR = Math.round(sy - 18);
+                if (this._cachedBadgeX !== sxR || this._cachedBadgeY !== syR) {
+                    this._cachedBadgeX = sxR; this._cachedBadgeY = syR;
+                    this.ui.countBadge.style.left = sxR + 'px';
+                    this.ui.countBadge.style.top = syR + 'px';
+                }
+                if (this._cachedBadgeShown !== true) { this._cachedBadgeShown = true; this.ui.countBadge.style.display = 'flex'; }
+            } else if (this._cachedBadgeShown !== false) {
+                this._cachedBadgeShown = false;
                 this.ui.countBadge.style.display = 'none';
             }
         }
@@ -1313,48 +1346,58 @@ class Game {
 
         // V3.3: 连杀HUD (combo>=5时显示)
         if (this.ui.comboBox) {
-            if (this.combo >= 5 && this.state === 'playing') {
-                this.ui.comboBox.classList.remove('hidden');
-                if (this.ui.comboNum) this.ui.comboNum.textContent = this.combo;
-                this.ui.comboBox.classList.toggle('hot', this.combo >= 30);
-            } else {
-                this.ui.comboBox.classList.add('hidden');
+            var comboShown = this.combo >= 5 && this.state === 'playing';
+            if (this._cachedComboShown !== comboShown) {
+                this._cachedComboShown = comboShown;
+                this.ui.comboBox.classList.toggle('hidden', !comboShown);
+            }
+            if (comboShown && this.ui.comboNum) {
+                if (this._cachedCombo !== this.combo) { this._cachedCombo = this.combo; this.ui.comboNum.textContent = this.combo; }
+                var hot = this.combo >= 30;
+                if (this._cachedComboHot !== hot) { this._cachedComboHot = hot; this.ui.comboBox.classList.toggle('hot', hot); }
             }
         }
 
-        // V3.4: 刷门按钮状态刷新(战斗中)
+        // V3.4: 刷门按钮状态刷新(战斗中, 0.5s一次)
         if (this.adCoord && this.state === 'playing') {
-            this._updateAdButtons();
+            this._adBtnT = (this._adBtnT || 0) - 1;
+            if (this._adBtnT <= 0) { this._adBtnT = 15; this._updateAdButtons(); }
         }
 
-        // 属性面板(带变化动画)
+        // 属性面板(带变化动画) — 数值脏检查后写DOM
         if (this.ui.statCount) {
-            this.ui.statCount.textContent = this.squad.count;
-            this.ui.statDamage.textContent = this.squad.getDamage();
-            this.ui.statFirerate.textContent = this.squad.getFireRate().toFixed(1);
-
-            // 输出变化: 闪光
+            var cnt = this.squad.count;
+            if (this._cachedStatCount !== cnt) {
+                this._cachedStatCount = cnt;
+                this.ui.statCount.textContent = cnt;
+                if (this.ui.statRowCount && this.ui.countNum && String(cnt) !== this.ui.countNum.textContent) {
+                    this.ui.statRowCount.classList.remove('bump');
+                    void this.ui.statRowCount.offsetWidth;
+                    this.ui.statRowCount.classList.add('bump');
+                }
+            }
             var curDmg = this.squad.getDamage();
-            if (curDmg !== this._prevDamage && this.ui.statRowDamage) {
-                this.ui.statRowDamage.classList.remove('flash');
-                void this.ui.statRowDamage.offsetWidth;
-                this.ui.statRowDamage.classList.add('flash');
+            if (this._cachedStatDamage !== curDmg) {
+                this._cachedStatDamage = curDmg;
+                this.ui.statDamage.textContent = curDmg;
+                if (curDmg !== this._prevDamage && this.ui.statRowDamage) {
+                    this.ui.statRowDamage.classList.remove('flash');
+                    void this.ui.statRowDamage.offsetWidth;
+                    this.ui.statRowDamage.classList.add('flash');
+                }
                 this._prevDamage = curDmg;
             }
-            // 射速变化: 加速反馈
             var curFr = this.squad.getFireRate();
-            if (Math.abs(curFr - this._prevFireRate) > 0.01 && this.ui.statRowFirerate) {
-                this.ui.statRowFirerate.classList.remove('bump');
-                void this.ui.statRowFirerate.offsetWidth;
-                this.ui.statRowFirerate.classList.add('bump');
+            var frStr = curFr.toFixed(1);
+            if (this._cachedStatFr !== frStr) {
+                this._cachedStatFr = frStr;
+                this.ui.statFirerate.textContent = frStr;
+                if (Math.abs(curFr - this._prevFireRate) > 0.01 && this.ui.statRowFirerate) {
+                    this.ui.statRowFirerate.classList.remove('bump');
+                    void this.ui.statRowFirerate.offsetWidth;
+                    this.ui.statRowFirerate.classList.add('bump');
+                }
                 this._prevFireRate = curFr;
-            }
-            // 人数变化: 跳动
-            if (this.ui.statRowCount && this.ui.countNum &&
-                this.ui.statCount.textContent !== this.ui.countNum.textContent) {
-                this.ui.statRowCount.classList.remove('bump');
-                void this.ui.statRowCount.offsetWidth;
-                this.ui.statRowCount.classList.add('bump');
             }
         }
     }

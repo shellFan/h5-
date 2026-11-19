@@ -113,9 +113,14 @@ class Effects {
             this._textCache[key] = tex;
         }
 
-        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
-            map: tex, transparent: true, depthTest: false
-        }));
+        // V10.1: Sprite/Material 池化 — 原实现每条飘字 new Sprite+Material(高频战斗GC尖峰)
+        var sprite = this._floatPool && this._floatPool.pop();
+        if (!sprite) {
+            sprite = new THREE.Sprite(new THREE.SpriteMaterial({ transparent: true, depthTest: false }));
+            if (!this._floatPool) this._floatPool = [];
+        }
+        sprite.material.map = tex;
+        sprite.material.needsUpdate = true;
         // V3.2: 分散出生点, 避免连续暴击文字完全重叠
         sprite.position.set(
             x + randRange(-0.5, 0.5),
@@ -197,7 +202,9 @@ class Effects {
         for(var p of this.particles){p.visible=false;this.pool.push(p);}this.particles.length=0;
         for(var f of this.flashes){this.scene.remove(f.mesh);f.mesh.visible=false;this._flashPool.push(f.mesh);}this.flashes.length=0;
         for(var r of this.shockwaves){this.scene.remove(r.mesh);r.mesh.visible=false;this._ringPool.push(r.mesh);}this.shockwaves.length=0;
-        for(var ft of this.floatTexts){this.scene.remove(ft.sprite);ft.sprite.material.dispose();}this.floatTexts.length=0;this._floatTextCount=0;
+        // V10.1: clear 回收入池
+        for(var ft of this.floatTexts){this.scene.remove(ft.sprite);if(this._floatPool.length<24)this._floatPool.push(ft.sprite);else ft.sprite.material.dispose();}
+        this.floatTexts.length=0;this._floatTextCount=0;
         this.particleMesh.count=0;
     }
 
@@ -261,8 +268,10 @@ class Effects {
             const ft = this.floatTexts[i];
             ft.life -= dt;
             if (ft.life <= 0) {
+                // V10.1: 回收入池(材质复用, 仅换贴图)
                 this.scene.remove(ft.sprite);
-                ft.sprite.material.dispose();
+                if (this._floatPool.length < 24) this._floatPool.push(ft.sprite);
+                else ft.sprite.material.dispose();
                 this.floatTexts.splice(i, 1);
                 this._floatTextCount--;
                 continue;

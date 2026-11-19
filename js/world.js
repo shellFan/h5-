@@ -45,7 +45,9 @@ class World {
         const dir = new THREE.DirectionalLight(0xFFF4E0, 0.72);
         dir.position.set(4, 12, 6);
         dir.castShadow = true;
-        dir.shadow.mapSize.set(2048, 2048);
+        // V10.1: 阴影贴图按画质分档 — 中画质(多数手机)2048→1024, GPU负担减半
+        var shadowRes = this.quality >= 2 ? 2048 : 1024;
+        dir.shadow.mapSize.set(shadowRes, shadowRes);
         dir.shadow.camera.left = -8;
         dir.shadow.camera.right = 8;
         dir.shadow.camera.top = 12;
