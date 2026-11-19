@@ -16,7 +16,9 @@ var RANDOM_EVENT_DEFS = [
     // —— 良性 (weight 65) ——
     { id: 'airdrop',   name: '空投补给',   icon: '📦', weight: 12, type: 'good',
       desc: '立即补充 15 名士兵',
-      apply: function(game) { game.squad.setCount(Math.min(CONFIG.SQUAD_MAX_COUNT, game.squad.count + 15)); } },
+      apply: function(game) { // V10.1: 空投人数吃士兵成长"招募效率"加成(原固定15, recruitBonus 从未消费于此)
+          var rb = (typeof SoldierGrowth !== 'undefined') ? (SoldierGrowth.stats(game.profile).recruitBonus || 0) : 0;
+          game.squad.setCount(Math.min(CONFIG.SQUAD_MAX_COUNT, game.squad.count + 15 + rb)); } },
     { id: 'coin_rain', name: '金币雨',     icon: '🪙', weight: 12, type: 'good',
       desc: '立即获得 40 金币',
       apply: function(game) { if (game.profile) game.profile.addCoins(40); } },

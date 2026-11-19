@@ -48,12 +48,8 @@ var BattleKinematics = {
     /** 子弹飞行: 返回新 z */
     bulletZ: function(z, speed, dt) {
         return z + CONFIG.DIRS.SHOOT_SIGN * speed * dt;
-    },
-    /** 纯数学判定: squadZ 是否已到达 anchorZ 前方 standoff 处(保留供Boss战/扩展使用) */
-    atDefenseLine: function(squadZ, anchorZ, standoff) {
-        return squadZ <= anchorZ + (standoff || 0);
     }
-};
+}; // V10.1: 移除无调用的 atDefenseLine
 
 /**
  * 将多个 BufferGeometry 合并为一个，支持顶点色。
@@ -133,14 +129,6 @@ function colorize(geo, hexColor) {
 /**
  * 变换几何体: 旋转+平移+缩放，然后返回新引用
  */
-function transformGeo(geo, px, py, pz, rx, ry, rz, sx, sy, sz) {
-    if (rx) geo.rotateX(rx);
-    if (ry) geo.rotateY(ry);
-    if (rz) geo.rotateZ(rz);
-    if (sx !== undefined) geo.scale(sx, sy !== undefined ? sy : sx, sz !== undefined ? sz : sx);
-    geo.translate(px || 0, py || 0, pz || 0);
-    return geo;
-}
 
 /**
  * 创建 Canvas 文字纹理 (用于状态门数值等)

@@ -73,6 +73,5 @@ var UpgradeShop = {
     },
     damageBonus: function(profile) { return this.levelOf(profile, 'gun'); },
     fireRateMul: function(profile) { return 1 + 0.05 * this.levelOf(profile, 'rapid'); },
-    pierceBonus: function(profile) { return this.levelOf(profile, 'pierce'); },
-    coinMul: function(profile) { return 1 + 0.10 * this.levelOf(profile, 'logistics'); }
-};
+    pierceBonus: function(profile) { return this.levelOf(profile, 'pierce'); }
+}; // V10.1: 移除无调用的 coinMul(后勤金币加成在 settleRunEconomy 直接读 upgrades.logistics)

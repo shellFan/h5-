@@ -10,7 +10,7 @@ var SKILL_DEFS = {
     },
     drone: {
         name: '支援无人机', icon: '🛰️', maxLevel: 3,
-        desc: '每层获得1架自动僚机(独立射击)',
+        desc: '每层射速 +15%(火力全开组合 +25%/层)', // V10.1: 文案对齐实现(射速乘区, 无独立僚机实体)
         apply: function(squad, lv) { squad._skillDrones = lv; }
     },
     venom: {
@@ -109,16 +109,5 @@ var Skills = {
             picks.push(copy.splice(Math.floor(Math.random() * copy.length), 1)[0]);
         }
         return picks;
-    },
-
-    /** 技能门三选一 UI(3D门模型复用+技能标签) */
-    createSkillGateModels: function(laneChoices, squad, z) {
-        // 返回3个门数据(由 GateSystem.loadSkillChoice 生成)
-        return laneChoices.map(function(id, lane) {
-            var def = SKILL_DEFS[id];
-            var lv = squad._skills ? (squad._skills[id] || 0) : 0;
-            return { lane: lane, op: 'skill', value: id,
-                label: def.icon + def.name + (lv > 0 ? ' Lv.' + (lv + 1) : ''), style: 'epic' };
-        });
     }
 };

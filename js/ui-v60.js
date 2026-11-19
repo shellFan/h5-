@@ -227,22 +227,6 @@ var V60UI = {
         }
     },
 
-    /** 战斗事件上报(战斗中每帧调用) */
-    reportProgress: function(game) {
-        if (!game.profile || typeof ChallengeDaily === 'undefined') return;
-        var d = game.profile.data;
-        if (!d.daily || d.daily.date !== ChallengeDaily.today()) return;
-        var kills = d.totalKills || 0;
-        var daily = d.daily;
-        daily.tasks.forEach(function(t) {
-            if (t.type === 'kills' && !t.claimed) t.progress = Math.min(t.target, kills);
-            if (t.type === 'squad' && !t.claimed) t.progress = Math.min(t.target, Math.max(t.progress, game.maxCount || 0));
-            if (t.type === 'gates' && !t.claimed) t.progress = Math.min(t.target, game.gates.chosenRows.size);
-            if (t.type === 'skills' && !t.claimed) t.progress = Math.min(t.target, Object.keys(game.squad._skills || {}).length);
-            if (t.type === 'boss' && !t.claimed) t.progress = Math.min(t.target, game.enemies.bossKills || 0);
-        });
-        // wins 和 clear 只在胜利结算时更新
-    },
 
     showPage: function(id) {
         this.hidePages();

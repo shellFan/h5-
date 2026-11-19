@@ -72,7 +72,7 @@ module.exports.run = function(ctx) {
             assertEq(UpgradeShop.startCount(p, 1), 4, 'L1: 1+3=4');
             assertEq(UpgradeShop.startCount(p, 2), 5, 'L2: 2+3=5');
         });
-        test('damageBonus/fireRateMul/pierceBonus/coinMul', () => {
+        test('damageBonus/fireRateMul/pierceBonus', () => {
             var p = makeProfile(0);
             p.data.upgrades.gun = 2;
             p.data.upgrades.rapid = 4;
@@ -81,7 +81,6 @@ module.exports.run = function(ctx) {
             assertEq(UpgradeShop.damageBonus(p), 2);
             assertEq(UpgradeShop.fireRateMul(p), 1.2);
             assertEq(UpgradeShop.pierceBonus(p), 2);
-            assertEq(UpgradeShop.coinMul(p), 1.3);
         });
         test('满级快速射击不突破全局射速上限', () => {
             var p = makeProfile(0);

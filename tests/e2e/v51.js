@@ -101,6 +101,9 @@ async function fastForward(page, maxGameSec, stepDt) {
     page.on('pageerror', e => errors.push('STACK>> ' + String(e.stack || e.message).split('\n').slice(0, 5).join(' || ')));
     await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => window.__game && window.__game.squad.renderer, { timeout: 30000 });
+    // V10.1: 停用实时rAF循环 — 步骤间真实时间窗口不再演化游戏状态, 套件成为完全密闭确定性
+    // (此前步骤间 rAF 帧数随机器负载浮动, 造成 ~1/6 偶发翻转; 现在帧推进只由 fastForward 驱动)
+    await page.evaluate(() => { window.__game._rafDisabled = true; window.__game.paused = false; });
 
     // ===== 清档开局 =====
     await step('清档: 全新档案(0金币/1级解锁)', async () => {
@@ -183,7 +186,9 @@ async function fastForward(page, maxGameSec, stepDt) {
         await page.evaluate(() => { window.__game.levelIndex = 2; window.__game.start(); });
         await page.waitForTimeout(150);
         await page.evaluate(() => { window.__game.squad.setCount(0); }); // 阵亡
-        await page.waitForTimeout(300);
+        // V10.1: rAF已停用 — 手动驱动帧让失败判定执行(密闭化后状态演化只经 _update)
+        await page.evaluate(() => { const g = window.__game; for (let i = 0; i < 10 && g.state === 'playing'; i++) g._update(1/30); });
+        await page.waitForTimeout(100);
         const state = await page.evaluate(() => window.__game.state);
         assert(state === 'lost', '进入失败界面');
         const s = await page.evaluate(() => ({ coins: window.__game.profile.coins, st: window.__game._settlement }));

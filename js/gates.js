@@ -182,15 +182,6 @@ class GateSystem {
         this.gates.splice(index, 1);
     }
 
-    /** 战斗阶段隐藏所有未触发的门 */
-    hideUntriggered() {
-        for (const g of this.gates) {
-            if (!g.triggered) {
-                g.model.visible = false;
-            }
-        }
-    }
-
     /** V6.0: 解析技能门 — 每排3个不同技能, 重建门模型 (VNext: 只认op, 每局重随机) */
     resolveSkillGates(squad) {
         if (typeof Skills === 'undefined') return;

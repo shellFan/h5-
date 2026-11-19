@@ -25,7 +25,6 @@ class Game {
         this.combat = new CombatSystem(this.world.scene, this.effects);
         // V4.0: 节奏控制器 — 分批刷怪/场上上限/Boss预警(替代整波同帧生成)
         this.pacing = new GamePacingController(this);
-        var self = this;
         this.pacing.spawnFn = function(type, x, z, hp) {
             // Enemy health depends on the encounter, never on the player's upgrades.
             if (type !== 'boss' && !hp) {
@@ -910,6 +909,10 @@ class Game {
             if (ws.slowMul) this.squad.freezeStacks = Math.max(this.squad.freezeStacks, Math.round((1 - ws.slowMul) * 10));
             if (ws.radius) this.squad.explosive = Math.max(this.squad.explosive, Math.round(ws.radius * 2));
             if (ws.critBonus) this.squad.critChance = Math.min(0.8, this.squad.critChance + ws.critBonus);
+            // V10.1: 武器特殊属性接线(修复: pellets/burn/dualLane 此前定义后无消费者)
+            this.squad._wpnPellets = ws.pellets || 1;   // 散弹枪: 每次射击多发弹丸扇形铺散
+            this.squad._wpnBurn = !!ws.burn;            // 地狱火箭: 命中附加燃烧DoT
+            this.squad._wpnDualLane = !!ws.dualLane;    // 风暴机枪: 平行双弹道
             // V8.0: 士兵成长属性(等级+装备)
             if (typeof SoldierGrowth !== 'undefined' && this.profile) {
                 var solStats = SoldierGrowth.stats(this.profile);
@@ -1073,6 +1076,7 @@ class Game {
     }
 
     _loop(timestamp) {
+        if (this._rafDisabled) return; // V10.1: 测试密闭化开关 — 停止实时循环, 帧推进改由外部 _update 驱动
         requestAnimationFrame(this._loop);
         var workT0 = performance.now();
         if (this.lastTime === 0) { this.lastTime = timestamp; return; }

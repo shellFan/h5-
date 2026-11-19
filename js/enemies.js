@@ -391,11 +391,12 @@ class EnemyManager {
     }
 
     /** 获取最近的活僵尸(子弹追踪用) V3.1: 只瞄准前方(e.z更小)的敌人 */
-    getNearest(x, z, maxDist) {
+    getNearest(x, z, maxDist, exclude) {
         let best = null;
         let bestDist = maxDist || 20;
         for (const e of this.enemies) {
             if (!e.alive) continue;
+            if (exclude && exclude.indexOf(e) >= 0) continue; // V10.1: 散弹pellets扇形多目标排除已瞄准者
             if (e.z > z + 1) continue; // 身后的敌人不瞄准
             const d = Math.hypot(e.z - z, (e.x - x) * .85);
             if (d < bestDist) {

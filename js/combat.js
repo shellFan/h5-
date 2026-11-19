@@ -141,6 +141,21 @@ class CombatSystem {
                     var isCrit = Math.random() < Math.min(0.8, squad.critChance + (squad._evCritBonus || 0)); // V8.0: 事件暴击buff
                     if (isCrit) dmgFinal = Math.round(dmgFinal * 2); // V10 QA修复: 原为 dmg*2 直接覆盖, 暴击瞬间丢失狂暴/守护之怒/事件/背水全部乘区
                     this._fire(positions[k], dmgFinal, target, isCrit);
+                    // V10.1: 散弹枪 pellets — 多发弹丸扇形铺散(其余弹丸依次瞄准相邻目标, 多目标AOE; 单目标时自然衰减)
+                    var wpnPellets = squad._wpnPellets || 1;
+                    if (wpnPellets > 1) {
+                        var fanHit = [target];
+                        for (var pi = 1; pi < wpnPellets; pi++) {
+                            var fanTarget = enemyManager.getNearest(positions[k].x, positions[k].z, CONFIG.BULLET_RANGE, fanHit);
+                            if (!fanTarget) break;
+                            fanHit.push(fanTarget);
+                            this._fire(positions[k], dmgFinal, fanTarget, isCrit);
+                        }
+                    }
+                    // V10.1: 风暴机枪 dualLane — 平行双弹道(同目标, 双倍弹丸吞吐)
+                    if (squad._wpnDualLane) {
+                        this._fire({ x: positions[k].x + 0.38, y: positions[k].y, z: positions[k].z }, dmgFinal, target, isCrit);
+                    }
                 }
             }
         }
@@ -180,6 +195,12 @@ class CombatSystem {
                                 this.effects.burst(e.x, 0.5, e.z, 0x9AD8FF, 4, 1.8, 0.35);
                                 e._frozenFx = true;
                             }
+                        }
+                        // V10.1: 地狱火箭燃烧 — 命中附加燃烧DoT(3秒, 每跳25%弹丸伤害)
+                        if (squad._wpnBurn) {
+                            e._burnT = 3;
+                            e._burnDps = Math.max(e._burnDps || 0, Math.max(1, Math.round(b.damage * 0.25)));
+                            this.effects.burst(e.x, 0.8, e.z, 0xFF8833, 3, 1.5, 0.3);
                         }
                         // V6.0: 毒液弹头 — 命中附加中毒DoT(修复: 原实现从未挂载)
                         if (squad._skillVenom) {
@@ -280,15 +301,28 @@ class CombatSystem {
         if (enemyManager && enemyManager.enemies) {
             for (var vi = enemyManager.enemies.length - 1; vi >= 0; vi--) {
                 var ve = enemyManager.enemies[vi];
-                if (!ve.alive || !ve._venomT) continue;
-                ve._venomT -= dt;
-                ve._venomTick = (ve._venomTick || 0) - dt;
-                if (ve._venomTick <= 0) {
-                    ve._venomTick = 0.5;
-                    ve.takeDamage(Math.max(1, Math.round(ve._venomDps * 0.5)), this.effects, ve.x, false);
-                    if (this.effects) this.effects.burst(ve.x, 1, ve.z, 0x66DD44, 2, 1.5, 0.25);
+                if (!ve.alive || (!ve._venomT && !ve._burnT)) continue; // V10.1: 燃烧DoT共入结算循环
+                if (ve._venomT) {
+                    ve._venomT -= dt;
+                    ve._venomTick = (ve._venomTick || 0) - dt;
+                    if (ve._venomTick <= 0) {
+                        ve._venomTick = 0.5;
+                        ve.takeDamage(Math.max(1, Math.round(ve._venomDps * 0.5)), this.effects, ve.x, false);
+                        if (this.effects) this.effects.burst(ve.x, 1, ve.z, 0x66DD44, 2, 1.5, 0.25);
+                    }
+                    if (ve._venomT <= 0) { ve._venomT = 0; ve._venomStacks = 0; }
                 }
-                if (ve._venomT <= 0) { ve._venomT = 0; ve._venomStacks = 0; }
+                // V10.1: 燃烧DoT结算(地狱火箭)
+                if (ve._burnT) {
+                    ve._burnT -= dt;
+                    ve._burnTick = (ve._burnTick || 0) - dt;
+                    if (ve._burnTick <= 0) {
+                        ve._burnTick = 0.5;
+                        ve.takeDamage(Math.max(1, Math.round(ve._burnDps * 0.5)), this.effects, ve.x, false);
+                        if (this.effects) this.effects.burst(ve.x, 1, ve.z, 0xFF8833, 2, 1.5, 0.25);
+                    }
+                    if (ve._burnT <= 0) { ve._burnT = 0; ve._burnDps = 0; }
+                }
             }
         }
 

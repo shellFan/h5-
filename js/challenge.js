@@ -15,23 +15,6 @@ var CHALLENGE_MODES = {
     }
 };
 
-var DAILY_TASK_POOL_V2 = [
-    { id: 'kill_100',  name: '消灭100只僵尸', target: 100, type: 'kills', reward: 60 },
-    { id: 'kill_300',  name: '消灭300只僵尸', target: 300, type: 'kills', reward: 150 },
-    { id: 'kill_500',  name: '消灭500只僵尸', target: 500, type: 'kills', reward: 250 },
-    { id: 'clear_2',   name: '通关2个关卡',   target: 2,  type: 'wins',  reward: 100 },
-    { id: 'clear_4',   name: '通关4个关卡',   target: 4,  type: 'wins',  reward: 200 },
-    { id: 'clear_6',   name: '通关6个关卡',   target: 6,  type: 'wins',  reward: 300 },
-    { id: 'squad_50',  name: '单局人数达50',  target: 50, type: 'squad', reward: 80 },
-    { id: 'squad_100', name: '单局人数达100', target: 100, type: 'squad', reward: 150 },
-    { id: 'squad_200', name: '单局人数达200', target: 200, type: 'squad', reward: 250 },
-    { id: 'boss_1',    name: '击败1个Boss',   target: 1,  type: 'boss',  reward: 120 },
-    { id: 'boss_3',    name: '击败3个Boss',   target: 3,  type: 'boss',  reward: 280 },
-    { id: 'gate_5',    name: '穿过5扇状态门',  target: 5,  type: 'gates', reward: 60 },
-    { id: 'gate_10',   name: '穿过10扇状态门', target: 10, type: 'gates', reward: 120 },
-    { id: 'skill_2',   name: '选择2个技能',   target: 2,  type: 'skills', reward: 50 },
-    { id: 'skill_4',   name: '选择4个技能',   target: 4,  type: 'skills', reward: 100 }
-];
 
 var DAILY_TASK_POOL = [
     { id: 'kill_100',  name: '消灭100只僵尸', target: 100, type: 'kills', reward: 60 },
@@ -101,20 +84,8 @@ var ChallengeDaily = {
         profile.addCoins(t.reward);
         profile.save();
         return true;
-    },
-
-    /** 挑战模式开始: 返回配置 */
-    startChallenge: function(type, levelIndex) {
-        var cfg = CHALLENGE_MODES[type];
-        if (!cfg) return null;
-        return {
-            type: type, name: cfg.name,
-            hpMul: cfg.baseHp * Math.pow(cfg.hpScale || 1, levelIndex),
-            waveMul: cfg.spawnRateMul || 1,
-            kills: 0, waves: 0, time: 0
-        };
     }
-};
+}; // V10.1: 移除无调用的 startChallenge(挑战模式由 game.js startChallengeMode 实现)
 
 // ===== V8.0: 7天循环签到 =====
 var SIGNIN_REWARDS = [80, 120, 150, 200, 250, 300, 500];

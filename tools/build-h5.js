@@ -36,7 +36,6 @@ const COPY_LIST = [
     'js/upgrades.js',
     'js/utils.js',
     'js/movement.js',   // V4.0
-    'js/models.js',
     'js/soldier-loader.js',
     'js/soldier-renderer.js',
     'js/enemy-models.js',

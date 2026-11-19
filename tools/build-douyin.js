@@ -44,7 +44,6 @@ const GAME_SCRIPTS = [
     'js/enemy-models.js',
     'js/boss-v42.js',
     'js/art-v42.js',
-    'js/models.js',
     'js/world.js',
     'js/effects.js',
     'js/squad.js',

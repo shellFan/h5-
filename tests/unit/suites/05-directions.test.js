@@ -23,10 +23,6 @@ module.exports.run = function(ctx) {
         test('BattleKinematics.bulletZ: 子弹z递减(射向前方怪群)', () => {
             assertEq(BattleKinematics.bulletZ(-9, 28, 0.1), -11.8);
         });
-        test('atDefenseLine 判定', () => {
-            assert(BattleKinematics.atDefenseLine(-11, -20, 9), 'z=-11 ≤ -20+9 → 抵达');
-            assert(!BattleKinematics.atDefenseLine(-10.5, -20, 9), 'z=-10.5 > -11 → 未抵达');
-        });
     });
 
     describe('V5.1 防守不后退', () => {
