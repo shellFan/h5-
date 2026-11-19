@@ -20,6 +20,7 @@ class Game {
             ? new GameProfile(Platform.storage, Platform.storageAdapter) : null;
         this.shop = (typeof UpgradeShop !== 'undefined') ? UpgradeShop : null;
         this.squad = new Squad(this.world.scene, this.profile);
+        this.squad._gameRef = this; // V11.5修复: 原惰性挂到首帧squad.update — 启动前读取武器/职业/科技乘区全部静默失效
         this.gates = new GateSystem(this.world.scene);
         this.enemies = new EnemyManager(this.world.scene, this.effects);
         this.combat = new CombatSystem(this.world.scene, this.effects);
@@ -1435,6 +1436,8 @@ class Game {
             ? EquipmentLoot.rollOnWin(this.profile, this.levelIndex, this._stars || 0) : [];
         // VNext: 真实战绩入榜
         if (typeof Leaderboard !== 'undefined' && this.profile) {
+            // V11.4: 职业专精计局
+            if (typeof SoldierClass !== 'undefined') SoldierClass.recordGame(this.profile, this.profile.data.classId);
             Leaderboard.record(this.profile, {
                 level: this.levelIndex + 1, win: true, kills: this.enemies.killCount,
                 maxCount: this.maxCount, combo: this.maxCombo, time: this.elapsedTime,
@@ -1488,6 +1491,7 @@ class Game {
             ? EquipmentLoot.rollOnLose(this.profile, this.levelIndex) : [];
         // VNext: 真实战绩入榜(失败也计)
         if (typeof Leaderboard !== 'undefined' && this.profile) {
+            if (typeof SoldierClass !== 'undefined') SoldierClass.recordGame(this.profile, this.profile.data.classId);
             Leaderboard.record(this.profile, {
                 level: this.levelIndex + 1, win: false, kills: this.enemies.killCount,
                 maxCount: this.maxCount, combo: this.maxCombo, time: this.elapsedTime,

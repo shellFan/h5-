@@ -70,16 +70,59 @@ var SoldierClass = {
         var lv = SoldierGrowth.level(profile);
         return Math.min(4, Math.floor(lv / 10));
     },
-    /** 战斗装配(每局 start() 调用一次) */
+
+    // ===== V11.4: 职业专精 (使用该职业完成对局 → 专精等级 → 永久战斗加成) =====
+    MASTERY_PER_LEVEL: 3, // 每3局+1级, 上限10
+    masteryOf: function(profile, id) {
+        var m = (profile && profile.data.classMastery && profile.data.classMastery[id]) || { games: 0 };
+        var level = Math.min(10, Math.floor(m.games / this.MASTERY_PER_LEVEL));
+        return { games: m.games || 0, level: level };
+    },
+    /** 对局结束记录(胜负均计, 仅当前职业) */
+    recordGame: function(profile, classId) {
+        if (!profile || !classId) return null;
+        if (!profile.data.classMastery) profile.data.classMastery = {};
+        var m = profile.data.classMastery[classId] || { games: 0 };
+        m.games++;
+        profile.data.classMastery[classId] = m;
+        profile.save();
+        return this.masteryOf(profile, classId);
+    },
+    /** 专精加成描述(每职业不同成长方向) */
+    masteryBonusText: function(id) {
+        return {
+            rifleman: '每级伤害 +1.5%',
+            gunner: '每级射速 +2%',
+            marksman: '每级暴击 +1%',
+            medic: '每级伤害减免 +1%'
+        }[id] || '';
+    },
+    _masteryBonus: function(profile, id) {
+        var level = id ? this.masteryOf(profile, id).level : 0;
+        switch (id) {
+            case 'rifleman': return { dmgMul: 1 + 0.015 * level };
+            case 'gunner': return { rateMul: 1 + 0.02 * level };
+            case 'marksman': return { critBonus: 0.01 * level };
+            case 'medic': return { dr: 0.01 * level };
+            default: return {};
+        }
+    },
+    /** 战斗装配(每局 start() 调用一次) — V11.4: 叠加专精加成 */
     combat: function(profile) {
         var def = this.def(profile);
         var m = def.mods;
+        var mb = this._masteryBonus(profile, def.id);
         return {
             id: def.id, name: def.name, icon: def.icon, color: def.color,
-            dmgMul: m.dmgMul, rateMul: m.rateMul, critBonus: m.critBonus, pierce: m.pierce,
-            dr: m.dr, bulletSpeed: m.bulletSpeed, eliteDmgMul: m.eliteDmgMul,
+            dmgMul: m.dmgMul * (mb.dmgMul || 1),
+            rateMul: m.rateMul * (mb.rateMul || 1),
+            critBonus: m.critBonus + (mb.critBonus || 0),
+            pierce: m.pierce,
+            dr: m.dr + (mb.dr || 0),
+            bulletSpeed: m.bulletSpeed, eliteDmgMul: m.eliteDmgMul,
             regenN: m.regenN, regenInterval: m.regenInterval || 10,
-            skill: def.skill, tier: this.tier(profile)
+            skill: def.skill, tier: this.tier(profile),
+            mastery: this.masteryOf(profile, def.id).level
         };
     }
 };

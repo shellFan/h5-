@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-11-19T16:32:28.960Z",
+  "startedAt": "2026-11-19T16:48:39.391Z",
   "view": {
     "width": 390,
     "height": 844
@@ -7,11 +7,11 @@
   "dpr": 3,
   "seed": 18526693,
   "phases": {
-    "battleFps": 102.3,
-    "level2Fps": 104.4
+    "battleFps": 102.5,
+    "level2Fps": 104.5
   },
   "consoleErrors": [],
-  "finishedAt": "2026-11-19T16:39:27.744Z",
+  "finishedAt": "2026-11-19T16:54:13.858Z",
   "results": [
     {
       "name": "加载界面初始可见",
@@ -49,9 +49,9 @@
       "detail": ""
     },
     {
-      "name": "战斗FPS≥30(实测102.3)",
+      "name": "战斗FPS≥30(实测102.5)",
       "ok": true,
-      "detail": "fps=102.3"
+      "detail": "fps=102.5"
     },
     {
       "name": "战斗进行(状态playing)",
@@ -66,7 +66,7 @@
     {
       "name": "击杀/金币增长(真实战斗输出)",
       "ok": true,
-      "detail": "kills=22 coins=0"
+      "detail": "kills=23 coins=0"
     },
     {
       "name": "状态门出现",
@@ -131,7 +131,7 @@
     {
       "name": "L2战斗FPS≥30",
       "ok": true,
-      "detail": "fps=104.4"
+      "detail": "fps=104.5"
     },
     {
       "name": "技能三选一门出现",
@@ -140,13 +140,13 @@
     },
     {
       "name": "技能门触发",
-      "ok": false,
+      "ok": true,
       "detail": ""
     },
     {
       "name": "技能获得(层数写入squad)",
-      "ok": false,
-      "detail": "{}→{}"
+      "ok": true,
+      "detail": "{}→{\"venom\":1}"
     },
     {
       "name": "L2胜利结算",
@@ -194,7 +194,7 @@
       "detail": ""
     }
   ],
-  "pass": 33,
-  "fail": 3,
+  "pass": 35,
+  "fail": 1,
   "consoleErrorCount": 0
 }

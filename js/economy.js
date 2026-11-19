@@ -97,7 +97,8 @@ class GameProfile {
             classId: d.classId || 'rifleman',
             bag: d.bag || [],
             records: d.records || [],
-            weaponAffix: d.weaponAffix || null // V11.3: 武器词条持久化
+            weaponAffix: d.weaponAffix || null, // V11.3: 武器词条持久化
+            classMastery: d.classMastery || {} // V11.4: 职业专精
         };
     }
 

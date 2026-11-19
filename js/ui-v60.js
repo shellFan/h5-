@@ -217,7 +217,9 @@ var V60UI = {
             card.innerHTML =
                 '<div class="v60-class-icon">' + def.icon + '</div>' +
                 '<div class="v60-class-name">' + def.name + '</div>' +
-                '<div class="v60-class-desc">' + (check.ok ? def.desc : def.unlockText) + '</div>';
+                '<div class="v60-class-desc">' + (check.ok
+                    ? def.desc + '<br>专精 Lv.' + SoldierClass.masteryOf(game.profile, id).level + ' (' + SoldierClass.masteryOf(game.profile, id).games + '场)'
+                    : def.unlockText) + '</div>';
             card.onclick = function(cid) { return function() {
                 var r = SoldierClass.select(game.profile, cid);
                 if (r.ok) { game._sfx('gate'); V60UI.renderClassSelector(game); }

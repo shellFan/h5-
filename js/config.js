@@ -92,6 +92,7 @@ const CONFIG = {
         split:   { hp: 4,  speed: 1.35, scale: 1.28, color: 0xA583C9, killScore: 2 },
         spitter: { hp: 4,  speed: 1.25, scale: 1.38, color: 0x63C24B, killScore: 2 },
         elite:   { hp: 26, speed: 1.0,  scale: 2.5,  color: 0x6F9A52, killScore: 5 },
+        bomber:  { hp: 6,  speed: 2.0,  scale: 1.32, color: 0xC94B4B, killScore: 2 }, // V11.5: 爆炸僵尸(死亡自爆波及)
         boss:    { hp: 200, speed: 0.9, scale: 3.9,  color: 0x9C3B32, killScore: 50 }
     },
 
@@ -395,7 +396,7 @@ const LEVELS = [
                 { lane: 1, op: 'buff', value: 'chain', label: '连锁闪电' },
                 { lane: 2, op: 'skill', value: 'roll' }
             ]},
-            { type: 'wave', z: -58, enemies: [ { type: 'elite', count: 8 }, { type: 'spitter', count: 45 }, { type: 'fast', count: 60 } ] },
+            { type: 'wave', z: -58, enemies: [ { type: 'elite', count: 8 }, { type: 'spitter', count: 40 }, { type: 'fast', count: 50 }, { type: 'bomber', count: 10 } ] },
             { type: 'energy', z: -76, core: { hp: 1400, buffRadius: 10 } },
             { type: 'gates', z: -92, gates: [
                 { lane: 0, op: 'add', value: 20, label: '+20' },
@@ -459,13 +460,13 @@ const LEVELS = [
                 { lane: 1, op: 'buff', value: 'damage2', label: '输出+2' },
                 { lane: 2, op: 'skill', value: 'roll' }
             ]},
-            { type: 'wave', z: -26, enemies: [ { type: 'elite', count: 8 }, { type: 'normal', count: 90 }, { type: 'fast', count: 70 } ] },
+            { type: 'wave', z: -26, enemies: [ { type: 'elite', count: 8 }, { type: 'normal', count: 80 }, { type: 'fast', count: 70 }, { type: 'bomber', count: 12 } ] },
             { type: 'gates', z: -44, gates: [
                 { lane: 0, op: 'buff', value: 'pierce', label: '穿透+1' },
                 { lane: 1, op: 'buff', value: 'crit2', label: '暴击+10%' },
                 { lane: 2, op: 'skill', value: 'roll' }
             ]},
-            { type: 'wave', z: -60, enemies: [ { type: 'elite', count: 14 }, { type: 'shield', count: 80 }, { type: 'spitter', count: 60 } ] },
+            { type: 'wave', z: -60, enemies: [ { type: 'elite', count: 14 }, { type: 'shield', count: 80 }, { type: 'spitter', count: 50 }, { type: 'bomber', count: 10 } ] },
             { type: 'energy', z: -78, core: { hp: 2000, buffRadius: 10 } },
             { type: 'gates', z: -94, gates: [
                 { lane: 0, op: 'buff', value: 'damage2', label: '输出+2' },

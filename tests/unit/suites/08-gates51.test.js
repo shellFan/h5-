@@ -19,7 +19,7 @@ module.exports.run = function(ctx) {
                 assert(GATE_REWARD_POOL[tier] && GATE_REWARD_POOL[tier].length >= 3, tier + '池≥3项');
                 GATE_REWARD_POOL[tier].forEach(function(item) {
                     assert(item.label, 'label必填');
-                    assert(['add', 'addpct', 'mul', 'buff', 'nuke'].indexOf(item.op) >= 0, '合法op: ' + item.op);
+                    assert(['add', 'addpct', 'mul', 'buff', 'nuke', 'coin', 'risk', 'skill'].indexOf(item.op) >= 0, '合法op: ' + item.op);
                 });
             });
         });

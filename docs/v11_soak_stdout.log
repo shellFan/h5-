@@ -1,0 +1,2 @@
+soak start: 30min
+[t+0min cycle1] heap=18.7MB errors=0 | start L2 / sim 40s state=lost / restart / modals x2 / challenge sim state=playing

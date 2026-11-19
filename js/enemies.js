@@ -27,7 +27,7 @@ class Enemy {
         this.spawnT = this.isBoss ? 0 : 1; // V4.0: Boss弹性入场动画
 
         // V3.5: 大众僵尸使用合并批处理模型(2 mesh/只), Boss/精英保留Group模型(细节动画+独立材质)
-        this.artStyle = styleOverride || (this.isBoss ? 'bruiser' : type);
+        this.artStyle = styleOverride || (this.isBoss ? 'bruiser' : (type === 'bomber' ? 'fast' : type)); // V11.5: 爆炸僵尸复用快速尸模型(红染/小体)
         this.model = new THREE.Group();
         this.model.userData.merged = true;
         this.model.userData.artSource = 'assets/models/'+(['normal','fast','shield','split','spitter','elite'].includes(this.artStyle)?'zombies':'bosses')+'/'+this.artStyle+'/'+this.artStyle+'.glb (instanced anchor)';
@@ -328,6 +328,16 @@ class EnemyManager {
                 if (e.type === 'split') {
                     this.splitQueue.push({ x: e.x, z: e.z, delay: 0.2 });
                     this.splitQueue.push({ x: e.x, z: e.z, delay: 0.35 });
+                }
+                // V11.5: 爆炸僵尸 — 死亡自爆, 半径2.2内波及小队-2人 + 红色冲击
+                if (e.type === 'bomber' && squad) {
+                    if (Math.abs(e.z - squad.z) < 3.0 && squad.alive) { // V11.5: 半径3.0(击退漂移容忍)
+                        squad.killSoldiers(2, this.effects);
+                    }
+                    if (this.effects) {
+                        this.effects.shockwave(e.x, 0.05, e.z, 0xFF5A4B);
+                        this.effects.burst(e.x, 0.6, e.z, 0xFF5A4B, 16, 3.5, 0.55);
+                    }
                 }
                 // V6.0: 分裂词缀
                 if (e.affixes && typeof AffixSystem !== 'undefined') AffixSystem.onDeath(e, this);
