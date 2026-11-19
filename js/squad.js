@@ -189,6 +189,11 @@ class Squad {
         } else if (gate.op === 'mul') {
             added = this.count * (gate.value - 1);
             this.setCount(this.count * gate.value);
+        } else if (gate.op === 'coin') {
+            // V11.1: 金币奖励门 — 真实入账
+            if (this.profile) this.profile.addCoins(gate.value);
+            if (effects) effects.floatText(this.x, 2.0, this.z, '+' + gate.value + ' 金币', '#FFC247', true);
+            added = 0;
         } else if (gate.op === 'risk') {
             // V3.3: 风险门 — 红色, 人数-30%换输出+2
             var lost = Math.floor(this.count * 0.3);

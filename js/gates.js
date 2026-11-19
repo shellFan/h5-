@@ -137,6 +137,11 @@ class GateSystem {
                     for (const sibling of this.gates) if (sibling !== g && sibling.z === g.z) sibling.passed = true;
                     squad.applyGate(g.data, effects);
                     this._highlight(g, effects);
+                    // V11.1: 门组合系统(同窗内成对触发真实增益)
+                    if (typeof GateCombos !== 'undefined') {
+                        var combo = GateCombos.feed(squad, g.data, effects, (typeof window !== 'undefined' && window.__game) || null);
+                        if (combo && effects) effects.floatText(squad.x, 2.8, squad.z, combo.icon + ' 门组合 · ' + combo.name + '!', '#FFC247', true);
+                    }
                     if (g.data.op === 'mul' && this.onMul) this.onMul(g); // V4.0: 翻倍慢动作+震屏
                 }
             }
@@ -295,12 +300,14 @@ var GATE_REWARD_POOL = {
         { op: 'buff',   value: 'vamp',    label: '吸血',     w: 2, style: 'buff' },
         { op: 'buff',   value: 'explosive', label: '爆炸弹', w: 2, style: 'buff' },
         { op: 'buff',   value: 'chain',   label: '连锁闪电', w: 2, style: 'buff' },
-        { op: 'mul',    value: 2,  label: '×2', w: 2, style: 'mul' }
+        { op: 'mul',    value: 2,  label: '×2', w: 2, style: 'mul' },
+        { op: 'coin',   value: 30, label: '🪙 30金币', w: 1.5, style: 'mul' } // V11.1: 金币奖励门
     ],
     epic: [
         { op: 'addpct', value: 50, label: '人数+50%', w: 1.5, style: 'mul' },
         { op: 'nuke',   value: 0,  label: '全屏爆炸', w: 1.5, style: 'mul' },
-        { op: 'buff',   value: 'arsenal', label: '军备强化', w: 1.5, style: 'mul' }
+        { op: 'buff',   value: 'arsenal', label: '军备强化', w: 1.5, style: 'mul' },
+        { op: 'coin',   value: 80, label: '🪙 80金币', w: 1, style: 'mul' } // V11.1: 史诗金币门
     ]
 };
 
@@ -348,3 +355,68 @@ var GateRewardPool = {
         return out;
     }
 };
+
+// ===== V11.1: 门组合效果 (同类/协同门在14秒窗内成对出现 → 真实增益, 每组合独立20s冷却) =====
+function _gateCategory(op, value) {
+    if (op === 'add' || op === 'addpct' || op === 'mul') return 'count';
+    if (op === 'buff') {
+        if (value === 'damage' || value === 'damage2') return 'attack';
+        if (value === 'firerate' || value === 'firerate10') return 'rate';
+        if (value === 'crit' || value === 'crit2') return 'crit';
+        if (value === 'pierce') return 'pierce';
+    }
+    if (op === 'coin') return 'coin';
+    return 'special';
+}
+
+var GATE_COMBO_DEFS = [
+    { id: 'horde_fury',    name: '人海战术', icon: '👥', catA: 'count',  catB: 'attack',
+      desc: '10秒伤害×1.5', apply: function(s) { s._evDmgMul = 1.5; s._evDmgMulT = 10; } },
+    { id: 'fire_synergy',  name: '火力共鸣', icon: '🔥', catA: 'attack', catB: 'rate',
+      desc: '8秒射速×1.6', apply: function(s) { s._evRateMul = 1.6; s._evRateMulT = 8; } },
+    { id: 'weak_strike',   name: '弱点打击', icon: '🎯', catA: 'crit',   catB: 'attack',
+      desc: '10秒暴击+25%', apply: function(s) { s._evCritBonus = 0.25; s._evCritT = 10; } },
+    { id: 'pierce_rain',   name: '穿刺弹幕', icon: '🔩', catA: 'pierce', catB: 'rate',
+      desc: '10秒穿透+2', apply: function(s) { s._evPierce = 2; s._evPierceT = 10; } },
+    { id: 'gold_rush',     name: '财源滚滚', icon: '🪙', catA: 'coin',   catB: 'count',
+      desc: '立即+40金币', apply: function(s, game) { if (game && game.profile) game.profile.addCoins(40); } },
+    { id: 'tide_surge',    name: '怒潮',    icon: '🌊', catA: 'count',  catB: 'count',
+      desc: '人数+15%', apply: function(s) { s.setCount(Math.min(CONFIG.SQUAD_MAX_COUNT, s.count + Math.max(1, Math.round(s.count * 0.15)))); } }
+];
+
+var GateCombos = {
+    WINDOW: 14, COOLDOWN: 20,
+    _log: [], _cd: {},
+    reset: function() { this._log = []; this._cd = {}; },
+    /** 门触发时投喂; 命中组合返回 def 并施加真实效果 */
+    feed: function(squad, data, effects, game) {
+        var cat = _gateCategory(data.op, data.value);
+        var now = (typeof performance !== 'undefined' ? performance.now() / 1000 : Date.now() / 1000);
+        this._log = this._log.filter(function(e) { return now - e.t < this.WINDOW; }, this);
+        var activated = null;
+        for (var i = 0; i < GATE_COMBO_DEFS.length; i++) {
+            var c = GATE_COMBO_DEFS[i];
+            if (this._cd[c.id] && now - this._cd[c.id] < this.COOLDOWN) continue;
+            var matched = null;
+            if (c.catA === cat) {
+                for (var j = this._log.length - 1; j >= 0; j--) {
+                    if (this._log[j].cat === c.catB) { matched = this._log[j]; break; }
+                }
+            } else if (c.catB === cat) {
+                for (var j2 = this._log.length - 1; j2 >= 0; j2--) {
+                    if (this._log[j2].cat === c.catA) { matched = this._log[j2]; break; }
+                }
+            }
+            if (matched) {
+                c.apply(squad, game);
+                this._cd[c.id] = now;
+                activated = c;
+                break;
+            }
+        }
+        this._log.push({ cat: cat, t: now });
+        if (this._log.length > 8) this._log.shift();
+        return activated;
+    }
+};
+if (typeof window !== 'undefined') window.GateCombos = GateCombos;
