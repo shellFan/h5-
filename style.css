@@ -1,5 +1,26 @@
 /* ===== 膨胀小队 V2.1 — 精品手游UI ===== */
 
+#reinforcement-notice {
+    position: fixed;
+    top: clamp(130px, 24vh, 220px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 90%;
+    padding: 10px 16px;
+    border: 1px solid #75ffb5;
+    border-radius: 14px;
+    background: rgba(12, 47, 36, .92);
+    color: #b9ffd6;
+    box-shadow: 0 0 18px rgba(57, 217, 138, .35);
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.5;
+    text-align: center;
+    pointer-events: none;
+    z-index: 25;
+}
+
 * {
     margin: 0;
     padding: 0;

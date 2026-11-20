@@ -1155,6 +1155,8 @@ class Game {
         var stopZ = this.enemies.boss ? this.enemies.boss.z + 4.5 : null;
         var frontier = this.pacing.frontierStopZ();
         if (frontier !== null) stopZ = stopZ === null ? frontier : Math.max(stopZ, frontier);
+        var gateStop = this.gates.approachStopZ(this.pacing, this.enemies.encounterOutstanding, this.squad.z);
+        if (gateStop !== null) stopZ = stopZ === null ? gateStop : Math.max(stopZ, gateStop);
         // V8.0: 挑战模式 — 小队驻守固定阵地
         if (this._challenge && this._challenge.holdZ !== undefined) {
             stopZ = stopZ === null ? this._challenge.holdZ : Math.max(stopZ, this._challenge.holdZ);

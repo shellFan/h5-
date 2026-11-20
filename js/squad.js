@@ -39,6 +39,16 @@ class Squad {
         return CONFIG.SQUAD_MAX_COUNT + bonus;
     }
 
+    /** Automatic recruitment reports actual gains after the squad cap. */
+    addReinforcements(amount, source, effects) {
+        if (this.count <= 0 || amount <= 0) return 0;
+        var before = this.count;
+        this.setCount(this.count + amount);
+        var added = this.count - before;
+        if (added > 0 && effects) effects.reinforcement(this, source, added);
+        return added;
+    }
+
     /** 设置小队人数(自动处理增减与弹出动画) */
     setCount(n) {
         n = clamp(Math.floor(n), 0, this._maxLimit());
@@ -304,8 +314,7 @@ class Squad {
                 this._regenT = regenIv;
                 var cap = this._maxLimit();
                 if (this.count < cap) {
-                    this.setCount(Math.min(cap, this.count + regenN));
-                    if (this._gameRef.effects) this._gameRef.effects.floatText(this.x, 1.8, this.z, '+' + regenN + ' 医疗', '#39D98A', false);
+                    this.addReinforcements(regenN, '战地医疗', this._gameRef.effects);
                 }
             }
         }

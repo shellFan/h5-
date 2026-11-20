@@ -114,11 +114,14 @@ class CombatSystem {
 
                 // 每发子弹伤害 = 总DPS / 视觉弹道频率
                 var totalDPS = count * squad.getDamage() * squad.getFireRate();
-                var dmg = Math.max(1, Math.round(totalDPS / visualRate));
 
                 // 齐射数量: 1~5发(人数越多越多)
                 var volley = Math.min(5, 1 + Math.floor(Math.sqrt(count) / 2.3)); // V8.0.1: 齐射曲线提升(÷2.6→÷2.3)
                 var positions = squad.getShootPositions(volley);
+                // A volley shares the squad DPS; giving every trail the full
+                // budget multiplied damage by up to five. Keep fractional damage
+                // so minimum-one rounding cannot inflate small squads either.
+                var dmg = totalDPS / visualRate / Math.max(1, positions.length);
                 if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('shoot'); // V5.0: 齐射音效(适配器内部限流)
                 for (var k = 0; k < positions.length; k++) {
                     // V3.1: 每发子弹瞄准前方最近敌人(修复阵型散布导致5/7子弹打不中Boss的问题)
@@ -129,20 +132,20 @@ class CombatSystem {
                     // V3.3: 暴击判定(开火时掷骰, 伤害×2)
                     var dmgFinal = dmg;
                     // V6.0: 狂暴技能伤害乘区
-                    if (squad._skillRage) dmgFinal = Math.round(dmgFinal * (1 + 0.35 * squad._skillRage));
+                    if (squad._skillRage) dmgFinal *= 1 + 0.35 * squad._skillRage;
                     // V8.0: 守护之怒组合 — 护盾可用时+25%
-                    if (squad._comboGuardianFury && squad._skillShield > 0) dmgFinal = Math.round(dmgFinal * 1.25);
+                    if (squad._comboGuardianFury && squad._skillShield > 0) dmgFinal *= 1.25;
                     // V8.0: 随机事件伤害buff(狂热时刻)
-                    if (squad._evDmgMul) dmgFinal = Math.round(dmgFinal * squad._evDmgMul);
+                    if (squad._evDmgMul) dmgFinal *= squad._evDmgMul;
                     // V6.0: 背水一战 — 人数低于一半时增伤
                     if (squad._skillBerserk && squad.count > 0 && squad._halfCount && squad.count <= squad._halfCount) {
-                        dmgFinal = Math.round(dmgFinal * (1 + 0.5 * squad._skillBerserk));
+                        dmgFinal *= 1 + 0.5 * squad._skillBerserk;
                     }
                     var isCrit = Math.random() < Math.min(0.8, squad.critChance + (squad._evCritBonus || 0)); // V8.0: 事件暴击buff
                     // V11.2: 处决者 — 暴击伤害乘区(2 + 0.25×层), 火力流派 +15%
                     var critMul = 2 + (squad._critMul || 0);
-                    if (isCrit) dmgFinal = Math.round(dmgFinal * critMul);
-                    if (squad._comboFireFlow) dmgFinal = Math.round(dmgFinal * 1.15);
+                    if (isCrit) dmgFinal *= critMul;
+                    if (squad._comboFireFlow) dmgFinal *= 1.15;
                     this._fire(positions[k], dmgFinal, target, isCrit);
                     // V10.1: 散弹枪 pellets — 多发弹丸扇形铺散(其余弹丸依次瞄准相邻目标, 多目标AOE; 单目标时自然衰减)
                     var wpnPellets = squad._wpnPellets || 1;
@@ -199,10 +202,10 @@ class CombatSystem {
                                 e._frozenFx = true;
                             }
                         }
-                        // V10.1: 地狱火箭燃烧 — 命中附加燃烧DoT(3秒, 每跳25%弹丸伤害)
+                        // 地狱火箭燃烧 — 持续3秒, 每秒25%弹丸伤害(每0.5秒结算)
                         if (squad._wpnBurn) {
                             e._burnT = 3;
-                            e._burnDps = Math.max(e._burnDps || 0, Math.max(1, Math.round(b.damage * 0.25)));
+                            e._burnDps = Math.max(e._burnDps || 0, b.damage * 0.25);
                             this.effects.burst(e.x, 0.8, e.z, 0xFF8833, 3, 1.5, 0.3);
                         }
                         // V6.0: 毒液弹头 — 命中附加中毒DoT(修复: 原实现从未挂载)
@@ -216,7 +219,7 @@ class CombatSystem {
                         var hitDmg = b.damage;
                         // VNext: 神射狙击 — 对精英/Boss ×1.25
                         if (squad._classEliteMul && (e.isBoss || e.type === 'elite' || e.affixes)) {
-                            hitDmg = Math.round(hitDmg * squad._classEliteMul);
+                            hitDmg *= squad._classEliteMul;
                         }
                         var died = e.takeDamage(hitDmg, this.effects, b.mesh.position.x, b.crit);
                         // V5.1: 爆炸弹 — 命中溅射(半径1.7, 50%伤害, 最多4个邻近目标)
@@ -228,7 +231,7 @@ class CombatSystem {
                                 if (se === e || !se.alive) continue;
                                 var sdx = se.x - e.x, sdz = se.z - e.z;
                                 if (sdx * sdx + sdz * sdz < splashR * splashR) {
-                                    se.takeDamage(Math.max(1, Math.round(b.damage * 0.5)), this.effects, se.x, false);
+                                    se.takeDamage(b.damage * 0.5, this.effects, se.x, false);
                                     splashN++;
                                 }
                             }
@@ -247,7 +250,7 @@ class CombatSystem {
                                     if (cd < bestD) { bestD = cd; best = ce; }
                                 }
                                 if (!best) break;
-                                best.takeDamage(Math.max(1, Math.round(b.damage * 0.4)), this.effects, best.x, false);
+                                best.takeDamage(b.damage * 0.4, this.effects, best.x, false);
                                 this.effects.burst(best.x, 1.0, best.z, 0x66D9FF, 4, 2, 0.25);
                                 last = best;
                             }
@@ -258,24 +261,21 @@ class CombatSystem {
                                 this.effects.floatText(e.x, 1.2, e.z, '暴击!', '#FF4444', true);
                             }
                             // V3.3: 吸血 — 击杀按层数概率回复1人
-                            if (squad.vampStacks > 0 && squad.count > 0 && squad.count < CONFIG.SQUAD_MAX_COUNT) {
+                            if (squad.vampStacks > 0 && squad.count > 0 && squad.count < squad._maxLimit()) {
                                 var vampProb = 0.12 * squad.vampStacks;
                                 if (Math.random() < vampProb) {
-                                    squad.setCount(squad.count + 1);
-                                    this.effects.floatText(squad.x, 1.4, squad.z, '+1', '#66D68F', false);
+                                    squad.addReinforcements(1, '吸血恢复', this.effects);
                                 }
                             }
                             // V8.0: 回收无人机组合 — 3%概率补员
-                            if (squad._comboRecycle && squad.count > 0 && squad.count < CONFIG.SQUAD_MAX_COUNT && Math.random() < 0.03) {
-                                squad.setCount(squad.count + 1);
-                                this.effects.floatText(squad.x, 1.4, squad.z, '回收+1', '#4DA8FF', false);
+                            if (squad._comboRecycle && squad.count > 0 && squad.count < squad._maxLimit() && Math.random() < 0.03) {
+                                squad.addReinforcements(1, '回收无人机', this.effects);
                             }
                             // V11.2: 亡者征召 — 5%×层概率补员(虫群流派×1.5)
-                            if (squad._skillHarvest && squad.count > 0 && squad.count < CONFIG.SQUAD_MAX_COUNT) {
+                            if (squad._skillHarvest && squad.count > 0 && squad.count < squad._maxLimit()) {
                                 var harvProb = 0.05 * squad._skillHarvest * (squad._comboSwarmFlow ? 1.5 : 1);
                                 if (Math.random() < harvProb) {
-                                    squad.setCount(squad.count + 1);
-                                    this.effects.floatText(squad.x, 1.6, squad.z, '征召+1', '#39D98A', false);
+                                    squad.addReinforcements(1, '亡者征召', this.effects);
                                 }
                             }
                         }
@@ -318,7 +318,7 @@ class CombatSystem {
                     ve._venomTick = (ve._venomTick || 0) - dt;
                     if (ve._venomTick <= 0) {
                         ve._venomTick = 0.5;
-                        ve.takeDamage(Math.max(1, Math.round(ve._venomDps * 0.5)), this.effects, ve.x, false);
+                        ve.takeDamage(ve._venomDps * 0.5, this.effects, ve.x, false);
                         if (this.effects) this.effects.burst(ve.x, 1, ve.z, 0x66DD44, 2, 1.5, 0.25);
                     }
                     if (ve._venomT <= 0) { ve._venomT = 0; ve._venomStacks = 0; }
@@ -329,7 +329,7 @@ class CombatSystem {
                     ve._burnTick = (ve._burnTick || 0) - dt;
                     if (ve._burnTick <= 0) {
                         ve._burnTick = 0.5;
-                        ve.takeDamage(Math.max(1, Math.round(ve._burnDps * 0.5)), this.effects, ve.x, false);
+                        ve.takeDamage(ve._burnDps * 0.5, this.effects, ve.x, false);
                         if (this.effects) this.effects.burst(ve.x, 1, ve.z, 0xFF8833, 2, 1.5, 0.25);
                     }
                     if (ve._burnT <= 0) { ve._burnT = 0; ve._burnDps = 0; }

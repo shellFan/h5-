@@ -54,6 +54,26 @@ class Effects {
         scene.add(this.impactMesh);
     }
 
+    reinforcement(squad, source, added) {
+        if (added <= 0) return;
+        if (!(this._recruitNoticeT > 0)) this._recruitTotals = {};
+        this._recruitTotals[source] = (this._recruitTotals[source] || 0) + added;
+        this._recruitNoticeT = 2.8;
+        var el = document.getElementById('reinforcement-notice');
+        if (el) {
+            el.textContent = Object.keys(this._recruitTotals).map(key => key + ' +' + this._recruitTotals[key] + '人').join(' · ');
+            el.hidden = false;
+        }
+        // Kill-based healing can fire dozens of times a second: aggregate the
+        // notice, and bound the expensive world effects to one pulse per 0.4s.
+        if (!(this._recruitFxT > 0)) {
+            this._recruitFxT = 0.4;
+            this.floatText(squad.x, 2.2, squad.z, source + ' +' + added + '人', '#75FFB5', true);
+            this.shockwave(squad.x, 0.06, squad.z, 0x39D98A);
+            this.burst(squad.x, 0.6, squad.z, 0x75FFB5, 10, 2.2, 0.6);
+        }
+    }
+
     impact(x, y, z, critical, lethal) {
         var p = this._impactPool.pop();
         if (!p) return;
@@ -196,6 +216,11 @@ class Effects {
     }
 
     clear() {
+        this._recruitTotals = {};
+        this._recruitNoticeT = 0;
+        this._recruitFxT = 0;
+        var notice = document.getElementById('reinforcement-notice');
+        if (notice) { notice.hidden = true; notice.textContent = ''; }
         for (var impact of this.impacts) this._impactPool.push(impact);
         this.impacts.length = 0;
         this.impactMesh.count = 0;
@@ -209,6 +234,15 @@ class Effects {
     }
 
     update(dt) {
+        this._recruitFxT = Math.max(0, (this._recruitFxT || 0) - dt);
+        if (this._recruitNoticeT > 0) {
+            this._recruitNoticeT = Math.max(0, this._recruitNoticeT - dt);
+            if (!this._recruitNoticeT) {
+                var notice = document.getElementById('reinforcement-notice');
+                if (notice) notice.hidden = true;
+                this._recruitTotals = {};
+            }
+        }
         var camera = this.scene.userData.camera;
         for (var ii = this.impacts.length - 1; ii >= 0; ii--) {
             var impact = this.impacts[ii], data = impact.userData;

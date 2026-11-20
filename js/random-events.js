@@ -18,7 +18,7 @@ var RANDOM_EVENT_DEFS = [
       desc: '立即补充 15 名士兵',
       apply: function(game) { // V10.1: 空投人数吃士兵成长"招募效率"加成(原固定15, recruitBonus 从未消费于此)
           var rb = (typeof SoldierGrowth !== 'undefined') ? (SoldierGrowth.stats(game.profile).recruitBonus || 0) : 0;
-          game.squad.setCount(Math.min(CONFIG.SQUAD_MAX_COUNT, game.squad.count + 15 + rb)); } },
+          game.squad.addReinforcements(15 + rb, '空投补给', game.effects); } },
     { id: 'coin_rain', name: '金币雨',     icon: '🪙', weight: 12, type: 'good',
       desc: '立即获得 40 金币',
       apply: function(game) { if (game.profile) game.profile.addCoins(40); } },
@@ -30,10 +30,10 @@ var RANDOM_EVENT_DEFS = [
       apply: function(game) { var s = game.squad; s._evRateMul = 1.5; s._evRateMulT = 12; } },
     { id: 'reinforce', name: '援军空降',   icon: '🚁', weight: 8, type: 'good',
       desc: '补充当前人数 30% 的士兵',
-      apply: function(game) { game.squad.setCount(Math.min(CONFIG.SQUAD_MAX_COUNT, game.squad.count + Math.max(1, Math.floor(game.squad.count * 0.3)))); } },
+      apply: function(game) { game.squad.addReinforcements(Math.max(1, Math.floor(game.squad.count * 0.3)), '援军空降', game.effects); } },
     { id: 'medkit',    name: '战地医疗',   icon: '💉', weight: 8, type: 'good',
       desc: '恢复 10% 编制士兵',
-      apply: function(game) { game.squad.setCount(Math.min(CONFIG.SQUAD_MAX_COUNT, game.squad.count + Math.max(1, Math.floor(game.maxCount * 0.1)))); } },
+      apply: function(game) { game.squad.addReinforcements(Math.max(1, Math.floor(game.maxCount * 0.1)), '战地医疗', game.effects); } },
     { id: 'crit_storm', name: '弱点洞察',  icon: '🎯', weight: 8, type: 'good',
       desc: '10 秒内暴击率 +20%',
       apply: function(game) { var s = game.squad; s._evCritBonus = 0.2; s._evCritT = 10; } },

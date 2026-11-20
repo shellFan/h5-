@@ -19,6 +19,7 @@ class Enemy {
         this.isBoss = (type === 'boss');
         this.enraged = false;   // V3.2: Boss狂暴阶段标记
         this.speedMul = 1;      // 移速倍率
+        this._returningToFront = false;
         this.attackMul = 1;     // 攻击间隔倍率
         this.dying = false;
         this.dieT = 0;
@@ -62,9 +63,9 @@ class Enemy {
             if (effects.impact) effects.impact(this.x, .85, this.z, isCrit, this.hp <= 0);
             // 伤害数字 (V3.6: 降低概率避免大规模战斗时文字刷屏; V3.3: 暴击必显大字)
             if (isCrit) {
-                effects.floatText(this.x, 1.0, this.z, String(dmg), '#FF8844', true);
+                effects.floatText(this.x, 1.0, this.z, String(Math.round(dmg * 100) / 100), '#FF8844', true);
             } else if (Math.random() < 0.12) {
-                effects.floatText(this.x, 0.9, this.z, String(dmg), '#FFD700', false);
+                effects.floatText(this.x, 0.9, this.z, String(Math.round(dmg * 100) / 100), '#FFD700', false);
             }
         }
         if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('hit');
@@ -153,12 +154,17 @@ class Enemy {
             }
         }
 
-        if (dist > attackDist) {
+        // Rear ambushes must finish flanking into the forward firing line.
+        // Stopping at melee distance behind a lone soldier left them untargetable
+        // forever, which also held the next gate's encounter lock forever.
+        if (dz < 0) this._returningToFront = true;
+        if (this.z <= squad.z - attackDist) this._returningToFront = false;
+        if (dist > attackDist || this._returningToFront) {
             // V5.1.1修复: 前方怪(+Z)向防线追击; 落后于军团的怪(-Z)以2.5倍冲刺归队
             // (旧Math.abs(sign)写反了落后怪方向 → 怪永远追不上 → 波次永不完成关卡卡死)
-            const behind = dz < -1;
+            const behind = this._returningToFront;
             const spd = this.cfg.speed * (this.speedMul || 1) * (frozen ? 0.3 : 1) * (behind ? 2.5 : 1);
-            if (behind) this.z -= spd * dt;
+            if (behind) this.z = Math.max(squad.z - attackDist, this.z - spd * dt);
             else this.z = BattleKinematics.enemyApproachZ(this.z, spd, dt);
             const dx = squad.x - this.x;
             this.x += clamp(dx, -1, 1) * spd * 0.4 * dt;

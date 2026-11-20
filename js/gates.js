@@ -54,21 +54,27 @@ class GateSystem {
         return this.chosenRows.has(z);
     }
 
-    syncVisibility(pacing, outstanding) {
-        // V5.1.5: next = 队伍前方最近的未选行(考虑队伍已越过的行)
+    nextRowZ() {
         var nextZ = null;
-        var squadZ = arguments[2] !== undefined ? arguments[2] : pacing ? (pacing.game ? pacing.game.squad.z : 0) : 0;
         for (const g of this.gates) {
-            if (this.isRowChosen(g.z)) continue;
-            if (nextZ === null || (g.z <= squadZ + 2 && g.z > nextZ)) nextZ = g.z;
+            if (g.passed || this.isRowChosen(g.z)) continue;
+            if (nextZ === null || g.z > nextZ) nextZ = g.z;
         }
+        return nextZ;
+    }
+
+    approachStopZ(pacing, outstanding, squadZ) {
+        var z = this.nextRowZ();
+        if (z === null || (outstanding === 0 && pacing.canChooseGate(z))) return null;
+        // Hold before the choice area, including while waves rest or splits spawn.
+        // Never pull a squad backwards when loading an already advanced position.
+        return Math.min(squadZ, z + 5);
+    }
+
+    syncVisibility(pacing, outstanding) {
+        var nextZ = this.nextRowZ();
         var available = outstanding === 0 && nextZ !== null && pacing.canChooseGate(nextZ);
         for (const g of this.gates) {
-            // V6.0: 技能门始终可见(不走 exclusive next 选中逻辑)
-            if (g.data && g.data.op === 'skill') {
-                g.model.visible = !g.passed;
-                continue;
-            }
             g.model.visible = g.triggered || (available && g.z === nextZ && !g.passed);
         }
     }
