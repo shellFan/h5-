@@ -162,9 +162,12 @@ var SoldierRenderer = class SoldierRenderer {
         }
 
         var visibleCount = squad.count + this.ghosts.length;
+        // V11.6: 前缀上传(只传已用槽位, 上限500时GPU带宽减半以上)
         for (var m = 0; m < this.parts.length; m++) {
             var partMesh = bank.meshes[this.parts[m]];
             partMesh.count = visibleCount;
+            partMesh.instanceMatrix.updateRange.offset = 0;
+            partMesh.instanceMatrix.updateRange.count = visibleCount * 16;
             partMesh.instanceMatrix.needsUpdate = true;
         }
     }

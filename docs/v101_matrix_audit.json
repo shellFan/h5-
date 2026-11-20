@@ -1,22 +1,24 @@
 [
  {
   "name": "360x640",
-  "issues": [],
+  "issues": [
+   "触控目标过小: btn-free-supply:53x25 | btn-open-shop:34x25 | btn-home-sound:28x28 | btn-start:217x32 | lv-btn unlocked current:29x29 | lv-btn locked:29x29"
+  ],
   "perf": {
-   "frameMs": 2.31,
-   "calls": 107,
-   "tris": 1341866,
+   "frameMs": 2.17,
+   "calls": 101,
+   "tris": 1341926,
    "geoms": 100,
-   "tex": 23
+   "tex": 22
   }
  },
  {
   "name": "360x800",
   "issues": [],
   "perf": {
-   "frameMs": 1.31,
-   "calls": 103,
-   "tris": 1342226,
+   "frameMs": 1.15,
+   "calls": 107,
+   "tris": 1341724,
    "geoms": 100,
    "tex": 22
   }
@@ -25,20 +27,20 @@
   "name": "375x812",
   "issues": [],
   "perf": {
-   "frameMs": 1.45,
-   "calls": 103,
-   "tris": 1341892,
+   "frameMs": 1.02,
+   "calls": 106,
+   "tris": 1341862,
    "geoms": 100,
-   "tex": 23
+   "tex": 22
   }
  },
  {
   "name": "390x844",
   "issues": [],
   "perf": {
-   "frameMs": 1.56,
-   "calls": 108,
-   "tris": 1341834,
+   "frameMs": 1.13,
+   "calls": 105,
+   "tris": 1341972,
    "geoms": 100,
    "tex": 22
   }
@@ -47,9 +49,9 @@
   "name": "393x852",
   "issues": [],
   "perf": {
-   "frameMs": 1.52,
-   "calls": 104,
-   "tris": 1341858,
+   "frameMs": 1.09,
+   "calls": 108,
+   "tris": 1341796,
    "geoms": 100,
    "tex": 23
   }
@@ -58,20 +60,20 @@
   "name": "402x874",
   "issues": [],
   "perf": {
-   "frameMs": 1.18,
-   "calls": 103,
-   "tris": 1341782,
+   "frameMs": 1.19,
+   "calls": 104,
+   "tris": 1341638,
    "geoms": 100,
-   "tex": 22
+   "tex": 23
   }
  },
  {
   "name": "414x896",
   "issues": [],
   "perf": {
-   "frameMs": 1.44,
-   "calls": 106,
-   "tris": 1341608,
+   "frameMs": 1.12,
+   "calls": 104,
+   "tris": 1341600,
    "geoms": 100,
    "tex": 22
   }
@@ -80,33 +82,33 @@
   "name": "430x932",
   "issues": [],
   "perf": {
-   "frameMs": 1.36,
+   "frameMs": 1.09,
    "calls": 104,
-   "tris": 1341638,
+   "tris": 1341860,
    "geoms": 100,
-   "tex": 22
+   "tex": 23
   }
  },
  {
   "name": "440x960",
   "issues": [],
   "perf": {
-   "frameMs": 1.48,
+   "frameMs": 1.11,
    "calls": 107,
-   "tris": 1341978,
+   "tris": 1341644,
    "geoms": 100,
-   "tex": 23
+   "tex": 22
   }
  },
  {
   "name": "768x1024",
   "issues": [],
   "perf": {
-   "frameMs": 3.36,
-   "calls": 96,
-   "tris": 1341126,
+   "frameMs": 3.06,
+   "calls": 101,
+   "tris": 1341358,
    "geoms": 100,
-   "tex": 23
+   "tex": 24
   }
  }
 ]

@@ -991,6 +991,7 @@ class Game {
             this._cachedBadgeX = undefined; this._cachedBadgeY = undefined; this._cachedBadgeShown = undefined;
             this._cachedComboShown = undefined; this._cachedCombo = undefined; this._cachedComboHot = undefined;
             this._cachedStatCount = undefined; this._cachedStatDamage = undefined; this._cachedStatFr = undefined;
+            this._cachedCountNum = undefined;
             for (var pn = 0; pn < this.progressNodes.length; pn++) this.progressNodes[pn]._lastCls = undefined;
             this._adBtnT = 0;
 
@@ -1315,8 +1316,8 @@ class Game {
                 var sxR = Math.round(sx), syR = Math.round(sy - 18);
                 if (this._cachedBadgeX !== sxR || this._cachedBadgeY !== syR) {
                     this._cachedBadgeX = sxR; this._cachedBadgeY = syR;
-                    this.ui.countBadge.style.left = sxR + 'px';
-                    this.ui.countBadge.style.top = syR + 'px';
+                    // V11.6: transform 代替 left/top — 合成器路径, 不触发每帧布局
+                    this.ui.countBadge.style.transform = 'translate3d(' + sxR + 'px,' + syR + 'px,0)';
                 }
                 if (this._cachedBadgeShown !== true) { this._cachedBadgeShown = true; this.ui.countBadge.style.display = 'flex'; }
             } else if (this._cachedBadgeShown !== false) {
@@ -1327,8 +1328,10 @@ class Game {
 
         // 人数气泡(变化时触发弹出/抖动动画)
         if (this.ui.countNum) {
-            var countStr = String(this.squad.count);
-            if (this.ui.countNum.textContent !== countStr) {
+            // V11.6: 数值先行比较, 避免每帧 String 分配
+            if (this._cachedCountNum !== this.squad.count) {
+                var countStr = String(this.squad.count);
+                this._cachedCountNum = this.squad.count;
                 var prevCount = parseInt(this.ui.countNum.textContent) || 0;
                 this.ui.countNum.textContent = countStr;
                 var animClass = this.squad.count > prevCount ? 'pop' : 'shake';
@@ -1623,12 +1626,15 @@ class Game {
         window.__BootProgress && window.__BootProgress.stage('整备蓝色小队…', 2);
         var error = document.getElementById('error-display');
         if (error) error.remove();
-        Promise.all([SoldierModelLoader.load(), EnemyModelLoader.load()]).then(function() {
+        // V11.6: 关键资源优先启动 — 只等士兵+普通/快速僵尸(6 GLB), 其余20个模型战斗中后台补齐
+        // (_bank 对未就绪体格有 normal 回退; Boss通常开局1-3分钟后才出场, 届时早已加载完成)
+        Promise.all([SoldierModelLoader.load(), EnemyModelLoader.loadCritical()]).then(function() {
             window.__BootProgress && window.__BootProgress.stage('构建战场与渲染管线…', 99);
             // V11 QA修复[P3]: 构造失败(如WebGL上下文异常)不再走"重建"重试 —
             // 同canvas二次new Game()会重复注册输入监听; 此路径引导用户刷新页面整体重置
             try {
                 if (!window.__game) window.__game = new Game();
+                EnemyModelLoader.load(); // V11.6: 后台续载剩余模型(不阻塞进入游戏)
             } catch (e) {
                 starting = false;
                 showError('游戏初始化失败：' + e.message + '\n请刷新页面重试。');

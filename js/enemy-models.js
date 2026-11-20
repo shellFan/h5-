@@ -1,10 +1,50 @@
 // V4.2: local Blender assets, cached immutable resources and rigid-part batches.
 var EnemyModelLoader = class EnemyModelLoader {
-    static load() {
+    static load(keys) {
+        // V11.6: 子集加载+后台续载 — 启动只等关键资源(士兵+normal/fast), 其余模型战斗中后台补齐
+        // (_bank 有 normal 回退, 未就绪体格短暂降级不崩溃)
+        if (keys === undefined) keys = this.KEYS;
+        if (this._data) {
+            var missing = keys.filter(function(k) { return !this._data.styles[k]; }, this);
+            if (!missing.length) return Promise.resolve(this._data);
+            // V11.6: 错峰续载 — 逐体型串行+间隔; 战斗中自动拉长间隔(解码不与实时玩法抢主线程)
+            return missing.reduce(function(p, k) {
+                return p.then(function() {
+                    var playing = typeof window !== 'undefined' && window.__game && window.__game.state === 'playing';
+                    var gap = playing ? 1500 : 400;
+                    return new Promise(function(res) { setTimeout(res, gap); })
+                        .then(function() { return this._loadKeys([k]); }.bind(this))
+                        .then(function(styles) { for (var mk in styles) this._data.styles[mk] = styles[mk]; }.bind(this));
+                }.bind(this));
+            }.bind(this), Promise.resolve()).then(function() {
+                this.status = 'loaded';
+                return this._data;
+            }.bind(this)).catch(function(e) { this.status = 'partial_failed'; throw e; }.bind(this));
+        }
         if (this._promise) return this._promise;
-        var start=performance.now(), loaded=[], loader=new THREE.GLTFLoader();
-        this.status='loading';
-        this._promise=Promise.allSettled(this.KEYS.flatMap(key=>['hero','lod'].map(lod=>new Promise((resolve,reject)=>{
+        this._bootT0 = performance.now();
+        this._promise = this._loadKeys(keys).then(function(styles) {
+            this._data = { parts: this.PARTS, styles: styles };
+            this.status = keys.length === this.KEYS.length ? 'loaded' : 'partial';
+            this.loadMs = performance.now() - this._bootT0;
+            return this._data;
+        }.bind(this)).catch(function(e) {
+            this._promise = null; this._data = null; this.status = 'failed'; throw e;
+        }.bind(this));
+        return this._promise;
+    }
+    static loadCritical() {
+        // V11.6: 启动关键集 — 2士兵+普通/快速僵尸×2LOD = 6 GLB
+        if (typeof window !== 'undefined' && window.__BootProgress) window.__BootProgress.total = 6;
+        return this.load(['normal', 'fast']);
+    }
+    static _loadKeys(keys) {
+        var loaded = [], loader = new THREE.GLTFLoader();
+        this.status = 'loading';
+        if (typeof window !== 'undefined' && window.__BootProgress && keys.length === this.KEYS.length) {
+            window.__BootProgress.total = 2 + this.KEYS.length * 2; // 士兵2 + 全部僵尸/Boss
+        }
+        return Promise.allSettled(keys.flatMap(key => ['hero','lod'].map(lod=>new Promise((resolve,reject)=>{
             var category=['normal','fast','shield','split','spitter','elite'].includes(key)?'zombies':'bosses';
             var url='assets/models/'+category+'/'+key+'/'+key+(lod==='lod'?'-lod':'')+'.glb';
             loader.load(url,g=>{
@@ -24,10 +64,7 @@ var EnemyModelLoader = class EnemyModelLoader {
                     loaded.push(g.scene);
                     resolve({key,lod,bank});
                 }catch(e){SoldierModelLoader._disposeScene(g.scene);reject(e);}
-            // V11 QA修复[P1]: GLTFLoader.load签名是(url,onLoad,onProgress,onError) —
-            // 原实现把进度回调传到了onError槽位、错误回调落在第5参被忽略, 任何GLB失败时Promise永不settle→启动永久卡加载界面
-            },ev=>{
-                // VNext: 启动进度上报(文件级 loaded/total)
+            },undefined,ev=>{
                 if (window.__BootProgress && ev) window.__BootProgress.file(url, ev.loaded || 0, ev.total || 1);
             },e=>reject(Error('Enemy asset failed: '+url+' '+(e.message||e))));
         })))).then(results=>{
@@ -35,7 +72,7 @@ var EnemyModelLoader = class EnemyModelLoader {
             if(fail)throw fail.reason;
             var styles={};
             for(var r of results) {var v=r.value;(styles[v.key]||(styles[v.key]={}))[v.lod]=v.bank;}
-            for(var key of this.KEYS) {
+            for(var key of keys) {
                 var h=styles[key].hero,l=styles[key].lod;
                 if(l.material!==h.material)SoldierModelLoader._disposeMaterial(l.material);
                 l.material=h.material;
@@ -52,15 +89,13 @@ var EnemyModelLoader = class EnemyModelLoader {
                     h.material.emissiveMap=emissive;h.material.emissive.setHex(0xffffff);h.material.emissiveIntensity=.65;
                     h.material.onBeforeCompile=function(shader){
                         shader.fragmentShader=shader.fragmentShader.replace('#include <encodings_fragment>','gl_FragColor = LinearTosRGB( gl_FragColor );');
-                        shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n#ifdef USE_INSTANCING_COLOR\nfloat glowPower=max(totalEmissiveRadiance.r,max(totalEmissiveRadiance.g,totalEmissiveRadiance.b));\nif(vColor.r>1.25 && vColor.g<.8)totalEmissiveRadiance=vec3(1.,.08,.15)*glowPower;\nelse if(vColor.r>1.05 && vColor.g<.95 && vColor.b>1.15)totalEmissiveRadiance=vec3(.7,.15,1.)*glowPower;\n#endif');
+                        shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n\n#ifdef USE_INSTANCING_COLOR\nfloat glowPower=max(totalEmissiveRadiance.r,max(totalEmissiveRadiance.g,totalEmissiveRadiance.b));\nif(vColor.r>1.25 && vColor.g<.8)totalEmissiveRadiance=vec3(1.,.08,.15)*glowPower;\nelse if(vColor.r>1.05 && vColor.g<.95 && vColor.b>1.15)totalEmissiveRadiance=vec3(.7,.15,1.)*glowPower;\n#endif');
                     };
                 }
                 h.material.customProgramCacheKey=function(){return 'v42-pbr-display';};
             }
-            this._data={parts:this.PARTS,styles:styles};this.status='loaded';this.loadMs=performance.now()-start;
-            return this._data;
-        }).catch(e=>{loaded.forEach(s=>SoldierModelLoader._disposeScene(s));this._promise=null;this._data=null;this.status='failed';throw e;});
-        return this._promise;
+            return styles;
+        }).catch(e=>{loaded.forEach(s=>SoldierModelLoader._disposeScene(s));throw e;});
     }
     static get(){return this._data;}
 };
@@ -133,12 +168,19 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
             }
             e.renderBank=style+':'+lod;e.renderSlot=slot;
         }
+        // V11.6: 实例缓冲前缀上传 — 原每帧全量上传448槽×5部件矩阵/颜色, 怪多时GPU带宽浪费
         for(var key in this.banks)for(var part of this.data.parts) {
-            var mesh=this.banks[key].meshes[part];mesh.count=this.banks[key].count;mesh.visible=mesh.count>0;
-            mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;
+            var mesh=this.banks[key].meshes[part],used=this.banks[key].count;
+            mesh.count=used;mesh.visible=used>0;
+            mesh.instanceMatrix.updateRange.offset=0;
+            mesh.instanceMatrix.updateRange.count=used*16;
+            mesh.instanceMatrix.needsUpdate=true;
+            if(mesh.instanceColor){mesh.instanceColor.updateRange.offset=0;mesh.instanceColor.updateRange.count=used*3;mesh.instanceColor.needsUpdate=true;}
             mesh.castShadow=mesh.visible&&enemies.length<=20;
         }
-        this.shieldMesh.count=shieldCount;this.shieldMesh.instanceMatrix.needsUpdate=true;
+        this.shieldMesh.count=shieldCount; // V11.6: 前缀上传
+        this.shieldMesh.instanceMatrix.updateRange.count=shieldCount*16;
+        this.shieldMesh.instanceMatrix.needsUpdate=true;
     }
     clear(){for(var key in this.banks)for(var p of this.data.parts)this.banks[key].meshes[p].count=0;this.shieldMesh.count=0;}
 };
