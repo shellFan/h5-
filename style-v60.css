@@ -235,7 +235,7 @@
     #game-container.v42-ui .v42-home-top { margin-bottom: 5px; }
     #game-container.v42-ui .v42-best-record { font-size: 10px; padding: 2px 7px; }
     #game-container.v42-ui .v51-coin-pill { font-size: 11px; padding: 2px 7px; }
-    #game-container.v42-ui .v51-shop-btn, #game-container.v42-ui .v51-supply-btn { font-size: 10px; padding: 4px 8px; min-height: 26px; }
+    #game-container.v42-ui .v51-shop-btn, #game-container.v42-ui .v51-supply-btn { font-size: 10px; padding: 4px 8px; min-height: 36px; }
     #game-container.v42-ui .v42-home-sound { width: 40px; height: 40px; font-size: 14px; }
     #game-container.v42-ui .btn-primary#btn-start { min-height: 44px; font-size: 15px; }
 }
@@ -280,3 +280,38 @@
 /* 面板滚动条美化(移动端弱化) */
 .v60-panel::-webkit-scrollbar, .v60-ach-list::-webkit-scrollbar, .v60-armory-list::-webkit-scrollbar { width: 4px; }
 .v60-panel::-webkit-scrollbar-thumb { background: rgba(26,111,212,.25); border-radius: 2px; }
+
+/* ===== V11: 手机端内容适配(用户反馈: 内容过长不能全部显示) =====
+   面板改flex列布局: 内部列表填满面板剩余高度(替代固定vh上限),
+   内容多时列表内部滚动, 标题/返回按钮始终完整可见 */
+#game-container.v42-ui .v60-page .v60-panel { display: flex; flex-direction: column; }
+#game-container.v42-ui .v60-page .v60-panel > * { flex-shrink: 0; }
+#game-container.v42-ui .v60-page .v60-panel .v60-armory-list,
+#game-container.v42-ui .v60-page .v60-panel .v60-tech-list,
+#game-container.v42-ui .v60-page .v60-panel .v60-rank-list,
+#game-container.v42-ui .v60-page .v60-panel .v60-ach-list,
+#game-container.v42-ui .v60-page .v60-panel .v60-codex-list,
+#game-container.v42-ui .v60-page .v60-panel .v60-map-nodes {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+/* 训练页背包夹在多个区块之间, 不参与flex伸展, 仅放宽上限 */
+#game-container.v42-ui .v60-page .v60-panel .v60-bag-list { flex: 0 0 auto; max-height: 40vh; }
+/* 图鉴双列表(图鉴+武器收藏)弹性分半 */
+#game-container.v42-ui .v60-page .v60-panel .v60-codex-list { flex: 1 1 50%; }
+
+/* V11: 矮屏(≤700px高)压缩卡片密度 — 同屏显示更多条目 */
+@media (max-height: 700px) {
+    #game-container.v42-ui .v60-armory-row { padding: 7px 10px; border-radius: 12px; }
+    #game-container.v42-ui .v60-tech-row, #game-container.v42-ui .v60-ach-row { padding: 6px 9px; }
+    #game-container.v42-ui .v60-codex-card { padding: 5px 9px; }
+    #game-container.v42-ui .v60-codex-icon { font-size: 17px; width: 24px; }
+    #game-container.v42-ui .v60-map-node { padding: 6px 10px; margin-left: 10px; }
+    #game-container.v42-ui .v60-rank-row { padding: 5px 9px; }
+    #game-container.v42-ui .v60-bag-item { padding: 5px 8px; }
+    #game-container.v42-ui .v60-challenge-card { padding: 9px 11px; }
+    #game-container.v42-ui .v60-signin-day { padding: 4px 2px; }
+}

@@ -136,7 +136,21 @@
     margin-bottom: 12px;
 }
 
-#shop-list { display: flex; flex-direction: column; gap: 8px; }
+/* V11: 商店面板flex列布局 — 列表填满剩余高度, 内容超长时列表内部滚动, 返回按钮始终可见 */
+#game-container.v42-ui #shop-screen .shop-panel { display: flex; flex-direction: column; }
+#game-container.v42-ui #shop-screen .shop-panel > * { flex-shrink: 0; }
+#shop-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+#shop-list::-webkit-scrollbar { width: 4px; }
+#shop-list::-webkit-scrollbar-thumb { background: rgba(26,111,212,.25); border-radius: 2px; }
 
 .shop-row {
     display: flex;
