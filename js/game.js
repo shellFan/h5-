@@ -1155,7 +1155,11 @@ class Game {
         var stopZ = this.enemies.boss ? this.enemies.boss.z + 4.5 : null;
         var frontier = this.pacing.frontierStopZ();
         if (frontier !== null) stopZ = stopZ === null ? frontier : Math.max(stopZ, frontier);
-        var gateStop = this.gates.approachStopZ(this.pacing, this.enemies.encounterOutstanding, this.squad.z);
+        // V12修复: 挑战模式驻守固定阵地, 门停线不外推驻守点(门前停线曾使挑战模式小队滞留门前
+        // 无法接敌 → 永不战败, v80 挑战失败判定/结算标记/失败原因三项回归)
+        var gateStop = (this._challenge && this._challenge.holdZ !== undefined)
+            ? null
+            : this.gates.approachStopZ(this.pacing, this.enemies.encounterOutstanding, this.squad.z);
         if (gateStop !== null) stopZ = stopZ === null ? gateStop : Math.max(stopZ, gateStop);
         // V8.0: 挑战模式 — 小队驻守固定阵地
         if (this._challenge && this._challenge.holdZ !== undefined) {

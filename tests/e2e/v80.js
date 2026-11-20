@@ -158,9 +158,10 @@ async function main() {
     g._challenge.waveT = 9999; // 屏蔽波次增援
     g.squad.setCount(10);
     var coinsBefore = g.profile.coins;
-    // 6只精英三线贴脸 — 单只会被子弹击退钉住(游戏机制), 无法构成必然死亡
-    for (var ei = 0; ei < 6; ei++) {
-      g.enemies.spawnEnemy('elite', CONFIG.LANE_X[ei % 3] + (ei % 2 ? 0.5 : -0.5), g.squad.z - (1 + ei * 0.4), 500);
+    // V12: 10只低血精英贴脸 — 单只精英会被子弹击退钉住(V12击退+侧翼包抄机制下的平衡态),
+    // 压倒性近战数量才能构成必然死亡(考察挑战失败结算链路, 非平衡性)
+    for (var ei = 0; ei < 10; ei++) {
+      g.enemies.spawnEnemy('elite', CONFIG.LANE_X[ei % 3] + (ei % 2 ? 0.5 : -0.5), g.squad.z - (0.8 + ei * 0.25), 80);
     }
     for (var f = 0; f < 600 && g.state === 'playing'; f++) g._update(1/30);
     return { state: g.state, scored: g._challenge ? g._challenge._scored : false,

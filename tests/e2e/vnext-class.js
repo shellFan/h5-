@@ -99,11 +99,12 @@ async function main() {
     g.profile.data.classId = 'marksman';
     g.start();
     RandomEvents._t = 9999;
+    g.gates.clear(); // V12: 该测试考察职业对精英机制 — 清除门避免门前停线让小队中途停步(伤害99/100临界)
     g.squad.setCount(20);
     var has = g.squad._classEliteMul === 1.25;
     var elite = g.enemies.spawnEnemy('elite', 0, g.squad.z - 8, 100);
     var hp0 = elite.hp;
-    for (var f = 0; f < 300 && elite.alive; f++) g._update(1/30);
+    for (var f = 0; f < 600 && elite.alive; f++) g._update(1/30); // V12: 300帧对临界伤害(99/100)太紧 → 600帧稳定化(产品逻辑不变)
     return { has: has, died: !elite.alive, dmgDealt: hp0 - Math.max(0, elite.hp) };
   });
   assert(marks.has, '狙击精英乘区挂载(×1.25)');

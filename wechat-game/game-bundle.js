@@ -1,10 +1,10 @@
 // ===== game-bundle.js (V12 微信小游戏构建产物: 单一模块作用域, 源脚本按 index.html 顺序拼接) =====
-// 生成: tools/build-wechat.js @ 2026-11-20T18:54:22.831Z
+// 生成: tools/build-wechat.js @ 2026-11-20T19:15:25.779Z
 // 代码与 H5 完全同源; 平台差异收敛于入口 game.js
 /* ==== index.html 内联脚本(BootProgress/错误横幅, H5 中先于业务脚本执行 — 保序) ==== */
 
         // V11 QA: 游戏版本标识(首页品牌栏读取; 与package.json同步维护)
-        window.__GAME_VERSION = 'v11.3';
+        window.__GAME_VERSION = 'v12.0';
         // VNext: 加载进度追踪器(被 soldier-loader / enemy-models 调用; 仅统计真实文件进度, 无定时器伪造)
         window.__BootProgress = {
             files: {}, total: 26, // 2士兵 + 12×2 僵尸/Boss GLB
@@ -2171,7 +2171,7 @@ var RANDOM_EVENT_DEFS = [
       desc: '立即补充 15 名士兵',
       apply: function(game) { // V10.1: 空投人数吃士兵成长"招募效率"加成(原固定15, recruitBonus 从未消费于此)
           var rb = (typeof SoldierGrowth !== 'undefined') ? (SoldierGrowth.stats(game.profile).recruitBonus || 0) : 0;
-          game.squad.setCount(Math.min(CONFIG.SQUAD_MAX_COUNT, game.squad.count + 15 + rb)); } },
+          game.squad.addReinforcements(15 + rb, '空投补给', game.effects); } },
     { id: 'coin_rain', name: '金币雨',     icon: '🪙', weight: 12, type: 'good',
       desc: '立即获得 40 金币',
       apply: function(game) { if (game.profile) game.profile.addCoins(40); } },
@@ -2183,10 +2183,10 @@ var RANDOM_EVENT_DEFS = [
       apply: function(game) { var s = game.squad; s._evRateMul = 1.5; s._evRateMulT = 12; } },
     { id: 'reinforce', name: '援军空降',   icon: '🚁', weight: 8, type: 'good',
       desc: '补充当前人数 30% 的士兵',
-      apply: function(game) { game.squad.setCount(Math.min(CONFIG.SQUAD_MAX_COUNT, game.squad.count + Math.max(1, Math.floor(game.squad.count * 0.3)))); } },
+      apply: function(game) { game.squad.addReinforcements(Math.max(1, Math.floor(game.squad.count * 0.3)), '援军空降', game.effects); } },
     { id: 'medkit',    name: '战地医疗',   icon: '💉', weight: 8, type: 'good',
       desc: '恢复 10% 编制士兵',
-      apply: function(game) { game.squad.setCount(Math.min(CONFIG.SQUAD_MAX_COUNT, game.squad.count + Math.max(1, Math.floor(game.maxCount * 0.1)))); } },
+      apply: function(game) { game.squad.addReinforcements(Math.max(1, Math.floor(game.maxCount * 0.1)), '战地医疗', game.effects); } },
     { id: 'crit_storm', name: '弱点洞察',  icon: '🎯', weight: 8, type: 'good',
       desc: '10 秒内暴击率 +20%',
       apply: function(game) { var s = game.squad; s._evCritBonus = 0.2; s._evCritT = 10; } },
@@ -11417,6 +11417,26 @@ class Effects {
         this.booms.push({ mesh: s, life: 0.14, maxLife: 0.14, size: size || 1.6 });
     }
 
+    reinforcement(squad, source, added) {
+        if (added <= 0) return;
+        if (!(this._recruitNoticeT > 0)) this._recruitTotals = {};
+        this._recruitTotals[source] = (this._recruitTotals[source] || 0) + added;
+        this._recruitNoticeT = 2.8;
+        var el = document.getElementById('reinforcement-notice');
+        if (el) {
+            el.textContent = Object.keys(this._recruitTotals).map(key => key + ' +' + this._recruitTotals[key] + '人').join(' · ');
+            el.hidden = false;
+        }
+        // Kill-based healing can fire dozens of times a second: aggregate the
+        // notice, and bound the expensive world effects to one pulse per 0.4s.
+        if (!(this._recruitFxT > 0)) {
+            this._recruitFxT = 0.4;
+            this.floatText(squad.x, 2.2, squad.z, source + ' +' + added + '人', '#75FFB5', true);
+            this.shockwave(squad.x, 0.06, squad.z, 0x39D98A);
+            this.burst(squad.x, 0.6, squad.z, 0x75FFB5, 10, 2.2, 0.6);
+        }
+    }
+
     impact(x, y, z, critical, lethal) {
         var p = this._impactPool.pop();
         if (!p) return;
@@ -11567,6 +11587,11 @@ class Effects {
     }
 
     clear() {
+        this._recruitTotals = {};
+        this._recruitNoticeT = 0;
+        this._recruitFxT = 0;
+        var notice = document.getElementById('reinforcement-notice');
+        if (notice) { notice.hidden = true; notice.textContent = ''; }
         for (var impact of this.impacts) this._impactPool.push(impact);
         this.impacts.length = 0;
         this.impactMesh.count = 0;
@@ -11586,6 +11611,15 @@ class Effects {
     }
 
     update(dt) {
+        this._recruitFxT = Math.max(0, (this._recruitFxT || 0) - dt);
+        if (this._recruitNoticeT > 0) {
+            this._recruitNoticeT = Math.max(0, this._recruitNoticeT - dt);
+            if (!this._recruitNoticeT) {
+                var notice = document.getElementById('reinforcement-notice');
+                if (notice) notice.hidden = true;
+                this._recruitTotals = {};
+            }
+        }
         var camera = this.scene.userData.camera;
         for (var ii = this.impacts.length - 1; ii >= 0; ii--) {
             var impact = this.impacts[ii], data = impact.userData;
@@ -11789,6 +11823,16 @@ class Squad {
         var g = this._gameRef;
         var bonus = (g && g._techStats && g._techStats.limitBonus) || 0;
         return CONFIG.SQUAD_MAX_COUNT + bonus;
+    }
+
+    /** Automatic recruitment reports actual gains after the squad cap. */
+    addReinforcements(amount, source, effects) {
+        if (this.count <= 0 || amount <= 0) return 0;
+        var before = this.count;
+        this.setCount(this.count + amount);
+        var added = this.count - before;
+        if (added > 0 && effects) effects.reinforcement(this, source, added);
+        return added;
     }
 
     /** 设置小队人数(自动处理增减与弹出动画) */
@@ -12056,8 +12100,7 @@ class Squad {
                 this._regenT = regenIv;
                 var cap = this._maxLimit();
                 if (this.count < cap) {
-                    this.setCount(Math.min(cap, this.count + regenN));
-                    if (this._gameRef.effects) this._gameRef.effects.floatText(this.x, 1.8, this.z, '+' + regenN + ' 医疗', '#39D98A', false);
+                    this.addReinforcements(regenN, '战地医疗', this._gameRef.effects);
                 }
             }
         }
@@ -12264,21 +12307,27 @@ class GateSystem {
         return this.chosenRows.has(z);
     }
 
-    syncVisibility(pacing, outstanding) {
-        // V5.1.5: next = 队伍前方最近的未选行(考虑队伍已越过的行)
+    nextRowZ() {
         var nextZ = null;
-        var squadZ = arguments[2] !== undefined ? arguments[2] : pacing ? (pacing.game ? pacing.game.squad.z : 0) : 0;
         for (const g of this.gates) {
-            if (this.isRowChosen(g.z)) continue;
-            if (nextZ === null || (g.z <= squadZ + 2 && g.z > nextZ)) nextZ = g.z;
+            if (g.passed || this.isRowChosen(g.z)) continue;
+            if (nextZ === null || g.z > nextZ) nextZ = g.z;
         }
+        return nextZ;
+    }
+
+    approachStopZ(pacing, outstanding, squadZ) {
+        var z = this.nextRowZ();
+        if (z === null || (outstanding === 0 && pacing.canChooseGate(z))) return null;
+        // Hold before the choice area, including while waves rest or splits spawn.
+        // Never pull a squad backwards when loading an already advanced position.
+        return Math.min(squadZ, z + 5);
+    }
+
+    syncVisibility(pacing, outstanding) {
+        var nextZ = this.nextRowZ();
         var available = outstanding === 0 && nextZ !== null && pacing.canChooseGate(nextZ);
         for (const g of this.gates) {
-            // V6.0: 技能门始终可见(不走 exclusive next 选中逻辑)
-            if (g.data && g.data.op === 'skill') {
-                g.model.visible = !g.passed;
-                continue;
-            }
             g.model.visible = g.triggered || (available && g.z === nextZ && !g.passed);
         }
     }
@@ -12655,6 +12704,7 @@ class Enemy {
         this.isBoss = (type === 'boss');
         this.enraged = false;   // V3.2: Boss狂暴阶段标记
         this.speedMul = 1;      // 移速倍率
+        this._returningToFront = false;
         this.attackMul = 1;     // 攻击间隔倍率
         this.dying = false;
         this.dieT = 0;
@@ -12698,9 +12748,9 @@ class Enemy {
             if (effects.impact) effects.impact(this.x, .85, this.z, isCrit, this.hp <= 0);
             // 伤害数字 (V3.6: 降低概率避免大规模战斗时文字刷屏; V3.3: 暴击必显大字)
             if (isCrit) {
-                effects.floatText(this.x, 1.0, this.z, String(dmg), '#FF8844', true);
+                effects.floatText(this.x, 1.0, this.z, String(Math.round(dmg * 100) / 100), '#FF8844', true);
             } else if (Math.random() < 0.12) {
-                effects.floatText(this.x, 0.9, this.z, String(dmg), '#FFD700', false);
+                effects.floatText(this.x, 0.9, this.z, String(Math.round(dmg * 100) / 100), '#FFD700', false);
             }
         }
         if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('hit');
@@ -12791,12 +12841,17 @@ class Enemy {
             }
         }
 
-        if (dist > attackDist) {
+        // Rear ambushes must finish flanking into the forward firing line.
+        // Stopping at melee distance behind a lone soldier left them untargetable
+        // forever, which also held the next gate's encounter lock forever.
+        if (dz < 0) this._returningToFront = true;
+        if (this.z <= squad.z - attackDist) this._returningToFront = false;
+        if (dist > attackDist || this._returningToFront) {
             // V5.1.1修复: 前方怪(+Z)向防线追击; 落后于军团的怪(-Z)以2.5倍冲刺归队
             // (旧Math.abs(sign)写反了落后怪方向 → 怪永远追不上 → 波次永不完成关卡卡死)
-            const behind = dz < -1;
+            const behind = this._returningToFront;
             const spd = this.cfg.speed * (this.speedMul || 1) * (frozen ? 0.3 : 1) * (behind ? 2.5 : 1);
-            if (behind) this.z -= spd * dt;
+            if (behind) this.z = Math.max(squad.z - attackDist, this.z - spd * dt);
             else this.z = BattleKinematics.enemyApproachZ(this.z, spd, dt);
             const dx = squad.x - this.x;
             this.x += clamp(dx, -1, 1) * spd * 0.4 * dt;
@@ -13193,11 +13248,14 @@ class CombatSystem {
 
                 // 每发子弹伤害 = 总DPS / 视觉弹道频率
                 var totalDPS = count * squad.getDamage() * squad.getFireRate();
-                var dmg = Math.max(1, Math.round(totalDPS / visualRate));
 
                 // 齐射数量: 1~5发(人数越多越多)
                 var volley = Math.min(5, 1 + Math.floor(Math.sqrt(count) / 2.3)); // V8.0.1: 齐射曲线提升(÷2.6→÷2.3)
                 var positions = squad.getShootPositions(volley);
+                // A volley shares the squad DPS; giving every trail the full
+                // budget multiplied damage by up to five. Keep fractional damage
+                // so minimum-one rounding cannot inflate small squads either.
+                var dmg = totalDPS / visualRate / Math.max(1, positions.length);
                 if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('shoot'); // V5.0: 齐射音效(适配器内部限流)
                 for (var k = 0; k < positions.length; k++) {
                     // V3.1: 每发子弹瞄准前方最近敌人(修复阵型散布导致5/7子弹打不中Boss的问题)
@@ -13208,20 +13266,20 @@ class CombatSystem {
                     // V3.3: 暴击判定(开火时掷骰, 伤害×2)
                     var dmgFinal = dmg;
                     // V6.0: 狂暴技能伤害乘区
-                    if (squad._skillRage) dmgFinal = Math.round(dmgFinal * (1 + 0.35 * squad._skillRage));
+                    if (squad._skillRage) dmgFinal *= 1 + 0.35 * squad._skillRage;
                     // V8.0: 守护之怒组合 — 护盾可用时+25%
-                    if (squad._comboGuardianFury && squad._skillShield > 0) dmgFinal = Math.round(dmgFinal * 1.25);
+                    if (squad._comboGuardianFury && squad._skillShield > 0) dmgFinal *= 1.25;
                     // V8.0: 随机事件伤害buff(狂热时刻)
-                    if (squad._evDmgMul) dmgFinal = Math.round(dmgFinal * squad._evDmgMul);
+                    if (squad._evDmgMul) dmgFinal *= squad._evDmgMul;
                     // V6.0: 背水一战 — 人数低于一半时增伤
                     if (squad._skillBerserk && squad.count > 0 && squad._halfCount && squad.count <= squad._halfCount) {
-                        dmgFinal = Math.round(dmgFinal * (1 + 0.5 * squad._skillBerserk));
+                        dmgFinal *= 1 + 0.5 * squad._skillBerserk;
                     }
                     var isCrit = Math.random() < Math.min(0.8, squad.critChance + (squad._evCritBonus || 0)); // V8.0: 事件暴击buff
                     // V11.2: 处决者 — 暴击伤害乘区(2 + 0.25×层), 火力流派 +15%
                     var critMul = 2 + (squad._critMul || 0);
-                    if (isCrit) dmgFinal = Math.round(dmgFinal * critMul);
-                    if (squad._comboFireFlow) dmgFinal = Math.round(dmgFinal * 1.15);
+                    if (isCrit) dmgFinal *= critMul;
+                    if (squad._comboFireFlow) dmgFinal *= 1.15;
                     this._fire(positions[k], dmgFinal, target, isCrit);
                     // V10.1: 散弹枪 pellets — 多发弹丸扇形铺散(其余弹丸依次瞄准相邻目标, 多目标AOE; 单目标时自然衰减)
                     var wpnPellets = squad._wpnPellets || 1;
@@ -13278,10 +13336,10 @@ class CombatSystem {
                                 e._frozenFx = true;
                             }
                         }
-                        // V10.1: 地狱火箭燃烧 — 命中附加燃烧DoT(3秒, 每跳25%弹丸伤害)
+                        // 地狱火箭燃烧 — 持续3秒, 每秒25%弹丸伤害(每0.5秒结算)
                         if (squad._wpnBurn) {
                             e._burnT = 3;
-                            e._burnDps = Math.max(e._burnDps || 0, Math.max(1, Math.round(b.damage * 0.25)));
+                            e._burnDps = Math.max(e._burnDps || 0, b.damage * 0.25);
                             this.effects.burst(e.x, 0.8, e.z, 0xFF8833, 3, 1.5, 0.3);
                         }
                         // V6.0: 毒液弹头 — 命中附加中毒DoT(修复: 原实现从未挂载)
@@ -13295,7 +13353,7 @@ class CombatSystem {
                         var hitDmg = b.damage;
                         // VNext: 神射狙击 — 对精英/Boss ×1.25
                         if (squad._classEliteMul && (e.isBoss || e.type === 'elite' || e.affixes)) {
-                            hitDmg = Math.round(hitDmg * squad._classEliteMul);
+                            hitDmg *= squad._classEliteMul;
                         }
                         var died = e.takeDamage(hitDmg, this.effects, b.mesh.position.x, b.crit);
                         // V5.1: 爆炸弹 — 命中溅射(半径1.7, 50%伤害, 最多4个邻近目标)
@@ -13307,7 +13365,7 @@ class CombatSystem {
                                 if (se === e || !se.alive) continue;
                                 var sdx = se.x - e.x, sdz = se.z - e.z;
                                 if (sdx * sdx + sdz * sdz < splashR * splashR) {
-                                    se.takeDamage(Math.max(1, Math.round(b.damage * 0.5)), this.effects, se.x, false);
+                                    se.takeDamage(b.damage * 0.5, this.effects, se.x, false);
                                     splashN++;
                                 }
                             }
@@ -13328,7 +13386,7 @@ class CombatSystem {
                                     if (cd < bestD) { bestD = cd; best = ce; }
                                 }
                                 if (!best) break;
-                                best.takeDamage(Math.max(1, Math.round(b.damage * 0.4)), this.effects, best.x, false);
+                                best.takeDamage(b.damage * 0.4, this.effects, best.x, false);
                                 this.effects.burst(best.x, 1.0, best.z, 0x66D9FF, 4, 2, 0.25);
                                 last = best;
                             }
@@ -13339,24 +13397,21 @@ class CombatSystem {
                                 this.effects.floatText(e.x, 1.2, e.z, '暴击!', '#FF4444', true);
                             }
                             // V3.3: 吸血 — 击杀按层数概率回复1人
-                            if (squad.vampStacks > 0 && squad.count > 0 && squad.count < CONFIG.SQUAD_MAX_COUNT) {
+                            if (squad.vampStacks > 0 && squad.count > 0 && squad.count < squad._maxLimit()) {
                                 var vampProb = 0.12 * squad.vampStacks;
                                 if (Math.random() < vampProb) {
-                                    squad.setCount(squad.count + 1);
-                                    this.effects.floatText(squad.x, 1.4, squad.z, '+1', '#66D68F', false);
+                                    squad.addReinforcements(1, '吸血恢复', this.effects);
                                 }
                             }
                             // V8.0: 回收无人机组合 — 3%概率补员
-                            if (squad._comboRecycle && squad.count > 0 && squad.count < CONFIG.SQUAD_MAX_COUNT && Math.random() < 0.03) {
-                                squad.setCount(squad.count + 1);
-                                this.effects.floatText(squad.x, 1.4, squad.z, '回收+1', '#4DA8FF', false);
+                            if (squad._comboRecycle && squad.count > 0 && squad.count < squad._maxLimit() && Math.random() < 0.03) {
+                                squad.addReinforcements(1, '回收无人机', this.effects);
                             }
                             // V11.2: 亡者征召 — 5%×层概率补员(虫群流派×1.5)
-                            if (squad._skillHarvest && squad.count > 0 && squad.count < CONFIG.SQUAD_MAX_COUNT) {
+                            if (squad._skillHarvest && squad.count > 0 && squad.count < squad._maxLimit()) {
                                 var harvProb = 0.05 * squad._skillHarvest * (squad._comboSwarmFlow ? 1.5 : 1);
                                 if (Math.random() < harvProb) {
-                                    squad.setCount(squad.count + 1);
-                                    this.effects.floatText(squad.x, 1.6, squad.z, '征召+1', '#39D98A', false);
+                                    squad.addReinforcements(1, '亡者征召', this.effects);
                                 }
                             }
                         }
@@ -13399,7 +13454,7 @@ class CombatSystem {
                     ve._venomTick = (ve._venomTick || 0) - dt;
                     if (ve._venomTick <= 0) {
                         ve._venomTick = 0.5;
-                        ve.takeDamage(Math.max(1, Math.round(ve._venomDps * 0.5)), this.effects, ve.x, false);
+                        ve.takeDamage(ve._venomDps * 0.5, this.effects, ve.x, false);
                         if (this.effects) this.effects.burst(ve.x, 1, ve.z, 0x66DD44, 2, 1.5, 0.25);
                     }
                     if (ve._venomT <= 0) { ve._venomT = 0; ve._venomStacks = 0; }
@@ -13410,7 +13465,7 @@ class CombatSystem {
                     ve._burnTick = (ve._burnTick || 0) - dt;
                     if (ve._burnTick <= 0) {
                         ve._burnTick = 0.5;
-                        ve.takeDamage(Math.max(1, Math.round(ve._burnDps * 0.5)), this.effects, ve.x, false);
+                        ve.takeDamage(ve._burnDps * 0.5, this.effects, ve.x, false);
                         if (this.effects) this.effects.burst(ve.x, 1, ve.z, 0xFF8833, 2, 1.5, 0.25);
                     }
                     if (ve._burnT <= 0) { ve._burnT = 0; ve._burnDps = 0; }
@@ -16400,6 +16455,12 @@ class Game {
         var stopZ = this.enemies.boss ? this.enemies.boss.z + 4.5 : null;
         var frontier = this.pacing.frontierStopZ();
         if (frontier !== null) stopZ = stopZ === null ? frontier : Math.max(stopZ, frontier);
+        // V12修复: 挑战模式驻守固定阵地, 门停线不外推驻守点(门前停线曾使挑战模式小队滞留门前
+        // 无法接敌 → 永不战败, v80 挑战失败判定/结算标记/失败原因三项回归)
+        var gateStop = (this._challenge && this._challenge.holdZ !== undefined)
+            ? null
+            : this.gates.approachStopZ(this.pacing, this.enemies.encounterOutstanding, this.squad.z);
+        if (gateStop !== null) stopZ = stopZ === null ? gateStop : Math.max(stopZ, gateStop);
         // V8.0: 挑战模式 — 小队驻守固定阵地
         if (this._challenge && this._challenge.holdZ !== undefined) {
             stopZ = stopZ === null ? this._challenge.holdZ : Math.max(stopZ, this._challenge.holdZ);
@@ -16912,7 +16973,7 @@ class Game {
 
 
 /* ---- index.html 内联引导(等价移植) ---- */
-window.__GAME_VERSION = 'v11.3';
+window.__GAME_VERSION = 'v12.0';
 window.__AD_TEST_SCENARIO = null; /* 小游戏无 location 注入, 生产恒为 null */
 Platform.initialize();
 window.__adService = setupAdService();
