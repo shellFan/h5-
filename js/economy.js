@@ -27,7 +27,7 @@ class GameProfile {
 
     _load() {
         var raw = null;
-        try { raw = this._storage.get(ECONOMY_RULES.PROFILE_KEY, null); } catch (e) {}
+        try { raw = this._storage.getSafe ? this._storage.getSafe(ECONOMY_RULES.PROFILE_KEY, null) : this._storage.get(ECONOMY_RULES.PROFILE_KEY, null); } catch (e) {}
         if (raw && typeof raw === 'object') {
             // V8.0: 分版本迁移链 — v1→v2(星级/成就)→v3(武器/科技/签到)
             if ((raw.profileVersion || 0) >= 3) return this._normalize(raw);
@@ -102,7 +102,11 @@ class GameProfile {
         };
     }
 
-    save() { try { this._storage.set(ECONOMY_RULES.PROFILE_KEY, this._data); } catch (e) {} }
+    save() {
+        // V12: 主档带 .bak 双写; 读侧损坏自动回退备份(GameStorage.getSafe), 不静默清档
+        if (this._storage.setSafe) { try { this._storage.setSafe(ECONOMY_RULES.PROFILE_KEY, this._data); } catch (e) {} return; }
+        try { this._storage.set(ECONOMY_RULES.PROFILE_KEY, this._data); } catch (e) {}
+    }
     get data() { return this._data; }
     get coins() { return this._data.coins; }
 

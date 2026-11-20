@@ -22,8 +22,9 @@ class PlatformAdapter {
         this.tt = (this.id === 'douyin') ? tt : null;
         this.wx = (this.id === 'wechat') ? wx : null;
 
-        // 存储适配器
+        // 存储适配器(V12: 微信端接入 wx 同步存储 — 原先误落内存存储导致存档不持久)
         if (this.id === 'douyin') this.storageAdapter = new TtStorageAdapter(this.tt);
+        else if (this.id === 'wechat') this.storageAdapter = new WxStorageAdapter(this.wx);
         else if (this.id === 'h5') this.storageAdapter = new LocalStorageAdapter();
         else this.storageAdapter = new MemoryStorageAdapter();
         this.storage = new GameStorage(this.storageAdapter);
@@ -60,6 +61,19 @@ class PlatformAdapter {
                 info.safeArea = s.safeArea || null;
             } catch (e) {}
         }
+        // V12: 微信小游戏系统信息(windowWidth/Height 为可用窗口尺寸, 用于 UI 视口)
+        if (this.id === 'wechat' && this.wx && this.wx.getSystemInfoSync) {
+            try {
+                var w = this.wx.getSystemInfoSync();
+                info.pixelRatio = w.pixelRatio || info.pixelRatio;
+                info.screenWidth = w.windowWidth || w.screenWidth || info.screenWidth;
+                info.screenHeight = w.windowHeight || w.screenHeight || info.screenHeight;
+                info.statusBarHeight = w.statusBarHeight || 0;
+                info.safeArea = w.safeArea || null;
+                info.model = w.model || '';
+                info.benchmarkLevel = (w.benchmarkLevel !== undefined) ? w.benchmarkLevel : -1;
+            } catch (e) {}
+        }
         return info;
     }
 
@@ -67,6 +81,9 @@ class PlatformAdapter {
     initialize() {
         if (this.id === 'douyin') {
             this.lifecycle.bindTt(this.tt);
+        } else if (this.id === 'wechat') {
+            // V12修复: 微信走 wx.onShow/onHide — 原先误入 bind() 会触碰 document(小游戏无 document, 直接抛错)
+            this.lifecycle.bindWx(this.wx);
         } else {
             this.lifecycle.bind();
         }

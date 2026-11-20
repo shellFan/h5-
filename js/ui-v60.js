@@ -185,19 +185,32 @@ var V60UI = {
         bind('v60-set-quality', function() {
             var cur = game.world.quality;
             var next = (cur + 1) % 3;
-            try { localStorage.setItem('pz_quality', String(next)); } catch (e) {}
+            // V12: 画质偏好走 Platform.storage(旧裸键 pz_quality 只写不读已修复; 微信端无 localStorage)
+            if (typeof Platform !== 'undefined' && Platform.storage && Platform.storage.setLegacy) {
+                Platform.storage.setLegacy('pz_quality', String(next));
+            } else {
+                try { localStorage.setItem('pz_quality', String(next)); } catch (e) {}
+            }
             location.reload();
         });
         bind('v60-set-shake', function() {
             game.world._shakeDisabled = !game.world._shakeDisabled;
-            try { localStorage.setItem('pz_shake_off', game.world._shakeDisabled ? '1' : '0'); } catch (e) {}
+            if (typeof Platform !== 'undefined' && Platform.storage && Platform.storage.setLegacy) {
+                Platform.storage.setLegacy('pz_shake_off', game.world._shakeDisabled ? '1' : '0');
+            } else {
+                try { localStorage.setItem('pz_shake_off', game.world._shakeDisabled ? '1' : '0'); } catch (e) {}
+            }
             self.renderSettings(game);
         });
 
         // 启动时恢复设置
-        try {
-            if (localStorage.getItem('pz_shake_off') === '1') game.world._shakeDisabled = true;
-        } catch (e) {}
+        if (typeof Platform !== 'undefined' && Platform.storage && Platform.storage.getLegacy) {
+            if (Platform.storage.getLegacy('pz_shake_off', '0') === '1') game.world._shakeDisabled = true;
+        } else {
+            try {
+                if (localStorage.getItem('pz_shake_off') === '1') game.world._shakeDisabled = true;
+            } catch (e) {}
+        }
 
         this.renderHomeGrowth(game);
         this.renderClassSelector(game);

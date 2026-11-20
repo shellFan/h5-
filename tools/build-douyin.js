@@ -32,9 +32,9 @@ const GAME_SCRIPTS = [
     'js/weapons.js',
     'js/tech-tree.js',
     'js/random-events.js',
+    'js/leaderboard.js',
     'js/progression.js',
     'js/challenge.js',
-    'js/leaderboard.js',
     'js/ui-v60.js',
     'js/upgrades.js',
     'js/movement.js',
@@ -60,12 +60,20 @@ const GAME_SCRIPTS = [
     'js/ads/web-mock-ad.js',
     'js/ads/douyin-ad.js',
     'js/ads/wechat-ad.js',
-    'js/ads/game-ad-coordinator.js'
+    'js/ads/game-ad-coordinator.js',
+    // V12修复(P0): 补入主类 — 原 GAME_SCRIPTS 缺失 js/game.js, 产物运行时必抛 'Game 类未定义'
+    'js/game.js'
 ];
 
 // index.html 内联引导脚本(平台初始化+广告装配, 必须在 game.js 之前执行)
+// V12: 从 index.html 解析游戏版本号注入小游戏端(品牌栏读取 __GAME_VERSION)
+const INDEX_HTML = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const GAME_VERSION_MATCH = INDEX_HTML.match(/__GAME_VERSION\s*=\s*'([^']+)'/);
+const GAME_VERSION = GAME_VERSION_MATCH ? GAME_VERSION_MATCH[1] : 'unknown';
+
 const BOOTSTRAP_SNIPPET = `
 /* ---- index.html 内联引导(等价移植) ---- */
+window.__GAME_VERSION = '${GAME_VERSION}';
 window.__AD_TEST_SCENARIO = null; /* 小游戏无 location 注入, 生产恒为 null */
 Platform.initialize();
 window.__adService = setupAdService();
@@ -336,6 +344,9 @@ if (typeof GameGlobal !== 'undefined') GameGlobal.THREE = THREE;
 if (typeof global !== 'undefined') global.THREE = THREE;
 window.THREE = THREE;
 
+/* V12修复(P1): 平台配置必须在 bundle(BOOTSTRAP→setupAdService)之前加载, 否则广告位ID永远读不到 */
+require('./game-config.js');
+
 /* ==================================================================
  * 3. 游戏代码 bundle(单一模块作用域, 全部脚本共享顶层声明)
  * ================================================================== */
@@ -422,7 +433,9 @@ function main() {
     fs.writeFileSync(path.join(OUT, 'game-bundle.js'), bundle);
 
     // 产物自检: 关键类必须出现在 bundle 中
-    const requiredSymbols = ['class Game', 'class Squad', 'class EnemyManager', 'class World',
+    // V12修复: 'class Game' 前缀会被 GamePacingController/GameProfile 等命中导致自检形同虚设,
+    // 改为检查 js/game.js 的 bundle 段标记 + 关键类定义
+    const requiredSymbols = ['[[ js/game.js ]]', 'class Squad', 'class EnemyManager', 'class World',
         'class PlatformAdapter', 'var Platform', 'class DouyinAdService', 'setupAdService',
         'THREE.GLTFLoader=GLTFLoader', 'SoldierModelLoader', 'EnemyModelLoader', 'V42Art'];
     const missing = requiredSymbols.filter(s => bundle.indexOf(s) === -1);

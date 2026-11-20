@@ -1149,7 +1149,7 @@ class Game {
     }
 
     _updateInner(dt) {
-        if(this._waveNoticeT>0){this._waveNoticeT=Math.max(0,this._waveNoticeT-dt);if(!this._waveNoticeT)document.getElementById('v42-wave-banner')?.classList.add('hidden');}
+        if(this._waveNoticeT>0){this._waveNoticeT=Math.max(0,this._waveNoticeT-dt);if(!this._waveNoticeT){var _wb=document.getElementById('v42-wave-banner');if(_wb)_wb.classList.add('hidden');}} // V12: 移除ES2020可选链
         // 核心系统更新
         // Boss存活时小队在Boss前方停下，击败Boss才能继续
         var stopZ = this.enemies.boss ? this.enemies.boss.z + 4.5 : null;
@@ -1252,7 +1252,11 @@ class Game {
             // V10 QA修复: L9双Boss各自显示自己的title(按 artStyle 匹配段配置, 原固定读 BOSS_NAMES[levelIndex])
             var segBoss=(LEVELS[this.levelIndex].segments||[]).find(s=>s.type==='boss'&&s.boss&&s.boss.style===(this.enemies.boss&&this.enemies.boss.artStyle));
             var bossTitle=(segBoss&&segBoss.boss&&segBoss.boss.title)||CONFIG.BOSS_NAMES[this.levelIndex];
-            if(bossNameNode && bossNameNode.firstChild && bossNameNode.firstChild.nodeType===3)bossNameNode.firstChild.nodeValue=bossTitle;
+            if(bossNameNode){ // V12: 结构无关的文本更新(原依赖firstChild.nodeType===3, HTML结构变动即失效)
+                var _bnTextNode=null;
+                for(var _bnI=0;_bnI<bossNameNode.childNodes.length;_bnI++){if(bossNameNode.childNodes[_bnI].nodeType===3){_bnTextNode=bossNameNode.childNodes[_bnI];break;}}
+                if(_bnTextNode)_bnTextNode.nodeValue=bossTitle;else bossNameNode.textContent=bossTitle;
+            }
             var phaseLabel=document.getElementById('boss-phase');
             if(phaseLabel)phaseLabel.textContent='阶段 '+(this.enemies.boss.phaseIndex||1)+(this.enemies.boss.shieldT>0?' · 护盾':'');
             if (this.ui.bossFill) this.ui.bossFill.style.width = (ratio * 100) + '%';

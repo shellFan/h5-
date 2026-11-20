@@ -394,7 +394,14 @@ class World {
     /** V4.0: 触发屏幕震动(amp≈世界单位幅度) */
     shake(amp, duration) {
         if (this._shakeDisabled === undefined) {
-            try { this._shakeDisabled = localStorage.getItem('pz_shake_off') === '1'; } catch (e) { this._shakeDisabled = false; } // V10 QA: 启动时恢复震动偏好(原仅设置页渲染时恢复)
+            // V12: 震动偏好走 Platform.storage(h5 兼容旧裸键 pz_shake_off; 微信端无 localStorage 也可存取)
+            var _shakeOff = '0';
+            if (typeof Platform !== 'undefined' && Platform.storage && Platform.storage.getLegacy) {
+                _shakeOff = Platform.storage.getLegacy('pz_shake_off', '0');
+            } else {
+                try { _shakeOff = localStorage.getItem('pz_shake_off') || '0'; } catch (e) {}
+            }
+            this._shakeDisabled = (_shakeOff === '1' || _shakeOff === 1);
         }
         if (this._shakeDisabled) return; // V10 QA修复: 设置页屏幕震动开关此前只写不读
         var strength = amp || 0.3;
@@ -407,6 +414,11 @@ class World {
     _detectQuality() {
         var requested = new URLSearchParams(window.location.search).get('quality');
         if (requested !== null && /^[012]$/.test(requested)) return Number(requested);
+        // V12: 用户画质设置生效(原 pz_quality 只写不读, 设置页按钮形同虚设)
+        if (typeof Platform !== 'undefined' && Platform.storage && Platform.storage.getLegacy) {
+            var savedQ = Platform.storage.getLegacy('pz_quality', null);
+            if (savedQ !== null && /^[012]$/.test(String(savedQ))) return Number(savedQ);
+        }
         var dpr = window.devicePixelRatio || 1;
         var area = window.innerWidth * window.innerHeight;
         // 移动端小屏 + 低DPR → 低画质

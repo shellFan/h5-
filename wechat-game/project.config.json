@@ -1,0 +1,19 @@
+{
+  "description": "膨胀小队 微信小游戏 V1.0 (构建产物, 源于 tools/build-wechat.js)",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "setting": {
+    "es6": false,
+    "enhance": false,
+    "postcss": false,
+    "minified": false,
+    "urlCheck": false
+  },
+  "compileType": "game",
+  "libVersion": "2.33.0",
+  "appid": "",
+  "projectname": "pengzhang-xiaodui",
+  "condition": {}
+}

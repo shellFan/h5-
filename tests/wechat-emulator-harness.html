@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>膨胀小队 · 微信小游戏模拟器 (V12 自动化测试用)</title>
+<style>
+  html,body{margin:0;padding:0;background:#000;width:100%;height:100%;}
+  #stage{position:relative;width:390px;height:844px;overflow:hidden;background:#0a0e1a;}
+  #stage canvas{position:absolute;left:0;top:0;width:100%;height:100%;}
+  #status{position:fixed;bottom:0;left:0;font-size:10px;background:#000;color:#0f0;padding:2px 6px;z-index:99999;max-width:100%;overflow:hidden;white-space:nowrap;}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="status">booting…</div>
+<script>
+/* ==================================================================
+ * 微信小游戏浏览器模拟层 — 仅供自动化测试(不参与生产构建)
+ * 模拟: wx 存储/画布/图片/文件系统/触摸/生命周期/激励视频广告/分享/系统信息
+ * 生产语义对齐: 未配置广告位ID时广告如实不可用; 触摸先命中 UI 再转发游戏画布
+ * ================================================================== */
+(function () {
+    'use strict';
+    var stage = document.getElementById('stage');
+    var status = document.getElementById('status');
+    window.__wxStatus = function (msg) { status.textContent = String(msg).slice(0, 300); };
+
+    var VW = 390, VH = 844, DPR = 2;
+
+    /* ---- 存储 ---- */
+    var __store = {};
+    /* ---- 触摸/生命周期回调 ---- */
+    var touchCbs = { start: [], move: [], end: [], cancel: [] };
+    var lifecycleCbs = { show: [], hide: [], error: [], resize: [] };
+
+    /* ---- 主屏 canvas(仅一次) + 离屏 ---- */
+    var screenCanvasCreated = false;
+    function createCanvas() {
+        if (!screenCanvasCreated) {
+            screenCanvasCreated = true;
+            var c = document.createElement('canvas');
+            c.width = VW * DPR; c.height = VH * DPR;
+            stage.appendChild(c);
+            return c;
+        }
+        return document.createElement('canvas');
+    }
+
+    /* ---- 激励视频广告 Mock(与 AdService 协议对齐; 广告位ID为空时上层不调用) ---- */
+    var adSeq = 0;
+    function createRewardedVideoAd(opts) {
+        var id = ++adSeq;
+        var ad = {
+            __id: id,
+            __closed: false,
+            load: function () { ad.__loadCalls = (ad.__loadCalls || 0) + 1; return Promise.resolve(); },
+            show: function () {
+                ad.__showCalls = (ad.__showCalls || 0) + 1;
+                window.__wxStatus('AD showing #' + id);
+                if (wx.__adAutoBehavior !== 'none') {
+                    setTimeout(function () {
+                        if (ad.__onCloseCb) ad.__onCloseCb({ isEnded: wx.__adAutoBehavior !== 'abandon' });
+                    }, 30);
+                }
+                return Promise.resolve();
+            },
+            onClose: function (cb) { ad.__onCloseCb = cb; },
+            onError: function (cb) { ad.__onErrorCb = cb; },
+            offClose: function () {}, offError: function () {},
+            destroy: function () { ad.__destroyed = true; }
+        };
+        (window.__adInstances = window.__adInstances || []).push(ad);
+        return ad;
+    }
+
+    var wx = {
+        /* --- 系统信息 --- */
+        getSystemInfoSync: function () {
+            return {
+                platform: 'devtools-wechat', model: 'wechat-emulator',
+                windowWidth: VW, windowHeight: VH, pixelRatio: DPR,
+                screenWidth: VW, screenHeight: VH,
+                statusBarHeight: 44,
+                safeArea: { top: 44, bottom: VH - 34, left: 0, right: VW, width: VW, height: VH - 78 },
+                benchmarkLevel: 50, SDKVersion: '2.33.0'
+            };
+        },
+        /* --- 画布/图片 --- */
+        createCanvas: createCanvas,
+        createImage: function () { return new Image(); },
+        /* --- 文件系统(包内文件) --- */
+        getFileSystemManager: function () {
+            return {
+                readFile: function (o) {
+                    fetch('/wechat-game/' + String(o.filePath).replace(/^\//, ''))
+                        .then(function (r) {
+                            if (!r.ok) throw new Error('fs 404: ' + o.filePath);
+                            return o.encoding === 'utf8' ? r.text() : r.arrayBuffer();
+                        })
+                        .then(function (data) { o.success && o.success({ data: data }); })
+                        .catch(function (e) { o.fail && o.fail({ errMsg: 'readFile fail: ' + e.message }); });
+                },
+                readFileSync: function (p, enc) { throw new Error('readFileSync 未实现'); },
+                writeFile: function (o) { o.success && o.success(); }
+            };
+        },
+        loadSubpackage: function (o) {
+            var p = Promise.resolve();
+            p.then(function () { o.success && o.success(); });
+            return p;
+        },
+        /* --- 存储(同步) --- */
+        getStorageSync: function (k) { return Object.prototype.hasOwnProperty.call(__store, k) ? __store[k] : ''; },
+        setStorageSync: function (k, v) { __store[k] = v; },
+        removeStorageSync: function (k) { delete __store[k]; },
+        getStorageInfoSync: function () { return { keys: Object.keys(__store), currentSize: 0, limitSize: 10240 }; },
+        /* --- 触摸 --- */
+        onTouchStart: function (cb) { touchCbs.start.push(cb); },
+        onTouchMove: function (cb) { touchCbs.move.push(cb); },
+        onTouchEnd: function (cb) { touchCbs.end.push(cb); },
+        onTouchCancel: function (cb) { touchCbs.cancel.push(cb); },
+        /* --- 生命周期 --- */
+        onShow: function (cb) { lifecycleCbs.show.push(cb); },
+        onHide: function (cb) { lifecycleCbs.hide.push(cb); },
+        onError: function (cb) { lifecycleCbs.error.push(cb); },
+        onWindowResize: function (cb) { lifecycleCbs.resize.push(cb); },
+        /* --- 广告 --- */
+        createRewardedVideoAd: createRewardedVideoAd,
+        /* --- 其他 --- */
+        vibrateShort: function () {}, vibrateLong: function () {},
+        showToast: function (o) { window.__lastToast = o; },
+        showModal: function (o) { window.__lastModal = o; o && o.success && o.success({ confirm: true }); },
+        shareAppMessage: function (o) { window.__lastShare = o; },
+        getUpdateManager: function () { return { onUpdateReady: function () {}, onUpdateFailed: function () {}, applyUpdate: function () {} }; },
+        arrayBufferToBase64: function (buf) {
+            var bytes = new Uint8Array(buf), bin = '';
+            for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+            return btoa(bin);
+        },
+        /* === 测试钩子(非 wx API) === */
+        __store: __store,
+        __emit: function (type, touches) {
+            var arr = touchCbs[type] || [];
+            for (var i = 0; i < arr.length; i++) {
+                try { arr[i]({ touches: touches, changedTouches: touches, timeStamp: Date.now() }); }
+                catch (e) { window.__wxStatus('touch ' + type + ' error: ' + e.message); }
+            }
+        },
+        __emitLifecycle: function (type) {
+            var arr = lifecycleCbs[type] || [];
+            for (var i = 0; i < arr.length; i++) { try { arr[i](); } catch (e) {} }
+        },
+        __adAutoBehavior: 'complete' // 'complete' | 'abandon' | 'none'
+    };
+    window.wx = wx;
+
+    /* ---- 小游戏全局 ---- */
+    window.GameGlobal = window;
+    window.global = window;
+
+    /* ---- CommonJS require(同步XHR) — 服务 wechat-game/ 构建产物 ---- */
+    var moduleCache = {};
+    function xhrSync(url) {
+        var x = new XMLHttpRequest();
+        x.open('GET', url, false);
+        x.send();
+        if (x.status !== 200) throw new Error('[require] 加载失败 ' + url);
+        return x.responseText;
+    }
+    window.require = function (rel) {
+        var p = '/wechat-game/' + String(rel).replace(/^\.\//, '').replace(/^\//, '');
+        if (moduleCache[p]) return moduleCache[p].exports;
+        var code = xhrSync(p);
+        var module = { exports: {} };
+        moduleCache[p] = module;
+        var env = window.__gameEnv || {};
+        var names = ['module', 'exports', 'require',
+            'document', 'window', 'self', 'navigator', 'location', 'performance',
+            'Image', 'Blob', 'URL', 'localStorage',
+            'requestAnimationFrame', 'cancelAnimationFrame',
+            'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'createImageBitmap'];
+        var values = [module, module.exports, window.require,
+            env.document || document, env.window || window, env.self || window,
+            env.navigator || navigator, env.location || location, env.performance || performance,
+            env.Image || Image, env.Blob || Blob, env.URL || URL,
+            env.localStorage !== undefined ? env.localStorage : localStorage,
+            env.requestAnimationFrame || requestAnimationFrame, env.cancelAnimationFrame || cancelAnimationFrame,
+            env.setTimeout || setTimeout, env.clearTimeout || clearTimeout,
+            env.setInterval || setInterval, env.clearInterval || clearInterval, undefined];
+        // 浏览器中 window.document 不可重定义 → bundle 用函数参数遮蔽浏览器全局(与微信端语义一致)
+        var fn = new Function(names.join(','), code + '\n//# sourceURL=' + p);
+        fn.apply(null, values);
+        return module.exports;
+    };
+
+    /* ---- 引导标记(测试等待点) ---- */
+    window.__emulatorReady = true;
+})();
+</script>
+<script src="/wechat-game/game.js"></script>
+</body>
+</html>

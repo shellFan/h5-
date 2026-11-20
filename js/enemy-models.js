@@ -7,8 +7,11 @@ var EnemyModelLoader = class EnemyModelLoader {
         if (this._data) {
             var missing = keys.filter(function(k) { return !this._data.styles[k]; }, this);
             if (!missing.length) return Promise.resolve(this._data);
+            // V12: 续载并发去重 — 同一缺键集合已有在途续载时复用, 防重复加载
+            if (this._contPromise && this._contKeys === missing.join(',')) return this._contPromise;
+            this._contKeys = missing.join(',');
             // V11.6: 错峰续载 — 逐体型串行+间隔; 战斗中自动拉长间隔(解码不与实时玩法抢主线程)
-            return missing.reduce(function(p, k) {
+            var contPromise = missing.reduce(function(p, k) {
                 return p.then(function() {
                     var playing = typeof window !== 'undefined' && window.__game && window.__game.state === 'playing';
                     var gap = playing ? 1500 : 400;
@@ -18,8 +21,11 @@ var EnemyModelLoader = class EnemyModelLoader {
                 }.bind(this));
             }.bind(this), Promise.resolve()).then(function() {
                 this.status = 'loaded';
+                this._contPromise = null; // V12: 在途标记清理
                 return this._data;
-            }.bind(this)).catch(function(e) { this.status = 'partial_failed'; throw e; }.bind(this));
+            }.bind(this)).catch(function(e) { this.status = 'partial_failed'; this._contPromise = null; throw e; }.bind(this));
+            this._contPromise = contPromise;
+            return contPromise;
         }
         if (this._promise) return this._promise;
         this._bootT0 = performance.now();

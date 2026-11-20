@@ -9,6 +9,7 @@ class AudioAdapter {
         this._platform = platformId || 'h5';
         this._ctx = null;          // WebAudio 上下文(h5)
         this._ttPool = [];         // 抖音 InnerAudioContext 池(按音效类型预建)
+        this._wxPool = [];         // V12: 微信 InnerAudioContext 池
         this._muted = storage ? !!storage.get('audio_muted', false) : false;
         this._enabled = false;
         this._lastPlay = {}; // 限流: 同一音效最小间隔
@@ -21,6 +22,22 @@ class AudioAdapter {
             if (this._platform === 'douyin' && typeof tt !== 'undefined' && tt.createInnerAudioContext) {
                 this._enabled = true;
                 return true;
+            }
+            // V12: 微信小游戏 — 优先 wx.createWebAudioContext(振荡器API与H5一致),
+            // 不支持时回退 wx.createInnerAudioContext(合成WAV data URI, 结构对齐抖音分支)
+            if (this._platform === 'wechat' && typeof wx !== 'undefined') {
+                if (wx.createWebAudioContext) {
+                    try {
+                        this._ctx = wx.createWebAudioContext();
+                        this._enabled = true;
+                        return true;
+                    } catch (e) { /* 落入 InnerAudio 回退 */ }
+                }
+                if (wx.createInnerAudioContext) {
+                    this._enabled = true;
+                    return true;
+                }
+                return false;
             }
             var AC = (typeof window !== 'undefined') && (window.AudioContext || window.webkitAudioContext);
             if (!AC) return false;
@@ -84,6 +101,7 @@ class AudioAdapter {
         try {
             if (this._ctx) this._playWebAudio(type);
             else if (this._platform === 'douyin') this._playTt(type);
+            else if (this._platform === 'wechat') this._playWx(type);
         } catch (e) { /* 音频失败不影响游戏 */ }
     }
 
@@ -101,6 +119,23 @@ class AudioAdapter {
         gain.gain.exponentialRampToValueAtTime(0.0001, t + conf.dur);
         osc.start(t);
         osc.stop(t + conf.dur + 0.02);
+    }
+
+    /** V12: 微信回退路径 — InnerAudioContext 播放合成 WAV(与抖音分支同构) */
+    _playWx(type) {
+        if (typeof wx === 'undefined' || !wx.createInnerAudioContext) return;
+        var conf = AudioAdapter.spec(type);
+        var dataUri = this._synthWav(conf);
+        var ctx = this._wxPool[type];
+        if (!ctx) {
+            ctx = wx.createInnerAudioContext();
+            ctx.volume = Math.min(1, conf.vol * 4);
+            ctx.loop = false;
+            this._wxPool[type] = ctx;
+        }
+        try { ctx.stop(); } catch (e) {}
+        ctx.src = dataUri;
+        ctx.play();
     }
 
     /** 抖音: 现场合成 8bit 单声道 WAV data URI, 经 InnerAudioContext 播放 */
@@ -154,6 +189,10 @@ class AudioAdapter {
         // ArrayBuffer→base64: 抖音用 tt.arrayBufferToBase64, H5 用 btoa
         if (typeof tt !== 'undefined' && tt.arrayBufferToBase64) {
             return 'data:audio/wav;base64,' + tt.arrayBufferToBase64(buf);
+        }
+        // V12: 微信小游戏 wx.arrayBufferToBase64
+        if (typeof wx !== 'undefined' && wx.arrayBufferToBase64) {
+            return 'data:audio/wav;base64,' + wx.arrayBufferToBase64(buf);
         }
         var bin = '';
         var raw = new Uint8Array(buf);

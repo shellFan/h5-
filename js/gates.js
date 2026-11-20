@@ -10,6 +10,7 @@ class GateSystem {
     /** 从关卡数据加载所有状态门 */
     loadFromLevel(level) {
         this.clear();
+        GateRewardPool.lastWasMul = false; // V12: ×2连续抑制状态跨局复位
         for (const seg of level.segments) {
             if (seg.type !== 'gates') continue;
             // V2.2: 每扇门宽度=单车道宽(1.8)，不再用两门间距(4.0导致门超出路面)

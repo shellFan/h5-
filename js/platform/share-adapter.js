@@ -5,6 +5,7 @@ class ShareAdapter {
     constructor(platformId) {
         this._platform = platformId;
         this._tt = (typeof tt !== 'undefined') ? tt : null;
+        this._wx = (typeof wx !== 'undefined') ? wx : null; // V12: 微信分享
     }
 
     /**
@@ -26,8 +27,20 @@ class ShareAdapter {
                 return Promise.resolve(false);
             }
         }
-        // H5: 尝试 navigator.share, 不支持则降级
-        if (navigator.share) {
+        // V12: 微信小游戏 wx.shareAppMessage(主动分享, 静默失败不影响游戏)
+        if (this._platform === 'wechat' && this._wx && this._wx.shareAppMessage) {
+            try {
+                this._wx.shareAppMessage({
+                    title: opts.title || '膨胀小队 - 招兵买马·火力全开',
+                    desc: opts.desc || '带你的小队冲穿状态门，击败僵尸Boss！'
+                });
+                return Promise.resolve(true);
+            } catch (e) {
+                return Promise.resolve(false);
+            }
+        }
+        // H5: 尝试 navigator.share, 不支持则降级(V12: 小游戏环境无 navigator, 直接降级)
+        if (typeof navigator !== 'undefined' && navigator.share) {
             return navigator.share({
                 title: opts.title || '膨胀小队',
                 text: opts.desc || '带你的小队冲穿状态门，击败僵尸Boss！',

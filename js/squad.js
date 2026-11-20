@@ -454,6 +454,7 @@ class Squad {
         this._comboFireFlow = 0; this._comboPierceFlow = 0; this._comboSwarmFlow = 0;
         this._regenT = undefined; this._classSkillT = undefined;
         this._totalDr = 0; this._classBulletSpeed = 1.0;
+        this.invulnT = 0; // V12: 复活无敌时间复位, 防残留到下一局
         this.alive = true;
         this.soldiers = [];
         this.count = 0; // 必须重置count, 否则setCount认为人数未变不补充士兵

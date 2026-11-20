@@ -1,0 +1,95 @@
+{
+  "timestamp": "2026-11-20T18:49:46.425Z",
+  "passed": 17,
+  "total": 17,
+  "results": [
+    {
+      "name": "微信入口启动: window.__game 就绪",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "minidom UI 纹理挂接(3D叠加)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "UI DOM 节点构建",
+      "ok": true,
+      "detail": "nodes=348, rules=506, keyframes=17"
+    },
+    {
+      "name": "首页开始按钮布局",
+      "ok": true,
+      "detail": "{\"x\":195,\"y\":161.894}"
+    },
+    {
+      "name": "点击开始进入战斗(state=playing)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "战斗HUD人数渲染",
+      "ok": true,
+      "detail": "人数=7"
+    },
+    {
+      "name": "战斗状态持续",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "拖动输入桥接(队伍移动)",
+      "ok": true,
+      "detail": "x: 0.00 → -2.04"
+    },
+    {
+      "name": "暂停按钮生效",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "恢复按钮生效",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "存档写入 wx 存储",
+      "ok": true,
+      "detail": "keys=pz_squad_profile_v51,pz_squad_profile_v51.bak"
+    },
+    {
+      "name": "切后台自动暂停战斗",
+      "ok": true,
+      "detail": "paused: false → true"
+    },
+    {
+      "name": "广告服务装配(wechat分支)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "未配置广告位ID时如实不可用(不伪造)",
+      "ok": true,
+      "detail": "isAvailable=false"
+    },
+    {
+      "name": "战斗帧率采样",
+      "ok": true,
+      "detail": "103 FPS (模拟器软件渲染, 真机预期更高)"
+    },
+    {
+      "name": "无致命运行时错误",
+      "ok": true,
+      "detail": "1条普通日志"
+    },
+    {
+      "name": "平台检测为 wechat",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ]
+}

@@ -315,3 +315,10 @@
     #game-container.v42-ui .v60-challenge-card { padding: 9px 11px; }
     #game-container.v42-ui .v60-signin-day { padding: 4px 2px; }
 }
+
+/* V11.6: 矮屏顶栏触控保底(密度压缩不牺牲可点性) */
+@media (max-height: 660px) {
+    #game-container.v42-ui .v51-supply-btn, #game-container.v42-ui .v51-shop-btn { min-height: 36px; min-width: 64px; }
+    #game-container.v42-ui .v42-home-sound { width: 40px; height: 40px; }
+    #game-container.v42-ui .btn-primary#btn-start { min-height: 44px; }
+}

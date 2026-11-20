@@ -1,7 +1,7 @@
 {
   "name": "pengzhang-xiaodui",
-  "version": "3.0.0",
-  "description": "膨胀小队 - 竖屏3D卡通射击 H5 / 抖音小游戏",
+  "version": "12.0.0",
+  "description": "膨胀小队 - 竖屏3D卡通射击 H5 / 抖音小游戏 / 微信小游戏",
   "private": true,
   "scripts": {
     "build": "node tools/build-h5.js",
@@ -29,7 +29,8 @@
     "test:visual": "node tests/e2e/visual.js",
     "test:v41": "node tools/v41-verify.js",
     "test:soldier": "node tests/e2e/soldier.js",
-    "test:model": "node tests/unit/soldier-asset.js"
+    "test:model": "node tests/unit/soldier-asset.js",
+    "test:wechat": "node tests/e2e/wechat-emulator.js"
   },
   "dependencies": {
     "playwright-core": "^1.65.0"

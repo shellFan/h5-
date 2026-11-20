@@ -28,6 +28,12 @@ class LifecycleAdapter {
     }
 
     /** 抖音环境用此方法接入 tt.onAppHide/onAppShow */
+    /** V12: 微信小游戏生命周期(wx.onShow/onHide), 与 bindTt 对齐 */
+    bindWx(wxApi) {
+        var self = this;
+        if (wxApi && wxApi.onShow) wxApi.onShow(function() { self._fire('show'); });
+        if (wxApi && wxApi.onHide) wxApi.onHide(function() { self._fire('hide'); });
+    }
     bindTt(ttApi) {
         var self = this;
         if (ttApi.onAppHide) ttApi.onAppHide(function() { self._fire('hide'); });

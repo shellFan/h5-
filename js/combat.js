@@ -379,7 +379,7 @@ class CombatSystem {
 
         // 枪口闪光
         this.effects.muzzleFlash(pos.x, pos.y, pos.z);
-        this._syncInstances();
+        // V12: 移除逐发同步 — _updateInner 在 combat.update 后统一调用 _syncInstances, 帧内一次即可(高频开火时省冗余矩阵上传)
     }
 
     clear() {
