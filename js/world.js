@@ -29,6 +29,7 @@ class World {
         this._setupLights();
         this._buildRoad();
         V42Art.buildEnvironment(this);
+        this._buildSky();
 
         this.resize();
         window.addEventListener('resize', () => this.resize());
@@ -65,6 +66,36 @@ class World {
         this.scene.add(fill);
     }
 
+    /** V12视觉: 渐变天空穹顶 — 替代纯色背景, 一张Canvas渐变+BackSide球, 单drawCall, 无光照成本 */
+    _buildSky() {
+        const cv = document.createElement('canvas');
+        cv.width = 16; cv.height = 256;
+        const ctx = cv.getContext('2d');
+        var g = ctx.createLinearGradient(0, 0, 0, 256);
+        // 顶:饱和天蓝 → 中:晴空蓝 → 地平线:暖白(与雾色衔接, 远景建筑融入天际)
+        g.addColorStop(0.00, '#4FA3DF');
+        g.addColorStop(0.45, '#87CEEB');
+        g.addColorStop(0.80, '#C9E6F5');
+        g.addColorStop(1.00, '#EAF4FA');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, 16, 256);
+        // 顶部淡光晕(太阳方位感)
+        var sun = ctx.createRadialGradient(8, 36, 2, 8, 36, 90);
+        sun.addColorStop(0, 'rgba(255,246,214,0.35)');
+        sun.addColorStop(1, 'rgba(255,246,214,0)');
+        ctx.fillStyle = sun;
+        ctx.fillRect(0, 0, 16, 256);
+        var tex = new THREE.CanvasTexture(cv);
+        var mat = new THREE.MeshBasicMaterial({ map: tex, side: THREE.BackSide, fog: false, depthWrite: false });
+        var dome = new THREE.Mesh(new THREE.SphereGeometry(88, 24, 16), mat);
+        dome.renderOrder = -10;
+        dome.userData.artSource = 'js/world.js:_buildSky() 渐变天空穹顶 16x256';
+        this.scene.add(dome);
+        this._skyDome = dome;
+        // 雾色向地平线色靠拢 — 远处路段/建筑自然融入天际
+        if (this._themeApplied !== 'apocalypse') this.scene.fog.color.setHex(0xC9E4F2);
+    }
+
     _buildRoad() {
         const C = CONFIG.COLORS;
         const roadGroup = new THREE.Group();
@@ -75,14 +106,21 @@ class World {
         const SEG_LEN = 12;
         const SEG_COUNT = 12;
 
-        // 道路纹理(浅灰紫柏油 + 噪点 + 车道线)
+        // 道路纹理(浅灰蓝柏油 + 大色调变化 + 噪点 + 车道线) — V12视觉: 色调分层, 黄边线降饱和
         const roadCanvas = document.createElement('canvas');
         roadCanvas.width = 256;
         roadCanvas.height = 512;
         const rctx = roadCanvas.getContext('2d');
-        // 底色: 灰紫柏油(V3.6: 加深一档,对抗雾色保证路面可读)
-        rctx.fillStyle = '#788792';
+        // 底色: 灰蓝柏油(V3.6加深保证可读; V12: 略偏蓝青与天空呼应, 去紫味)
+        rctx.fillStyle = '#7C8B96';
         rctx.fillRect(0, 0, 256, 512);
+        // V12: 大块色调变化(3-4个宽幅纵向淡色带, 打破整段同色)
+        var bandTones = ['rgba(255,255,255,0.045)', 'rgba(30,44,56,0.05)', 'rgba(255,255,255,0.03)', 'rgba(30,44,56,0.04)'];
+        for (let b = 0; b < 4; b++) {
+            rctx.fillStyle = bandTones[b];
+            var bx = (b * 67 + randRange(-10, 10)) % 256;
+            rctx.fillRect(bx, 0, randRange(46, 80), 512);
+        }
         // 柏油噪点纹理
         for (let i = 0; i < 400; i++) {
             var v = Math.random();
@@ -101,7 +139,7 @@ class World {
             rctx.stroke();
         }
         // V3.7: 车辙印(两条纵向暗带 — 增加柏油路真实感)
-        rctx.fillStyle = 'rgba(28,40,48,0.12)';
+        rctx.fillStyle = 'rgba(28,40,48,0.10)';
         rctx.fillRect(52, 0, 22, 512);
         rctx.fillRect(182, 0, 22, 512);
         // V3.7: 深色补丁(随机圆形沥青修补痕)
@@ -118,8 +156,11 @@ class World {
             rctx.fillRect(88, y, 5, 30);
             rctx.fillRect(163, y, 5, 30);
         }
-        // 路边实线(黄色警示边线)
-        rctx.fillStyle = '#F6CC59';
+        // 路边实线(V12: 降饱和暖黄+暗色衬边 — 原纯黄过艳, 抢戏整个画面)
+        rctx.fillStyle = 'rgba(52,58,48,0.35)';
+        rctx.fillRect(3, 0, 7, 512);
+        rctx.fillRect(246, 0, 7, 512);
+        rctx.fillStyle = '#E3C26B';
         rctx.fillRect(4, 0, 5, 512);
         rctx.fillRect(247, 0, 5, 512);
         // Drain covers and repairs make the road read as part of a lived-in street.
@@ -184,14 +225,24 @@ class World {
             }
             seg.add(new THREE.Mesh(mergeGeometries(pavement), new THREE.MeshLambertMaterial({ vertexColors: true })));
 
-            // 草地(两侧合并)
-            var gL = new THREE.PlaneGeometry(20, SEG_LEN);
-            gL.rotateX(-Math.PI / 2);
-            gL.translate(-14, -0.02, 0);
-            var gR = new THREE.PlaneGeometry(20, SEG_LEN);
-            gR.rotateX(-Math.PI / 2);
-            gR.translate(14, -0.02, 0);
-            var groundMesh = new THREE.Mesh(mergeGeometries([colorize(gL, C.grass), colorize(gR, C.grass)]),
+            // 草地(两侧合并) — V12视觉: 修剪条纹明暗交替 + 偶发浅色草斑, 打破大片单色
+            var grassBase = new THREE.Color(C.grass);
+            var grassLight = grassBase.clone().lerp(new THREE.Color(0xCFFF9E), 0.16);
+            var grassGeoList = [];
+            for (var side2 = -1; side2 <= 1; side2 += 2) {
+                for (var strip = 0; strip < 4; strip++) {
+                    var stripGeo = new THREE.PlaneGeometry(20, SEG_LEN / 4);
+                    stripGeo.rotateX(-Math.PI / 2);
+                    stripGeo.translate(side2 * 14, -0.02, SEG_LEN / 4 * (strip - 1.5));
+                    grassGeoList.push(colorize(stripGeo, strip % 2 ? grassLight : grassBase));
+                }
+                // 偶发浅色草斑(每段每侧1个, 大而淡)
+                var patch = new THREE.CircleGeometry(randRange(0.9, 1.7), 7);
+                patch.rotateX(-Math.PI / 2);
+                patch.translate(side2 * randRange(6.5, 10.5), -0.015, randRange(-4, 4));
+                grassGeoList.push(colorize(patch, grassLight.clone().lerp(grassBase, 0.35)));
+            }
+            var groundMesh = new THREE.Mesh(mergeGeometries(grassGeoList),
                 new THREE.MeshLambertMaterial({ vertexColors: true }));
             groundMesh.receiveShadow = true;
             seg.add(groundMesh);
@@ -296,6 +347,8 @@ class World {
             cam.position.y += (Math.random() - 0.5) * sAmp * 0.5;
         }
         cam.lookAt(targetX * 0.5, 0, squadZ + lookAhead);
+        // V12视觉: 天空穹顶跟随相机(XZ), 保持地平线稳定
+        if (this._skyDome) this._skyDome.position.set(cam.position.x, 0, cam.position.z);
 
         // 阴影相机跟随
         this.sunLight.position.set(squadX + 4, 12, squadZ + 6);
@@ -308,7 +361,8 @@ class World {
         var T = themeName === 'apocalypse' ? CONFIG.APOCALYPSE_THEME : null;
         if (!T) {
             this.scene.background = new THREE.Color(CONFIG.COLORS.sky);
-            this.scene.fog = new THREE.Fog(CONFIG.COLORS.fog, 45, 130);
+            this.scene.fog = new THREE.Fog(0xC9E4F2, 45, 130);
+            if (this._skyDome) this._skyDome.material.color.setHex(0xFFFFFF);
             this.sunLight.color.setHex(0xFFF4E0);
             this.sunLight.intensity = 0.72;
             this._themeApplied = 'default';
@@ -316,6 +370,8 @@ class World {
         }
         this.scene.background = new THREE.Color(T.sky);
         this.scene.fog = new THREE.Fog(T.fog, T.fogNear, T.fogFar);
+        // V12视觉: 末日主题时天空穹顶整体压暗染色(乘色), 雾色不变
+        if (this._skyDome) this._skyDome.material.color.setHex(0x8A5060);
         this.sunLight.color.setHex(T.sunColor);
         this.sunLight.intensity = T.sunIntensity;
         // 环境实例材质染色(草地/路面/建筑向末日色过渡)

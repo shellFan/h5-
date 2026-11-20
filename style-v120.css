@@ -1,0 +1,241 @@
+/* ============================================================
+   V12 视觉升级层 — 设计令牌 / HUD精修 / 结算强化 / 排行榜 / 手机适配
+   规范来源: docs/art/UI_DESIGN_SYSTEM.md (加载顺序: style.css → v42 → v51 → v60 → v120)
+   原则: 只做表现层; 不覆盖前层结构, 以增强类(.v12-)/覆盖规则附加
+   ============================================================ */
+
+/* ---- 设计令牌(全游戏唯一色彩/圆角/阴影来源) ---- */
+:root {
+    --v12-blue: #1A6FD4;
+    --v12-blue-deep: #173B79;
+    --v12-blue-soft: #4DA8FF;
+    --v12-gold: #FFC247;
+    --v12-gold-deep: #B07A12;
+    --v12-green: #39D98A;
+    --v12-red: #E8506A;
+    --v12-purple: #8454D6;
+    --v12-ink: #173B79;
+    --v12-sub: #5B7A92;
+    --v12-card: rgba(255, 255, 255, 0.94);
+    --v12-radius-sm: 10px;
+    --v12-radius: 14px;
+    --v12-radius-lg: 20px;
+    --v12-shadow-sm: 0 2px 8px rgba(23, 59, 121, 0.10);
+    --v12-shadow-md: 0 6px 18px rgba(23, 59, 121, 0.16);
+    --v12-shadow-lg: 0 12px 32px rgba(23, 59, 121, 0.22);
+}
+
+/* ---- 全局: 主按钮统一立体渐变 + 按压反馈 ---- */
+#game-container.v42-ui .btn-primary {
+    background: linear-gradient(180deg, #3D8EFF 0%, var(--v12-blue) 58%, #155FCB 100%);
+    border: none;
+    border-radius: var(--v12-radius);
+    box-shadow: 0 4px 0 #114EA8, var(--v12-shadow-md);
+    text-shadow: 0 1px 2px rgba(9, 40, 92, 0.35);
+    transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.12s ease;
+}
+#game-container.v42-ui .btn-primary:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #114EA8, var(--v12-shadow-sm);
+    filter: brightness(0.97);
+}
+#game-container.v42-ui .btn-gold {
+    background: linear-gradient(180deg, #FFD979 0%, var(--v12-gold) 58%, #EDA929 100%);
+    border: none;
+    border-radius: var(--v12-radius);
+    box-shadow: 0 4px 0 #C98F16, var(--v12-shadow-md);
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+#game-container.v42-ui .btn-gold:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #C98F16, var(--v12-shadow-sm);
+}
+#game-container.v42-ui .btn-secondary {
+    border-radius: var(--v12-radius);
+    transition: transform 0.08s ease;
+}
+#game-container.v42-ui .btn-secondary:active { transform: translateY(1px); }
+
+/* ---- HUD 顶栏: 属性胶囊玻璃化 + 数值醒目 ---- */
+#game-container.v42-ui #stats-panel .stat-row {
+    background: linear-gradient(180deg, rgba(23, 59, 121, 0.92), rgba(23, 59, 121, 0.82));
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: var(--v12-shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+#game-container.v42-ui #stats-panel .stat-val {
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.2px;
+}
+#game-container.v42-ui #stats-panel #stat-count { color: #75DFFF; }
+#game-container.v42-ui #stats-panel #stat-damage { color: #FFE66D; }
+#game-container.v42-ui #stats-panel #stat-firerate { color: #66D68F; }
+
+/* 人数气泡: 主数值强化(金色描边呼吸感) */
+#game-container.v42-ui #squad-count-badge {
+    box-shadow: 0 4px 14px rgba(26, 111, 212, 0.45), inset 0 -2px 0 rgba(9, 40, 92, 0.25);
+}
+#game-container.v42-ui #squad-count-num {
+    font-weight: 900;
+    text-shadow: 0 1px 2px rgba(9, 40, 92, 0.4);
+}
+
+/* ---- HUD 进度条: 渐变填充 + 高光扫过 ---- */
+#game-container.v42-ui #progress-bar-container {
+    box-shadow: inset 0 1px 3px rgba(9, 30, 70, 0.5);
+}
+#game-container.v42-ui #progress-bar-fill {
+    background: linear-gradient(90deg, #57C7FF 0%, var(--v12-blue-soft) 55%, #2E7BE0 100%);
+    box-shadow: 0 0 8px rgba(77, 168, 255, 0.55);
+    transition: width 0.25s ease-out;
+}
+#game-container.v42-ui #progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 55%);
+    pointer-events: none;
+}
+
+/* ---- Boss 血条: 层次渐变 + 分段光感 ---- */
+#game-container.v42-ui #boss-bar-fill {
+    background: linear-gradient(180deg, #FF8A7A 0%, #E8455A 52%, #C22840 100%);
+    box-shadow: 0 0 10px rgba(232, 69, 90, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: width 0.2s ease-out;
+}
+#game-container.v42-ui #boss-bar-bg {
+    box-shadow: inset 0 2px 5px rgba(30, 5, 12, 0.55);
+}
+#game-container.v42-ui #boss-name {
+    text-shadow: 0 1px 2px rgba(60, 8, 16, 0.5);
+    letter-spacing: 1px;
+}
+
+/* ---- 连杀HUD: 弹跳入场节奏 ---- */
+#game-container.v42-ui #combo-box {
+    animation: v12ComboPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes v12ComboPop {
+    0% { transform: scale(0.6); }
+    60% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+/* ---- Boss预警横幅: 危险条纹强化 ---- */
+#game-container.v42-ui #boss-warning {
+    background: linear-gradient(180deg, rgba(200, 34, 51, 0.95), rgba(155, 18, 34, 0.95));
+    box-shadow: 0 6px 22px rgba(155, 18, 34, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+/* ---- 胜利/失败结算: 去重假星星 + 第五格通栏 + 数值强调 ---- */
+/* V12修复: index.html 静态 #stars-row 恒显3颗星(假数据), 与动态 #win-stars 重复 — 隐藏静态组 */
+#game-container.v42-ui #win-screen #stars-row { display: none; }
+#game-container.v42-ui .win-stat:nth-child(5) {
+    grid-column: 1 / -1;
+}
+#game-container.v42-ui .win-stat {
+    background: linear-gradient(180deg, #F4FAFF, #E9F2FB);
+    border: 1px solid rgba(26, 111, 212, 0.14);
+    box-shadow: var(--v12-shadow-sm);
+}
+#game-container.v42-ui .win-stat .ws-val {
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+}
+#game-container.v42-ui .wc-total b {
+    font-size: 1.15em;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* ---- 排行榜: 前三甲奖牌卡 + 头像章 + 最新战绩高亮 ---- */
+#game-container.v42-ui .v60-rank-row {
+    border-radius: var(--v12-radius-sm);
+    transition: transform 0.1s ease;
+}
+#game-container.v42-ui .v60-rank-badge {
+    width: 30px; height: 30px;
+    flex: 0 0 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 900;
+    color: #fff;
+    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.18), var(--v12-shadow-sm);
+}
+#game-container.v42-ui .v60-rank-row.top1 { background: linear-gradient(180deg, #FFF6DC, #FFEFC2); border-color: rgba(233, 168, 37, 0.4); }
+#game-container.v42-ui .v60-rank-row.top1 .v60-rank-badge { background: linear-gradient(180deg, #FFD979, #EDA929); }
+#game-container.v42-ui .v60-rank-row.top2 { background: linear-gradient(180deg, #F3F7FA, #E6EDF3); border-color: rgba(120, 140, 160, 0.35); }
+#game-container.v42-ui .v60-rank-row.top2 .v60-rank-badge { background: linear-gradient(180deg, #C8D2DC, #9AA8B6); }
+#game-container.v42-ui .v60-rank-row.top3 { background: linear-gradient(180deg, #FFF0E4, #FFE2C8); border-color: rgba(196, 116, 44, 0.35); }
+#game-container.v42-ui .v60-rank-row.top3 .v60-rank-badge { background: linear-gradient(180deg, #E8A66B, #C4742C); }
+#game-container.v42-ui .v60-rank-row-me {
+    outline: 2px solid rgba(77, 168, 255, 0.65);
+    outline-offset: -2px;
+    position: relative;
+}
+#game-container.v42-ui .v60-rank-row-me::after {
+    content: '最新';
+    position: absolute;
+    top: -7px; right: 8px;
+    background: linear-gradient(180deg, #57C7FF, #2E7BE0);
+    color: #fff;
+    font-size: 9px; font-weight: 900;
+    padding: 1.5px 7px;
+    border-radius: 8px;
+    box-shadow: var(--v12-shadow-sm);
+    letter-spacing: 1px;
+}
+#game-container.v42-ui .v60-rank-class-chip {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 4px;
+    padding: 0 6px;
+    height: 16px;
+    border-radius: 8px;
+    font-size: 10px;
+    color: #fff;
+    vertical-align: 1px;
+}
+
+/* ---- 成长页卡片: 统一圆角阴影(轻touch) ---- */
+#game-container.v42-ui .v60-page .v60-panel {
+    box-shadow: var(--v12-shadow-lg);
+}
+
+/* ---- 手机适配: 刘海屏安全区 + 触控保底 ---- */
+#game-container.v42-ui #hud {
+    padding-left: calc(env(safe-area-inset-left, 0px) + 10px);
+    padding-right: calc(env(safe-area-inset-right, 0px) + 10px);
+}
+#game-container.v42-ui #top-bar {
+    margin-top: env(safe-area-inset-top, 0px);
+}
+#game-container.v42-ui .v60-page {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+}
+#game-container.v42-ui #btn-pause,
+#game-container.v42-ui #btn-refresh-gates {
+    min-width: 44px;
+    min-height: 44px;
+}
+
+/* ---- 小屏(≤360px): 压缩HUD密度防溢出 ---- */
+@media (max-width: 360px) {
+    #game-container.v42-ui #stats-panel .stat-row {
+        padding: 3px 8px;
+        gap: 5px;
+    }
+    #game-container.v42-ui #stats-panel .stat-val { font-size: 12px; }
+    #game-container.v42-ui #squad-count-badge { transform: scale(0.92); transform-origin: top center; }
+    #game-container.v42-ui .v60-rank-badge { width: 26px; height: 26px; flex-basis: 26px; font-size: 13px; }
+}
+
+/* ---- 减少动态偏好: 关闭装饰性动画 ---- */
+@media (prefers-reduced-motion: reduce) {
+    #game-container.v42-ui #combo-box { animation: none; }
+    #game-container.v42-ui #progress-bar-fill,
+    #game-container.v42-ui #boss-bar-fill { transition: none; }
+}

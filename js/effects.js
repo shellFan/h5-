@@ -52,6 +52,85 @@ class Effects {
         this.impactMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
         this.impactMesh.userData.artSource = 'pooled-impact-starbursts';
         scene.add(this.impactMesh);
+
+        // V12视觉: 尸液/碎屑地面痕迹(pooled decals, 16上限) — 击杀反馈落地
+        this._splatPool = Array.from({ length: 16 }, function() { return new THREE.Object3D(); });
+        var splatCanvas = document.createElement('canvas');
+        splatCanvas.width = splatCanvas.height = 128;
+        var sc2 = splatCanvas.getContext('2d');
+        sc2.translate(64, 64);
+        var gooGrad = sc2.createRadialGradient(0, 0, 4, 0, 0, 56);
+        gooGrad.addColorStop(0, 'rgba(46,74,40,0.92)');
+        gooGrad.addColorStop(0.55, 'rgba(52,84,44,0.75)');
+        gooGrad.addColorStop(0.85, 'rgba(60,96,48,0.28)');
+        gooGrad.addColorStop(1, 'rgba(60,96,48,0)');
+        sc2.fillStyle = gooGrad;
+        sc2.beginPath();
+        for (var sa = 0; sa < 26; sa++) {
+            var ang = sa / 26 * Math.PI * 2;
+            var wob = 40 + Math.sin(sa * 2.7) * 10 + Math.cos(sa * 5.1) * 6;
+            sc2.lineTo(Math.cos(ang) * wob, Math.sin(ang) * wob);
+        }
+        sc2.closePath();
+        sc2.fill();
+        // 三滴飞溅卫星点
+        for (var drop = 0; drop < 3; drop++) {
+            var da = drop * 2.2 + 0.6;
+            var dr = 46 + drop * 6;
+            sc2.fillStyle = 'rgba(52,84,44,0.5)';
+            sc2.beginPath();
+            sc2.arc(Math.cos(da) * dr, Math.sin(da) * dr, 5 - drop, 0, Math.PI * 2);
+            sc2.fill();
+        }
+        var splatTex = new THREE.CanvasTexture(splatCanvas);
+        this.splatMesh = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1),
+            new THREE.MeshBasicMaterial({ map: splatTex, transparent: true, depthWrite: false }), 16);
+        this.splatMesh.count = 0;
+        this.splatMesh.frustumCulled = false;
+        this.splatMesh.renderOrder = 1;
+        this.splatMesh.userData.artSource = 'js/effects.js 程序化尸液decal(128px CanvasTexture)';
+        scene.add(this.splatMesh);
+        this.splats = [];
+        this._splatQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
+
+        // V12视觉: 爆炸白闪(径向亮核, 8上限) — 自爆/Boss死亡/爆炸弹的瞬间亮度冲击
+        this._boomPool = [];
+        this.booms = [];
+        if (!this._boomTex) {
+            var bc = document.createElement('canvas');
+            bc.width = bc.height = 128;
+            var bctx = bc.getContext('2d');
+            var bg = bctx.createRadialGradient(64, 64, 4, 64, 64, 62);
+            bg.addColorStop(0, 'rgba(255,255,255,1)');
+            bg.addColorStop(0.28, 'rgba(255,236,160,0.92)');
+            bg.addColorStop(0.62, 'rgba(255,176,64,0.42)');
+            bg.addColorStop(1, 'rgba(255,120,20,0)');
+            bctx.fillStyle = bg;
+            bctx.fillRect(0, 0, 128, 128);
+            this._boomTex = new THREE.CanvasTexture(bc);
+        }
+    }
+
+    /** V12视觉: 地面尸液痕迹 (dieT期间淡出, 大体型更大) */
+    splat(x, z, size) {
+        var p = this._splatPool.pop();
+        if (!p) return;
+        p.position.set(x, 0.02 + Math.random() * 0.01, z);
+        p.userData = { life: 2.2, maxLife: 2.2, size: (size || 1) * randRange(0.75, 1.05), roll: Math.random() * Math.PI * 2 };
+        this.splats.push(p);
+    }
+
+    /** V12视觉: 爆炸白闪 (0.14s 亮核弹出) */
+    flash(x, y, z, color, size) {
+        if (this.booms.length >= 8) return;
+        var s = this._boomPool.pop() || new THREE.Sprite(new THREE.SpriteMaterial({ map: this._boomTex, transparent: true, depthWrite: false }));
+        s.position.set(x, y, z);
+        s.visible = true;
+        s.material.opacity = 1;
+        if (color) s.material.color.setHex(color); else s.material.color.setHex(0xFFFFFF);
+        s.scale.setScalar((size || 1.6) * 0.55);
+        this.scene.add(s);
+        this.booms.push({ mesh: s, life: 0.14, maxLife: 0.14, size: size || 1.6 });
     }
 
     reinforcement(squad, source, added) {
@@ -124,7 +203,13 @@ class Effects {
                 var free=keys.find(k=>!this.floatTexts.some(ft=>ft.sprite.material.map===this._textCache[k]));
                 if(free){this._textCache[free].dispose();delete this._textCache[free];}
             }
-            tex = createTextTexture(text, {
+            tex = createTextTexture(text, damageNumber ? {
+                // V12视觉: 纯数字伤害 — 白芯+彩色描边(远看醒目, 近看不糊)
+                fontSize: big ? 120 : 88,
+                fill: '#FFFFFF',
+                stroke: color,
+                strokeWidth: big ? 14 : 10
+            } : {
                 fontSize: big ? 110 : 80,
                 fill: color,
                 stroke: '#1a1a2e',
@@ -210,7 +295,9 @@ class Effects {
         }));
         flash.position.set(x, y, z);
         flash.visible=true;flash.material.opacity=.95;
-        flash.scale.set(0.48, 0.48, 1); // V3.7: 枪口火焰更醒目
+        flash.material.rotation = Math.random() * Math.PI; // V12视觉: 随机滚转, 齐射时火光不重复
+        var mfScale = randRange(0.42, 0.52);
+        flash.scale.set(mfScale, mfScale, 1); // V3.7: 枪口火焰更醒目
         this.scene.add(flash);
         this.flashes.push({ mesh: flash, life: 0.07, maxLife: 0.07 });
     }
@@ -231,6 +318,12 @@ class Effects {
         for(var ft of this.floatTexts){this.scene.remove(ft.sprite);if(this._floatPool.length<24)this._floatPool.push(ft.sprite);else ft.sprite.material.dispose();}
         this.floatTexts.length=0;this._floatTextCount=0;
         this.particleMesh.count=0;
+        // V12视觉: decals/爆闪回收
+        for(var sp of this.splats) this._splatPool.push(sp);
+        this.splats.length = 0;
+        this.splatMesh.count = 0;
+        for(var bm of this.booms){this.scene.remove(bm.mesh);bm.mesh.visible=false;this._boomPool.push(bm.mesh);}
+        this.booms.length = 0;
     }
 
     update(dt) {
@@ -354,6 +447,45 @@ class Effects {
             var sc = 0.48 + (1 - t) * 0.55; // V3.7
             f.mesh.scale.set(sc, sc, 1);
         }
+
+        // V12视觉: 尸液decal(淡出+首帧展开; 复用scratch矩阵/向量, 热循环零分配)
+        if (!this._m4) { this._m4 = new THREE.Matrix4(); this._v3 = new THREE.Vector3(); }
+        var liveSplats = 0;
+        for (var si2 = this.splats.length - 1; si2 >= 0; si2--) {
+            var sp = this.splats[si2];
+            sp.userData.life -= dt;
+            if (sp.userData.life <= 0) {
+                this._splatPool.push(sp);
+                this.splats.splice(si2, 1);
+            }
+        }
+        for (var pk = 0; pk < this.splats.length; pk++) {
+            var pkSp = this.splats[pk];
+            var pkGrow = Math.min(1, (1 - pkSp.userData.life / pkSp.userData.maxLife) * 8); // 前0.125s快速展开
+            this._v3.set(pkSp.userData.size * pkGrow, pkSp.userData.size * pkGrow, 1);
+            this._m4.compose(pkSp.position, this._splatQuat, this._v3);
+            this.splatMesh.setMatrixAt(pk, this._m4);
+            liveSplats++;
+        }
+        this.splatMesh.count = liveSplats;
+        this.splatMesh.instanceMatrix.needsUpdate = true;
+
+        // V12视觉: 爆炸白闪(0.14s 弹出+淡出)
+        for (var bi = this.booms.length - 1; bi >= 0; bi--) {
+            var bm = this.booms[bi];
+            bm.life -= dt;
+            if (bm.life <= 0) {
+                this.scene.remove(bm.mesh);
+                bm.mesh.visible = false;
+                this._boomPool.push(bm.mesh);
+                this.booms.splice(bi, 1);
+                continue;
+            }
+            var bt = bm.life / bm.maxLife;
+            bm.mesh.material.opacity = bt;
+            bm.mesh.scale.setScalar(bm.size * (0.55 + (1 - bt) * 0.6));
+        }
+
         this.particleMesh.count=this.particles.length;
         for(var pi=0;pi<this.particles.length;pi++) {
             var particle=this.particles[pi];particle.updateMatrix();

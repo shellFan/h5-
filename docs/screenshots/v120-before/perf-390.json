@@ -1,0 +1,9 @@
+{
+  "calls": 117,
+  "tris": 754736,
+  "geoms": 122,
+  "textures": 32,
+  "frameMsAvg": 1.05,
+  "frameMsP95": 1.8,
+  "programs": 23
+}

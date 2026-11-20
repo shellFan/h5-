@@ -154,12 +154,13 @@
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         var panel = ctx.createLinearGradient(0, 20, 0, 238);
-        panel.addColorStop(0, 'rgba(255,255,255,.14)');
-        panel.addColorStop(0.46, 'rgba(9,19,48,.55)');
-        panel.addColorStop(1, 'rgba(5,12,31,.38)');
+        // V12视觉: 面板加深提高文字对比(浅色玻璃上白字不再发虚)
+        panel.addColorStop(0, 'rgba(255,255,255,.16)');
+        panel.addColorStop(0.46, 'rgba(8,17,44,.74)');
+        panel.addColorStop(1, 'rgba(4,10,28,.55)');
         ctx.fillStyle = panel;
-        ctx.strokeStyle = 'rgba(255,255,255,.45)';
-        ctx.lineWidth = 5;
+        ctx.strokeStyle = 'rgba(255,255,255,.62)';
+        ctx.lineWidth = 7;
         if (ctx.roundRect) {
             ctx.beginPath();
             ctx.roundRect(24, 24, canvas.width - 48, 208, 42);
@@ -363,6 +364,25 @@
         group.userData.drawCalls = 5;
         group.userData.ownsResources = true;
         return group;
+    };
+
+    /** V12视觉: 精英身份光环 — 贴地金环+缓流入内圈; 共享几何/材质(调用方不dispose, 无泄漏) */
+    V42Art.createEliteAura = function () {
+        if (!V42Art._eliteAuraGeo) {
+            V42Art._eliteAuraGeo = mergeGeometries([
+                colorize(new THREE.RingGeometry(0.62, 0.78, 28), 0xFFC247),
+                colorize(new THREE.RingGeometry(0.30, 0.38, 22), 0xFFE28A)
+            ]);
+            V42Art._eliteAuraMat = new THREE.MeshBasicMaterial({
+                vertexColors: true, transparent: true, opacity: 0.55,
+                side: THREE.DoubleSide, depthWrite: false, toneMapped: false
+            });
+            V42Art._eliteAuraGeo.userData = { artSource: 'js/art-v42.js:createEliteAura() 共享金环' };
+        }
+        var mesh = new THREE.Mesh(V42Art._eliteAuraGeo, V42Art._eliteAuraMat);
+        mesh.rotation.x = -Math.PI / 2;
+        mesh.renderOrder = 2;
+        return mesh;
     };
 
     function seededRandom(seed) {

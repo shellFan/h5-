@@ -7,9 +7,8 @@ class CombatSystem {
         this.bullets = [];
         this.fireTimer = 0;
 
-        // 弹道纹理: 加载 assets/art-v1/effects/bullet-glow.svg
+        // 弹道纹理: V12视觉 — 程序化曳光弹贴图(亮核弹头+长尾迹), 替代原SVG水滴形
         this._bulletTex = null;
-        this._loadBulletTexture();
 
         // 共享Sprite材质(所有子弹共用，减少DrawCall)
         // V3.6修复: 改用Normal混合(Additive在浅色路面上会加成纯白,弹道完全不可见)
@@ -19,79 +18,71 @@ class CombatSystem {
             opacity: 1,
             depthWrite: false
         });
+        // 顺序修正(V12): 材质就绪后再挂贴图 — _makeTracerTexture 同步写 map, 必须在材质创建之后
+        this._makeTracerTexture();
         this._bulletInstances=new THREE.InstancedMesh(new THREE.PlaneGeometry(1,1),this._bulletMat,CONFIG.BULLET_MAX_VISIBLE);
         this._bulletInstances.count=0;this._bulletInstances.frustumCulled=false;
         this._bulletInstances.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this._bulletInstances.userData.artSource='V42 instanced golden trails / pooled bullet anchors';
+        this._bulletInstances.userData.artSource='V120 instanced ground tracer streaks / pooled bullet anchors';
         scene.add(this._bulletInstances);
-        this._bulletMat.userData = { artSource: 'assets/art-v1/effects/bullet-glow.svg (CanvasTexture)' };
+        this._bulletMat.userData = { artSource: 'js/combat.js:_makeTracerTexture() 程序化曳光贴图 64x256 (CanvasTexture)' };
+        // V12视觉: 曳光朝向(贴地掠过+尾部微抬向镜头), 不再逐帧拷贝相机四元数
+        this._tracerQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2 + 0.42, 0, 0));
 
-        // 弹道对象池 (Sprite + bullet-glow纹理)
+        // 弹道对象池 (锚点 + 曳光纹理)
         this.pool = [];
         for (var i = 0; i < CONFIG.BULLET_MAX_VISIBLE; i++) {
             var sprite = new THREE.Object3D();
             sprite.visible = false;
-            sprite.scale.set(0.3, 0.9, 1);
+            sprite.scale.set(0.26, 2.1, 1);
             this.pool.push(sprite);
         }
     }
 
-    /** 加载bullet-glow.svg作为弹道纹理 */
-    _loadBulletTexture() {
-        var self = this;
-        var img = new Image();
-        img.onload = function() {
-            try {
-                var c = document.createElement('canvas');
-                c.width = 64; c.height = 192;
-                var ctx = c.getContext('2d');
-                ctx.drawImage(img, 0, 0, 64, 192);
-                self._bulletTex = new THREE.CanvasTexture(c);
-                if (self._bulletMat) {
-                    self._bulletMat.map = self._bulletTex;
-                    self._bulletMat.needsUpdate = true;
-                }
-            } catch (e) {
-                self._makeFallbackTex();
-            }
-        };
-        img.onerror = function() {
-            self._makeFallbackTex();
-        };
-        img.src = 'assets/art-v1/effects/bullet-glow.svg';
-    }
-
-    /** SVG加载失败时的程序化兜底纹理(模拟bullet-glow.svg风格) */
-    _makeFallbackTex() {
+    /** V12视觉: 程序化曳光弹贴图 — 白热弹头 + 金色长尾; 实测(flipY=true): 画布顶部=平面+Y=弹道前方 */
+    _makeTracerTexture() {
         var c = document.createElement('canvas');
-        c.width = 64; c.height = 192;
+        c.width = 64; c.height = 256;
         var ctx = c.getContext('2d');
-        // 径向光晕(弹头)
-        var g = ctx.createRadialGradient(32, 36, 0, 32, 36, 30);
-        g.addColorStop(0, '#FFFFFF');
-        g.addColorStop(0.2, '#FFF6A2');
-        g.addColorStop(0.48, '#FFBC2B');
-        g.addColorStop(1, 'rgba(255,122,0,0)');
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, 64, 72);
-        // 尾焰(向下渐隐)
-        var t = ctx.createLinearGradient(0, 23, 0, 192);
-        t.addColorStop(0, '#FFFAD1');
-        t.addColorStop(0.3, 'rgba(255,194,51,0.75)');
-        t.addColorStop(1, 'rgba(255,139,17,0)');
-        ctx.fillStyle = t;
+        // 尾迹主体(锥形, 弹头宽→尾端窄): 外层柔光 + 内层亮芯, 沿画布向下渐隐
+        var tail = ctx.createLinearGradient(0, 52, 0, 256);
+        tail.addColorStop(0, 'rgba(255,214,90,0.95)');
+        tail.addColorStop(0.35, 'rgba(255,170,44,0.62)');
+        tail.addColorStop(1, 'rgba(255,120,16,0)');
+        ctx.fillStyle = tail;
         ctx.beginPath();
-        ctx.moveTo(32, 23);
-        ctx.quadraticCurveTo(43, 35, 41, 63);
-        ctx.lineTo(32, 192);
-        ctx.lineTo(23, 63);
-        ctx.quadraticCurveTo(21, 35, 32, 23);
+        ctx.moveTo(10, 52);
+        ctx.quadraticCurveTo(14, 130, 27, 252);
+        ctx.lineTo(37, 252);
+        ctx.quadraticCurveTo(50, 130, 54, 52);
         ctx.closePath();
         ctx.fill();
-        // 亮核
-        ctx.fillStyle = '#FFF9CF';
+        // 内层亮芯(更窄更亮)
+        var core = ctx.createLinearGradient(0, 52, 0, 220);
+        core.addColorStop(0, 'rgba(255,250,205,0.95)');
+        core.addColorStop(1, 'rgba(255,200,70,0)');
+        ctx.fillStyle = core;
         ctx.beginPath();
-        ctx.ellipse(32, 35, 9, 17, 0, 0, Math.PI * 2);
+        ctx.moveTo(20, 52);
+        ctx.quadraticCurveTo(24, 130, 30, 218);
+        ctx.lineTo(34, 218);
+        ctx.quadraticCurveTo(40, 130, 44, 52);
+        ctx.closePath();
+        ctx.fill();
+        // 弹头亮核(径向: 白→金→透明), 画布顶部
+        var head = ctx.createRadialGradient(32, 40, 2, 32, 40, 26);
+        head.addColorStop(0, '#FFFFFF');
+        head.addColorStop(0.25, '#FFF3B0');
+        head.addColorStop(0.55, 'rgba(255,190,50,0.85)');
+        head.addColorStop(1, 'rgba(255,140,20,0)');
+        ctx.fillStyle = head;
+        ctx.beginPath();
+        ctx.ellipse(32, 40, 22, 30, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // 弹头中心炽白小核
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.ellipse(32, 38, 6, 10, 0, 0, Math.PI * 2);
         ctx.fill();
         this._bulletTex = new THREE.CanvasTexture(c);
         if (this._bulletMat) {
@@ -236,6 +227,8 @@ class CombatSystem {
                                 }
                             }
                             this.effects.burst(e.x, 0.6, e.z, 0xFF8833, 6, 2.5, 0.3);
+                            // V12视觉: 爆炸弹命中白闪
+                            if (this.effects.flash) this.effects.flash(e.x, 0.6, e.z, 0xFFB060, 1.5);
                         }
                         // V5.1: 连锁闪电 — 跳至最近(最多1+chain层)邻敌, 各受40%伤害
                         if (squad.chain > 0) {
@@ -357,10 +350,9 @@ class CombatSystem {
 
     _syncInstances() {
         this._bulletInstances.count=this.bullets.length;
-        var camera=this.scene.userData.camera;
         for(var i=0;i<this.bullets.length;i++) {
             var anchor=this.bullets[i].mesh;
-            if(camera)anchor.quaternion.copy(camera.quaternion);
+            anchor.quaternion.copy(this._tracerQuat); // V12视觉: 贴地曳光朝向(弹头朝-Z, 尾部微抬)
             anchor.updateMatrix();this._bulletInstances.setMatrixAt(i,anchor.matrix);
         }
         this._bulletInstances.instanceMatrix.needsUpdate=true;
@@ -373,9 +365,9 @@ class CombatSystem {
         // GLB Muzzle is authoritative. Target convergence supplies trajectory
         // variation after launch; random origin offsets detached shots from guns.
         mesh.position.set(pos.x, pos.y, pos.z);
-        // Sprite scale: 金黄发光弹道 (V3.6: 加大尺寸保证清晰可见; V3.3: 暴击弹更大)
-        if (isCrit) mesh.scale.set(0.28, 1.45, 1);
-        else mesh.scale.set(0.20, 1.25, 1);
+        // Sprite scale: V12视觉 贴地曳光(长度沿弹道; 暴击弹更长更亮)
+        if (isCrit) mesh.scale.set(0.34, 2.8, 1);
+        else mesh.scale.set(0.26, 2.1, 1);
         this.bullets.push({
             mesh: mesh, damage: damage, life: 1.2,
             target: target || null,

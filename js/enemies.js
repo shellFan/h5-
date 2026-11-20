@@ -86,6 +86,8 @@ class Enemy {
             effects.burst(this.x, 0.5, this.z, 0xFFFFFF, 4, 2, 0.3);
             // 金色积分光点
             effects.burst(this.x, 0.7, this.z, 0xFFD700, 3, 2.2, 0.8);
+            // V12视觉: 地面尸液痕迹(大体型更大; decal池内自动限流)
+            if (effects.splat) effects.splat(this.x, this.z, this.visScale * (this.isBoss ? 1.6 : 0.9));
         }
     }
 
@@ -267,6 +269,15 @@ class EnemyManager {
             AffixSystem.roll(e, this._levelIndex || 0);
             if (e.affixNames) e.model.userData.affixTag = e.affixNames;
         }
+        // V12视觉: 精英身份光环(贴地金环, 随锚点移动; >10只精英时省略保护drawcall)
+        if (type === 'elite' && this._eliteAuraCount === undefined) this._eliteAuraCount = 0;
+        if (type === 'elite' && this._eliteAuraCount < 10 && typeof V42Art !== 'undefined' && V42Art.createEliteAura) {
+            var aura = V42Art.createEliteAura();
+            aura.position.y = 0.04;
+            e.model.add(aura);
+            e._eliteAura = aura;
+            this._eliteAuraCount++;
+        }
         this.enemies.push(e);
         if (type === 'boss') { this.boss = e; this.bossKills = this.bossKills || 0; }
         return e;
@@ -275,6 +286,7 @@ class EnemyManager {
     clear() {
         for (const e of this.enemies) e.destroy(this.scene);
         this.enemies = [];
+        this._eliteAuraCount = 0; // V12视觉: 光环配额重置(共享几何/材质不dispose, 无泄漏)
         for (const s of this.spits) this._spitPool.push(s);
         this.spits = [];
         this.pendingSpawns = [];
@@ -343,6 +355,8 @@ class EnemyManager {
                     if (this.effects) {
                         this.effects.shockwave(e.x, 0.05, e.z, 0xFF5A4B);
                         this.effects.burst(e.x, 0.6, e.z, 0xFF5A4B, 16, 3.5, 0.55);
+                        // V12视觉: 自爆白闪(瞬间亮度冲击)
+                        if (this.effects.flash) this.effects.flash(e.x, 0.7, e.z, 0xFFB060, 2.4);
                     }
                 }
                 // V6.0: 分裂词缀
@@ -357,10 +371,13 @@ class EnemyManager {
                     this.effects.burst(e.x, 1.2, e.z, 0xFFFFFF, 15, 3, 0.6);
                     // 冲击波
                     this.effects.shockwave(e.x, 0.05, e.z, 0xFFD700);
+                    // V12视觉: Boss死亡爆闪(大尺寸金色)
+                    if (this.effects.flash) this.effects.flash(e.x, 1.1, e.z, 0xFFD980, 3.4);
                 }
             }
             // 死亡动画完成: 移除
             if (e.removeReady) {
+                if (e._eliteAura) this._eliteAuraCount--;
                 e.destroy(this.scene);
                 this.enemies.splice(i, 1);
             }
@@ -401,7 +418,10 @@ class EnemyManager {
         for(var i=this.enemies.length-1;i>=0;i--) {
             var e=this.enemies[i];if(!e.dying)continue;
             e.update(dt,time,squad,this,this.effects);
-            if(e.removeReady){e.destroy(this.scene);this.enemies.splice(i,1);}
+            if(e.removeReady){
+                if (e._eliteAura) this._eliteAuraCount--;
+                e.destroy(this.scene);this.enemies.splice(i,1);
+            }
         }
         this.renderer.update(dt,time,this.enemies,squad.z);
     }

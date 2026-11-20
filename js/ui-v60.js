@@ -674,6 +674,7 @@ var V60UI = {
     },
 
     // ===== VNext: 战绩排行(真实结算数据, 无假排名) =====
+    // V12视觉: 前三甲奖牌徽章 + 职业徽章 + 最新战绩高亮(docs/art/UI_DESIGN_SYSTEM.md)
     renderRank: function(game) {
         var el = document.getElementById('v60-rank-list');
         if (!el || !game.profile || typeof Leaderboard === 'undefined') return;
@@ -683,16 +684,23 @@ var V60UI = {
             el.innerHTML = '<div class="v60-rank-empty">暂无战绩 · 完成一局战斗后进入排行</div>';
             return;
         }
+        // 最新一条战绩标记"最新"徽标(本地榜=玩家自己的历史)
+        var latestTs = 0;
+        for (var mi = 0; mi < list.length; mi++) latestTs = Math.max(latestTs, list[mi].ts || 0);
+        var MEDALS = ['🥇', '🥈', '🥉'];
         for (var i = 0; i < list.length; i++) {
             var r = list[i];
             var clsDef = (typeof CLASS_DEFS !== 'undefined' && CLASS_DEFS[r.classId]) ? CLASS_DEFS[r.classId] : null;
             var row = document.createElement('div');
-            row.className = 'v60-rank-row' + (i < 3 ? ' top' + (i + 1) : '');
+            row.className = 'v60-rank-row' + (i < 3 ? ' top' + (i + 1) : '') +
+                (r.ts === latestTs ? ' v60-rank-row-me' : '');
             row.innerHTML =
-                '<div class="v60-rank-pos">' + (i + 1) + '</div>' +
+                (i < 3
+                    ? '<div class="v60-rank-badge">' + MEDALS[i] + '</div>'
+                    : '<div class="v60-rank-badge" style="background:linear-gradient(180deg,#B9D2EA,#8FB2D1)">' + (i + 1) + '</div>') +
                 '<div class="v60-rank-info"><div class="v60-rank-name">' +
                 (r.win ? '🏆 通关L' + r.level : (r.challenge ? '⚔️ ' + r.challenge : '💀 L' + r.level + '失利')) +
-                (clsDef ? ' <span style="color:' + clsDef.color + '">' + clsDef.icon + '</span>' : '') + '</div>' +
+                (clsDef ? ' <span class="v60-rank-class-chip" style="background:' + clsDef.color + '">' + clsDef.icon + clsDef.name + '</span>' : '') + '</div>' +
                 '<div class="v60-rank-meta">⚔️' + r.kills + ' · 👥' + r.maxCount + ' · 🔥' + (r.combo || 0) +
                 ' · ' + Leaderboard.fmtDate(r.ts) + '</div></div>' +
                 '<div class="v60-rank-score">' + r.score + '</div>';

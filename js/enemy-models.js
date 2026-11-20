@@ -146,6 +146,9 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
             var walk=e.dying?0:Math.sin(phase)*(.45*(e.frozenT>0?.3:1));
             var attack=e.attackT||0,charge=e.chargeT||0;
             this._color.setRGB(1,1,1);
+            // V12视觉: 特殊体型染色(冰冻/受击闪烁随后覆盖)
+            if(e.type==='elite')this._color.setRGB(1.22,1.08,.72);          // 精英金染
+            else if(e.type==='bomber')this._color.setRGB(1.5,.55,.5);       // 自爆尸红染(fast模型区分)
             if(e.frozenT>0)this._color.setRGB(.50,.85,1.35);
             if(e.phaseIndex>=3)this._color.setRGB(1.35,.72,.75);
             else if(e.phaseIndex===2)this._color.setRGB(1.12,.85,1.2);
