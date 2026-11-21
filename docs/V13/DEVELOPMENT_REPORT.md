@@ -32,3 +32,12 @@
 - 全量回归在合并态重跑全绿（unit 102 · e2e 29 · v51 39 · v80 37 · v111-v114 54 ·
   vnext 183 · mobile 29 · soldier 11 · combat-feedback-gates PASS · 微信模拟器 20/20）；
 - 最终 SHA: 合并后 V13 主提交 `9c32560` + 截图刷新 `cb02b8d`，已推送 origin/master。
+
+## V13 FINAL 补充交付(同轮收尾)
+
+- 新增规范文档: ASSET_PIPELINE.md(素材管线)/ VISUAL_DEVELOPMENT_STANDARD.md(流程标准)/
+  MOBILE_VISUAL_GUIDELINES.md(移动端规范) / THREEJS_ART_GUIDELINES.md(Three.js r149 美术规范);
+- 320×640 小屏端到端验收(任务书尺寸矩阵补全): 无横向溢出/按钮可达/HUD 完整;
+- 15 分钟长跑测试(tools/v101-soak.js): **72 周期战局循环**(L1-L10+弹窗+挑战模拟),
+  **0 页面错误**, 堆内存 21.8→25.8MB(趋势平稳无泄漏, 工具判定通过) — docs/V13/soak-run.log;
+- 三端构建复验: H5 6717KB / 抖音 5.20MB / 微信主包 2.82MB 整包 6.19MB(红线内)。
