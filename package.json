@@ -11,6 +11,7 @@
     "build:douyin": "node tools/build-douyin.js",
     "test:unit": "node tests/unit/run.js",
     "test:combat-feedback": "node tests/e2e/combat-feedback-gates.js",
+    "test:ui-v118": "node tests/e2e/ui-v118.js",
     "test:h5-build": "node tests/e2e/h5-build.js",
     "test:v51": "node tests/e2e/v51.js",
     "test:v80": "node tests/e2e/v80.js",

@@ -16,6 +16,7 @@ const COPY_LIST = [
     'style-v51.css',
     'style-v60.css', // V10 QA修复: V6.0 UI样式此前未入包, 生产构建中九页界面全部无样式
     'style-v120.css', // V12视觉升级层: 设计令牌/HUD精修/结算/排行榜/手机安全区
+    'style-v118.css', // Approved navy/gold UI and local weapon illustration atlas.
     'js/vendor/three.min.js',
     'js/vendor/GLTFLoader.js',
     'js/vendor/THREE-LICENSE.txt',

@@ -49,7 +49,9 @@ var V60UI = {
             '</div>' +
             '<div id="v60-armory-page" class="v60-page hidden">' +
                 '<div class="title-panel v60-panel">' +
-                    '<div class="v42-panel-kicker cyan">军械库</div>' +
+                    '<div class="v42-panel-kicker cyan">装备整备</div>' +
+                    '<h2 class="v60-page-title">军械库</h2>' +
+                    '<div id="v118-armory-hero" class="v118-armory-hero"></div>' +
                     '<div id="v60-armory-list" class="v60-armory-list"></div>' +
                     '<button id="v60-armory-back" class="btn-secondary">返回</button>' +
                 '</div>' +
@@ -83,7 +85,8 @@ var V60UI = {
             '<div id="v60-rank-page" class="v60-page hidden">' +
                 '<div class="title-panel v60-panel">' +
                     '<div class="v42-panel-kicker gold">名人堂</div>' +
-                    '<h2 class="v60-page-title">战绩排行</h2>' +
+                    '<h2 class="v60-page-title">本机战绩榜</h2>' +
+                    '<div class="v118-rank-source">仅记录此设备上的真实对局</div>' +
                     '<div id="v60-rank-list" class="v60-rank-list"></div>' +
                     '<button id="v60-rank-back" class="btn-secondary">返回</button>' +
                 '</div>' +
@@ -499,7 +502,8 @@ var V60UI = {
     // ===== V8.0: 军械库(WeaponSystem 8种武器) =====
     renderArmory: function(game) {
         var el = document.getElementById('v60-armory-list');
-        if (!el || !game.profile || typeof WeaponSystem === 'undefined') return;
+        var hero = document.getElementById('v118-armory-hero');
+        if (!el || !hero || !game.profile || typeof WeaponSystem === 'undefined') return;
         el.innerHTML = '';
         var current = WeaponSystem.current(game.profile);
         var wLv = WeaponSystem.level(game.profile);
@@ -507,8 +511,34 @@ var V60UI = {
         var upCost = WeaponSystem.upgradeCost(game.profile);
         var canEvo = WeaponSystem.canEvolve(game.profile);
         var self = this;
-        for (var id in WEAPON_DEFS) {
+        var weaponOrder = ['rifle', 'shotgun', 'sniper', 'mg', 'flamethrower', 'rocket', 'freeze', 'tesla'];
+        var statTextOf = function(st) {
+            return '伤害 ×' + (st.dmgMul || 1) +
+                (st.rateMul ? ' · 射速 ×' + st.rateMul : '') +
+                (st.pellets ? ' · 弹丸 ×' + st.pellets : '') +
+                (st.pierceBonus ? ' · 穿透 +' + st.pierceBonus : '') +
+                (st.radius ? ' · 半径 ' + st.radius : '') +
+                (st.chain ? ' · 链式 ×' + st.chain : '') +
+                (st.slowMul ? ' · 减速 ' + Math.round((1 - st.slowMul) * 100) + '%' : '') +
+                (st.critBonus ? ' · 暴击 +' + Math.round(st.critBonus * 100) + '%' : '');
+        };
+        var currentIndex = weaponOrder.indexOf(current);
+        var currentDef = WEAPON_DEFS[current];
+        if (currentDef && currentIndex >= 0) {
+            hero.innerHTML =
+                '<div class="v118-weapon-art" role="img" aria-label="' + currentDef.name + '" data-weapon="' + current + '"' +
+                ' style="--weapon-col:' + (currentIndex % 4) + ';--weapon-row:' + Math.floor(currentIndex / 4) + '"></div>' +
+                '<div class="v118-armory-hero-info"><div class="v118-armory-current">当前装备</div>' +
+                '<div class="v118-armory-hero-name">' + currentDef.icon + ' ' + currentDef.name + '</div>' +
+                '<div class="v118-armory-hero-level">强化等级 Lv.' + wLv + '</div>' +
+                '<div class="v118-armory-hero-stats">' + statTextOf(wStats) + '</div></div>';
+        } else {
+            hero.innerHTML = '';
+        }
+        for (var wi = 0; wi < weaponOrder.length; wi++) {
+            var id = weaponOrder[wi];
             var def = WEAPON_DEFS[id];
+            if (!def) continue;
             var isCurrent = id === current;
             var canUnlock = WeaponSystem.canUnlock(game.profile, id);
             var unlockedNow = !def.unlockCondition || isCurrent || canUnlock ||
@@ -516,6 +546,7 @@ var V60UI = {
             var st = def.effect(wLv);
             var row = document.createElement('div');
             row.className = 'v60-armory-row' + (isCurrent ? ' equipped' : unlockedNow ? ' owned' : ' locked');
+            row.setAttribute('data-weapon', id);
             var evoLine = '';
             if (isCurrent) {
                 if (wStats.evolvedName) evoLine = '<div class="v60-armory-evo">✅ 已进化: ' + wStats.evolvedName + '</div>';
@@ -524,14 +555,10 @@ var V60UI = {
                 // V11.3: 武器词条行
                 if (wStats.affixName) evoLine += '<div class="v60-armory-evo" style="color:#FFC247">📝 词条: ' + wStats.affixName + '</div>';
             }
-            var statText = '伤害 ×' + (st.dmgMul || 1) +
-                (st.rateMul ? ' · 射速 ×' + st.rateMul : '') +
-                (st.pellets ? ' · 弹丸 ×' + st.pellets : '') +
-                (st.pierceBonus ? ' · 穿透 +' + st.pierceBonus : '') +
-                (st.radius ? ' · 半径 ' + st.radius : '') +
-                (st.chain ? ' · 链式 ×' + st.chain : '') +
-                (st.slowMul ? ' · 减速 ' + Math.round((1 - st.slowMul) * 100) + '%' : '');
+            var statText = statTextOf(st);
             row.innerHTML =
+                '<div class="v118-weapon-art" role="img" aria-label="' + def.name + '" data-weapon="' + id + '"' +
+                ' style="--weapon-col:' + (wi % 4) + ';--weapon-row:' + Math.floor(wi / 4) + '"></div>' +
                 '<div class="v60-armory-head"><span class="v60-armory-icon">' + def.icon + '</span>' +
                 '<span class="v60-armory-name">' + def.name + (isCurrent ? ' ✓' : '') + '</span>' +
                 '<span class="v60-armory-lv">Lv.' + wLv + '/5</span></div>' +
@@ -697,27 +724,37 @@ var V60UI = {
             el.innerHTML = '<div class="v60-rank-empty">暂无战绩 · 完成一局战斗后进入排行</div>';
             return;
         }
-        // 最新一条战绩标记"最新"徽标(本地榜=玩家自己的历史)
         var latestTs = 0;
         for (var mi = 0; mi < list.length; mi++) latestTs = Math.max(latestTs, list[mi].ts || 0);
-        var MEDALS = ['🥇', '🥈', '🥉'];
+        var podium = document.createElement('div');
+        podium.className = 'v118-rank-podium';
+        el.appendChild(podium);
         for (var i = 0; i < list.length; i++) {
             var r = list[i];
             var clsDef = (typeof CLASS_DEFS !== 'undefined' && CLASS_DEFS[r.classId]) ? CLASS_DEFS[r.classId] : null;
             var row = document.createElement('div');
-            row.className = 'v60-rank-row' + (i < 3 ? ' top' + (i + 1) : '') +
-                (r.ts === latestTs ? ' v60-rank-row-me' : '');
+            row.className = 'v60-rank-row' + (i < 3 ? ' top' + (i + 1) : '') + (r.ts === latestTs ? ' v60-rank-row-me' : '');
+            row.setAttribute('data-rank', i + 1);
+            row.setAttribute('aria-label', '第' + (i + 1) + '名，得分' + r.score);
+            var classText = clsDef ? clsDef.icon + clsDef.name : (r.classId || '未记录职业');
+            var elapsed = Number(r.time);
+            var timeText = isFinite(elapsed) ? ' · ⏱️' + (elapsed % 1 ? elapsed.toFixed(1) : elapsed.toFixed(0)) + '秒' : '';
+            var resultText = r.challenge
+                ? '⚔️ ' + r.challenge + ' · L' + r.level + (r.win ? '完成' : '失利')
+                : (r.win ? '🏆 通关L' + r.level : '💀 L' + r.level + '失利');
+            var detailText = '⚔️' + r.kills + ' · 👥' + r.maxCount + ' · 🔥' + (r.combo || 0) + timeText;
+            var metadata = i < 3
+                ? '<div class="v118-rank-date">' + Leaderboard.fmtDate(r.ts) + '</div>' +
+                    '<details class="v118-rank-details"><summary>战绩详情</summary><div class="v60-rank-meta">' + detailText + '</div></details>'
+                : '<div class="v60-rank-meta">' + detailText + ' · ' + Leaderboard.fmtDate(r.ts) + '</div>';
             row.innerHTML =
-                (i < 3
-                    ? '<div class="v60-rank-badge">' + MEDALS[i] + '</div>'
-                    : '<div class="v60-rank-badge" style="background:linear-gradient(180deg,#B9D2EA,#8FB2D1)">' + (i + 1) + '</div>') +
+                '<div class="v60-rank-pos">' + (i + 1) + '</div>' +
                 '<div class="v60-rank-info"><div class="v60-rank-name">' +
-                (r.win ? '🏆 通关L' + r.level : (r.challenge ? '⚔️ ' + r.challenge : '💀 L' + r.level + '失利')) +
-                (clsDef ? ' <span class="v60-rank-class-chip" style="background:' + clsDef.color + '">' + clsDef.icon + clsDef.name + '</span>' : '') + '</div>' +
-                '<div class="v60-rank-meta">⚔️' + r.kills + ' · 👥' + r.maxCount + ' · 🔥' + (r.combo || 0) +
-                ' · ' + Leaderboard.fmtDate(r.ts) + '</div></div>' +
+                resultText +
+                ' <span class="v118-rank-class"' + (clsDef ? ' style="color:' + clsDef.color + '"' : '') + '>' + classText + '</span></div>' +
+                metadata + '</div>' +
                 '<div class="v60-rank-score">' + r.score + '</div>';
-            el.appendChild(row);
+            (i < 3 ? podium : el).appendChild(row);
         }
     },
 
