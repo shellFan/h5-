@@ -121,7 +121,8 @@ var V60UI = {
             '</div>');
 
         // —— 首页按钮组(V8.0: 九宫格导航) ——
-        var startPanel = document.querySelector('#start-screen .title-panel');
+        var startScreen = document.getElementById('start-screen');
+        var startPanel = startScreen ? startScreen.querySelector('.title-panel') : null;
         if (startPanel && !document.getElementById('v60-home-nav')) {
             startPanel.insertAdjacentHTML('beforeend',
                 '<div id="v60-home-nav" class="v60-home-nav">' +
@@ -527,6 +528,7 @@ var V60UI = {
         if (currentDef && currentIndex >= 0) {
             hero.innerHTML =
                 '<div class="v118-weapon-art" role="img" aria-label="' + currentDef.name + '" data-weapon="' + current + '"' +
+                ' data-atlas-cols="4" data-atlas-rows="2" data-atlas-col="' + (currentIndex % 4) + '" data-atlas-row="' + Math.floor(currentIndex / 4) + '"' +
                 ' style="--weapon-col:' + (currentIndex % 4) + ';--weapon-row:' + Math.floor(currentIndex / 4) + '"></div>' +
                 '<div class="v118-armory-hero-info"><div class="v118-armory-current">当前装备</div>' +
                 '<div class="v118-armory-hero-name">' + currentDef.icon + ' ' + currentDef.name + '</div>' +
@@ -558,6 +560,7 @@ var V60UI = {
             var statText = statTextOf(st);
             row.innerHTML =
                 '<div class="v118-weapon-art" role="img" aria-label="' + def.name + '" data-weapon="' + id + '"' +
+                ' data-atlas-cols="4" data-atlas-rows="2" data-atlas-col="' + (wi % 4) + '" data-atlas-row="' + Math.floor(wi / 4) + '"' +
                 ' style="--weapon-col:' + (wi % 4) + ';--weapon-row:' + Math.floor(wi / 4) + '"></div>' +
                 '<div class="v60-armory-head"><span class="v60-armory-icon">' + def.icon + '</span>' +
                 '<span class="v60-armory-name">' + def.name + (isCurrent ? ' ✓' : '') + '</span>' +

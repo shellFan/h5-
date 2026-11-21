@@ -84,10 +84,11 @@ const ASSET_RULES = [
     { match: /^assets\/models\/zombies\//, priority: 'P1', role: '特型僵尸' },
     { match: /^assets\/models\/bosses\//, priority: 'P2', role: 'Boss模型' },
     { match: /^assets\/art-v1\/ui\/.*\.svg$/, priority: 'P0', role: 'HUD头像图标' },
+    { match: /^assets\/ui-v118\/.*\.png$/, priority: 'P3', role: '军械库界面插图' },
     { match: /\.svg$/, priority: 'P3', role: '矢量图标' }
 ];
 
-const CSS_FILES = ['style.css', 'style-v42.css', 'style-v51.css', 'style-v60.css', 'style-v120.css'];
+const CSS_FILES = ['style.css', 'style-v42.css', 'style-v51.css', 'style-v60.css', 'style-v120.css', 'style-v118.css'];
 
 function mustRead(rel) {
     const p = path.join(ROOT, rel);
@@ -168,7 +169,7 @@ function copyAssets() {
                 const lower = e.name.toLowerCase();
                 const isGlb = lower.endsWith('.glb');
                 const isSvg = lower.endsWith('.svg');
-                if (!isGlb && !isSvg) continue; // model-stats.json/README/catalog.json 不进包(运行时未引用)
+                if (!isGlb && !isSvg) continue; // UI atlas is placed in the main package below.
                 const rule = ASSET_RULES.find(r => r.match.test('assets/' + relPath)) || { priority: 'P3', role: 'other' };
                 const dst = path.join(outRoot, relPath);
                 fs.mkdirSync(path.dirname(dst), { recursive: true });
@@ -185,6 +186,13 @@ function copyAssets() {
         }
     }
     walk('');
+    // Keep the 1.25MB inventory atlas in the main package: assets already uses
+    // 3.37MB of its 4MB subpackage budget. It is loaded only when armory opens.
+    const uiArt = 'ui-art/weapon-atlas.png';
+    fs.mkdirSync(path.join(OUT, 'ui-art'), { recursive: true });
+    fs.copyFileSync(path.join(ROOT, 'assets/ui-v118/weapon-atlas.png'), path.join(OUT, uiArt));
+    const uiBytes = fs.readFileSync(path.join(OUT, uiArt));
+    manifest.push({ path: uiArt, size: uiBytes.length, priority: 'P3', role: '军械库界面插图', package: 'main', sha1: crypto.createHash('sha1').update(uiBytes).digest('hex').slice(0, 12) });
     manifest.sort((a, b) => a.path.localeCompare(b.path));
     fs.writeFileSync(path.join(OUT, 'assets-manifest.json'), JSON.stringify({
         generatedAt: new Date().toISOString(),
@@ -219,7 +227,7 @@ function main() {
 
     console.log('[build:wechat] 生成 UI DOM/CSS 模块...');
     fs.writeFileSync(path.join(OUT, 'ui-dom.js'), '// V12 构建产物: index.html <body> 转换的 UI DOM 树\nmodule.exports = ' + JSON.stringify(bodySpec) + ';\n');
-    const cssTexts = CSS_FILES.map(f => mustRead(f));
+    const cssTexts = CSS_FILES.map(f => mustRead(f).replace(/assets\/ui-v118\//g, 'ui-art/'));
     fs.writeFileSync(path.join(OUT, 'ui-css.js'), '// V12 构建产物: 项目全部样式表原文(运行时级联)\nmodule.exports = ' + JSON.stringify(cssTexts) + ';\n');
 
     console.log('[build:wechat] 生成入口 game.js...');
@@ -297,7 +305,8 @@ function main() {
     const mainFiles = ['game.js', 'minidom.js', 'ui-dom.js', 'ui-css.js', 'game-bundle.js', 'game-config.js', 'libs/three.min.js'];
     let mainSize = 0;
     for (const f of mainFiles) mainSize += fs.statSync(path.join(OUT, f)).size;
-    const assetsSize = manifest.reduce((s, f) => s + f.size, 0);
+    mainSize += manifest.filter(f => f.package === 'main').reduce((s, f) => s + f.size, 0);
+    const assetsSize = manifest.filter(f => f.package !== 'main').reduce((s, f) => s + f.size, 0);
     const totalSize = mainSize + assetsSize;
     const MAIN_LIMIT = 4 * 1024 * 1024, SUB_LIMIT = 4 * 1024 * 1024, TOTAL_LIMIT = 30 * 1024 * 1024;
     console.log('[build:wechat] 包体: 主包 ' + fmtSize(mainSize) + ' / 分包(assets) ' + fmtSize(assetsSize) + ' / 整包 ' + fmtSize(totalSize));

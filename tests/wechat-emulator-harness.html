@@ -190,6 +190,15 @@
         // 浏览器中 window.document 不可重定义 → bundle 用函数参数遮蔽浏览器全局(与微信端语义一致)
         var fn = new Function(names.join(','), code + '\n//# sourceURL=' + p);
         fn.apply(null, values);
+        if (p === '/wechat-game/ui-css.js') {
+            // Browser tests live under /tests; wx CSS assets resolve from the
+            // package root. Keep this URL adjustment out of the production code.
+            module.exports = module.exports.map(function (css) {
+                return css.replace(/url\((['"]?)(ui-art\/[^'")]+)\1\)/g, function (_, quote, asset) {
+                    return 'url(' + quote + '/wechat-game/' + asset + quote + ')';
+                });
+            });
+        }
         return module.exports;
     };
 

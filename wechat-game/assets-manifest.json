@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-11-20T19:15:25.838Z",
+  "generatedAt": "2026-11-21T12:44:54.381Z",
   "note": "微信小游戏资源清单(构建生成); P0=首局必需, P1=当前关卡, P2=Boss/后续, P3=装饰",
-  "totalSize": 3528666,
+  "totalSize": 4835269,
   "files": [
     {
       "path": "assets/art-v1/effects/bullet-glow.svg",
@@ -212,6 +212,14 @@
       "priority": "P1",
       "role": "特型僵尸",
       "sha1": "1bc083e26f2c"
+    },
+    {
+      "path": "ui-art/weapon-atlas.png",
+      "size": 1306603,
+      "priority": "P3",
+      "role": "军械库界面插图",
+      "package": "main",
+      "sha1": "1dfeac24dd29"
     }
   ]
 }

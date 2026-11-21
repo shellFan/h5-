@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-11-20T19:15:41.166Z",
-  "passed": 17,
-  "total": 17,
+  "timestamp": "2026-11-21T12:45:13.654Z",
+  "passed": 20,
+  "total": 20,
   "results": [
     {
       "name": "微信入口启动: window.__game 就绪",
@@ -16,12 +16,27 @@
     {
       "name": "UI DOM 节点构建",
       "ok": true,
-      "detail": "nodes=349, rules=555, keyframes=18"
+      "detail": "nodes=388, rules=715, keyframes=18"
     },
     {
       "name": "首页开始按钮布局",
       "ok": true,
-      "detail": "{\"x\":195,\"y\":161.894}"
+      "detail": "{\"x\":195,\"y\":162.00424999999998}"
+    },
+    {
+      "name": "军械库透明图集随包加载",
+      "ok": true,
+      "detail": "{\"count\":9,\"loaded\":9,\"cells\":8,\"textures\":1}"
+    },
+    {
+      "name": "军械库8种插图按单格裁切",
+      "ok": true,
+      "detail": "{\"count\":9,\"loaded\":9,\"cells\":8,\"textures\":1}"
+    },
+    {
+      "name": "军械库共享单张图集解码",
+      "ok": true,
+      "detail": "{\"count\":9,\"loaded\":9,\"cells\":8,\"textures\":1}"
     },
     {
       "name": "点击开始进入战斗(state=playing)",
@@ -41,7 +56,7 @@
     {
       "name": "拖动输入桥接(队伍移动)",
       "ok": true,
-      "detail": "x: 0.00 → -2.01"
+      "detail": "x: 0.00 → -2.02"
     },
     {
       "name": "暂停按钮生效",
@@ -76,7 +91,7 @@
     {
       "name": "战斗帧率采样",
       "ok": true,
-      "detail": "104 FPS (模拟器软件渲染, 真机预期更高)"
+      "detail": "60 FPS (模拟器软件渲染, 真机预期更高)"
     },
     {
       "name": "无致命运行时错误",

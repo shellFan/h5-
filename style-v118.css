@@ -135,7 +135,7 @@
 
 /* Image atlas: each graphic is a transparent tile, separate from combat models. */
 .v118-weapon-art {
-    display: block; width: min(100%, 132px); aspect-ratio: 1; margin: 0 auto;
+    display: block; width: 132px; max-width: 100%; height: 132px; aspect-ratio: 1; margin: 0 auto;
     background-image: url('assets/ui-v118/weapon-atlas.png');
     background-repeat: no-repeat;
     background-size: 400% 200%;
@@ -148,7 +148,7 @@
 #game-container.v42-ui #v60-armory-page .v60-page-title { font-size: 26px; margin-bottom: 10px; }
 #game-container.v42-ui #v118-armory-hero { position: relative; margin: 0 0 12px; padding: 8px 12px 12px; border: 1px solid #5b7494; border-radius: 16px; background: radial-gradient(ellipse at 50% 40%, #4c648378, transparent 65%), linear-gradient(#1c304b, #102139); flex: 0 0 auto; }
 #game-container.v42-ui #v118-armory-hero::after { content: ''; position: absolute; top: 61%; left: 15%; width: 70%; height: 7px; border-radius: 50%; background: #71bef240; box-shadow: 0 0 18px #70cfff66; pointer-events: none; }
-#game-container.v42-ui #v118-armory-hero .v118-weapon-art { width: 160px; max-height: none; }
+#game-container.v42-ui #v118-armory-hero .v118-weapon-art { width: 160px; height: 160px; max-height: none; }
 #game-container.v42-ui .v118-armory-hero-info { position: relative; z-index: 1; text-align: center; }
 #game-container.v42-ui .v118-armory-current { color: #a8c3de; font-size: 10px; letter-spacing: 2px; margin: 3px 0; }
 #game-container.v42-ui .v118-armory-hero-name { color: #fff0c6; font-size: 20px; font-weight: 900; line-height: 1.5; }
@@ -207,7 +207,7 @@
     #game-container.v42-ui .game-title { font-size: 27px; }
     #game-container.v42-ui .v60-page .v60-panel { padding: 12px 11px 10px; }
     #game-container.v42-ui #v118-armory-hero { padding: 4px 10px 8px; margin-bottom: 8px; }
-    #game-container.v42-ui #v118-armory-hero .v118-weapon-art { width: 96px; }
+    #game-container.v42-ui #v118-armory-hero .v118-weapon-art { width: 96px; height: 96px; }
     #game-container.v42-ui .v118-armory-title { font-size: 16px; }
     #game-container.v42-ui .v118-armory-description { font-size: 10px; }
     #game-container.v42-ui #v60-home-nav .v60-nav-btn { min-height: 44px; }

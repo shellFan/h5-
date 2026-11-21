@@ -104,8 +104,37 @@ async function main() {
         await page.screenshot({ path: path.join(SHOT_DIR, 'wechat-home.png') });
         console.log('  截图: docs/WeChat/screenshots/wechat-home.png');
 
+        // Inventory art must be packaged and cropped to a single atlas cell.
+        await page.evaluate(() => {
+            window.__atlasDrawCalls = [];
+            const original = CanvasRenderingContext2D.prototype.drawImage;
+            window.__restoreAtlasDraw = () => { CanvasRenderingContext2D.prototype.drawImage = original; };
+            CanvasRenderingContext2D.prototype.drawImage = function(...args) {
+                if (args.length === 9 && /ui-v118|ui-art/.test(String(args[0].src || ''))) window.__atlasDrawCalls.push(args.slice(1, 5));
+                return original.apply(this, args);
+            };
+            window.__minidom.document.getElementById('v60-btn-armory').onclick();
+        });
+        await page.waitForTimeout(1800);
+        await page.evaluate(() => { window.__minidom.document.getElementById('v60-armory-list').scrollTop = 10000; });
+        await page.waitForTimeout(800);
+        const artState = await page.evaluate(() => {
+            const art = window.__minidom.document.querySelectorAll('.v118-weapon-art');
+            const loaded = Array.from(art).filter(e => e._bgImgState === 'loaded').length;
+            const textures = new Set(Array.from(art).filter(e => e._bgImg).map(e => e._bgImg)).size;
+            const cells = new Set(window.__atlasDrawCalls.map(c => c.join(','))).size;
+            window.__restoreAtlasDraw();
+            window.__minidom.document.getElementById('v60-armory-back').onclick();
+            return { count: art.length, loaded, cells, textures };
+        });
+        check('军械库透明图集随包加载', artState.count === 9 && artState.loaded === 9, JSON.stringify(artState));
+        check('军械库8种插图按单格裁切', artState.cells === 8, JSON.stringify(artState));
+        check('军械库共享单张图集解码', artState.textures === 1, JSON.stringify(artState));
+        await page.waitForTimeout(300);
+
         // 4. 点击开始 → 进入战斗
-        await touch(page, startBox.x, startBox.y);
+        const readyStartBox = await elCenter(page, 'btn-start');
+        await touch(page, readyStartBox.x, readyStartBox.y);
         await page.waitForFunction('window.__game.state === "playing"', { timeout: 20000 });
         check('点击开始进入战斗(state=playing)', true);
 

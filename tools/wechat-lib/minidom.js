@@ -425,6 +425,7 @@
         var measureCtx = opts.measureCtx || rasterCtx;
 
         var engine = CSS.parseStylesheets(opts.cssTexts, { width: W, height: H });
+        var backgroundImageCache = Object.create(null);
 
         /* ---- 构建 DOM 树 ---- */
         var doc = {
@@ -499,6 +500,12 @@
 
         doc.getElementById = function (id) {
             var el = doc._idMap[id] || null;
+            // insertAdjacentHTML may insert a whole nested menu at once; only
+            // its root is indexed by _onTreeChange. Resolve and cache child IDs.
+            if (!el && id) {
+                el = body.querySelector('#' + id);
+                if (el) doc._idMap[id] = el;
+            }
             // 主画布槽位返回真实 canvas(WebGLRenderer 需要 getContext; 输入桥接已由入口接管)
             if (el && el._realCanvas) return el._realCanvas;
             return el;
@@ -1843,7 +1850,19 @@
                     ctx.save();
                     rectPath(ctx, box.x, box.y, box.w, box.h, radii);
                     ctx.clip();
-                    ctx.drawImage(el._bgImg, box.x, box.y, box.w, box.h);
+                    // Optional sprite-atlas coordinates for inventory art. The
+                    // native canvas renderer cannot use CSS background-position.
+                    var cols = Number(el.getAttribute('data-atlas-cols'));
+                    var rows = Number(el.getAttribute('data-atlas-rows'));
+                    var col = Number(el.getAttribute('data-atlas-col'));
+                    var row = Number(el.getAttribute('data-atlas-row'));
+                    var iw = el._bgImg.naturalWidth || el._bgImg.width;
+                    var ih = el._bgImg.naturalHeight || el._bgImg.height;
+                    if (cols > 0 && rows > 0 && col >= 0 && col < cols && row >= 0 && row < rows && iw > 0 && ih > 0) {
+                        ctx.drawImage(el._bgImg, col * iw / cols, row * ih / rows, iw / cols, ih / rows, box.x, box.y, box.w, box.h);
+                    } else {
+                        ctx.drawImage(el._bgImg, box.x, box.y, box.w, box.h);
+                    }
                     ctx.restore();
                 } else if (mUrl && !el._bgImgRequested) {
                     el._bgImgRequested = true;
@@ -1924,9 +1943,29 @@
         }
 
         function loadBgImage(el, src) {
+            var cached = backgroundImageCache[src];
+            if (cached) {
+                if (cached.state === 'loaded') {
+                    el._bgImg = cached.image; el._bgImgState = 'loaded'; bump();
+                } else if (cached.state === 'loading') {
+                    cached.owners.push(el);
+                } else {
+                    el._bgImgState = 'failed';
+                }
+                return;
+            }
             var img = opts.createImage();
-            img.onload = function () { el._bgImg = img; el._bgImgState = 'loaded'; bump(); };
-            img.onerror = function () { el._bgImgState = 'failed'; };
+            var entry = backgroundImageCache[src] = { image: img, state: 'loading', owners: [el] };
+            img.onload = function () {
+                entry.state = 'loaded';
+                entry.owners.forEach(function (owner) { owner._bgImg = img; owner._bgImgState = 'loaded'; });
+                entry.owners.length = 0; bump();
+            };
+            img.onerror = function () {
+                entry.state = 'failed';
+                entry.owners.forEach(function (owner) { owner._bgImgState = 'failed'; });
+                entry.owners.length = 0; bump();
+            };
             img.src = src;
         }
 
