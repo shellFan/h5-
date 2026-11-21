@@ -1,5 +1,5 @@
 // ===== game-bundle.js (V12 微信小游戏构建产物: 单一模块作用域, 源脚本按 index.html 顺序拼接) =====
-// 生成: tools/build-wechat.js @ 2026-11-21T15:19:36.821Z
+// 生成: tools/build-wechat.js @ 2026-11-21T15:29:23.712Z
 // 代码与 H5 完全同源; 平台差异收敛于入口 game.js
 /* ==== index.html 内联脚本(BootProgress/错误横幅, H5 中先于业务脚本执行 — 保序) ==== */
 
@@ -2789,7 +2789,9 @@ var V60UI = {
             '</div>' +
             '<div id="v60-armory-page" class="v60-page hidden">' +
                 '<div class="title-panel v60-panel">' +
-                    '<div class="v42-panel-kicker cyan">军械库</div>' +
+                    '<div class="v42-panel-kicker cyan">装备整备</div>' +
+                    '<h2 class="v60-page-title">军械库</h2>' +
+                    '<div id="v118-armory-hero" class="v118-armory-hero"></div>' +
                     '<div id="v60-armory-list" class="v60-armory-list"></div>' +
                     '<button id="v60-armory-back" class="btn-secondary">返回</button>' +
                 '</div>' +
@@ -2823,7 +2825,8 @@ var V60UI = {
             '<div id="v60-rank-page" class="v60-page hidden">' +
                 '<div class="title-panel v60-panel">' +
                     '<div class="v42-panel-kicker gold">名人堂</div>' +
-                    '<h2 class="v60-page-title">战绩排行</h2>' +
+                    '<h2 class="v60-page-title">本机战绩榜</h2>' +
+                    '<div class="v118-rank-source">仅记录此设备上的真实对局</div>' +
                     '<div id="v60-rank-list" class="v60-rank-list"></div>' +
                     '<button id="v60-rank-back" class="btn-secondary">返回</button>' +
                 '</div>' +
@@ -2852,14 +2855,14 @@ var V60UI = {
                     '<div class="v60-setting-row"><span>音效</span><button id="v60-set-sound" class="v60-toggle"></button></div>' +
                     '<div class="v60-setting-row"><span>画质</span><button id="v60-set-quality" class="v60-toggle"></button></div>' +
                     '<div class="v60-setting-row"><span>屏幕震动</span><button id="v60-set-shake" class="v60-toggle"></button></div>' +
-                    '<div class="v60-setting-row"><span>减少动效</span><button id="v60-set-motion" class="v60-toggle"></button></div>' +
                     '<div class="v60-saveinfo" id="v60-saveinfo"></div>' +
                     '<button id="v60-set-back" class="btn-primary">返回</button>' +
                 '</div>' +
             '</div>');
 
         // —— 首页按钮组(V8.0: 九宫格导航) ——
-        var startPanel = document.querySelector('#start-screen .title-panel');
+        var startScreen = document.getElementById('start-screen');
+        var startPanel = startScreen ? startScreen.querySelector('.title-panel') : null;
         if (startPanel && !document.getElementById('v60-home-nav')) {
             startPanel.insertAdjacentHTML('beforeend',
                 '<div id="v60-home-nav" class="v60-home-nav">' +
@@ -2934,17 +2937,6 @@ var V60UI = {
             }
             location.reload();
         });
-        bind('v60-set-motion', function() {
-            // V13: 减少动态效果开关 — 关闭页面/弹窗动效(prefers-reduced-motion 的游戏内等价)
-            var cur = false;
-            try { cur = Platform.storage.get('motion_reduced', false) === true || Platform.storage.get('motion_reduced', '') === 'true'; } catch (e) {}
-            var next = !cur;
-            Platform.storage.set('motion_reduced', next ? 'true' : 'false');
-            var root = document.documentElement;
-            if (root) root.classList.toggle('v13-reduced-motion', next);
-            if (window.__minidom && window.__minidom.body) window.__minidom.body.classList.toggle('v13-reduced-motion', next);
-            self.renderSettings(game);
-        });
         bind('v60-set-shake', function() {
             game.world._shakeDisabled = !game.world._shakeDisabled;
             if (typeof Platform !== 'undefined' && Platform.storage && Platform.storage.setLegacy) {
@@ -2955,13 +2947,6 @@ var V60UI = {
             self.renderSettings(game);
         });
 
-        // V13: 启动恢复"减少动效"偏好
-        try {
-            var motionOn0 = Platform.storage.get('motion_reduced', 'false') === 'true';
-            var htmlRoot0 = document.documentElement;
-            if (htmlRoot0 && htmlRoot0.classList) htmlRoot0.classList.toggle('v13-reduced-motion', motionOn0);
-            if (window.__minidom && window.__minidom.body) window.__minidom.body.classList.toggle('v13-reduced-motion', motionOn0);
-        } catch (e) {}
         // 启动时恢复设置
         if (typeof Platform !== 'undefined' && Platform.storage && Platform.storage.getLegacy) {
             if (Platform.storage.getLegacy('pz_shake_off', '0') === '1') game.world._shakeDisabled = true;
@@ -2970,6 +2955,13 @@ var V60UI = {
                 if (localStorage.getItem('pz_shake_off') === '1') game.world._shakeDisabled = true;
             } catch (e) {}
         }
+        // V13: 启动恢复"减少动效"偏好
+        try {
+            var motionOn0 = Platform.storage.get('motion_reduced', 'false') === 'true';
+            var htmlRoot0 = document.documentElement;
+            if (htmlRoot0 && htmlRoot0.classList) htmlRoot0.classList.toggle('v13-reduced-motion', motionOn0);
+            if (window.__minidom && window.__minidom.body) window.__minidom.body.classList.toggle('v13-reduced-motion', motionOn0);
+        } catch (e) {}
 
         this.renderHomeGrowth(game);
         this.renderClassSelector(game);
@@ -3256,34 +3248,10 @@ var V60UI = {
     },
 
     // ===== V8.0: 军械库(WeaponSystem 8种武器) =====
-    /** V13: 武器剪影图标(程序化 SVG, 按 type 区分轮廓, tier 决定色阶, evolved 金色发光)
-     *  剪影设计遵循 ART_DIRECTION「剪影优先」规则: 0.3s 内可分辨武器类型。 */
-    weaponIconSvg: function(type, tier, evolved) {
-        var TIER_COLORS = ['#8FA8C2', '#8FA8C2', '#4A8FE0', '#4A8FE0', '#9A6EE0', '#FFC247'];
-        var base = evolved ? '#FFC247' : (TIER_COLORS[tier] || '#8FA8C2');
-        var dark = evolved ? '#B8860B' : '#2E4A6E';
-        var lite = evolved ? '#FFE9A8' : '#B8D4F0';
-        var glow = evolved ? '<circle cx="10" cy="9" r="7.2" fill="#FFC247" opacity=".25"/><circle cx="10" cy="9" r="4.6" fill="#FFE9A8" opacity=".4"/>' : '';
-        // 各类型剪影(body: 主体 path, extra: 特征件)
-        var P = {
-            single: { body: 'M10 18h30l2-3h14v6h-8l-2 3H18l-2 4h-5l1-4h-3z', extra: '<rect x="24" y="24" width="6" height="10" rx="1.5" transform="rotate(-14 27 29)" fill="' + dark + '"/><rect x="12" y="14" width="4" height="4" fill="' + dark + '"/>' },
-            spread: { body: 'M8 17h14l3-4h8v5h-6l-2 3H12z M33 15h18v8h-6l-2 4h-8z', extra: '<rect x="20" y="23" width="10" height="4" rx="2" fill="' + dark + '"/><rect x="36" y="14" width="3" height="10" fill="' + dark + '"/>' },
-            pierce: { body: 'M6 19h10l2-2h40v5h-14l-3 4h-9l-2-3H12z', extra: '<rect x="30" y="11" width="14" height="5" rx="2.4" fill="' + dark + '"/><circle cx="37" cy="13.5" r="2" fill="' + lite + '"/><rect x="16" y="22" width="5" height="8" rx="1.5" transform="rotate(-16 18 26)" fill="' + dark + '"/>' },
-            rapid: { body: 'M8 16h12l2-2h26v7h-9l-2 4h-8l-2-3H12z', extra: '<circle cx="22" cy="28" r="6" fill="' + dark + '"/><circle cx="22" cy="28" r="3" fill="' + lite + '"/><rect x="44" y="15" width="8" height="3" fill="' + dark + '"/>' },
-            cone: { body: 'M8 17h10l3-3h10v10h-8l-2 3h-9z', extra: '<circle cx="34" cy="19" r="7.5" fill="' + dark + '"/><circle cx="34" cy="19" r="4" fill="' + lite + '"/><path d="M43 19l8-4-2 4 2 4z" fill="#FF8844"/>' },
-            explosive: { body: 'M6 16h14l3-3h20v10h-8l-3 4h-10l-2-3H10z', extra: '<path d="M43 14l10 5-10 5z" fill="#FF8844"/><rect x="18" y="25" width="8" height="4" rx="2" fill="' + dark + '"/>' },
-            freeze: { body: 'M8 16h12l2-2h18v9h-8l-2 3h-8l-2-3H12z', extra: '<rect x="40" y="13" width="9" height="12" rx="3" fill="#BFEFFF"/><path d="M50 19h6M53 16l-3 3 3 3" stroke="#7FD4FF" stroke-width="2" fill="none"/><circle cx="35" cy="25" r="3" fill="#7FD4FF"/>' },
-            chain: { body: 'M8 18h12l2-2h16v8h-9l-2 3h-9l-2-3H12z', extra: '<rect x="38" y="13" width="5" height="12" rx="1.5" fill="' + dark + '"/><rect x="44" y="14" width="4" height="10" rx="1.5" fill="' + lite + '"/><path d="M52 15l4 2-1 3 3 2-4 2" stroke="#B8E0FF" stroke-width="2" fill="none"/>' }
-        };
-        var d = P[type] || P.single;
-        return '<svg class="v13-wicon" viewBox="0 0 64 38" width="58" height="34" aria-hidden="true">' + glow +
-            '<path d="' + d.body + '" fill="' + base + '" stroke="' + dark + '" stroke-width="1.2" stroke-linejoin="round"/>' +
-            d.extra + '</svg>';
-    },
-
     renderArmory: function(game) {
         var el = document.getElementById('v60-armory-list');
-        if (!el || !game.profile || typeof WeaponSystem === 'undefined') return;
+        var hero = document.getElementById('v118-armory-hero');
+        if (!el || !hero || !game.profile || typeof WeaponSystem === 'undefined') return;
         el.innerHTML = '';
         var current = WeaponSystem.current(game.profile);
         var wLv = WeaponSystem.level(game.profile);
@@ -3291,8 +3259,35 @@ var V60UI = {
         var upCost = WeaponSystem.upgradeCost(game.profile);
         var canEvo = WeaponSystem.canEvolve(game.profile);
         var self = this;
-        for (var id in WEAPON_DEFS) {
+        var weaponOrder = ['rifle', 'shotgun', 'sniper', 'mg', 'flamethrower', 'rocket', 'freeze', 'tesla'];
+        var statTextOf = function(st) {
+            return '伤害 ×' + (st.dmgMul || 1) +
+                (st.rateMul ? ' · 射速 ×' + st.rateMul : '') +
+                (st.pellets ? ' · 弹丸 ×' + st.pellets : '') +
+                (st.pierceBonus ? ' · 穿透 +' + st.pierceBonus : '') +
+                (st.radius ? ' · 半径 ' + st.radius : '') +
+                (st.chain ? ' · 链式 ×' + st.chain : '') +
+                (st.slowMul ? ' · 减速 ' + Math.round((1 - st.slowMul) * 100) + '%' : '') +
+                (st.critBonus ? ' · 暴击 +' + Math.round(st.critBonus * 100) + '%' : '');
+        };
+        var currentIndex = weaponOrder.indexOf(current);
+        var currentDef = WEAPON_DEFS[current];
+        if (currentDef && currentIndex >= 0) {
+            hero.innerHTML =
+                '<div class="v118-weapon-art" role="img" aria-label="' + currentDef.name + '" data-weapon="' + current + '"' +
+                ' data-atlas-cols="4" data-atlas-rows="2" data-atlas-col="' + (currentIndex % 4) + '" data-atlas-row="' + Math.floor(currentIndex / 4) + '"' +
+                ' style="--weapon-col:' + (currentIndex % 4) + ';--weapon-row:' + Math.floor(currentIndex / 4) + '"></div>' +
+                '<div class="v118-armory-hero-info"><div class="v118-armory-current">当前装备</div>' +
+                '<div class="v118-armory-hero-name">' + currentDef.icon + ' ' + currentDef.name + '</div>' +
+                '<div class="v118-armory-hero-level">强化等级 Lv.' + wLv + '</div>' +
+                '<div class="v118-armory-hero-stats">' + statTextOf(wStats) + '</div></div>';
+        } else {
+            hero.innerHTML = '';
+        }
+        for (var wi = 0; wi < weaponOrder.length; wi++) {
+            var id = weaponOrder[wi];
             var def = WEAPON_DEFS[id];
+            if (!def) continue;
             var isCurrent = id === current;
             var canUnlock = WeaponSystem.canUnlock(game.profile, id);
             var unlockedNow = !def.unlockCondition || isCurrent || canUnlock ||
@@ -3300,6 +3295,7 @@ var V60UI = {
             var st = def.effect(wLv);
             var row = document.createElement('div');
             row.className = 'v60-armory-row' + (isCurrent ? ' equipped' : unlockedNow ? ' owned' : ' locked');
+            row.setAttribute('data-weapon', id);
             var evoLine = '';
             if (isCurrent) {
                 if (wStats.evolvedName) evoLine = '<div class="v60-armory-evo">✅ 已进化: ' + wStats.evolvedName + '</div>';
@@ -3308,18 +3304,12 @@ var V60UI = {
                 // V11.3: 武器词条行
                 if (wStats.affixName) evoLine += '<div class="v60-armory-evo" style="color:#FFC247">📝 词条: ' + wStats.affixName + '</div>';
             }
-            var statText = '伤害 ×' + (st.dmgMul || 1) +
-                (st.rateMul ? ' · 射速 ×' + st.rateMul : '') +
-                (st.pellets ? ' · 弹丸 ×' + st.pellets : '') +
-                (st.pierceBonus ? ' · 穿透 +' + st.pierceBonus : '') +
-                (st.radius ? ' · 半径 ' + st.radius : '') +
-                (st.chain ? ' · 链式 ×' + st.chain : '') +
-                (st.slowMul ? ' · 减速 ' + Math.round((1 - st.slowMul) * 100) + '%' : '');
-            // V13: 剪影图标(未解锁灰阶; 已解锁按等级色阶; 当前装备若已进化 → 金色发光)
-            var iconTier = unlockedNow ? Math.min(5, (wLv || 0) + 1) : 0;
-            var iconSvg = this.weaponIconSvg(def.type, iconTier, isCurrent && wStats.evolvedName);
+            var statText = statTextOf(st);
             row.innerHTML =
-                '<div class="v60-armory-head"><span class="v60-armory-icon">' + iconSvg + '</span>' +
+                '<div class="v118-weapon-art" role="img" aria-label="' + def.name + '" data-weapon="' + id + '"' +
+                ' data-atlas-cols="4" data-atlas-rows="2" data-atlas-col="' + (wi % 4) + '" data-atlas-row="' + Math.floor(wi / 4) + '"' +
+                ' style="--weapon-col:' + (wi % 4) + ';--weapon-row:' + Math.floor(wi / 4) + '"></div>' +
+                '<div class="v60-armory-head"><span class="v60-armory-icon">' + def.icon + '</span>' +
                 '<span class="v60-armory-name">' + def.name + (isCurrent ? ' ✓' : '') + '</span>' +
                 '<span class="v60-armory-lv">Lv.' + wLv + '/5</span></div>' +
                 '<div class="v60-armory-stats">' + statText + '</div>' +
@@ -3381,7 +3371,6 @@ var V60UI = {
                 var check = TechTree.canUpgrade(game.profile, id);
                 var row = document.createElement('div');
                 row.className = 'v60-tech-row v13-tech-node' + (lv >= def.max ? ' maxed' : check.ok && tp >= check.cost ? ' ready' : check.ok ? '' : ' locked');
-                // V13: 等级点(pips) — 满级=已完成, 未满=点亮进度
                 var pips = '<span class="v13-tech-pips" aria-hidden="true">';
                 for (var pi = 0; pi < def.max; pi++) pips += '<i class="' + (pi < lv ? 'on' : '') + '"></i>';
                 pips += '</span>';
@@ -3403,6 +3392,31 @@ var V60UI = {
     },
 
     // ===== V8.0: 战场图鉴(Boss+武器收藏) =====
+    /** V13: 武器剪影图标(程序化 SVG, 按 type 区分轮廓, tier 决定色阶, evolved 金色发光)
+     *  剪影设计遵循 ART_DIRECTION「剪影优先」规则: 0.3s 内可分辨武器类型。
+     *  军械库主视图使用 v118 武器图集(hero 大图); 本剪影服务于图鉴等小尺寸列表场景。 */
+    weaponIconSvg: function(type, tier, evolved) {
+        var TIER_COLORS = ['#8FA8C2', '#8FA8C2', '#4A8FE0', '#4A8FE0', '#9A6EE0', '#FFC247'];
+        var base = evolved ? '#FFC247' : (TIER_COLORS[tier] || '#8FA8C2');
+        var dark = evolved ? '#B8860B' : '#2E4A6E';
+        var lite = evolved ? '#FFE9A8' : '#B8D4F0';
+        var glow = evolved ? '<circle cx="10" cy="9" r="7.2" fill="#FFC247" opacity=".25"/><circle cx="10" cy="9" r="4.6" fill="#FFE9A8" opacity=".4"/>' : '';
+        var P = {
+            single: { body: 'M10 18h30l2-3h14v6h-8l-2 3H18l-2 4h-5l1-4h-3z', extra: '<rect x="24" y="24" width="6" height="10" rx="1.5" transform="rotate(-14 27 29)" fill="' + dark + '"/><rect x="12" y="14" width="4" height="4" fill="' + dark + '"/>' },
+            spread: { body: 'M8 17h14l3-4h8v5h-6l-2 3H12z M33 15h18v8h-6l-2 4h-8z', extra: '<rect x="20" y="23" width="10" height="4" rx="2" fill="' + dark + '"/><rect x="36" y="14" width="3" height="10" fill="' + dark + '"/>' },
+            pierce: { body: 'M6 19h10l2-2h40v5h-14l-3 4h-9l-2-3H12z', extra: '<rect x="30" y="11" width="14" height="5" rx="2.4" fill="' + dark + '"/><circle cx="37" cy="13.5" r="2" fill="' + lite + '"/><rect x="16" y="22" width="5" height="8" rx="1.5" transform="rotate(-16 18 26)" fill="' + dark + '"/>' },
+            rapid: { body: 'M8 16h12l2-2h26v7h-9l-2 4h-8l-2-3H12z', extra: '<circle cx="22" cy="28" r="6" fill="' + dark + '"/><circle cx="22" cy="28" r="3" fill="' + lite + '"/><rect x="44" y="15" width="8" height="3" fill="' + dark + '"/>' },
+            cone: { body: 'M8 17h10l3-3h10v10h-8l-2 3h-9z', extra: '<circle cx="34" cy="19" r="7.5" fill="' + dark + '"/><circle cx="34" cy="19" r="4" fill="' + lite + '"/><path d="M43 19l8-4-2 4 2 4z" fill="#FF8844"/>' },
+            explosive: { body: 'M6 16h14l3-3h20v10h-8l-3 4h-10l-2-3H10z', extra: '<path d="M43 14l10 5-10 5z" fill="#FF8844"/><rect x="18" y="25" width="8" height="4" rx="2" fill="' + dark + '"/>' },
+            freeze: { body: 'M8 16h12l2-2h18v9h-8l-2 3h-8l-2-3H12z', extra: '<rect x="40" y="13" width="9" height="12" rx="3" fill="#BFEFFF"/><path d="M50 19h6M53 16l-3 3 3 3" stroke="#7FD4FF" stroke-width="2" fill="none"/><circle cx="35" cy="25" r="3" fill="#7FD4FF"/>' },
+            chain: { body: 'M8 18h12l2-2h16v8h-9l-2 3h-9l-2-3H12z', extra: '<rect x="38" y="13" width="5" height="12" rx="1.5" fill="' + dark + '"/><rect x="44" y="14" width="4" height="10" rx="1.5" fill="' + lite + '"/><path d="M52 15l4 2-1 3 3 2-4 2" stroke="#B8E0FF" stroke-width="2" fill="none"/>' }
+        };
+        var d = P[type] || P.single;
+        return '<svg class="v13-wicon" viewBox="0 0 64 38" width="46" height="27" aria-hidden="true">' + glow +
+            '<path d="' + d.body + '" fill="' + base + '" stroke="' + dark + '" stroke-width="1.2" stroke-linejoin="round"/>' +
+            d.extra + '</svg>';
+    },
+
     renderCodex: function(game) {
         var bossesEl = document.getElementById('v60-codex-bosses');
         var weaponsEl = document.getElementById('v60-codex-weapons');
@@ -3499,27 +3513,37 @@ var V60UI = {
                 '暂无战绩 · 完成一局战斗后进入排行</div>';
             return;
         }
-        // 最新一条战绩标记"最新"徽标(本地榜=玩家自己的历史)
         var latestTs = 0;
         for (var mi = 0; mi < list.length; mi++) latestTs = Math.max(latestTs, list[mi].ts || 0);
-        var MEDALS = ['🥇', '🥈', '🥉'];
+        var podium = document.createElement('div');
+        podium.className = 'v118-rank-podium';
+        el.appendChild(podium);
         for (var i = 0; i < list.length; i++) {
             var r = list[i];
             var clsDef = (typeof CLASS_DEFS !== 'undefined' && CLASS_DEFS[r.classId]) ? CLASS_DEFS[r.classId] : null;
             var row = document.createElement('div');
-            row.className = 'v60-rank-row' + (i < 3 ? ' top' + (i + 1) : '') +
-                (r.ts === latestTs ? ' v60-rank-row-me' : '');
+            row.className = 'v60-rank-row' + (i < 3 ? ' top' + (i + 1) : '') + (r.ts === latestTs ? ' v60-rank-row-me' : '');
+            row.setAttribute('data-rank', i + 1);
+            row.setAttribute('aria-label', '第' + (i + 1) + '名，得分' + r.score);
+            var classText = clsDef ? clsDef.icon + clsDef.name : (r.classId || '未记录职业');
+            var elapsed = Number(r.time);
+            var timeText = isFinite(elapsed) ? ' · ⏱️' + (elapsed % 1 ? elapsed.toFixed(1) : elapsed.toFixed(0)) + '秒' : '';
+            var resultText = r.challenge
+                ? '⚔️ ' + r.challenge + ' · L' + r.level + (r.win ? '完成' : '失利')
+                : (r.win ? '🏆 通关L' + r.level : '💀 L' + r.level + '失利');
+            var detailText = '⚔️' + r.kills + ' · 👥' + r.maxCount + ' · 🔥' + (r.combo || 0) + timeText;
+            var metadata = i < 3
+                ? '<div class="v118-rank-date">' + Leaderboard.fmtDate(r.ts) + '</div>' +
+                    '<details class="v118-rank-details"><summary>战绩详情</summary><div class="v60-rank-meta">' + detailText + '</div></details>'
+                : '<div class="v60-rank-meta">' + detailText + ' · ' + Leaderboard.fmtDate(r.ts) + '</div>';
             row.innerHTML =
-                (i < 3
-                    ? '<div class="v60-rank-badge">' + MEDALS[i] + '</div>'
-                    : '<div class="v60-rank-badge" style="background:linear-gradient(180deg,#B9D2EA,#8FB2D1)">' + (i + 1) + '</div>') +
+                '<div class="v60-rank-pos">' + (i + 1) + '</div>' +
                 '<div class="v60-rank-info"><div class="v60-rank-name">' +
-                (r.win ? '🏆 通关L' + r.level : (r.challenge ? '⚔️ ' + r.challenge : '💀 L' + r.level + '失利')) +
-                (clsDef ? ' <span class="v60-rank-class-chip" style="background:' + clsDef.color + '">' + clsDef.icon + clsDef.name + '</span>' : '') + '</div>' +
-                '<div class="v60-rank-meta">⚔️' + r.kills + ' · 👥' + r.maxCount + ' · 🔥' + (r.combo || 0) +
-                ' · ' + Leaderboard.fmtDate(r.ts) + '</div></div>' +
+                resultText +
+                ' <span class="v118-rank-class"' + (clsDef ? ' style="color:' + clsDef.color + '"' : '') + '>' + classText + '</span></div>' +
+                metadata + '</div>' +
                 '<div class="v60-rank-score">' + r.score + '</div>';
-            el.appendChild(row);
+            (i < 3 ? podium : el).appendChild(row);
         }
     },
 
@@ -3535,14 +3559,6 @@ var V60UI = {
         }
         var shakeBtn = document.getElementById('v60-set-shake');
         if (shakeBtn) shakeBtn.textContent = game.world._shakeDisabled ? '🚫 关' : '💥 开';
-        // V13: 减少动效开关状态渲染 + 应用到根节点(H5: html; 微信: minidom body)
-        var motionBtn = document.getElementById('v60-set-motion');
-        var motionOn = false;
-        try { motionOn = Platform.storage.get('motion_reduced', 'false') === 'true'; } catch (e) {}
-        if (motionBtn) motionBtn.textContent = motionOn ? '🚫 关' : '✨ 开';
-        var htmlRoot = document.documentElement;
-        if (htmlRoot && htmlRoot.classList) htmlRoot.classList.toggle('v13-reduced-motion', motionOn);
-        if (window.__minidom && window.__minidom.body) window.__minidom.body.classList.toggle('v13-reduced-motion', motionOn);
         var info = document.getElementById('v60-saveinfo');
         if (info && game.profile) {
             var d = game.profile.data;
