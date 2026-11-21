@@ -110,9 +110,11 @@ class CombatSystem {
                 var volley = Math.min(5, 1 + Math.floor(Math.sqrt(count) / 2.3)); // V8.0.1: 齐射曲线提升(÷2.6→÷2.3)
                 var positions = squad.getShootPositions(volley);
                 // A volley shares the squad DPS; giving every trail the full
-                // budget multiplied damage by up to five. Keep fractional damage
-                // so minimum-one rounding cannot inflate small squads either.
-                var dmg = totalDPS / visualRate / Math.max(1, positions.length);
+                // V13: 恢复 V12 交付基线公式 — c95ef42 的 budget 改动(除以弹丸数)虽修复了
+                // "多弹丸武器 DPS 膨胀×3-5"的真实问题, 但全游戏波次/血量按旧口径调校,
+                // 导致 L3 起不可通关(v51 L3胜利回归)。数值重校准属核心数值修改(需设计授权),
+                // 本轮恢复基线; 该问题已在 docs/V13/QA_REPORT.md 登记为待决策项。
+                var dmg = Math.max(1, Math.round(totalDPS / visualRate));
                 if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('shoot'); // V5.0: 齐射音效(适配器内部限流)
                 for (var k = 0; k < positions.length; k++) {
                     // V3.1: 每发子弹瞄准前方最近敌人(修复阵型散布导致5/7子弹打不中Boss的问题)

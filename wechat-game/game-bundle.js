@@ -1,5 +1,5 @@
 // ===== game-bundle.js (V12 微信小游戏构建产物: 单一模块作用域, 源脚本按 index.html 顺序拼接) =====
-// 生成: tools/build-wechat.js @ 2026-11-21T12:44:54.296Z
+// 生成: tools/build-wechat.js @ 2026-11-21T15:19:36.821Z
 // 代码与 H5 完全同源; 平台差异收敛于入口 game.js
 /* ==== index.html 内联脚本(BootProgress/错误横幅, H5 中先于业务脚本执行 — 保序) ==== */
 
@@ -146,6 +146,82 @@ const CONFIG = {
         coreHp: 900, coreBuffRadius: 9, coreBuffInterval: 4.5,
         star2Count: 250, star3Kills: 700
     },
+    // ===== V13: 关卡视觉主题注册表 — 天穹渐变/雾/灯光/环境染色的表现层数据 =====
+    // 仅影响视觉呈现; 关卡结构/刷怪/胜负完全不受影响。LEVELS[].theme 引用此处键名。
+    // sky: 穹顶渐变 4 停靠点(顶→地平线) | envTint: 环境(草地/建筑实例)染色目标 | domeTint: 穹顶乘色
+    WORLD_THEMES: {
+        default: {
+            sky: ['#4FA3DF', '#87CEEB', '#C9E6F5', '#EAF4FA'],
+            fog: 0xC9E4F2, fogNear: 45, fogFar: 130,
+            sunColor: 0xFFF4E0, sunIntensity: 0.72,
+            hemiSky: 0xB0DFFF, hemiGround: 0x8FBC8F, hemiIntensity: 0.5,
+            envTint: 0x719C80, domeTint: 0xFFFFFF
+        },
+        dawn: { // L1 新兵训练 — 柔和晨光
+            sky: ['#5E9FD8', '#93C4E8', '#D8E8F2', '#F2F0EA'],
+            fog: 0xDCEAF2, fogNear: 45, fogFar: 128,
+            sunColor: 0xFFE8C8, sunIntensity: 0.68,
+            hemiSky: 0xBADCF2, hemiGround: 0x8FBC8F, hemiIntensity: 0.52,
+            envTint: 0x7BA486, domeTint: 0xFFFFFF
+        },
+        noon: { // L2 快速尸潮 — 明快正午
+            sky: ['#3E96DE', '#7FC4EE', '#CFE9F8', '#EAF6FB'],
+            fog: 0xD8ECF6, fogNear: 48, fogFar: 135,
+            sunColor: 0xFFFBE8, sunIntensity: 0.78,
+            hemiSky: 0xBEE4FF, hemiGround: 0x94C49A, hemiIntensity: 0.5,
+            envTint: 0x6FA37C, domeTint: 0xFFFFFF
+        },
+        overcast: { // L3 盾牌军团 — 阴云灰蓝(压抑感)
+            sky: ['#5E7E9E', '#8FA9C2', '#C2D2DE', '#DDE6EC'],
+            fog: 0xC2D2DE, fogNear: 38, fogFar: 118,
+            sunColor: 0xE8EEF4, sunIntensity: 0.62,
+            hemiSky: 0xA9BFD2, hemiGround: 0x7E9C84, hemiIntensity: 0.55,
+            envTint: 0x6E8A7A, domeTint: 0xFFFFFF
+        },
+        sunset: { // L4 变异尸潮 — 暖橙天际
+            sky: ['#7E86C2', '#D8A678', '#F2CFA0', '#F8E4C2'],
+            fog: 0xE8D2B2, fogNear: 42, fogFar: 125,
+            sunColor: 0xFFD9A8, sunIntensity: 0.66,
+            hemiSky: 0xD2C2E8, hemiGround: 0x9C9A6E, hemiIntensity: 0.5,
+            envTint: 0x9C9A6E, domeTint: 0xFFFFFF
+        },
+        dusk: { // L5 终局Boss — 暮色
+            sky: ['#4E5E9E', '#8E7EA8', '#C8A2B2', '#E2C8C2'],
+            fog: 0xD2BCC2, fogNear: 36, fogFar: 112,
+            sunColor: 0xFFC8A0, sunIntensity: 0.58,
+            hemiSky: 0x9EA2C8, hemiGround: 0x7E7C8E, hemiIntensity: 0.5,
+            envTint: 0x6E7C8E, domeTint: 0xFFFFFF
+        },
+        apocalypse: { // L6/L10 末日核心 — 兼容原 APOCALYPSE_THEME 视觉值
+            sky: ['#6E4050', '#8A5060', '#A86870', '#C8A0A0'],
+            fog: 0x5A3040, fogNear: 30, fogFar: 95,
+            sunColor: 0xFFB0A0, sunIntensity: 0.55,
+            hemiSky: 0x8A6070, hemiGround: 0x2E3A30, hemiIntensity: 0.5,
+            envTint: 0x3E5C43, domeTint: 0x8A5060
+        },
+        cave: { // L7 地下巢穴 — 深蓝绿洞穴
+            sky: ['#0E2430', '#16323C', '#1E424A', '#2A545C'],
+            fog: 0x142E38, fogNear: 26, fogFar: 88,
+            sunColor: 0xA8D8D0, sunIntensity: 0.42,
+            hemiSky: 0x2E5A5C, hemiGround: 0x1A2E28, hemiIntensity: 0.55,
+            envTint: 0x4A6A5C, domeTint: 0xFFFFFF
+        },
+        mechanical: { // L8 机械废土 — 铁灰锈橙
+            sky: ['#4E5258', '#6E7076', '#8E8C86', '#A8A096'],
+            fog: 0x8E8C86, fogNear: 34, fogFar: 108,
+            sunColor: 0xFFE2C0, sunIntensity: 0.6,
+            hemiSky: 0x9EA2A8, hemiGround: 0x6E6E6A, hemiIntensity: 0.48,
+            envTint: 0x7A7E82, domeTint: 0xFFFFFF
+        },
+        fortress: { // L9 最终防线 — 冷钢蓝
+            sky: ['#2E4E7E', '#4E6E9E', '#7E9EC2', '#B2C8DC'],
+            fog: 0x8AA2B8, fogNear: 34, fogFar: 112,
+            sunColor: 0xE2F0FF, sunIntensity: 0.62,
+            hemiSky: 0x7E9EC8, hemiGround: 0x4A5E72, hemiIntensity: 0.5,
+            envTint: 0x5E7A8E, domeTint: 0xFFFFFF
+        }
+    },
+
     // 试玩强化：每关 authored wave 总量×3，并提高同屏密度。
     ENEMY_WAVE_MULTIPLIER: 3,
     ENEMY_MAX_ALIVE_MULTIPLIER: 2.2,
@@ -233,6 +309,7 @@ const LEVELS = [
     // ============ 第1关 新兵训练 (总怪44, 教学) ============
     {
         name: '第 1 关 新兵训练',
+        theme: 'dawn',
         startCount: 1,
         totalZ: -96,
         rewardCoins: 60,
@@ -261,6 +338,7 @@ const LEVELS = [
     // ============ 第2关 快速尸潮 (总怪60, 火力分配) ============
     {
         name: '第 2 关 快速尸潮',
+        theme: 'noon',
         startCount: 1,
         totalZ: -104,
         rewardCoins: 80,
@@ -289,6 +367,7 @@ const LEVELS = [
     // ============ 第3关 盾牌军团 (总怪78, 破防思路) ============
     {
         name: '第 3 关 盾牌军团',
+        theme: 'overcast',
         startCount: 1,
         totalZ: -122,
         rewardCoins: 110,
@@ -318,6 +397,7 @@ const LEVELS = [
     // ============ 第4关 变异尸潮 (总怪96, 组合压力) ============
     {
         name: '第 4 关 变异尸潮',
+        theme: 'sunset',
         startCount: 1,
         totalZ: -126,
         rewardCoins: 140,
@@ -343,6 +423,7 @@ const LEVELS = [
     // ============ 第5关 终局Boss (总怪127+Boss, 三阶段挑战) ============
     {
         name: '第 5 关 终局Boss',
+        theme: 'dusk',
         startCount: 1,
         totalZ: -166,
         rewardCoins: 200,
@@ -2708,9 +2789,7 @@ var V60UI = {
             '</div>' +
             '<div id="v60-armory-page" class="v60-page hidden">' +
                 '<div class="title-panel v60-panel">' +
-                    '<div class="v42-panel-kicker cyan">装备整备</div>' +
-                    '<h2 class="v60-page-title">军械库</h2>' +
-                    '<div id="v118-armory-hero" class="v118-armory-hero"></div>' +
+                    '<div class="v42-panel-kicker cyan">军械库</div>' +
                     '<div id="v60-armory-list" class="v60-armory-list"></div>' +
                     '<button id="v60-armory-back" class="btn-secondary">返回</button>' +
                 '</div>' +
@@ -2744,8 +2823,7 @@ var V60UI = {
             '<div id="v60-rank-page" class="v60-page hidden">' +
                 '<div class="title-panel v60-panel">' +
                     '<div class="v42-panel-kicker gold">名人堂</div>' +
-                    '<h2 class="v60-page-title">本机战绩榜</h2>' +
-                    '<div class="v118-rank-source">仅记录此设备上的真实对局</div>' +
+                    '<h2 class="v60-page-title">战绩排行</h2>' +
                     '<div id="v60-rank-list" class="v60-rank-list"></div>' +
                     '<button id="v60-rank-back" class="btn-secondary">返回</button>' +
                 '</div>' +
@@ -2774,14 +2852,14 @@ var V60UI = {
                     '<div class="v60-setting-row"><span>音效</span><button id="v60-set-sound" class="v60-toggle"></button></div>' +
                     '<div class="v60-setting-row"><span>画质</span><button id="v60-set-quality" class="v60-toggle"></button></div>' +
                     '<div class="v60-setting-row"><span>屏幕震动</span><button id="v60-set-shake" class="v60-toggle"></button></div>' +
+                    '<div class="v60-setting-row"><span>减少动效</span><button id="v60-set-motion" class="v60-toggle"></button></div>' +
                     '<div class="v60-saveinfo" id="v60-saveinfo"></div>' +
                     '<button id="v60-set-back" class="btn-primary">返回</button>' +
                 '</div>' +
             '</div>');
 
         // —— 首页按钮组(V8.0: 九宫格导航) ——
-        var startScreen = document.getElementById('start-screen');
-        var startPanel = startScreen ? startScreen.querySelector('.title-panel') : null;
+        var startPanel = document.querySelector('#start-screen .title-panel');
         if (startPanel && !document.getElementById('v60-home-nav')) {
             startPanel.insertAdjacentHTML('beforeend',
                 '<div id="v60-home-nav" class="v60-home-nav">' +
@@ -2856,6 +2934,17 @@ var V60UI = {
             }
             location.reload();
         });
+        bind('v60-set-motion', function() {
+            // V13: 减少动态效果开关 — 关闭页面/弹窗动效(prefers-reduced-motion 的游戏内等价)
+            var cur = false;
+            try { cur = Platform.storage.get('motion_reduced', false) === true || Platform.storage.get('motion_reduced', '') === 'true'; } catch (e) {}
+            var next = !cur;
+            Platform.storage.set('motion_reduced', next ? 'true' : 'false');
+            var root = document.documentElement;
+            if (root) root.classList.toggle('v13-reduced-motion', next);
+            if (window.__minidom && window.__minidom.body) window.__minidom.body.classList.toggle('v13-reduced-motion', next);
+            self.renderSettings(game);
+        });
         bind('v60-set-shake', function() {
             game.world._shakeDisabled = !game.world._shakeDisabled;
             if (typeof Platform !== 'undefined' && Platform.storage && Platform.storage.setLegacy) {
@@ -2866,6 +2955,13 @@ var V60UI = {
             self.renderSettings(game);
         });
 
+        // V13: 启动恢复"减少动效"偏好
+        try {
+            var motionOn0 = Platform.storage.get('motion_reduced', 'false') === 'true';
+            var htmlRoot0 = document.documentElement;
+            if (htmlRoot0 && htmlRoot0.classList) htmlRoot0.classList.toggle('v13-reduced-motion', motionOn0);
+            if (window.__minidom && window.__minidom.body) window.__minidom.body.classList.toggle('v13-reduced-motion', motionOn0);
+        } catch (e) {}
         // 启动时恢复设置
         if (typeof Platform !== 'undefined' && Platform.storage && Platform.storage.getLegacy) {
             if (Platform.storage.getLegacy('pz_shake_off', '0') === '1') game.world._shakeDisabled = true;
@@ -3160,10 +3256,34 @@ var V60UI = {
     },
 
     // ===== V8.0: 军械库(WeaponSystem 8种武器) =====
+    /** V13: 武器剪影图标(程序化 SVG, 按 type 区分轮廓, tier 决定色阶, evolved 金色发光)
+     *  剪影设计遵循 ART_DIRECTION「剪影优先」规则: 0.3s 内可分辨武器类型。 */
+    weaponIconSvg: function(type, tier, evolved) {
+        var TIER_COLORS = ['#8FA8C2', '#8FA8C2', '#4A8FE0', '#4A8FE0', '#9A6EE0', '#FFC247'];
+        var base = evolved ? '#FFC247' : (TIER_COLORS[tier] || '#8FA8C2');
+        var dark = evolved ? '#B8860B' : '#2E4A6E';
+        var lite = evolved ? '#FFE9A8' : '#B8D4F0';
+        var glow = evolved ? '<circle cx="10" cy="9" r="7.2" fill="#FFC247" opacity=".25"/><circle cx="10" cy="9" r="4.6" fill="#FFE9A8" opacity=".4"/>' : '';
+        // 各类型剪影(body: 主体 path, extra: 特征件)
+        var P = {
+            single: { body: 'M10 18h30l2-3h14v6h-8l-2 3H18l-2 4h-5l1-4h-3z', extra: '<rect x="24" y="24" width="6" height="10" rx="1.5" transform="rotate(-14 27 29)" fill="' + dark + '"/><rect x="12" y="14" width="4" height="4" fill="' + dark + '"/>' },
+            spread: { body: 'M8 17h14l3-4h8v5h-6l-2 3H12z M33 15h18v8h-6l-2 4h-8z', extra: '<rect x="20" y="23" width="10" height="4" rx="2" fill="' + dark + '"/><rect x="36" y="14" width="3" height="10" fill="' + dark + '"/>' },
+            pierce: { body: 'M6 19h10l2-2h40v5h-14l-3 4h-9l-2-3H12z', extra: '<rect x="30" y="11" width="14" height="5" rx="2.4" fill="' + dark + '"/><circle cx="37" cy="13.5" r="2" fill="' + lite + '"/><rect x="16" y="22" width="5" height="8" rx="1.5" transform="rotate(-16 18 26)" fill="' + dark + '"/>' },
+            rapid: { body: 'M8 16h12l2-2h26v7h-9l-2 4h-8l-2-3H12z', extra: '<circle cx="22" cy="28" r="6" fill="' + dark + '"/><circle cx="22" cy="28" r="3" fill="' + lite + '"/><rect x="44" y="15" width="8" height="3" fill="' + dark + '"/>' },
+            cone: { body: 'M8 17h10l3-3h10v10h-8l-2 3h-9z', extra: '<circle cx="34" cy="19" r="7.5" fill="' + dark + '"/><circle cx="34" cy="19" r="4" fill="' + lite + '"/><path d="M43 19l8-4-2 4 2 4z" fill="#FF8844"/>' },
+            explosive: { body: 'M6 16h14l3-3h20v10h-8l-3 4h-10l-2-3H10z', extra: '<path d="M43 14l10 5-10 5z" fill="#FF8844"/><rect x="18" y="25" width="8" height="4" rx="2" fill="' + dark + '"/>' },
+            freeze: { body: 'M8 16h12l2-2h18v9h-8l-2 3h-8l-2-3H12z', extra: '<rect x="40" y="13" width="9" height="12" rx="3" fill="#BFEFFF"/><path d="M50 19h6M53 16l-3 3 3 3" stroke="#7FD4FF" stroke-width="2" fill="none"/><circle cx="35" cy="25" r="3" fill="#7FD4FF"/>' },
+            chain: { body: 'M8 18h12l2-2h16v8h-9l-2 3h-9l-2-3H12z', extra: '<rect x="38" y="13" width="5" height="12" rx="1.5" fill="' + dark + '"/><rect x="44" y="14" width="4" height="10" rx="1.5" fill="' + lite + '"/><path d="M52 15l4 2-1 3 3 2-4 2" stroke="#B8E0FF" stroke-width="2" fill="none"/>' }
+        };
+        var d = P[type] || P.single;
+        return '<svg class="v13-wicon" viewBox="0 0 64 38" width="58" height="34" aria-hidden="true">' + glow +
+            '<path d="' + d.body + '" fill="' + base + '" stroke="' + dark + '" stroke-width="1.2" stroke-linejoin="round"/>' +
+            d.extra + '</svg>';
+    },
+
     renderArmory: function(game) {
         var el = document.getElementById('v60-armory-list');
-        var hero = document.getElementById('v118-armory-hero');
-        if (!el || !hero || !game.profile || typeof WeaponSystem === 'undefined') return;
+        if (!el || !game.profile || typeof WeaponSystem === 'undefined') return;
         el.innerHTML = '';
         var current = WeaponSystem.current(game.profile);
         var wLv = WeaponSystem.level(game.profile);
@@ -3171,35 +3291,8 @@ var V60UI = {
         var upCost = WeaponSystem.upgradeCost(game.profile);
         var canEvo = WeaponSystem.canEvolve(game.profile);
         var self = this;
-        var weaponOrder = ['rifle', 'shotgun', 'sniper', 'mg', 'flamethrower', 'rocket', 'freeze', 'tesla'];
-        var statTextOf = function(st) {
-            return '伤害 ×' + (st.dmgMul || 1) +
-                (st.rateMul ? ' · 射速 ×' + st.rateMul : '') +
-                (st.pellets ? ' · 弹丸 ×' + st.pellets : '') +
-                (st.pierceBonus ? ' · 穿透 +' + st.pierceBonus : '') +
-                (st.radius ? ' · 半径 ' + st.radius : '') +
-                (st.chain ? ' · 链式 ×' + st.chain : '') +
-                (st.slowMul ? ' · 减速 ' + Math.round((1 - st.slowMul) * 100) + '%' : '') +
-                (st.critBonus ? ' · 暴击 +' + Math.round(st.critBonus * 100) + '%' : '');
-        };
-        var currentIndex = weaponOrder.indexOf(current);
-        var currentDef = WEAPON_DEFS[current];
-        if (currentDef && currentIndex >= 0) {
-            hero.innerHTML =
-                '<div class="v118-weapon-art" role="img" aria-label="' + currentDef.name + '" data-weapon="' + current + '"' +
-                ' data-atlas-cols="4" data-atlas-rows="2" data-atlas-col="' + (currentIndex % 4) + '" data-atlas-row="' + Math.floor(currentIndex / 4) + '"' +
-                ' style="--weapon-col:' + (currentIndex % 4) + ';--weapon-row:' + Math.floor(currentIndex / 4) + '"></div>' +
-                '<div class="v118-armory-hero-info"><div class="v118-armory-current">当前装备</div>' +
-                '<div class="v118-armory-hero-name">' + currentDef.icon + ' ' + currentDef.name + '</div>' +
-                '<div class="v118-armory-hero-level">强化等级 Lv.' + wLv + '</div>' +
-                '<div class="v118-armory-hero-stats">' + statTextOf(wStats) + '</div></div>';
-        } else {
-            hero.innerHTML = '';
-        }
-        for (var wi = 0; wi < weaponOrder.length; wi++) {
-            var id = weaponOrder[wi];
+        for (var id in WEAPON_DEFS) {
             var def = WEAPON_DEFS[id];
-            if (!def) continue;
             var isCurrent = id === current;
             var canUnlock = WeaponSystem.canUnlock(game.profile, id);
             var unlockedNow = !def.unlockCondition || isCurrent || canUnlock ||
@@ -3207,7 +3300,6 @@ var V60UI = {
             var st = def.effect(wLv);
             var row = document.createElement('div');
             row.className = 'v60-armory-row' + (isCurrent ? ' equipped' : unlockedNow ? ' owned' : ' locked');
-            row.setAttribute('data-weapon', id);
             var evoLine = '';
             if (isCurrent) {
                 if (wStats.evolvedName) evoLine = '<div class="v60-armory-evo">✅ 已进化: ' + wStats.evolvedName + '</div>';
@@ -3216,12 +3308,18 @@ var V60UI = {
                 // V11.3: 武器词条行
                 if (wStats.affixName) evoLine += '<div class="v60-armory-evo" style="color:#FFC247">📝 词条: ' + wStats.affixName + '</div>';
             }
-            var statText = statTextOf(st);
+            var statText = '伤害 ×' + (st.dmgMul || 1) +
+                (st.rateMul ? ' · 射速 ×' + st.rateMul : '') +
+                (st.pellets ? ' · 弹丸 ×' + st.pellets : '') +
+                (st.pierceBonus ? ' · 穿透 +' + st.pierceBonus : '') +
+                (st.radius ? ' · 半径 ' + st.radius : '') +
+                (st.chain ? ' · 链式 ×' + st.chain : '') +
+                (st.slowMul ? ' · 减速 ' + Math.round((1 - st.slowMul) * 100) + '%' : '');
+            // V13: 剪影图标(未解锁灰阶; 已解锁按等级色阶; 当前装备若已进化 → 金色发光)
+            var iconTier = unlockedNow ? Math.min(5, (wLv || 0) + 1) : 0;
+            var iconSvg = this.weaponIconSvg(def.type, iconTier, isCurrent && wStats.evolvedName);
             row.innerHTML =
-                '<div class="v118-weapon-art" role="img" aria-label="' + def.name + '" data-weapon="' + id + '"' +
-                ' data-atlas-cols="4" data-atlas-rows="2" data-atlas-col="' + (wi % 4) + '" data-atlas-row="' + Math.floor(wi / 4) + '"' +
-                ' style="--weapon-col:' + (wi % 4) + ';--weapon-row:' + Math.floor(wi / 4) + '"></div>' +
-                '<div class="v60-armory-head"><span class="v60-armory-icon">' + def.icon + '</span>' +
+                '<div class="v60-armory-head"><span class="v60-armory-icon">' + iconSvg + '</span>' +
                 '<span class="v60-armory-name">' + def.name + (isCurrent ? ' ✓' : '') + '</span>' +
                 '<span class="v60-armory-lv">Lv.' + wLv + '/5</span></div>' +
                 '<div class="v60-armory-stats">' + statText + '</div>' +
@@ -3270,10 +3368,11 @@ var V60UI = {
         listEl.innerHTML = '';
         var self = this;
         var branches = { fire: '火力科技', army: '军团科技', logi: '后勤科技' };
+        var BRANCH_ICONS = { fire: '⚔️', army: '🛡️', logi: '🔧' }; // V13: 分支徽记
         for (var branch in branches) {
             var title = document.createElement('div');
-            title.className = 'v60-tech-branch';
-            title.textContent = branches[branch];
+            title.className = 'v60-tech-branch v13-tech-branch';
+            title.innerHTML = '<span class="v13-tech-rail" aria-hidden="true"></span><span class="v13-tech-branch-badge">' + BRANCH_ICONS[branch] + '</span>' + branches[branch];
             listEl.appendChild(title);
             for (var id in TECH_DEFS) {
                 var def = TECH_DEFS[id];
@@ -3281,9 +3380,14 @@ var V60UI = {
                 var lv = TechTree.levelOf(game.profile, id);
                 var check = TechTree.canUpgrade(game.profile, id);
                 var row = document.createElement('div');
-                row.className = 'v60-tech-row' + (lv >= def.max ? ' maxed' : check.ok && tp >= check.cost ? ' ready' : check.ok ? '' : ' locked');
+                row.className = 'v60-tech-row v13-tech-node' + (lv >= def.max ? ' maxed' : check.ok && tp >= check.cost ? ' ready' : check.ok ? '' : ' locked');
+                // V13: 等级点(pips) — 满级=已完成, 未满=点亮进度
+                var pips = '<span class="v13-tech-pips" aria-hidden="true">';
+                for (var pi = 0; pi < def.max; pi++) pips += '<i class="' + (pi < lv ? 'on' : '') + '"></i>';
+                pips += '</span>';
                 row.innerHTML =
-                    '<div class="v60-ach-info"><div class="v60-ach-name">' + def.icon + ' ' + def.name + ' <i>Lv.' + lv + '/' + def.max + '</i></div>' +
+                    '<span class="v13-tech-connector" aria-hidden="true"></span>' +
+                    '<div class="v60-ach-info"><div class="v60-ach-name">' + def.icon + ' ' + def.name + ' <i>Lv.' + lv + '/' + def.max + '</i>' + pips + '</div>' +
                     '<div class="v60-ach-desc">' + def.desc + (def.req && lv < def.max ? ' · 前置: ' + TECH_DEFS[def.req].name : '') + '</div></div>' +
                     '<div class="v60-ach-reward">' + (lv >= def.max ? 'MAX' : def.cost + '🔬') + '</div>';
                 if (check.ok) {
@@ -3334,7 +3438,7 @@ var V60UI = {
             var wcard = document.createElement('div');
             wcard.className = 'v60-codex-card' + (got ? '' : ' unknown');
             wcard.innerHTML =
-                '<div class="v60-codex-icon">' + (got ? def.icon : '🔒') + '</div>' +
+                '<div class="v60-codex-icon">' + (got ? this.weaponIconSvg(def.type, 3, false) : '🔒') + '</div>' +
                 '<div class="v60-ach-info"><div class="v60-ach-name">' + (got ? def.name : '???') + '</div>' +
                 '<div class="v60-ach-desc">' + (got ? def.desc : '通关第 ' + cond.level + ' 关解锁') + '</div></div>' +
                 '<div class="v60-ach-reward">' + (wStats.weaponId === wid && wStats.evolvedName ? '⚡' : got ? '已装备档案' : '') + '</div>';
@@ -3380,43 +3484,42 @@ var V60UI = {
     renderRank: function(game) {
         var el = document.getElementById('v60-rank-list');
         if (!el || !game.profile || typeof Leaderboard === 'undefined') return;
-        var list = Leaderboard.top(game.profile, LEADERBOARD_CAP);
-        el.innerHTML = '';
-        if (!list.length) {
-            el.innerHTML = '<div class="v60-rank-empty">暂无战绩 · 完成一局战斗后进入排行</div>';
+        var list = [];
+        try {
+            list = Leaderboard.top(game.profile, LEADERBOARD_CAP);
+        } catch (e) {
+            // V13: 数据源异常态(本地榜读取失败) — 如实呈现, 不伪造数据
+            el.innerHTML = '<div class="v60-rank-empty v13-rank-error">⚠️ 排行数据加载失败<br><span class="v13-rank-error-tip">请返回后重试</span></div>';
             return;
         }
+        el.innerHTML = '';
+        if (!list.length) {
+            el.innerHTML = '<div class="v60-rank-empty v13-rank-empty-rich">' +
+                '<div class="v13-rank-empty-medals" aria-hidden="true"><span>🥈</span><span class="gold">🥇</span><span>🥉</span></div>' +
+                '暂无战绩 · 完成一局战斗后进入排行</div>';
+            return;
+        }
+        // 最新一条战绩标记"最新"徽标(本地榜=玩家自己的历史)
         var latestTs = 0;
         for (var mi = 0; mi < list.length; mi++) latestTs = Math.max(latestTs, list[mi].ts || 0);
-        var podium = document.createElement('div');
-        podium.className = 'v118-rank-podium';
-        el.appendChild(podium);
+        var MEDALS = ['🥇', '🥈', '🥉'];
         for (var i = 0; i < list.length; i++) {
             var r = list[i];
             var clsDef = (typeof CLASS_DEFS !== 'undefined' && CLASS_DEFS[r.classId]) ? CLASS_DEFS[r.classId] : null;
             var row = document.createElement('div');
-            row.className = 'v60-rank-row' + (i < 3 ? ' top' + (i + 1) : '') + (r.ts === latestTs ? ' v60-rank-row-me' : '');
-            row.setAttribute('data-rank', i + 1);
-            row.setAttribute('aria-label', '第' + (i + 1) + '名，得分' + r.score);
-            var classText = clsDef ? clsDef.icon + clsDef.name : (r.classId || '未记录职业');
-            var elapsed = Number(r.time);
-            var timeText = isFinite(elapsed) ? ' · ⏱️' + (elapsed % 1 ? elapsed.toFixed(1) : elapsed.toFixed(0)) + '秒' : '';
-            var resultText = r.challenge
-                ? '⚔️ ' + r.challenge + ' · L' + r.level + (r.win ? '完成' : '失利')
-                : (r.win ? '🏆 通关L' + r.level : '💀 L' + r.level + '失利');
-            var detailText = '⚔️' + r.kills + ' · 👥' + r.maxCount + ' · 🔥' + (r.combo || 0) + timeText;
-            var metadata = i < 3
-                ? '<div class="v118-rank-date">' + Leaderboard.fmtDate(r.ts) + '</div>' +
-                    '<details class="v118-rank-details"><summary>战绩详情</summary><div class="v60-rank-meta">' + detailText + '</div></details>'
-                : '<div class="v60-rank-meta">' + detailText + ' · ' + Leaderboard.fmtDate(r.ts) + '</div>';
+            row.className = 'v60-rank-row' + (i < 3 ? ' top' + (i + 1) : '') +
+                (r.ts === latestTs ? ' v60-rank-row-me' : '');
             row.innerHTML =
-                '<div class="v60-rank-pos">' + (i + 1) + '</div>' +
+                (i < 3
+                    ? '<div class="v60-rank-badge">' + MEDALS[i] + '</div>'
+                    : '<div class="v60-rank-badge" style="background:linear-gradient(180deg,#B9D2EA,#8FB2D1)">' + (i + 1) + '</div>') +
                 '<div class="v60-rank-info"><div class="v60-rank-name">' +
-                resultText +
-                ' <span class="v118-rank-class"' + (clsDef ? ' style="color:' + clsDef.color + '"' : '') + '>' + classText + '</span></div>' +
-                metadata + '</div>' +
+                (r.win ? '🏆 通关L' + r.level : (r.challenge ? '⚔️ ' + r.challenge : '💀 L' + r.level + '失利')) +
+                (clsDef ? ' <span class="v60-rank-class-chip" style="background:' + clsDef.color + '">' + clsDef.icon + clsDef.name + '</span>' : '') + '</div>' +
+                '<div class="v60-rank-meta">⚔️' + r.kills + ' · 👥' + r.maxCount + ' · 🔥' + (r.combo || 0) +
+                ' · ' + Leaderboard.fmtDate(r.ts) + '</div></div>' +
                 '<div class="v60-rank-score">' + r.score + '</div>';
-            (i < 3 ? podium : el).appendChild(row);
+            el.appendChild(row);
         }
     },
 
@@ -3432,6 +3535,14 @@ var V60UI = {
         }
         var shakeBtn = document.getElementById('v60-set-shake');
         if (shakeBtn) shakeBtn.textContent = game.world._shakeDisabled ? '🚫 关' : '💥 开';
+        // V13: 减少动效开关状态渲染 + 应用到根节点(H5: html; 微信: minidom body)
+        var motionBtn = document.getElementById('v60-set-motion');
+        var motionOn = false;
+        try { motionOn = Platform.storage.get('motion_reduced', 'false') === 'true'; } catch (e) {}
+        if (motionBtn) motionBtn.textContent = motionOn ? '🚫 关' : '✨ 开';
+        var htmlRoot = document.documentElement;
+        if (htmlRoot && htmlRoot.classList) htmlRoot.classList.toggle('v13-reduced-motion', motionOn);
+        if (window.__minidom && window.__minidom.body) window.__minidom.body.classList.toggle('v13-reduced-motion', motionOn);
         var info = document.getElementById('v60-saveinfo');
         if (info && game.profile) {
             var d = game.profile.data;
@@ -10354,6 +10465,30 @@ var V42BossController = {
         ground.position.y = 0.015;
         group.add(ground);
 
+        // V13: 稀有度光束柱 — 双柱+顶梁合并为单 mesh(+1 drawCall/门), 加色混合;
+        // 让门在任意主题(洞穴/末日)下保持稀有度色可读性(玩法可读性优先级最高)
+        var beamH = 2.5;
+        var beamGeo = mergeGeometries([
+            colorize(new THREE.PlaneGeometry(0.09, beamH), style.light),
+            colorize(new THREE.PlaneGeometry(0.09, beamH).translate(width * 0.5 - postW * 0.5, 0, 0), style.light),
+            colorize(new THREE.PlaneGeometry(width - 0.34, 0.055).translate(0, beamH * 0.5 - 0.03, 0), style.light)
+        ]);
+        var beamMat = new THREE.MeshBasicMaterial({
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.34,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            toneMapped: false,
+            side: THREE.DoubleSide,
+            fog: false
+        });
+        var beam = new THREE.Mesh(beamGeo, beamMat);
+        beam.position.set(0, 0.45 + beamH * 0.5, -0.16);
+        beam.renderOrder = 2;
+        beam.userData.artSource = 'V13 稀有度光束柱(加色, 脉动由 gates.update 驱动)';
+        group.add(beam);
+
         var labelTexture = makeGateTextTexture(formatGateLabel(gateData), style);
         var labelMat = new THREE.SpriteMaterial({
             map: labelTexture,
@@ -10377,6 +10512,7 @@ var V42BossController = {
         group.userData.qualityKind = style.kind;
         group.userData.label = label;
         group.userData.labelBaseY = 1.03;
+        group.userData.beamMat = beamMat; // V13: 光束脉动(gates.update)
         group.userData.glass = glass;
         group.userData.glow = ground;
         group.userData.ring = ground;
@@ -10917,6 +11053,7 @@ class World {
         // 半球光: 天空蓝 -> 地面绿
         const hemi = new THREE.HemisphereLight(0xB0DFFF, 0x8FBC8F, 0.5);
         this.scene.add(hemi);
+        this.hemiLight = hemi; // V13: 主题系统需要调整半球光色/强度
 
         // 主方向光 (暖白色, 产生阴影)
         const dir = new THREE.DirectionalLight(0xFFF4E0, 0.72);
@@ -10947,6 +11084,7 @@ class World {
         const cv = document.createElement('canvas');
         cv.width = 16; cv.height = 256;
         const ctx = cv.getContext('2d');
+        this._skyCanvas = cv; // V13: 主题系统重绘渐变用
         var g = ctx.createLinearGradient(0, 0, 0, 256);
         // 顶:饱和天蓝 → 中:晴空蓝 → 地平线:暖白(与雾色衔接, 远景建筑融入天际)
         g.addColorStop(0.00, '#4FA3DF');
@@ -10968,8 +11106,9 @@ class World {
         dome.userData.artSource = 'js/world.js:_buildSky() 渐变天空穹顶 16x256';
         this.scene.add(dome);
         this._skyDome = dome;
-        // 雾色向地平线色靠拢 — 远处路段/建筑自然融入天际
-        if (this._themeApplied !== 'apocalypse') this.scene.fog.color.setHex(0xC9E4F2);
+        // 雾色向地平线色靠拢(V13: 雾色统一由主题预设决定, 与 applyTheme 一致)
+        var T0 = (CONFIG.WORLD_THEMES && (CONFIG.WORLD_THEMES[this._themeApplied || 'default'])) || CONFIG.WORLD_THEMES.default;
+        this.scene.fog.color.setHex(T0.fog);
     }
 
     _buildRoad() {
@@ -11232,39 +11371,63 @@ class World {
         this.sunLight.target.updateMatrixWorld();
     }
 
-    /** V6.0: 关卡主题 — 末日核心等场景换装(天空/雾/灯光), 'default'还原 */
+    /** V6.0: 关卡主题 — 场景换装(天空/雾/灯光), 'default'还原
+     *  V13: 泛化为 CONFIG.WORLD_THEMES 预设查表 — 10 关全覆盖(城市时段族+末日/洞穴/机械/要塞),
+     *       天穹渐变按主题重绘(16x256 Canvas, 单drawCall不变), 环境实例染色目标泛化。
+     *       仅表现层; 关卡结构/刷怪/胜负不受影响。'apocalypse' 保持与旧 APOCALYPSE_THEME 完全一致。 */
     applyTheme(themeName) {
-        var T = themeName === 'apocalypse' ? CONFIG.APOCALYPSE_THEME : null;
-        if (!T) {
+        var themes = CONFIG.WORLD_THEMES || {};
+        var T = themes[themeName] || themes.default;
+        if (!T) return;
+        if (this._skyCanvas && this._paintSky) {
+            this._paintSky(T.sky);
+            this.scene.background = null;
+        } else {
             this.scene.background = new THREE.Color(CONFIG.COLORS.sky);
-            this.scene.fog = new THREE.Fog(0xC9E4F2, 45, 130);
-            if (this._skyDome) this._skyDome.material.color.setHex(0xFFFFFF);
-            this.sunLight.color.setHex(0xFFF4E0);
-            this.sunLight.intensity = 0.72;
-            this._themeApplied = 'default';
-            return;
         }
-        this.scene.background = new THREE.Color(T.sky);
         this.scene.fog = new THREE.Fog(T.fog, T.fogNear, T.fogFar);
-        // V12视觉: 末日主题时天空穹顶整体压暗染色(乘色), 雾色不变
-        if (this._skyDome) this._skyDome.material.color.setHex(0x8A5060);
+        if (this._skyDome) this._skyDome.material.color.setHex(T.domeTint || 0xFFFFFF);
         this.sunLight.color.setHex(T.sunColor);
         this.sunLight.intensity = T.sunIntensity;
-        // 环境实例材质染色(草地/路面/建筑向末日色过渡)
+        if (this.hemiLight) {
+            this.hemiLight.color.setHex(T.hemiSky);
+            this.hemiLight.groundColor.setHex(T.hemiGround);
+            this.hemiLight.intensity = T.hemiIntensity;
+        }
+        // 环境实例材质染色(草地/建筑向主题色过渡; __themeBaseHex 记录初始色, 幂等)
         if (this._v42Environment && this._v42Environment.root) {
-            var mix = { done: false };
             this._v42Environment.root.traverse(function(o) {
                 if (o.isInstancedMesh && o.material && o.material.color) {
                     if (o.material.__themeBaseHex === undefined) o.material.__themeBaseHex = o.material.color.getHex();
                     var base = new THREE.Color(o.material.__themeBaseHex);
-                    var target = new THREE.Color(T.grass).lerp(base, 0.35);
+                    var target = new THREE.Color(T.envTint).lerp(base, 0.35);
                     o.material.color.copy(base.lerp(target, 0.55));
                     o.material.needsUpdate = true;
                 }
             });
-            mix.done = true;
         }
         this._themeApplied = themeName;
+    }
+
+    /** V13: 按主题重绘天穹渐变(与 _buildSky 同规格: 4 停靠点 + 顶部太阳光晕) */
+    _paintSky(stops) {
+        if (!this._skyCanvas || !stops || stops.length < 4) return;
+        var ctx = this._skyCanvas.getContext('2d');
+        var g = ctx.createLinearGradient(0, 0, 0, 256);
+        g.addColorStop(0.00, stops[0]);
+        g.addColorStop(0.45, stops[1]);
+        g.addColorStop(0.80, stops[2]);
+        g.addColorStop(1.00, stops[3]);
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, 16, 256);
+        var sun = ctx.createRadialGradient(8, 36, 2, 8, 36, 90);
+        sun.addColorStop(0, 'rgba(255,246,214,0.35)');
+        sun.addColorStop(1, 'rgba(255,246,214,0)');
+        ctx.fillStyle = sun;
+        ctx.fillRect(0, 0, 16, 256);
+        if (this._skyDome && this._skyDome.material && this._skyDome.material.map) {
+            this._skyDome.material.map.needsUpdate = true;
+        }
     }
 
     /** V4.0: 触发屏幕震动(amp≈世界单位幅度) */
@@ -12359,8 +12522,13 @@ class GateSystem {
     approachStopZ(pacing, outstanding, squadZ) {
         var z = this.nextRowZ();
         if (z === null || (outstanding === 0 && pacing.canChooseGate(z))) return null;
-        // Hold before the choice area, including while waves rest or splits spawn.
-        // Never pull a squad backwards when loading an already advanced position.
+        // V13修复: 交战中不再门前滞留(战斗时恢复推进, 与 V12 前行为一致) —
+        // 原实现在 outstanding>0 时也驻足门前, 盾牌军团等高压波次把小队钉死在门前围杀,
+        // 导致 L3 无法通关(v51 L3胜利回归)。保留"平静时驻足选门"的新特性:
+        // 波次休整期(outstanding=0 且门未到可选窗口)仍然驻足。
+        if (outstanding > 0) return null;
+        // Hold before the choice area while waves rest. Never pull a squad
+        // backwards when loading an already advanced position.
         return Math.min(squadZ, z + 5);
     }
 
@@ -12417,6 +12585,12 @@ class GateSystem {
                     if (glass) {
                         glass.material.opacity = 0.45 + intensity * 0.3;
                     }
+                }
+                // V13: 稀有度光束呼吸脉动(相位取门z; 靠近时增强 — 复用上面的 intensity)
+                const beam = g.model.userData.beamMat;
+                if (beam) {
+                    const nearBoost = dist < 6 ? (1 - dist / 6) * 0.22 : 0;
+                    beam.opacity = 0.26 + Math.sin(time * 3 + g.z * 1.7) * 0.08 + nearBoost;
                 }
             }
 
@@ -13293,9 +13467,11 @@ class CombatSystem {
                 var volley = Math.min(5, 1 + Math.floor(Math.sqrt(count) / 2.3)); // V8.0.1: 齐射曲线提升(÷2.6→÷2.3)
                 var positions = squad.getShootPositions(volley);
                 // A volley shares the squad DPS; giving every trail the full
-                // budget multiplied damage by up to five. Keep fractional damage
-                // so minimum-one rounding cannot inflate small squads either.
-                var dmg = totalDPS / visualRate / Math.max(1, positions.length);
+                // V13: 恢复 V12 交付基线公式 — c95ef42 的 budget 改动(除以弹丸数)虽修复了
+                // "多弹丸武器 DPS 膨胀×3-5"的真实问题, 但全游戏波次/血量按旧口径调校,
+                // 导致 L3 起不可通关(v51 L3胜利回归)。数值重校准属核心数值修改(需设计授权),
+                // 本轮恢复基线; 该问题已在 docs/V13/QA_REPORT.md 登记为待决策项。
+                var dmg = Math.max(1, Math.round(totalDPS / visualRate));
                 if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('shoot'); // V5.0: 齐射音效(适配器内部限流)
                 for (var k = 0; k < positions.length; k++) {
                     // V3.1: 每发子弹瞄准前方最近敌人(修复阵型散布导致5/7子弹打不中Boss的问题)

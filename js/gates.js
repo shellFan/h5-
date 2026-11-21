@@ -67,8 +67,13 @@ class GateSystem {
     approachStopZ(pacing, outstanding, squadZ) {
         var z = this.nextRowZ();
         if (z === null || (outstanding === 0 && pacing.canChooseGate(z))) return null;
-        // Hold before the choice area, including while waves rest or splits spawn.
-        // Never pull a squad backwards when loading an already advanced position.
+        // V13修复: 交战中不再门前滞留(战斗时恢复推进, 与 V12 前行为一致) —
+        // 原实现在 outstanding>0 时也驻足门前, 盾牌军团等高压波次把小队钉死在门前围杀,
+        // 导致 L3 无法通关(v51 L3胜利回归)。保留"平静时驻足选门"的新特性:
+        // 波次休整期(outstanding=0 且门未到可选窗口)仍然驻足。
+        if (outstanding > 0) return null;
+        // Hold before the choice area while waves rest. Never pull a squad
+        // backwards when loading an already advanced position.
         return Math.min(squadZ, z + 5);
     }
 
@@ -125,6 +130,12 @@ class GateSystem {
                     if (glass) {
                         glass.material.opacity = 0.45 + intensity * 0.3;
                     }
+                }
+                // V13: 稀有度光束呼吸脉动(相位取门z; 靠近时增强 — 复用上面的 intensity)
+                const beam = g.model.userData.beamMat;
+                if (beam) {
+                    const nearBoost = dist < 6 ? (1 - dist / 6) * 0.22 : 0;
+                    beam.opacity = 0.26 + Math.sin(time * 3 + g.z * 1.7) * 0.08 + nearBoost;
                 }
             }
 

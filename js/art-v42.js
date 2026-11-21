@@ -335,6 +335,30 @@
         ground.position.y = 0.015;
         group.add(ground);
 
+        // V13: 稀有度光束柱 — 双柱+顶梁合并为单 mesh(+1 drawCall/门), 加色混合;
+        // 让门在任意主题(洞穴/末日)下保持稀有度色可读性(玩法可读性优先级最高)
+        var beamH = 2.5;
+        var beamGeo = mergeGeometries([
+            colorize(new THREE.PlaneGeometry(0.09, beamH), style.light),
+            colorize(new THREE.PlaneGeometry(0.09, beamH).translate(width * 0.5 - postW * 0.5, 0, 0), style.light),
+            colorize(new THREE.PlaneGeometry(width - 0.34, 0.055).translate(0, beamH * 0.5 - 0.03, 0), style.light)
+        ]);
+        var beamMat = new THREE.MeshBasicMaterial({
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.34,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            toneMapped: false,
+            side: THREE.DoubleSide,
+            fog: false
+        });
+        var beam = new THREE.Mesh(beamGeo, beamMat);
+        beam.position.set(0, 0.45 + beamH * 0.5, -0.16);
+        beam.renderOrder = 2;
+        beam.userData.artSource = 'V13 稀有度光束柱(加色, 脉动由 gates.update 驱动)';
+        group.add(beam);
+
         var labelTexture = makeGateTextTexture(formatGateLabel(gateData), style);
         var labelMat = new THREE.SpriteMaterial({
             map: labelTexture,
@@ -358,6 +382,7 @@
         group.userData.qualityKind = style.kind;
         group.userData.label = label;
         group.userData.labelBaseY = 1.03;
+        group.userData.beamMat = beamMat; // V13: 光束脉动(gates.update)
         group.userData.glass = glass;
         group.userData.glow = ground;
         group.userData.ring = ground;

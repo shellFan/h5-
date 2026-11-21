@@ -88,7 +88,7 @@ const ASSET_RULES = [
     { match: /\.svg$/, priority: 'P3', role: '矢量图标' }
 ];
 
-const CSS_FILES = ['style.css', 'style-v42.css', 'style-v51.css', 'style-v60.css', 'style-v120.css', 'style-v118.css'];
+const CSS_FILES = ['style.css', 'style-v42.css', 'style-v51.css', 'style-v60.css', 'style-v120.css', 'style-v118.css', 'style-v130.css'];
 
 function mustRead(rel) {
     const p = path.join(ROOT, rel);
