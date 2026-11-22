@@ -66,4 +66,5 @@ v51 39/39 · v80 37/37 · soldier 11/11 · v111-114 54 · vnext 183 · mobile 29
 
 ## 6. Git
 - 8589bb5 feat(v14): monster variants, themed map packs, 3d weapon showcase, tiered vfx
-- 本轮收尾提交: 见下方 docs/fix 提交(推送状态以最终 push 输出为准)
+- e994fcd docs(v14): reports, standards, asset manifest, 24 in-game screenshots, mobile/wechat fixes
+- 分支 master, 已推送 origin/master(6335677..e994fcd); 工作区干净。
