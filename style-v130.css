@@ -182,3 +182,26 @@ html.v13-reduced-motion *, html.v13-reduced-motion *::before, html.v13-reduced-m
 .v14-tb-icon { width: 13px; height: 13px; vertical-align: -2.5px; margin-right: 2px; }
 .v51-coin-pill .v14-coin-icon { color: #FFC247; }
 .v51-coin-pill .v14-coin-icon .v14-coin-mark { stroke-width: 1.6; }
+
+/* ===== V16: 横屏引导(仅触屏+横屏+矮屏; 桌面指针设备不受影响) ===== */
+#orientation-hint {
+    display: none; position: fixed; inset: 0; z-index: 999998;
+    background: rgba(8, 18, 34, 0.94); align-items: center; justify-content: center;
+}
+#orientation-hint .oh-inner { text-align: center; color: #EAF4FB; }
+#orientation-hint .oh-icon {
+    font-size: 44px; font-weight: 900; color: #FFC247; margin-bottom: 10px;
+    animation: v16-rotate-hint 1.6s ease-in-out infinite;
+}
+@keyframes v16-rotate-hint {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+}
+#orientation-hint .oh-text { font-size: 16px; font-weight: 800; line-height: 1.7; }
+#orientation-hint .oh-text span { font-size: 11px; color: #8FA9C2; font-weight: 600; }
+/* V16.1: 显示由 JS 驱动(触屏+横屏+矮屏三条件; headless/桌面 pointer 探测不可靠) */
+#orientation-hint.v16-show { display: flex; }
+/* 减少动态: 引导动画停用 */
+@media (prefers-reduced-motion: reduce) {
+    #orientation-hint .oh-icon { animation: none; }
+}

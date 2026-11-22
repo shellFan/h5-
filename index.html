@@ -27,6 +27,20 @@
     <script>
         // V11 QA: 游戏版本标识(首页品牌栏读取; 与package.json同步维护)
         window.__GAME_VERSION = 'v14.0';
+        // V16: 横屏引导控制器(触屏设备 + 横屏 + 矮屏 三条件; 桌面不受影响)
+        (function () {
+            var update = function () {
+                var el = document.getElementById('orientation-hint');
+                if (!el) return;
+                var touch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+                var landscapeShort = window.innerHeight < 500 && window.innerWidth > window.innerHeight;
+                el.classList.toggle('v16-show', !!(touch && landscapeShort));
+            };
+            window.addEventListener('resize', update);
+            window.addEventListener('orientationchange', update);
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', update);
+            else update();
+        })();
         // VNext: 加载进度追踪器(被 soldier-loader / enemy-models 调用; 仅统计真实文件进度, 无定时器伪造)
         window.__BootProgress = {
             files: {}, total: 26, // 2士兵 + 12×2 僵尸/Boss GLB
@@ -69,6 +83,13 @@
             }
         };
     </script>
+    <!-- V16: 横屏引导(仅触屏设备横屏+矮屏时显示; 桌面/竖屏不受影响) -->
+    <div id="orientation-hint">
+        <div class="oh-inner">
+            <div class="oh-icon">↻</div>
+            <div class="oh-text">请将设备旋转至竖屏<br><span>竖屏是《膨胀小队》的最佳体验方向</span></div>
+        </div>
+    </div>
     <div id="game-container">
         <canvas id="game-canvas"></canvas>
 

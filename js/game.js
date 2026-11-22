@@ -1178,6 +1178,7 @@ class Game {
             }
             // V14: tier3 分级爆炸(全屏爆炸门) + 既有金色飘字/震屏
             if (this.effects.explosion) this.effects.explosion(this.squad.x, 1.0, this.squad.z - 6, 3);
+            if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('boom'); // V16: 全屏爆炸音效(原为静默)
             this.world.shake(0.5);
             this.effects.floatText(this.squad.x, 2.4, this.squad.z, '全屏爆炸!', '#FFC247', true);
         }

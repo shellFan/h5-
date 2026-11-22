@@ -82,19 +82,20 @@ class AudioAdapter {
             lose:  { freq: 330, end: 110, dur: 0.6, vol: 0.2, wave: 'sawtooth' },
             click: { freq: 660, end: 660, dur: 0.05, vol: 0.1, wave: 'sine' },
             bossWarn: { freq: 150, end: 60, dur: 0.7, vol: 0.25, wave: 'sawtooth' },
-            bossDie:  { freq: 200, end: 40, dur: 0.8, vol: 0.26, wave: 'sawtooth' }
+            bossDie:  { freq: 200, end: 40, dur: 0.8, vol: 0.26, wave: 'sawtooth' },
+            boom:     { freq: 130, end: 28, dur: 0.5, vol: 0.3, wave: 'sawtooth' }
         }[type] || { freq: 440, end: 440, dur: 0.1, vol: 0.1, wave: 'sine' };
     }
 
     /**
      * 合成音效
-     * type: 'shoot'|'hit'|'kill'|'gate'|'grow'|'win'|'lose'|'click'|'bossWarn'|'bossDie'
+     * type: 'shoot'|'hit'|'kill'|'gate'|'grow'|'win'|'lose'|'click'|'bossWarn'|'bossDie'|'boom'
      * 限流避免大量士兵同时射击时的音频爆音
      */
     play(type) {
         if (!this._enabled || this._muted) return;
         var now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
-        var minGap = { shoot: 90, hit: 60, kill: 70, gate: 200, grow: 120, win: 0, lose: 0, click: 50, bossWarn: 0, bossDie: 0 }[type] || 80;
+        var minGap = { shoot: 90, hit: 60, kill: 70, gate: 200, grow: 120, win: 0, lose: 0, click: 50, bossWarn: 0, bossDie: 0, boom: 150 }[type] || 80;
         if (this._lastPlay[type] && now - this._lastPlay[type] < minGap) return;
         this._lastPlay[type] = now;
 

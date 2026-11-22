@@ -83,6 +83,8 @@ class Enemy {
         if (effects) {
             // 卡通粒子爆开
             effects.burst(this.x, 0.5, this.z, this.cfg.color, 12, 3.5, 0.6);
+            // V16: 身体碎片(旋转四面体, 大体型更多; 池上限48自动限流)
+            if (effects.spawnShards) effects.spawnShards(this.x, 0.55, this.z, this.cfg.color, this.isBoss ? 14 : 6, this.isBoss ? 4.6 : 3.4, 0.75);
             effects.burst(this.x, 0.5, this.z, 0xFFFFFF, 4, 2, 0.3);
             // 金色积分光点
             effects.burst(this.x, 0.7, this.z, 0xFFD700, 3, 2.2, 0.8);
@@ -356,6 +358,8 @@ class EnemyManager {
                         // V14: 分级爆炸组合(闪光+双冲击波+橙白火花+烟尘), 保留红色自爆身份
                         if (this.effects.explosion) this.effects.explosion(e.x, 0.6, e.z, 2);
                         this.effects.burst(e.x, 0.6, e.z, 0xFF5A4B, 14, 4.0, 0.55);
+                        // V16: 自爆爆炸音效(原为静默)
+                        if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('boom');
                     }
                 }
                 // V6.0: 分裂词缀

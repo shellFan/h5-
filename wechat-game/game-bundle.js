@@ -1,10 +1,24 @@
 // ===== game-bundle.js (V12 微信小游戏构建产物: 单一模块作用域, 源脚本按 index.html 顺序拼接) =====
-// 生成: tools/build-wechat.js @ 2026-11-22T19:25:29.272Z
+// 生成: tools/build-wechat.js @ 2026-11-22T19:49:37.879Z
 // 代码与 H5 完全同源; 平台差异收敛于入口 game.js
 /* ==== index.html 内联脚本(BootProgress/错误横幅, H5 中先于业务脚本执行 — 保序) ==== */
 
         // V11 QA: 游戏版本标识(首页品牌栏读取; 与package.json同步维护)
         window.__GAME_VERSION = 'v14.0';
+        // V16: 横屏引导控制器(触屏设备 + 横屏 + 矮屏 三条件; 桌面不受影响)
+        (function () {
+            var update = function () {
+                var el = document.getElementById('orientation-hint');
+                if (!el) return;
+                var touch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+                var landscapeShort = window.innerHeight < 500 && window.innerWidth > window.innerHeight;
+                el.classList.toggle('v16-show', !!(touch && landscapeShort));
+            };
+            window.addEventListener('resize', update);
+            window.addEventListener('orientationchange', update);
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', update);
+            else update();
+        })();
         // VNext: 加载进度追踪器(被 soldier-loader / enemy-models 调用; 仅统计真实文件进度, 无定时器伪造)
         window.__BootProgress = {
             files: {}, total: 26, // 2士兵 + 12×2 僵尸/Boss GLB
@@ -9795,10 +9809,49 @@ var SoldierRenderer = class SoldierRenderer {
         this._temp = new THREE.Matrix4();
         this._muzzleWorld = new THREE.Matrix4();
         this._outPos = new THREE.Vector3();
+        // V16: 职业辨识 — 实例染色 scratch + 职业附件库(gunner肩甲/medic急救包)
+        this._v16Color = new THREE.Color();
+        this._v16AccBanks = {};
 
         this._createBank('hero');
         this._createBank('lod');
         this._selectBank('hero', 0);
+    }
+
+    /** V16: 职业附件几何(Body 局部空间, 程序化, 顶点色+共享材质) */
+    static _classAccGeometry(name) {
+        if (SoldierRenderer._accGeos && SoldierRenderer._accGeos[name]) return SoldierRenderer._accGeos[name];
+        if (!SoldierRenderer._accGeos) SoldierRenderer._accGeos = {};
+        var parts = [];
+        if (name === 'heavyplate') {
+            parts.push(colorize(new THREE.BoxGeometry(0.34, 0.14, 0.3), 0x8A5A34).translate(-0.36, 0.34, 0).rotateZ(0.1));
+            parts.push(colorize(new THREE.BoxGeometry(0.34, 0.14, 0.3), 0x8A5A34).translate(0.36, 0.34, 0).rotateZ(-0.1));
+            parts.push(colorize(new THREE.BoxGeometry(0.3, 0.18, 0.1), 0x9C6A3E).translate(0, 0.3, -0.28));
+        } else if (name === 'scoutcap') {
+            parts.push(colorize(new THREE.CylinderGeometry(0.21, 0.23, 0.09, 9), 0x4E3A66).translate(0, 0.34, 0));
+            parts.push(colorize(new THREE.BoxGeometry(0.18, 0.03, 0.14), 0x3C2C50).translate(0, 0.3, 0.22));
+            parts.push(colorize(new THREE.BoxGeometry(0.08, 0.26, 0.06), 0x5E4680).translate(0.24, 0.22, -0.1).rotateZ(-0.15));
+        } else if (name === 'medickit') {
+            parts.push(colorize(new THREE.BoxGeometry(0.3, 0.24, 0.16), 0xE8EDE8).translate(0, 0.32, -0.26));
+            parts.push(colorize(new THREE.BoxGeometry(0.16, 0.05, 0.02), 0xD84848).translate(0, 0.34, -0.345));
+            parts.push(colorize(new THREE.BoxGeometry(0.05, 0.16, 0.02), 0xD84848).translate(0, 0.34, -0.345));
+        }
+        var merged = mergeGeometries(parts);
+        merged.userData = { artSource: 'V16 class attachment procedural: ' + name };
+        SoldierRenderer._accGeos[name] = merged;
+        return merged;
+    }
+    _classAccBank(name) {
+        if (this._v16AccBanks[name]) return this._v16AccBanks[name];
+        var geo = SoldierRenderer._classAccGeometry(name);
+        var mat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF, vertexColors: true });
+        var mesh = new THREE.InstancedMesh(geo, mat, this.capacity);
+        mesh.name = 'Soldier_clsacc_' + name;
+        mesh.count = 0; mesh.frustumCulled = false;
+        mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        mesh.userData.artSource = 'V16 class attachment ' + name;
+        this.scene.add(mesh);
+        return this._v16AccBanks[name] = { mesh: mesh, count: 0 };
     }
 
     _createBank(name) {
@@ -9899,6 +9952,12 @@ var SoldierRenderer = class SoldierRenderer {
         if (this._denseSample) this._denseSampleTime = time;
 
         var bank = this.banks[bankName];
+        // V16: 职业辨识 — 每实例染色 + 职业附件(读取 squad._gameRef._classStats.id)
+        var clsId = (squad._gameRef && squad._gameRef._classStats && squad._gameRef._classStats.id) || 'rifleman';
+        var clsPres = SoldierRenderer.CLASS_PRESENTATION[clsId] || SoldierRenderer.CLASS_PRESENTATION.rifleman;
+        this._v16Color.setRGB(clsPres.tint[0], clsPres.tint[1], clsPres.tint[2]);
+        for (var k in this._v16AccBanks) this._v16AccBanks[k].count = 0;
+        var accBank = clsPres.attach ? this._classAccBank(clsPres.attach) : null;
         for (var index = 0; index < squad.count; index++) {
             this._composeRoot(index, squad, moving, lean, tilt, this._root);
             if (!this._lastRoots[index]) this._lastRoots[index] = new THREE.Matrix4();
@@ -9908,6 +9967,12 @@ var SoldierRenderer = class SoldierRenderer {
                 var part = this.parts[p];
                 this._partMatrix(part, bank.source, this._root, pose, this._temp);
                 bank.meshes[part].setMatrixAt(index, this._temp);
+                bank.meshes[part].setColorAt(index, this._v16Color);
+            }
+            if (accBank && index < SoldierRenderer.ACC_MAX) {
+                var aSlot = accBank.count++;
+                this._partMatrix('Body', bank.source, this._root, pose, this._temp);
+                accBank.mesh.setMatrixAt(aSlot, this._temp);
             }
         }
 
@@ -9919,6 +9984,7 @@ var SoldierRenderer = class SoldierRenderer {
                 var ghostPart = this.parts[gp];
                 this._partMatrix(ghostPart, bank.source, ghost.root, deathPose, this._temp);
                 bank.meshes[ghostPart].setMatrixAt(slot, this._temp);
+                bank.meshes[ghostPart].setColorAt(slot, this._v16Color);
             }
         }
 
@@ -9930,6 +9996,20 @@ var SoldierRenderer = class SoldierRenderer {
             partMesh.instanceMatrix.updateRange.offset = 0;
             partMesh.instanceMatrix.updateRange.count = visibleCount * 16;
             partMesh.instanceMatrix.needsUpdate = true;
+            if (partMesh.instanceColor) {
+                partMesh.instanceColor.updateRange.offset = 0;
+                partMesh.instanceColor.updateRange.count = visibleCount * 3;
+                partMesh.instanceColor.needsUpdate = true;
+            }
+        }
+        // V16: 职业附件上传(仅 hero 银行可见; LOD 大编制隐藏以省调用)
+        for (var ak in this._v16AccBanks) {
+            var am = this._v16AccBanks[ak].mesh, au = this._v16AccBanks[ak].count;
+            am.count = au;
+            am.visible = au > 0 && bankName === 'hero';
+            am.instanceMatrix.updateRange.offset = 0;
+            am.instanceMatrix.updateRange.count = au * 16;
+            am.instanceMatrix.needsUpdate = true;
         }
     }
 
@@ -10064,6 +10144,14 @@ var SoldierRenderer = class SoldierRenderer {
     }
 };
 
+// V16: 职业士兵辨识表 — 乘法染色(与 CLASS_DEFS.color 身份色呼应) + 职业附件
+SoldierRenderer.CLASS_PRESENTATION = {
+    rifleman: { tint: [1, 1, 1] },
+    gunner:   { tint: [1.22, 0.98, 0.82], attach: 'heavyplate' },
+    marksman: { tint: [1.05, 0.9, 1.28], attach: 'scoutcap' },
+    medic:    { tint: [0.82, 1.18, 0.94], attach: 'medickit' }
+};
+SoldierRenderer.ACC_MAX = 600;
 SoldierRenderer.HERO_LIMIT = 100;
 SoldierRenderer.MAX_GHOSTS = 16;
 SoldierRenderer.SHOOT_DURATION = 0.16;
@@ -12318,6 +12406,19 @@ class Effects {
         this.splats = [];
         this._splatQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
 
+        // V16: 碎片粒子(四面体, 旋转+重力) — 死亡/爆炸的形状层次, 与球形火花区分
+        this.shards = [];
+        this._shardPool = Array.from({ length: 48 }, () => new THREE.Object3D());
+        this._shardGeo = new THREE.TetrahedronGeometry(0.085, 0);
+        this.shardMesh = new THREE.InstancedMesh(this._shardGeo,
+            new THREE.MeshBasicMaterial({ color: 0xffffff }), 48);
+        this.shardMesh.count = 0; this.shardMesh.frustumCulled = false;
+        this.shardMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        this.shardMesh.userData.artSource = 'V16 pooled tetra shards (spinning body fragments)';
+        scene.add(this.shardMesh);
+        this._shardQuat = new THREE.Quaternion();
+        this._shardEuler = new THREE.Euler();
+
         // V12视觉: 爆炸白闪(径向亮核, 8上限) — 自爆/Boss死亡/爆炸弹的瞬间亮度冲击
         this._boomPool = [];
         this.booms = [];
@@ -12372,6 +12473,8 @@ class Effects {
         // notice, and bound the expensive world effects to one pulse per 0.4s.
         if (!(this._recruitFxT > 0)) {
             this._recruitFxT = 0.4;
+            // V16: 补员成长音效('grow' 音色既有但从未被调用)
+            if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('grow');
             this.floatText(squad.x, 2.2, squad.z, source + ' +' + added + '人', '#75FFB5', true);
             this.shockwave(squad.x, 0.06, squad.z, 0x39D98A);
             this.burst(squad.x, 0.6, squad.z, 0x75FFB5, 10, 2.2, 0.6);
@@ -12417,6 +12520,28 @@ class Effects {
                 life: randRange(0.55, 0.85), maxLife: 0.8, s0: ss, smoke: true
             };
             this.particles.push(p);
+        }
+    }
+
+    /** V16: 旋转碎片(死亡肢体残片/爆炸碎片) — 与球形火花形成形状层次 */
+    spawnShards(x, y, z, color, count, speed, life) {
+        count = count || 6;
+        speed = speed || 3.4;
+        life = life || 0.7;
+        for (let i = 0; i < count; i++) {
+            const p = this._shardPool.pop();
+            if (!p) break;
+            p.visible = true;
+            p.position.set(x + randRange(-0.15, 0.15), y, z + randRange(-0.15, 0.15));
+            p.rotation.set(Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, 0);
+            const s = randRange(0.7, 1.5);
+            p.scale.setScalar(s);
+            p.userData = {
+                vx: randRange(-1, 1) * speed, vy: randRange(0.9, 2.4) * speed, vz: randRange(-1, 1) * speed,
+                rx: randRange(-9, 9), rz: randRange(-9, 9),
+                life: life * randRange(0.7, 1.15), maxLife: life, s0: s, color: color
+            };
+            this.shards.push(p);
         }
     }
 
@@ -12581,6 +12706,10 @@ class Effects {
         for(var sp of this.splats) this._splatPool.push(sp);
         this.splats.length = 0;
         this.splatMesh.count = 0;
+        // V16: 碎片回收
+        for(var sh of this.shards) this._shardPool.push(sh);
+        this.shards.length = 0;
+        this.shardMesh.count = 0;
         for(var bm of this.booms){this.scene.remove(bm.mesh);bm.mesh.visible=false;this._boomPool.push(bm.mesh);}
         this.booms.length = 0;
     }
@@ -12748,6 +12877,30 @@ class Effects {
             // V14.3 节奏: 白闪瞬时峰值(出生 1.25×)后收缩淡出
             bm.mesh.scale.setScalar(bm.size * (1.25 - bt * 0.38));
         }
+
+        // V16: 碎片粒子(重力+自旋+落地反弹; 实例色+矩阵前缀上传)
+        var liveShards = 0;
+        for (var si3 = this.shards.length - 1; si3 >= 0; si3--) {
+            var sh = this.shards[si3], su = sh.userData;
+            su.life -= dt;
+            if (su.life <= 0) { sh.visible = false; this._shardPool.push(sh); this.shards.splice(si3, 1); continue; }
+            su.vy -= 9.5 * dt;
+            sh.position.x += su.vx * dt; sh.position.y += su.vy * dt; sh.position.z += su.vz * dt;
+            if (sh.position.y < 0.05) { sh.position.y = 0.05; su.vy *= -0.32; su.vx *= 0.6; su.vz *= 0.6; su.rx *= 0.5; su.rz *= 0.5; }
+            sh.rotation.x += su.rx * dt; sh.rotation.z += su.rz * dt;
+            var st = su.life / su.maxLife;
+            sh.scale.setScalar(su.s0 * (0.35 + st * 0.65));
+            sh.updateMatrix();
+        }
+        for (var spi = 0; spi < this.shards.length; spi++) {
+            this.shardMesh.setMatrixAt(spi, this.shards[spi].matrix);
+            this._particleColor.setHex(this.shards[spi].userData.color || 0xffffff);
+            this.shardMesh.setColorAt(spi, this._particleColor);
+            liveShards++;
+        }
+        this.shardMesh.count = liveShards;
+        this.shardMesh.instanceMatrix.needsUpdate = true;
+        if (this.shardMesh.instanceColor) this.shardMesh.instanceColor.needsUpdate = true;
 
         this.particleMesh.count=this.particles.length;
         for(var pi=0;pi<this.particles.length;pi++) {
@@ -13757,6 +13910,8 @@ class Enemy {
         if (effects) {
             // 卡通粒子爆开
             effects.burst(this.x, 0.5, this.z, this.cfg.color, 12, 3.5, 0.6);
+            // V16: 身体碎片(旋转四面体, 大体型更多; 池上限48自动限流)
+            if (effects.spawnShards) effects.spawnShards(this.x, 0.55, this.z, this.cfg.color, this.isBoss ? 14 : 6, this.isBoss ? 4.6 : 3.4, 0.75);
             effects.burst(this.x, 0.5, this.z, 0xFFFFFF, 4, 2, 0.3);
             // 金色积分光点
             effects.burst(this.x, 0.7, this.z, 0xFFD700, 3, 2.2, 0.8);
@@ -14030,6 +14185,8 @@ class EnemyManager {
                         // V14: 分级爆炸组合(闪光+双冲击波+橙白火花+烟尘), 保留红色自爆身份
                         if (this.effects.explosion) this.effects.explosion(e.x, 0.6, e.z, 2);
                         this.effects.burst(e.x, 0.6, e.z, 0xFF5A4B, 14, 4.0, 0.55);
+                        // V16: 自爆爆炸音效(原为静默)
+                        if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('boom');
                     }
                 }
                 // V6.0: 分裂词缀
@@ -15250,19 +15407,20 @@ class AudioAdapter {
             lose:  { freq: 330, end: 110, dur: 0.6, vol: 0.2, wave: 'sawtooth' },
             click: { freq: 660, end: 660, dur: 0.05, vol: 0.1, wave: 'sine' },
             bossWarn: { freq: 150, end: 60, dur: 0.7, vol: 0.25, wave: 'sawtooth' },
-            bossDie:  { freq: 200, end: 40, dur: 0.8, vol: 0.26, wave: 'sawtooth' }
+            bossDie:  { freq: 200, end: 40, dur: 0.8, vol: 0.26, wave: 'sawtooth' },
+            boom:     { freq: 130, end: 28, dur: 0.5, vol: 0.3, wave: 'sawtooth' }
         }[type] || { freq: 440, end: 440, dur: 0.1, vol: 0.1, wave: 'sine' };
     }
 
     /**
      * 合成音效
-     * type: 'shoot'|'hit'|'kill'|'gate'|'grow'|'win'|'lose'|'click'|'bossWarn'|'bossDie'
+     * type: 'shoot'|'hit'|'kill'|'gate'|'grow'|'win'|'lose'|'click'|'bossWarn'|'bossDie'|'boom'
      * 限流避免大量士兵同时射击时的音频爆音
      */
     play(type) {
         if (!this._enabled || this._muted) return;
         var now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
-        var minGap = { shoot: 90, hit: 60, kill: 70, gate: 200, grow: 120, win: 0, lose: 0, click: 50, bossWarn: 0, bossDie: 0 }[type] || 80;
+        var minGap = { shoot: 90, hit: 60, kill: 70, gate: 200, grow: 120, win: 0, lose: 0, click: 50, bossWarn: 0, bossDie: 0, boom: 150 }[type] || 80;
         if (this._lastPlay[type] && now - this._lastPlay[type] < minGap) return;
         this._lastPlay[type] = now;
 
@@ -17495,6 +17653,7 @@ class Game {
             }
             // V14: tier3 分级爆炸(全屏爆炸门) + 既有金色飘字/震屏
             if (this.effects.explosion) this.effects.explosion(this.squad.x, 1.0, this.squad.z - 6, 3);
+            if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('boom'); // V16: 全屏爆炸音效(原为静默)
             this.world.shake(0.5);
             this.effects.floatText(this.squad.x, 2.4, this.squad.z, '全屏爆炸!', '#FFC247', true);
         }

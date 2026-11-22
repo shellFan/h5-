@@ -93,6 +93,19 @@ class Effects {
         this.splats = [];
         this._splatQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
 
+        // V16: 碎片粒子(四面体, 旋转+重力) — 死亡/爆炸的形状层次, 与球形火花区分
+        this.shards = [];
+        this._shardPool = Array.from({ length: 48 }, () => new THREE.Object3D());
+        this._shardGeo = new THREE.TetrahedronGeometry(0.085, 0);
+        this.shardMesh = new THREE.InstancedMesh(this._shardGeo,
+            new THREE.MeshBasicMaterial({ color: 0xffffff }), 48);
+        this.shardMesh.count = 0; this.shardMesh.frustumCulled = false;
+        this.shardMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        this.shardMesh.userData.artSource = 'V16 pooled tetra shards (spinning body fragments)';
+        scene.add(this.shardMesh);
+        this._shardQuat = new THREE.Quaternion();
+        this._shardEuler = new THREE.Euler();
+
         // V12视觉: 爆炸白闪(径向亮核, 8上限) — 自爆/Boss死亡/爆炸弹的瞬间亮度冲击
         this._boomPool = [];
         this.booms = [];
@@ -147,6 +160,8 @@ class Effects {
         // notice, and bound the expensive world effects to one pulse per 0.4s.
         if (!(this._recruitFxT > 0)) {
             this._recruitFxT = 0.4;
+            // V16: 补员成长音效('grow' 音色既有但从未被调用)
+            if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('grow');
             this.floatText(squad.x, 2.2, squad.z, source + ' +' + added + '人', '#75FFB5', true);
             this.shockwave(squad.x, 0.06, squad.z, 0x39D98A);
             this.burst(squad.x, 0.6, squad.z, 0x75FFB5, 10, 2.2, 0.6);
@@ -192,6 +207,28 @@ class Effects {
                 life: randRange(0.55, 0.85), maxLife: 0.8, s0: ss, smoke: true
             };
             this.particles.push(p);
+        }
+    }
+
+    /** V16: 旋转碎片(死亡肢体残片/爆炸碎片) — 与球形火花形成形状层次 */
+    spawnShards(x, y, z, color, count, speed, life) {
+        count = count || 6;
+        speed = speed || 3.4;
+        life = life || 0.7;
+        for (let i = 0; i < count; i++) {
+            const p = this._shardPool.pop();
+            if (!p) break;
+            p.visible = true;
+            p.position.set(x + randRange(-0.15, 0.15), y, z + randRange(-0.15, 0.15));
+            p.rotation.set(Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, 0);
+            const s = randRange(0.7, 1.5);
+            p.scale.setScalar(s);
+            p.userData = {
+                vx: randRange(-1, 1) * speed, vy: randRange(0.9, 2.4) * speed, vz: randRange(-1, 1) * speed,
+                rx: randRange(-9, 9), rz: randRange(-9, 9),
+                life: life * randRange(0.7, 1.15), maxLife: life, s0: s, color: color
+            };
+            this.shards.push(p);
         }
     }
 
@@ -356,6 +393,10 @@ class Effects {
         for(var sp of this.splats) this._splatPool.push(sp);
         this.splats.length = 0;
         this.splatMesh.count = 0;
+        // V16: 碎片回收
+        for(var sh of this.shards) this._shardPool.push(sh);
+        this.shards.length = 0;
+        this.shardMesh.count = 0;
         for(var bm of this.booms){this.scene.remove(bm.mesh);bm.mesh.visible=false;this._boomPool.push(bm.mesh);}
         this.booms.length = 0;
     }
@@ -523,6 +564,30 @@ class Effects {
             // V14.3 节奏: 白闪瞬时峰值(出生 1.25×)后收缩淡出
             bm.mesh.scale.setScalar(bm.size * (1.25 - bt * 0.38));
         }
+
+        // V16: 碎片粒子(重力+自旋+落地反弹; 实例色+矩阵前缀上传)
+        var liveShards = 0;
+        for (var si3 = this.shards.length - 1; si3 >= 0; si3--) {
+            var sh = this.shards[si3], su = sh.userData;
+            su.life -= dt;
+            if (su.life <= 0) { sh.visible = false; this._shardPool.push(sh); this.shards.splice(si3, 1); continue; }
+            su.vy -= 9.5 * dt;
+            sh.position.x += su.vx * dt; sh.position.y += su.vy * dt; sh.position.z += su.vz * dt;
+            if (sh.position.y < 0.05) { sh.position.y = 0.05; su.vy *= -0.32; su.vx *= 0.6; su.vz *= 0.6; su.rx *= 0.5; su.rz *= 0.5; }
+            sh.rotation.x += su.rx * dt; sh.rotation.z += su.rz * dt;
+            var st = su.life / su.maxLife;
+            sh.scale.setScalar(su.s0 * (0.35 + st * 0.65));
+            sh.updateMatrix();
+        }
+        for (var spi = 0; spi < this.shards.length; spi++) {
+            this.shardMesh.setMatrixAt(spi, this.shards[spi].matrix);
+            this._particleColor.setHex(this.shards[spi].userData.color || 0xffffff);
+            this.shardMesh.setColorAt(spi, this._particleColor);
+            liveShards++;
+        }
+        this.shardMesh.count = liveShards;
+        this.shardMesh.instanceMatrix.needsUpdate = true;
+        if (this.shardMesh.instanceColor) this.shardMesh.instanceColor.needsUpdate = true;
 
         this.particleMesh.count=this.particles.length;
         for(var pi=0;pi<this.particles.length;pi++) {

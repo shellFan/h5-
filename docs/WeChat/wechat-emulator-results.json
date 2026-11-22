@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-22T19:25:46.337Z",
+  "timestamp": "2026-11-22T19:49:54.768Z",
   "passed": 20,
   "total": 20,
   "results": [
@@ -16,7 +16,7 @@
     {
       "name": "UI DOM 节点构建",
       "ok": true,
-      "detail": "nodes=419, rules=760, keyframes=20"
+      "detail": "nodes=428, rules=767, keyframes=21"
     },
     {
       "name": "首页开始按钮布局",
@@ -91,7 +91,7 @@
     {
       "name": "战斗帧率采样",
       "ok": true,
-      "detail": "87 FPS (模拟器软件渲染, 真机预期更高)"
+      "detail": "90 FPS (模拟器软件渲染, 真机预期更高)"
     },
     {
       "name": "无致命运行时错误",
