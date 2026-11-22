@@ -67,13 +67,12 @@ class GateSystem {
     approachStopZ(pacing, outstanding, squadZ) {
         var z = this.nextRowZ();
         if (z === null || (outstanding === 0 && pacing.canChooseGate(z))) return null;
-        // V13修复: 交战中不再门前滞留(战斗时恢复推进, 与 V12 前行为一致) —
-        // 原实现在 outstanding>0 时也驻足门前, 盾牌军团等高压波次把小队钉死在门前围杀,
-        // 导致 L3 无法通关(v51 L3胜利回归)。保留"平静时驻足选门"的新特性:
-        // 波次休整期(outstanding=0 且门未到可选窗口)仍然驻足。
-        if (outstanding > 0) return null;
-        // Hold before the choice area while waves rest. Never pull a squad
-        // backwards when loading an already advanced position.
+        // Hold before the choice area, including while waves rest or splits spawn.
+        // Never pull a squad backwards when loading an already advanced position.
+        // V13.1恢复V12契约: 交战期也必须驻足 — 若交战中放行推进, 小队会在门仍隐形
+        // (syncVisibility要求outstanding=0)时直接穿过1单位触发窗口, 该排状态门被
+        // 永久跳过(combat-feedback-gates伏击回归稳定FAIL)。门不可见时窗口不可重入,
+        // 小队只前进, 因此唯一安全策略是推进到门前即驻足, 清场后开门通过。
         return Math.min(squadZ, z + 5);
     }
 

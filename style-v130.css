@@ -114,8 +114,8 @@
     animation: v13-panel-in var(--v13-dur-slow) var(--v13-ease) both;
 }
 @keyframes v13-panel-in {
-    from { opacity: 0; transform: translateY(14px) scale(0.985); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* ---- 卡片/列表行 hover 级反馈(触摸设备按下态增强) ---- */

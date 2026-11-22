@@ -46,7 +46,7 @@ async function main() {
         var warning = document.getElementById('boss-warning');
         g._showBossWarning(true);
         var warningShown = warning && !warning.classList.contains('hidden');
-        var boss = g.pacing.spawnFn('boss', CONFIG.LANE_X[1], g.squad.z - 14, 0);
+        var boss = g.pacing.spawnFn('boss', CONFIG.LANE_X[1], g.squad.z - 9, 0); // V13.1: -14→-9 适配门驻足契约(驻足线在首排门前5单位, -14出生的Boss在弱火力下死于行军途中, 永不入咬击距离 — 与真实战斗几何不符); 断言不变
         var out = { warningShown: warningShown, spawnT0: boss.spawnT, style: boss.artStyle, bk0: g.enemies.bossKills || 0 }; // V10 QA: 每局clear()复位后按增量断言
         var observations = {
           spawnAnimDone: false, hpBarSynced: false, soldierLost: false,

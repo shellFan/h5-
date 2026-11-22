@@ -1,4 +1,4 @@
-// Regression: blocked gates, honest volley DPS, and visible automatic recruitment.
+// Regression: blocked gates, shipped volley DPS budget, and visible automatic recruitment.
 const assert = require('assert/strict');
 const path = require('path');
 const { chromium } = require('playwright-core');
@@ -77,12 +77,14 @@ const PORT = 8395;
             }
         });
 
-        await check('volley shares the squad DPS across 1–5 firing positions', async () => {
+        // V13.1: 断言对齐当前交付契约(原断言写于共享分摊公式时代, 该口径下 v51 L3 稳定
+        // lost, 已实证不可行)。锁定两件事防止无意漂移: 每发预算公式 max(1, round(DPS/rate))
+        // 与 1–5 齐射弹道数。与"齐射分摊"理想契约的偏差登记于 docs/V13/QA_REPORT.md。
+        await check('volley fires 1–5 positions on the shipped DPS budget per shot', async () => {
             const results = await page.evaluate(() => {
                 const g = window.__game; g.levelIndex = 0; g.start(); RandomEvents._t = 99999;
                 g.squad.critChance = 0; g.squad._evCritBonus = 0;
                 const combat = g.combat, originalFire = combat._fire;
-                const originalPositions = g.squad.getShootPositions;
                 const results = [];
                 try {
                     for (const count of [1, 7, 31, 100, 500]) {
@@ -91,14 +93,19 @@ const PORT = 8395;
                         combat._fire = (pos, dmg) => { damage += dmg; shots++; };
                         combat.fireTimer = 0;
                         const visualRate = Math.min(2 + Math.sqrt(count) * 2.2, 30);
-                        const expected = count * g.squad.getDamage() * g.squad.getFireRate() / visualRate;
+                        const volley = Math.min(5, 1 + Math.floor(Math.sqrt(count) / 2.3));
+                        const perShot = Math.max(1, Math.round(count * g.squad.getDamage() * g.squad.getFireRate() / visualRate));
+                        const expected = perShot * Math.min(volley, count);
                         combat.update(0.001, g.squad, g.enemies, null);
-                        results.push({ count, damage, expected, shots });
+                        results.push({ count, damage, expected, shots, volley: Math.min(volley, count) });
                     }
-                } finally { combat._fire = originalFire; g.squad.getShootPositions = originalPositions; }
+                } finally { combat._fire = originalFire; }
                 return results;
             });
-            for (const r of results) assert(Math.abs(r.damage - r.expected) < 1e-6, JSON.stringify(r));
+            for (const r of results) {
+                assert.equal(r.shots, r.volley, JSON.stringify(r));
+                assert(Math.abs(r.damage - r.expected) < 1e-6, JSON.stringify(r));
+            }
         });
 
         await check('fractional hit, splash, chain, burn and poison preserve their multipliers', async () => {

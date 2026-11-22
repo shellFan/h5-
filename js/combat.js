@@ -110,10 +110,15 @@ class CombatSystem {
                 var volley = Math.min(5, 1 + Math.floor(Math.sqrt(count) / 2.3)); // V8.0.1: 齐射曲线提升(÷2.6→÷2.3)
                 var positions = squad.getShootPositions(volley);
                 // A volley shares the squad DPS; giving every trail the full
-                // V13: 恢复 V12 交付基线公式 — c95ef42 的 budget 改动(除以弹丸数)虽修复了
-                // "多弹丸武器 DPS 膨胀×3-5"的真实问题, 但全游戏波次/血量按旧口径调校,
-                // 导致 L3 起不可通关(v51 L3胜利回归)。数值重校准属核心数值修改(需设计授权),
-                // 本轮恢复基线; 该问题已在 docs/V13/QA_REPORT.md 登记为待决策项。
+                // budget multiplied damage by up to five. Keep fractional damage
+                // so minimum-one rounding cannot inflate small squads either.
+                // V13.1事实修正: 上行注释描述的是历史"齐射分摊"理想契约, 非当前交付口径。
+                // 当前已交付契约 = max(1, round(totalDPS/visualRate))/发:
+                // - 实证 v51 L3 在真实V12基线(totalDPS/visualRate/positions, 未取整)下稳定lost
+                //   ×2, 在本公式下稳定胜利 — L3 可通关性依赖本口径;
+                // - 9c32560 的"c95ef42 改动基线"归因有误(c95ef42 未改过此公式), 但公式本身
+                //   是全部现行平衡门(v51/v80/vnext/v111-114)的校验口径, 予以保留;
+                // - 与分摊理想契约的偏差属数值重校准事项, 已在 docs/V13/QA_REPORT.md 登记。
                 var dmg = Math.max(1, Math.round(totalDPS / visualRate));
                 if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('shoot'); // V5.0: 齐射音效(适配器内部限流)
                 for (var k = 0; k < positions.length; k++) {
@@ -183,7 +188,14 @@ class CombatSystem {
                 // V3.3: 穿透弹不重复命中同一目标
                 if (b.hitSet && b.hitSet.indexOf(e) >= 0) continue;
                 // 子弹从前往后穿越僵尸位置
-                if (oldZ >= e.z - 0.2 && newZ <= e.z + 0.4) {
+                // V13.1近距离盲区修复: 命中窗后沿 0.2→1.5 — 弹速28u/s(0.467/帧)时旧0.6深度
+                // 窗口对近身目标(枪口前0.5-1.2单位)只开放~2帧, x收敛(damp λ=10, ~15%/帧)
+                // 2帧内最多关闭1.26横向差; 近身目标横向差可达1.4-1.5(枪口姿态偏移+怪横移
+                // 冻结位), 子弹逐发从怪侧面掠过(x在穿越后才收敛) → 永久不可命中 → 伏击怪
+                // 驻足态打不死 → outstanding永不归零 → 状态门永久锁死(软锁)。
+                // 延长后沿=曳光(长2.1)尾部仍覆在僵尸体上时允许命中, 给x收敛4-5帧; 远距离
+                // 目标穿越面时x早已收敛, 命中帧不变; 不改变伤害数值。
+                if (oldZ >= e.z - 1.5 && newZ <= e.z + 0.4) {
                     // V3.1: 命中窗加宽(0.7→0.9), Boss等大体型敌人按体型放大判定
                     var winX = e.isBoss ? 1.4 : 0.9;
                     if (Math.abs(b.mesh.position.x - e.x) < winX) {

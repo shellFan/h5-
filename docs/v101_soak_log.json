@@ -10,427 +10,427 @@
   {
    "min": 0.2,
    "cycle": 2,
-   "heapMB": 19.6,
+   "heapMB": 23,
    "errors": 0
   },
   {
    "min": 0.4,
    "cycle": 3,
-   "heapMB": 33.5,
+   "heapMB": 33.9,
    "errors": 0
   },
   {
    "min": 0.6,
    "cycle": 4,
-   "heapMB": 33,
+   "heapMB": 32.7,
    "errors": 0
   },
   {
-   "min": 0.9,
+   "min": 0.8,
    "cycle": 5,
-   "heapMB": 33.4,
+   "heapMB": 21.1,
    "errors": 0
   },
   {
    "min": 1.1,
    "cycle": 6,
-   "heapMB": 33,
+   "heapMB": 34.8,
    "errors": 0
   },
   {
    "min": 1.3,
    "cycle": 7,
-   "heapMB": 35.5,
+   "heapMB": 36.9,
    "errors": 0
   },
   {
    "min": 1.5,
    "cycle": 8,
-   "heapMB": 33,
+   "heapMB": 35.4,
    "errors": 0
   },
   {
    "min": 1.7,
    "cycle": 9,
-   "heapMB": 34.8,
+   "heapMB": 35.5,
    "errors": 0
   },
   {
    "min": 1.9,
    "cycle": 10,
-   "heapMB": 33.8,
+   "heapMB": 33.2,
    "errors": 0
   },
   {
    "min": 2.1,
    "cycle": 11,
-   "heapMB": 36,
+   "heapMB": 36.8,
    "errors": 0
   },
   {
    "min": 2.3,
    "cycle": 12,
-   "heapMB": 36.1,
+   "heapMB": 32.9,
    "errors": 0
   },
   {
    "min": 2.5,
    "cycle": 13,
-   "heapMB": 35.1,
+   "heapMB": 36.5,
    "errors": 0
   },
   {
-   "min": 2.8,
+   "min": 2.7,
    "cycle": 14,
-   "heapMB": 36.8,
+   "heapMB": 35.9,
    "errors": 0
   },
   {
-   "min": 3,
+   "min": 2.9,
    "cycle": 15,
-   "heapMB": 53.1,
+   "heapMB": 35.5,
    "errors": 0
   },
   {
    "min": 3.2,
    "cycle": 16,
-   "heapMB": 36.2,
+   "heapMB": 35.7,
    "errors": 0
   },
   {
    "min": 3.4,
    "cycle": 17,
-   "heapMB": 35.2,
+   "heapMB": 36.6,
    "errors": 0
   },
   {
    "min": 3.6,
    "cycle": 18,
-   "heapMB": 35.8,
+   "heapMB": 23.6,
    "errors": 0
   },
   {
    "min": 3.8,
    "cycle": 19,
-   "heapMB": 33,
+   "heapMB": 31.8,
    "errors": 0
   },
   {
    "min": 4,
    "cycle": 20,
-   "heapMB": 34.2,
+   "heapMB": 35.7,
    "errors": 0
   },
   {
    "min": 4.2,
    "cycle": 21,
-   "heapMB": 34,
+   "heapMB": 34.6,
    "errors": 0
   },
   {
    "min": 4.4,
    "cycle": 22,
-   "heapMB": 33.5,
+   "heapMB": 34.6,
    "errors": 0
   },
   {
    "min": 4.6,
    "cycle": 23,
-   "heapMB": 33.9,
+   "heapMB": 34.7,
    "errors": 0
   },
   {
-   "min": 4.9,
+   "min": 4.8,
    "cycle": 24,
-   "heapMB": 33.4,
+   "heapMB": 34,
    "errors": 0
   },
   {
-   "min": 5.1,
+   "min": 5,
    "cycle": 25,
-   "heapMB": 48,
+   "heapMB": 34.3,
    "errors": 0
   },
   {
-   "min": 5.3,
+   "min": 5.2,
    "cycle": 26,
-   "heapMB": 34.5,
+   "heapMB": 35.2,
    "errors": 0
   },
   {
-   "min": 5.5,
+   "min": 5.4,
    "cycle": 27,
-   "heapMB": 36.3,
+   "heapMB": 36.9,
    "errors": 0
   },
   {
    "min": 5.7,
    "cycle": 28,
-   "heapMB": 35,
+   "heapMB": 35.9,
    "errors": 0
   },
   {
    "min": 5.9,
    "cycle": 29,
-   "heapMB": 34.9,
+   "heapMB": 36.5,
    "errors": 0
   },
   {
    "min": 6.1,
    "cycle": 30,
-   "heapMB": 32.8,
+   "heapMB": 36.4,
    "errors": 0
   },
   {
    "min": 6.3,
    "cycle": 31,
-   "heapMB": 34.3,
+   "heapMB": 36.2,
    "errors": 0
   },
   {
-   "min": 6.6,
+   "min": 6.5,
    "cycle": 32,
-   "heapMB": 21.4,
+   "heapMB": 32.4,
    "errors": 0
   },
   {
-   "min": 6.8,
+   "min": 6.7,
    "cycle": 33,
-   "heapMB": 35.8,
+   "heapMB": 33.7,
    "errors": 0
   },
   {
-   "min": 7,
+   "min": 6.9,
    "cycle": 34,
-   "heapMB": 22.3,
+   "heapMB": 35.4,
    "errors": 0
   },
   {
-   "min": 7.2,
+   "min": 7.1,
    "cycle": 35,
-   "heapMB": 32.2,
+   "heapMB": 31.9,
    "errors": 0
   },
   {
-   "min": 7.4,
+   "min": 7.3,
    "cycle": 36,
-   "heapMB": 35.1,
+   "heapMB": 34.6,
    "errors": 0
   },
   {
-   "min": 7.6,
+   "min": 7.5,
    "cycle": 37,
-   "heapMB": 40.9,
+   "heapMB": 34.1,
    "errors": 0
   },
   {
-   "min": 7.8,
+   "min": 7.7,
    "cycle": 38,
-   "heapMB": 35.5,
+   "heapMB": 35.3,
    "errors": 0
   },
   {
-   "min": 8,
+   "min": 7.9,
    "cycle": 39,
-   "heapMB": 34.9,
+   "heapMB": 25.5,
    "errors": 0
   },
   {
    "min": 8.2,
    "cycle": 40,
-   "heapMB": 36.1,
+   "heapMB": 35.9,
    "errors": 0
   },
   {
    "min": 8.4,
    "cycle": 41,
-   "heapMB": 33.4,
+   "heapMB": 35.6,
    "errors": 0
   },
   {
    "min": 8.6,
    "cycle": 42,
-   "heapMB": 51.3,
+   "heapMB": 23.9,
    "errors": 0
   },
   {
-   "min": 8.9,
+   "min": 8.8,
    "cycle": 43,
+   "heapMB": 35.8,
+   "errors": 0
+  },
+  {
+   "min": 9,
+   "cycle": 44,
+   "heapMB": 36.5,
+   "errors": 0
+  },
+  {
+   "min": 9.2,
+   "cycle": 45,
    "heapMB": 33.1,
    "errors": 0
   },
   {
-   "min": 9.1,
-   "cycle": 44,
-   "heapMB": 25.2,
-   "errors": 0
-  },
-  {
-   "min": 9.3,
-   "cycle": 45,
-   "heapMB": 54.3,
-   "errors": 0
-  },
-  {
-   "min": 9.5,
+   "min": 9.4,
    "cycle": 46,
-   "heapMB": 36.4,
+   "heapMB": 35.5,
    "errors": 0
   },
   {
-   "min": 9.7,
+   "min": 9.6,
    "cycle": 47,
-   "heapMB": 34.6,
+   "heapMB": 52.6,
    "errors": 0
   },
   {
-   "min": 9.9,
+   "min": 9.8,
    "cycle": 48,
-   "heapMB": 36.7,
+   "heapMB": 33.4,
    "errors": 0
   },
   {
-   "min": 10.1,
+   "min": 10,
    "cycle": 49,
-   "heapMB": 34,
+   "heapMB": 34.1,
    "errors": 0
   },
   {
    "min": 10.3,
    "cycle": 50,
-   "heapMB": 33.6,
+   "heapMB": 34.4,
    "errors": 0
   },
   {
-   "min": 10.6,
+   "min": 10.5,
    "cycle": 51,
-   "heapMB": 36.5,
+   "heapMB": 33.7,
    "errors": 0
   },
   {
-   "min": 10.8,
+   "min": 10.7,
    "cycle": 52,
-   "heapMB": 22.2,
+   "heapMB": 48.8,
    "errors": 0
   },
   {
-   "min": 11,
+   "min": 10.9,
    "cycle": 53,
-   "heapMB": 35.2,
-   "errors": 0
-  },
-  {
-   "min": 11.2,
-   "cycle": 54,
-   "heapMB": 30,
-   "errors": 0
-  },
-  {
-   "min": 11.4,
-   "cycle": 55,
-   "heapMB": 33,
-   "errors": 0
-  },
-  {
-   "min": 11.6,
-   "cycle": 56,
-   "heapMB": 34.3,
-   "errors": 0
-  },
-  {
-   "min": 11.8,
-   "cycle": 57,
-   "heapMB": 34.7,
-   "errors": 0
-  },
-  {
-   "min": 12,
-   "cycle": 58,
-   "heapMB": 33.2,
-   "errors": 0
-  },
-  {
-   "min": 12.2,
-   "cycle": 59,
-   "heapMB": 33.3,
-   "errors": 0
-  },
-  {
-   "min": 12.5,
-   "cycle": 60,
-   "heapMB": 35.2,
-   "errors": 0
-  },
-  {
-   "min": 12.7,
-   "cycle": 61,
-   "heapMB": 35.8,
-   "errors": 0
-  },
-  {
-   "min": 12.9,
-   "cycle": 62,
-   "heapMB": 29.6,
-   "errors": 0
-  },
-  {
-   "min": 13.1,
-   "cycle": 63,
-   "heapMB": 33.9,
-   "errors": 0
-  },
-  {
-   "min": 13.3,
-   "cycle": 64,
-   "heapMB": 36.7,
-   "errors": 0
-  },
-  {
-   "min": 13.5,
-   "cycle": 65,
-   "heapMB": 41.6,
-   "errors": 0
-  },
-  {
-   "min": 13.7,
-   "cycle": 66,
-   "heapMB": 33.9,
-   "errors": 0
-  },
-  {
-   "min": 13.9,
-   "cycle": 67,
    "heapMB": 33.4,
    "errors": 0
   },
   {
-   "min": 14.1,
+   "min": 11.1,
+   "cycle": 54,
+   "heapMB": 33.9,
+   "errors": 0
+  },
+  {
+   "min": 11.3,
+   "cycle": 55,
+   "heapMB": 37,
+   "errors": 0
+  },
+  {
+   "min": 11.5,
+   "cycle": 56,
+   "heapMB": 34.2,
+   "errors": 0
+  },
+  {
+   "min": 11.7,
+   "cycle": 57,
+   "heapMB": 22.5,
+   "errors": 0
+  },
+  {
+   "min": 11.9,
+   "cycle": 58,
+   "heapMB": 33.5,
+   "errors": 0
+  },
+  {
+   "min": 12.1,
+   "cycle": 59,
+   "heapMB": 33,
+   "errors": 0
+  },
+  {
+   "min": 12.3,
+   "cycle": 60,
+   "heapMB": 34,
+   "errors": 0
+  },
+  {
+   "min": 12.6,
+   "cycle": 61,
+   "heapMB": 34.1,
+   "errors": 0
+  },
+  {
+   "min": 12.8,
+   "cycle": 62,
+   "heapMB": 34.7,
+   "errors": 0
+  },
+  {
+   "min": 13,
+   "cycle": 63,
+   "heapMB": 33.3,
+   "errors": 0
+  },
+  {
+   "min": 13.2,
+   "cycle": 64,
+   "heapMB": 34.7,
+   "errors": 0
+  },
+  {
+   "min": 13.4,
+   "cycle": 65,
+   "heapMB": 39.8,
+   "errors": 0
+  },
+  {
+   "min": 13.6,
+   "cycle": 66,
+   "heapMB": 35.4,
+   "errors": 0
+  },
+  {
+   "min": 13.8,
+   "cycle": 67,
+   "heapMB": 35.7,
+   "errors": 0
+  },
+  {
+   "min": 14,
    "cycle": 68,
-   "heapMB": 22.6,
+   "heapMB": 34.3,
    "errors": 0
   },
   {
-   "min": 14.3,
+   "min": 14.2,
    "cycle": 69,
-   "heapMB": 36,
+   "heapMB": 25.3,
    "errors": 0
   },
   {
-   "min": 14.5,
+   "min": 14.4,
    "cycle": 70,
-   "heapMB": 36.7,
+   "heapMB": 35.6,
    "errors": 0
   },
   {
-   "min": 14.8,
+   "min": 14.6,
    "cycle": 71,
-   "heapMB": 35.9,
+   "heapMB": 33.8,
    "errors": 0
   },
   {
-   "min": 15,
+   "min": 14.9,
    "cycle": 72,
-   "heapMB": 25.8,
+   "heapMB": 24.3,
    "errors": 0
   }
  ],
