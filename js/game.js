@@ -1176,7 +1176,8 @@ class Game {
                 ne.takeDamage(Math.max(20, ne.maxHp * 0.5), this.effects, ne.x, false);
                 nuked++;
             }
-            this.effects.shockwave(this.squad.x, 0.05, this.squad.z - 6, 0xFFC247);
+            // V14: tier3 分级爆炸(全屏爆炸门) + 既有金色飘字/震屏
+            if (this.effects.explosion) this.effects.explosion(this.squad.x, 1.0, this.squad.z - 6, 3);
             this.world.shake(0.5);
             this.effects.floatText(this.squad.x, 2.4, this.squad.z, '全屏爆炸!', '#FFC247', true);
         }

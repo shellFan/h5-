@@ -1,6 +1,13 @@
 // ===== 自动射击与弹道系统 =====
 
 class CombatSystem {
+    static get TRACER_COLORS() {
+        return {
+            rifle: 0xFFD84A, shotgun: 0xFFB04A, sniper: 0xFFF3D0, mg: 0xFFC44A,
+            flamethrower: 0xFF8C3C, rocket: 0xFF7A45, freeze: 0x7EDFFF, tesla: 0xB48CFF
+        };
+    }
+    static get HEAVY_MUZZLE() { return { shotgun: 1, mg: 1, flamethrower: 1, rocket: 1 }; }
     constructor(scene, effects) {
         this.scene = scene;
         this.effects = effects;
@@ -13,7 +20,7 @@ class CombatSystem {
         // 共享Sprite材质(所有子弹共用，减少DrawCall)
         // V3.6修复: 改用Normal混合(Additive在浅色路面上会加成纯白,弹道完全不可见)
         this._bulletMat = new THREE.MeshBasicMaterial({
-            color: 0xFFD700,
+            color: 0xFFFFFF,
             transparent: true,
             opacity: 1,
             depthWrite: false
@@ -28,6 +35,7 @@ class CombatSystem {
         this._bulletMat.userData = { artSource: 'js/combat.js:_makeTracerTexture() 程序化曳光贴图 64x256 (CanvasTexture)' };
         // V12视觉: 曳光朝向(贴地掠过+尾部微抬向镜头), 不再逐帧拷贝相机四元数
         this._tracerQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2 + 0.42, 0, 0));
+        this._tmpColor = new THREE.Color();
 
         // 弹道对象池 (锚点 + 曳光纹理)
         this.pool = [];
@@ -44,11 +52,11 @@ class CombatSystem {
         var c = document.createElement('canvas');
         c.width = 64; c.height = 256;
         var ctx = c.getContext('2d');
-        // 尾迹主体(锥形, 弹头宽→尾端窄): 外层柔光 + 内层亮芯, 沿画布向下渐隐
+        // V14: 曳光贴图中性化(白芯白尾) — 色相由实例色按武器类提供, 单drawCall实现8种弹道色
         var tail = ctx.createLinearGradient(0, 52, 0, 256);
-        tail.addColorStop(0, 'rgba(255,214,90,0.95)');
-        tail.addColorStop(0.35, 'rgba(255,170,44,0.62)');
-        tail.addColorStop(1, 'rgba(255,120,16,0)');
+        tail.addColorStop(0, 'rgba(255,255,255,0.95)');
+        tail.addColorStop(0.35, 'rgba(255,252,244,0.62)');
+        tail.addColorStop(1, 'rgba(255,248,235,0)');
         ctx.fillStyle = tail;
         ctx.beginPath();
         ctx.moveTo(10, 52);
@@ -59,8 +67,8 @@ class CombatSystem {
         ctx.fill();
         // 内层亮芯(更窄更亮)
         var core = ctx.createLinearGradient(0, 52, 0, 220);
-        core.addColorStop(0, 'rgba(255,250,205,0.95)');
-        core.addColorStop(1, 'rgba(255,200,70,0)');
+        core.addColorStop(0, 'rgba(255,255,255,0.98)');
+        core.addColorStop(1, 'rgba(255,252,240,0)');
         ctx.fillStyle = core;
         ctx.beginPath();
         ctx.moveTo(20, 52);
@@ -72,7 +80,7 @@ class CombatSystem {
         // 弹头亮核(径向: 白→金→透明), 画布顶部
         var head = ctx.createRadialGradient(32, 40, 2, 32, 40, 26);
         head.addColorStop(0, '#FFFFFF');
-        head.addColorStop(0.25, '#FFF3B0');
+        head.addColorStop(0.25, '#F2F7FF');
         head.addColorStop(0.55, 'rgba(255,190,50,0.85)');
         head.addColorStop(1, 'rgba(255,140,20,0)');
         ctx.fillStyle = head;
@@ -368,10 +376,17 @@ class CombatSystem {
             var anchor=this.bullets[i].mesh;
             anchor.quaternion.copy(this._tracerQuat); // V12视觉: 贴地曳光朝向(弹头朝-Z, 尾部微抬)
             anchor.updateMatrix();this._bulletInstances.setMatrixAt(i,anchor.matrix);
+            if (this.bullets[i].color !== undefined) this._bulletInstances.setColorAt(i, this._tmpColor.setHex(this.bullets[i].color));
         }
         this._bulletInstances.instanceMatrix.needsUpdate=true;
+        if (this._bulletInstances.instanceColor) this._bulletInstances.instanceColor.needsUpdate = true;
     }
 
+    // V14: 武器弹道色表 — 单材质+实例色实现 8 类弹道辨识(零额外drawCall)
+    _tracerColor() {
+        var wid = (this._squad && this._squad._gameRef && this._squad._gameRef._weaponStats) ? this._squad._gameRef._weaponStats.weaponId : null;
+        return CombatSystem.TRACER_COLORS[wid] || CombatSystem.TRACER_COLORS.rifle;
+    }
     _fire(pos, damage, target, isCrit) {
         var mesh = this.pool.pop();
         if (!mesh) return;
@@ -385,6 +400,7 @@ class CombatSystem {
         this.bullets.push({
             mesh: mesh, damage: damage, life: 1.2,
             target: target || null,
+            color: this._tracerColor(),
             crit: !!isCrit,
             // V11.2: 穿透流派 +1
             pierceLeft: 1 + (this._squad ? this._squad.pierce + (this._squad._evPierce || 0) + (this._squad._comboPierceFlow ? 1 : 0) : 0),
@@ -392,7 +408,9 @@ class CombatSystem {
         });
 
         // 枪口闪光
-        this.effects.muzzleFlash(pos.x, pos.y, pos.z);
+        // V14: 重型武器枪口火焰放大(表现层分级)
+        var wid = (this._squad && this._squad._gameRef && this._squad._gameRef._weaponStats) ? this._squad._gameRef._weaponStats.weaponId : 'rifle';
+        this.effects.muzzleFlash(pos.x, pos.y, pos.z, CombatSystem.HEAVY_MUZZLE[wid] ? 1.38 : 1);
         // V12: 移除逐发同步 — _updateInner 在 combat.update 后统一调用 _syncInstances, 帧内一次即可(高频开火时省冗余矩阵上传)
     }
 

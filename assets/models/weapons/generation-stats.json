@@ -1,0 +1,47 @@
+{
+  "generatedBy": "tools/v14-weapon-glb.js (程序化建模, 无外部依赖)",
+  "license": "原创程序化生成 — 项目自有",
+  "count": 8,
+  "weapons": [
+    {
+      "id": "rifle",
+      "name": "标准步枪",
+      "bytes": 7436
+    },
+    {
+      "id": "shotgun",
+      "name": "散弹枪",
+      "bytes": 5888
+    },
+    {
+      "id": "sniper",
+      "name": "狙击枪",
+      "bytes": 7524
+    },
+    {
+      "id": "mg",
+      "name": "机枪",
+      "bytes": 7468
+    },
+    {
+      "id": "flamethrower",
+      "name": "火焰喷射器",
+      "bytes": 6140
+    },
+    {
+      "id": "rocket",
+      "name": "火箭炮",
+      "bytes": 8804
+    },
+    {
+      "id": "freeze",
+      "name": "冰冻枪",
+      "bytes": 6900
+    },
+    {
+      "id": "tesla",
+      "name": "电磁枪",
+      "bytes": 7700
+    }
+  ]
+}

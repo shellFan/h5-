@@ -155,3 +155,21 @@ html.v13-reduced-motion *, html.v13-reduced-motion *::before, html.v13-reduced-m
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
 }
+
+/* ===== V14: 军械库 3D 武器展示台 ===== */
+.v14-weapon-3d { display: none; }
+.v14-weapon-3d:not(:empty) { display: block; width: 160px; height: 132px; margin: 0 auto; position: relative; }
+.v14-weapon-3d .v14-weapon-canvas { width: 100%; height: 100%; display: block; }
+/* 3D 就绪后隐藏 SVG 图集回退; 平台光环 + 地台阴影 */
+#v118-armory-hero.v14-3d-ready .v118-weapon-art { display: none; }
+#v118-armory-hero.v14-3d-ready { position: relative; }
+#v118-armory-hero.v14-3d-ready::before {
+    content: ''; position: absolute; left: 50%; top: 54%; width: 150px; height: 30px;
+    transform: translateX(-50%); border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(255,194,71,0.28) 0%, rgba(255,194,71,0) 70%);
+    pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    /* 展示台呼吸/摆动由 JS 驱动; 减少动态时首帧静置(渲染仍进行但幅度归零) */
+    #v118-armory-hero.v14-3d-ready .v14-weapon-canvas { opacity: 1; }
+}

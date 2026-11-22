@@ -185,6 +185,7 @@ class World {
         roadTex.anisotropy = 4;
 
         const roadMat = new THREE.MeshLambertMaterial({ map: roadTex });
+        this.roadMat = roadMat; // V14: 主题地面纹理切换需要引用
 
         // V3.5: 每段合并为3个mesh(路面/路侧结构/草地) — 原9个, drawCalls 108→36
         for (let i = 0; i < SEG_COUNT; i++) {
@@ -385,7 +386,7 @@ class World {
         // 环境实例材质染色(草地/建筑向主题色过渡; __themeBaseHex 记录初始色, 幂等)
         if (this._v42Environment && this._v42Environment.root) {
             this._v42Environment.root.traverse(function(o) {
-                if (o.isInstancedMesh && o.material && o.material.color) {
+                if (o.isInstancedMesh && o.material && o.material.color && !o.material.__noThemeTint) {
                     if (o.material.__themeBaseHex === undefined) o.material.__themeBaseHex = o.material.color.getHex();
                     var base = new THREE.Color(o.material.__themeBaseHex);
                     var target = new THREE.Color(T.envTint).lerp(base, 0.35);
@@ -393,6 +394,17 @@ class World {
                     o.material.needsUpdate = true;
                 }
             });
+        }
+        // V14: 主题道具包可见性切换 + 地面纹理切换(柏油/龟裂/岩面/金属板/混凝土)
+        if (this._v42Environment && V42Art.setEnvironmentTheme) {
+            V42Art.setEnvironmentTheme(this._v42Environment, themeName);
+        }
+        if (this.roadMat && V42Art.getGroundTexture) {
+            var groundTex = V42Art.getGroundTexture(T.ground || 'asphalt');
+            if (this.roadMat.map !== groundTex) {
+                this.roadMat.map = groundTex;
+                this.roadMat.needsUpdate = true;
+            }
         }
         this._themeApplied = themeName;
     }

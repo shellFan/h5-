@@ -79,70 +79,70 @@ const CONFIG = {
             fog: 0xC9E4F2, fogNear: 45, fogFar: 130,
             sunColor: 0xFFF4E0, sunIntensity: 0.72,
             hemiSky: 0xB0DFFF, hemiGround: 0x8FBC8F, hemiIntensity: 0.5,
-            envTint: 0x719C80, domeTint: 0xFFFFFF
+            envTint: 0x719C80, domeTint: 0xFFFFFF, ground: 'asphalt'
         },
         dawn: { // L1 新兵训练 — 柔和晨光
             sky: ['#5E9FD8', '#93C4E8', '#D8E8F2', '#F2F0EA'],
             fog: 0xDCEAF2, fogNear: 45, fogFar: 128,
             sunColor: 0xFFE8C8, sunIntensity: 0.68,
             hemiSky: 0xBADCF2, hemiGround: 0x8FBC8F, hemiIntensity: 0.52,
-            envTint: 0x7BA486, domeTint: 0xFFFFFF
+            envTint: 0x7BA486, domeTint: 0xFFFFFF, ground: 'asphalt'
         },
         noon: { // L2 快速尸潮 — 明快正午
             sky: ['#3E96DE', '#7FC4EE', '#CFE9F8', '#EAF6FB'],
             fog: 0xD8ECF6, fogNear: 48, fogFar: 135,
             sunColor: 0xFFFBE8, sunIntensity: 0.78,
             hemiSky: 0xBEE4FF, hemiGround: 0x94C49A, hemiIntensity: 0.5,
-            envTint: 0x6FA37C, domeTint: 0xFFFFFF
+            envTint: 0x6FA37C, domeTint: 0xFFFFFF, ground: 'asphalt'
         },
         overcast: { // L3 盾牌军团 — 阴云灰蓝(压抑感)
             sky: ['#5E7E9E', '#8FA9C2', '#C2D2DE', '#DDE6EC'],
             fog: 0xC2D2DE, fogNear: 38, fogFar: 118,
             sunColor: 0xE8EEF4, sunIntensity: 0.62,
             hemiSky: 0xA9BFD2, hemiGround: 0x7E9C84, hemiIntensity: 0.55,
-            envTint: 0x6E8A7A, domeTint: 0xFFFFFF
+            envTint: 0x6E8A7A, domeTint: 0xFFFFFF, ground: 'asphalt'
         },
         sunset: { // L4 变异尸潮 — 暖橙天际
             sky: ['#7E86C2', '#D8A678', '#F2CFA0', '#F8E4C2'],
             fog: 0xE8D2B2, fogNear: 42, fogFar: 125,
             sunColor: 0xFFD9A8, sunIntensity: 0.66,
             hemiSky: 0xD2C2E8, hemiGround: 0x9C9A6E, hemiIntensity: 0.5,
-            envTint: 0x9C9A6E, domeTint: 0xFFFFFF
+            envTint: 0x9C9A6E, domeTint: 0xFFFFFF, ground: 'asphalt'
         },
         dusk: { // L5 终局Boss — 暮色
             sky: ['#4E5E9E', '#8E7EA8', '#C8A2B2', '#E2C8C2'],
             fog: 0xD2BCC2, fogNear: 36, fogFar: 112,
             sunColor: 0xFFC8A0, sunIntensity: 0.58,
             hemiSky: 0x9EA2C8, hemiGround: 0x7E7C8E, hemiIntensity: 0.5,
-            envTint: 0x6E7C8E, domeTint: 0xFFFFFF
+            envTint: 0x6E7C8E, domeTint: 0xFFFFFF, ground: 'asphalt'
         },
         apocalypse: { // L6/L10 末日核心 — 兼容原 APOCALYPSE_THEME 视觉值
             sky: ['#6E4050', '#8A5060', '#A86870', '#C8A0A0'],
             fog: 0x5A3040, fogNear: 30, fogFar: 95,
             sunColor: 0xFFB0A0, sunIntensity: 0.55,
             hemiSky: 0x8A6070, hemiGround: 0x2E3A30, hemiIntensity: 0.5,
-            envTint: 0x3E5C43, domeTint: 0x8A5060
+            envTint: 0x3E5C43, domeTint: 0x8A5060, ground: 'cracked'
         },
         cave: { // L7 地下巢穴 — 深蓝绿洞穴
             sky: ['#0E2430', '#16323C', '#1E424A', '#2A545C'],
             fog: 0x142E38, fogNear: 26, fogFar: 88,
             sunColor: 0xA8D8D0, sunIntensity: 0.42,
             hemiSky: 0x2E5A5C, hemiGround: 0x1A2E28, hemiIntensity: 0.55,
-            envTint: 0x4A6A5C, domeTint: 0xFFFFFF
+            envTint: 0x4A6A5C, domeTint: 0xFFFFFF, ground: 'rock'
         },
         mechanical: { // L8 机械废土 — 铁灰锈橙
             sky: ['#4E5258', '#6E7076', '#8E8C86', '#A8A096'],
             fog: 0x8E8C86, fogNear: 34, fogFar: 108,
             sunColor: 0xFFE2C0, sunIntensity: 0.6,
             hemiSky: 0x9EA2A8, hemiGround: 0x6E6E6A, hemiIntensity: 0.48,
-            envTint: 0x7A7E82, domeTint: 0xFFFFFF
+            envTint: 0x7A7E82, domeTint: 0xFFFFFF, ground: 'metal'
         },
         fortress: { // L9 最终防线 — 冷钢蓝
             sky: ['#2E4E7E', '#4E6E9E', '#7E9EC2', '#B2C8DC'],
             fog: 0x8AA2B8, fogNear: 34, fogFar: 112,
             sunColor: 0xE2F0FF, sunIntensity: 0.62,
             hemiSky: 0x7E9EC8, hemiGround: 0x4A5E72, hemiIntensity: 0.5,
-            envTint: 0x5E7A8E, domeTint: 0xFFFFFF
+            envTint: 0x5E7A8E, domeTint: 0xFFFFFF, ground: 'concrete'
         }
     },
 

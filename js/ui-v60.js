@@ -534,6 +534,7 @@ var V60UI = {
         var currentDef = WEAPON_DEFS[current];
         if (currentDef && currentIndex >= 0) {
             hero.innerHTML =
+                '<div class="v14-weapon-3d" id="v14-weapon-3d"></div>' +
                 '<div class="v118-weapon-art" role="img" aria-label="' + currentDef.name + '" data-weapon="' + current + '"' +
                 ' data-atlas-cols="4" data-atlas-rows="2" data-atlas-col="' + (currentIndex % 4) + '" data-atlas-row="' + Math.floor(currentIndex / 4) + '"' +
                 ' style="--weapon-col:' + (currentIndex % 4) + ';--weapon-row:' + Math.floor(currentIndex / 4) + '"></div>' +
@@ -541,6 +542,11 @@ var V60UI = {
                 '<div class="v118-armory-hero-name">' + currentDef.icon + ' ' + currentDef.name + '</div>' +
                 '<div class="v118-armory-hero-level">强化等级 Lv.' + wLv + '</div>' +
                 '<div class="v118-armory-hero-stats">' + statTextOf(wStats) + '</div></div>';
+            // V14: 3D 武器展示台(H5; 微信/minidom 自动回退 SVG 图集)
+            var v14host = hero.querySelector('#v14-weapon-3d');
+            if (v14host && typeof WeaponShowcase !== 'undefined' && WeaponShowcase.mount(v14host, current)) {
+                hero.classList.add('v14-3d-ready');
+            }
         } else {
             hero.innerHTML = '';
         }

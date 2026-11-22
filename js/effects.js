@@ -162,6 +162,39 @@ class Effects {
         this.impacts.push(p);
     }
 
+    /** V14: 分级爆炸组合器 — 闪光+冲击波+火花+烟尘按档位组合(tier 1小/2普/3大/4Boss)
+     *  全部复用既有池(flash/shockwave/burst), 不新增材质/几何; 供自爆/Boss死亡/全屏爆炸接入 */
+    explosion(x, y, z, tier) {
+        var cfg = [
+            { flash: 1.0, ring: 0, sparks: 10, speed: 3.0, smoke: 0 },
+            { flash: 1.7, ring: 1, sparks: 16, speed: 4.2, smoke: 4 },
+            { flash: 2.4, ring: 1, sparks: 24, speed: 5.5, smoke: 7 },
+            { flash: 3.4, ring: 2, sparks: 34, speed: 7.0, smoke: 12 }
+        ][Math.max(0, Math.min(3, (tier | 0) - 1))];
+        if (!cfg) return;
+        this.flash(x, y, z, 0xFFC26B, cfg.flash);
+        for (var r = 0; r < cfg.ring; r++) this.shockwave(x, Math.max(0.06, y - r * 0.12), z, r ? 0xFFB055 : 0xFFE1A0);
+        // 火花: 橙芯+白热双层
+        this.burst(x, y, z, 0xFFA03C, Math.ceil(cfg.sparks * 0.7), cfg.speed, 0.5);
+        this.burst(x, y, z, 0xFFF3C0, Math.ceil(cfg.sparks * 0.3), cfg.speed * 0.7, 0.35);
+        // 烟尘: 深灰慢速上飘(vy低+重力自然衰减), 落点略有散布
+        for (var s = 0; s < cfg.smoke; s++) {
+            var p = this.pool.pop();
+            if (!p) break;
+            p.visible = true;
+            p.position.set(x + randRange(-0.4, 0.4), y + randRange(0, 0.5), z + randRange(-0.4, 0.4));
+            p.material.color.setHex(0x3A3F46);
+            p.material.opacity = 0.75;
+            var ss = randRange(1.6, 2.6);
+            p.scale.setScalar(ss);
+            p.userData = {
+                vx: randRange(-1, 1) * 0.9, vy: randRange(0.9, 1.8), vz: randRange(-1, 1) * 0.9,
+                life: randRange(0.55, 0.85), maxLife: 0.8, s0: ss, smoke: true
+            };
+            this.particles.push(p);
+        }
+    }
+
     /** 生成粒子爆发 */
     burst(x, y, z, color, count, speed, life) {
         count = count || 8;
@@ -260,7 +293,7 @@ class Effects {
     }
 
     /** 枪口闪光 (星形+加法混合发光) */
-    muzzleFlash(x, y, z) {
+    muzzleFlash(x, y, z, sizeMul) {
         // 惰性创建星形闪光纹理
         if (!this._muzzleTex) {
             var c = document.createElement('canvas');
@@ -296,7 +329,7 @@ class Effects {
         flash.position.set(x, y, z);
         flash.visible=true;flash.material.opacity=.95;
         flash.material.rotation = Math.random() * Math.PI; // V12视觉: 随机滚转, 齐射时火光不重复
-        var mfScale = randRange(0.42, 0.52);
+        var mfScale = randRange(0.42, 0.52) * (sizeMul || 1); // V14: 重型武器火焰放大
         flash.scale.set(mfScale, mfScale, 1); // V3.7: 枪口火焰更醒目
         this.scene.add(flash);
         this.flashes.push({ mesh: flash, life: 0.07, maxLife: 0.07 });
@@ -375,11 +408,13 @@ class Effects {
                 this.particles.splice(i, 1);
                 continue;
             }
-            u.vy -= 7 * dt;
+            // V14: 烟尘粒子 buoyancy(缓升缓散), 与火花(重力弹跳)区分
+            u.vy -= (u.smoke ? -0.5 : 7) * dt;
+            if (u.smoke) u.vx *= (1 - 0.8 * dt);
             p.position.x += u.vx * dt;
             p.position.y += u.vy * dt;
             p.position.z += u.vz * dt;
-            if (p.position.y < 0.03) {
+            if (p.position.y < 0.03 && !u.smoke) {
                 p.position.y = 0.03;
                 u.vy *= -0.25;
                 u.vx *= 0.7;
