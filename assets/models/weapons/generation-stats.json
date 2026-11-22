@@ -6,42 +6,42 @@
     {
       "id": "rifle",
       "name": "标准步枪",
-      "bytes": 7436
+      "bytes": 5396
     },
     {
       "id": "shotgun",
       "name": "散弹枪",
-      "bytes": 5888
+      "bytes": 5368
     },
     {
       "id": "sniper",
       "name": "狙击枪",
-      "bytes": 7524
+      "bytes": 6112
     },
     {
       "id": "mg",
       "name": "机枪",
-      "bytes": 7468
+      "bytes": 6104
     },
     {
       "id": "flamethrower",
       "name": "火焰喷射器",
-      "bytes": 6140
+      "bytes": 3948
     },
     {
       "id": "rocket",
       "name": "火箭炮",
-      "bytes": 8804
+      "bytes": 5644
     },
     {
       "id": "freeze",
       "name": "冰冻枪",
-      "bytes": 6900
+      "bytes": 3936
     },
     {
       "id": "tesla",
       "name": "电磁枪",
-      "bytes": 7700
+      "bytes": 4016
     }
   ]
 }

@@ -246,8 +246,10 @@ class World {
                 patch.translate(side2 * randRange(6.5, 10.5), -0.015, randRange(-4, 4));
                 grassGeoList.push(colorize(patch, grassLight.clone().lerp(grassBase, 0.35)));
             }
-            var groundMesh = new THREE.Mesh(mergeGeometries(grassGeoList),
-                new THREE.MeshLambertMaterial({ vertexColors: true }));
+            var grassMat = new THREE.MeshLambertMaterial({ vertexColors: true });
+            // V14.3: 草地噪点贴图(与顶点色相乘, 提升地面材质质量; 共享单张纹理)
+            if (typeof V42Art !== 'undefined' && V42Art.getGrassTexture) grassMat.map = V42Art.getGrassTexture();
+            var groundMesh = new THREE.Mesh(mergeGeometries(grassGeoList), grassMat);
             groundMesh.receiveShadow = true;
             seg.add(groundMesh);
 

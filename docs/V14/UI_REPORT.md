@@ -6,3 +6,8 @@
 - 排行榜/科技树/装备/成就/每日/设置/结算/暂停/加载: V13 已达标, 本轮全量截图复核
   无回归(screenshots/09-19)。
 - 设计系统: 全部沿用 V13 Navy/Gold + v130 动效令牌, 无新增风格分支。
+
+## V14.2 补充(第二轮)
+
+- 首页顶栏静态图标(奖杯/补给/金币/升级)→ 原创 SVG(13px, currentColor);
+- 踩坑记录: art-v42 makeElement 使用 textContent, SVG 字符串必须走 innerHTML。

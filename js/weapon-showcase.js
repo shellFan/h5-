@@ -66,7 +66,7 @@ var WeaponShowcase = {
         var scene = new THREE.Scene();
         var camera = new THREE.PerspectiveCamera(32, w / h, 0.05, 10);
         // 三点布光: 主光暖白 + 冷色补光 + 金色轮辋光(呼应 Navy/Gold 设计系统)
-        var key = new THREE.DirectionalLight(0xFFF2DC, 1.05); key.position.set(1.5, 2.2, 1.6); scene.add(key);
+        var key = new THREE.DirectionalLight(0xFFF2DC, 1.2); key.position.set(1.5, 2.2, 1.6); scene.add(key);
         var fill = new THREE.DirectionalLight(0x9EC3E8, 0.5); fill.position.set(-2.2, 0.2, 1.4); scene.add(fill);
         var up = new THREE.DirectionalLight(0xFFE2B0, 0.35); up.position.set(0, -1.6, 0.8); scene.add(up);
         var rim = new THREE.DirectionalLight(0xFFC247, 0.8); rim.position.set(-0.6, 1.6, -2.4); scene.add(rim);
@@ -98,7 +98,7 @@ var WeaponShowcase = {
             if (self._active !== state || !state.canvas.isConnected) return;
             var clone = model.mesh.clone();
             clone.material = model.mesh.material; // 共享材质(GLB 自带), 不逐实例复制
-            clone.material.envMapIntensity = 0.45; // 环境反射降档防曝白
+            clone.material.envMapIntensity = 0.58; // 环境反射降档防曝白
             var group = new THREE.Group();
             // 归一化: 居中 + 按最长边缩放到 ~1.4 单位, 枪口朝向镜头左前(经典展示角)
             var maxDim = Math.max(model.size.x, model.size.y, model.size.z) || 1;
@@ -106,17 +106,17 @@ var WeaponShowcase = {
             clone.position.set(-model.center.x, -model.center.y, -model.center.z);
             group.add(clone);
             group.scale.setScalar(s);
-            group.rotation.set(0.0, -0.95, 0);
+            group.rotation.set(0.0, -0.35, 0);
             state.mesh = group;
             scene.add(group);
-            var dist = 2.15;
-            camera.position.set(1.3, 0.95, dist);
+            var dist = 1.78;
+            camera.position.set(1.5, 1.12, dist);
             camera.lookAt(0, -0.04, 0);
             var loop = function() {
                 if (!state.canvas.isConnected || self._active !== state) return; // 断开即停
                 state.t += 0.016;
                 if (state.mesh) {
-                    state.mesh.rotation.y = -0.95 + Math.sin(state.t * 0.8) * 0.38; // 缓慢摆动展示
+                    state.mesh.rotation.y = -0.35 + Math.sin(state.t * 0.8) * 0.35; // 缓慢摆动展示
                     state.mesh.position.y = Math.sin(state.t * 1.3) * 0.035;        // 悬浮呼吸
                 }
                 renderer.render(scene, camera);

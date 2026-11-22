@@ -108,8 +108,29 @@ var EnemyModelLoader = class EnemyModelLoader {
 EnemyModelLoader.PARTS=['Body','Head','Arms','LegL','LegR'];
 EnemyModelLoader.KEYS=['normal','fast','shield','split','spitter','elite','bruiser','bulwark','spitking','hivelord','titan','overlord'];
 EnemyModelLoader.status='idle';EnemyModelLoader.loadMs=0;
+// V14.2: Boss 造型辨识表 — 每型专属染色/体态/入场特效色(表现层; GLB 资产不动)。
+// 解决 hivelord/titan 等实机同形同色不可辨识的问题(逐型实机截图审计)。
+EnemyModelLoader.BOSS_PRESENTATION={
+    bruiser:  { tint:[1,1,1],          fx:0xFF8A4A },
+    bulwark:  { tint:[0.88,1.02,1.22], fx:0x57CFFF },
+    hivelord: { tint:[1.18,1.28,0.72], fx:0xA8E84A,
+                bodyScale:[1.30,1.02,1.30], headScale:[0.94,0.92,0.94], attach:'sacs' },
+    overlord: { tint:[1.12,0.82,1.38], fx:0xB26AE8,
+                bodyScale:[1.08,1.06,1.08], attach:'horns' },
+    spitking: { tint:[1.22,1.32,0.68], fx:0xC8E84A },
+    titan:    { tint:[0.86,0.92,0.98], fx:0x9AA8B4,
+                bodyScale:[1.26,1.14,1.26], headScale:[0.84,0.82,0.84], attach:'plates' }
+};
 // V14: 感染者外观变体 — 确定性实例染色族(乘法系数, 以e.phase为种子, 同一怪每帧一致)。
 // 只做轻微色偏保持贴图质感与全局风格统一; 精英/自爆/冰冻等状态染色在其后覆盖。
+// V14.2: 体型 Rig 侧影家族 — 解决"变体只是颜色不同": 壮硕/驼背/瘦长/标准
+// (仅躯干/头/臂, 腿不动防悬空; 与附件/染色正交叠加)
+EnemyModelLoader.BODY_RIGS={
+    standard:{ bodyW:1,    bodyH:1,    pitch:0,    armW:1,    armH:1,    headS:1,    headPitch:0    },
+    brute:   { bodyW:1.22, bodyH:1.04, pitch:0.06, armW:1.30, armH:1.04, headS:0.92, headPitch:0.05 },
+    huncher: { bodyW:1.06, bodyH:0.90, pitch:0.30, armW:1.02, armH:0.94, headS:1.0,  headPitch:0.34 },
+    wiry:    { bodyW:0.88, bodyH:1.10, pitch:0.04, armW:0.82, armH:1.14, headS:0.96, headPitch:0.02 }
+};
 EnemyModelLoader.VARIANT_TINTS={
     normal:[[1,1,1],[1.08,.96,.88],[.89,1.06,.92],[.96,.98,1.12],[1.02,1.06,.82]],
     fast:  [[1,1,1],[1.12,.92,.84],[.90,1.03,.90],[1.04,1.00,.88]],
@@ -132,6 +153,7 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
     }
     /** V14: 附件几何(头局部空间) — 程序化军盔/便帽/肩甲, 全部共享单材质(顶点色) */
     static _accGeometry(name) {
+        if (name === 'sacs' || name === 'horns' || name === 'plates') return EnemyArmyRenderer._bossAccGeometry(name);
         if (EnemyArmyRenderer._accGeos && EnemyArmyRenderer._accGeos[name]) return EnemyArmyRenderer._accGeos[name];
         if (!EnemyArmyRenderer._accGeos) EnemyArmyRenderer._accGeos={};
         var geos=[], mat;
@@ -156,10 +178,10 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
         EnemyArmyRenderer._accGeos[name] = { geo: merged, matParams: mat };
         return EnemyArmyRenderer._accGeos[name];
     }
-    _accBank(style, lod, name) {
+    _accBank(style, lod, name, geoKey) {
         var key = style + ':' + lod + ':' + name;
         if (this.accBanks[key]) return this.accBanks[key];
-        var acc = EnemyArmyRenderer._accGeometry(name);
+        var acc = EnemyArmyRenderer._accGeometry(geoKey || name);
         var mat = new THREE.MeshLambertMaterial(acc.matParams);
         mat.color.setHex(0xFFFFFF);
         var mesh = new THREE.InstancedMesh(acc.geo, mat, EnemyArmyRenderer.ACC_MAX || 448);
@@ -206,6 +228,9 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
             var walk=e.dying?0:Math.sin(phase)*(.45*(e.frozenT>0?.3:1));
             var attack=e.attackT||0,charge=e.chargeT||0;
             this._color.setRGB(1,1,1);
+            // V14.2: Boss 造型辨识染色(先于阶段/冰冻/受击覆盖)
+            var bp = e.isBoss ? EnemyModelLoader.BOSS_PRESENTATION[style] : null;
+            if (bp) this._color.setRGB(bp.tint[0], bp.tint[1], bp.tint[2]);
             // V14: 外观变体族染色(确定性, e.phase为种子; 精英/自爆/冰冻等状态染色随后覆盖)
             var tints=EnemyModelLoader.VARIANT_TINTS[style];
             if(tints && !e.isBoss && e.type!=='elite' && e.type!=='bomber') {
@@ -220,8 +245,11 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
             else if(e.phaseIndex===2)this._color.setRGB(1.12,.85,1.2);
             if(e.hitFlash>0)this._color.setRGB(2.8,2.4,1.8);
             // V14: 轮廓变体 — 体宽±5% + 前倾±9°(只动躯干/头/臂, 腿不动避免脚底悬空)
-            var vw=1,lean=0;
+            // V14.2: 体型 Rig 侧影家族 — 四种骨架姿态, 变体不再只有颜色差
+            var vw=1,lean=0,rig=EnemyModelLoader.BODY_RIGS.standard;
             if(!e.isBoss && e.type!=='elite' && !e.dying) {
+                var rigPool = (style==='fast') ? ['wiry','huncher','standard'] : (style==='shield'||style==='split') ? ['brute','standard'] : ['standard','brute','huncher','wiry'];
+                rig = EnemyModelLoader.BODY_RIGS[rigPool[Math.floor(((e.phase||0)*17.77)%1*rigPool.length)%rigPool.length]] || rig;
                 vw=1+((((e.phase||0)*5.51)%1)-0.5)*0.10;
                 lean=((((e.phase||0)*9.13)%1)-0.5)*0.18;
             }
@@ -231,16 +259,24 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
                 else if(part==='Arms') {
                     this._e.set(-.12-Math.sin(phase)*.05-attack*.65-charge*.4+lean*.5,0,Math.sin(phase)*.04);
                     this._pose.makeRotationFromEuler(this._e);
+                    this._pose.scale(this._v14.set(rig.armW,rig.armH,rig.armW));
                 } else if(part==='Head') {
-                    this._e.set(charge*.12+lean*.6,Math.sin(phase*.5)*.09,Math.sin(phase)*.025);
+                    this._e.set(charge*.12+lean*.6+rig.headPitch,Math.sin(phase*.5)*.09,Math.sin(phase)*.025);
                     this._pose.makeRotationFromEuler(this._e);
+                    var hs = bp ? bp.headScale : null;
+                    if (hs) this._pose.scale(this._v14.set(hs[0],hs[1],hs[2]));
+                    else this._pose.scale(this._v14.set(rig.headS,rig.headS,rig.headS));
                 } else if(part==='Body'&&e.isBoss) {
-                    this._pose.makeScale(1+charge*.035,1+charge*.05,1+charge*.035);
+                    var bs = bp && bp.bodyScale;
+                    this._pose.makeScale(
+                        (bs ? bs[0] : 1) * (1+charge*.035),
+                        (bs ? bs[1] : 1) * (1+charge*.05),
+                        (bs ? bs[2] : 1) * (1+charge*.035));
                 } else if(part==='Body') {
-                    // V14: 躯干宽度变体+前倾(感染者驼背/壮硕差异)
-                    this._e.set(lean,0,0);
+                    // V14+V14.2: 躯干宽度变体+前倾+Rig 侧影
+                    this._e.set(lean + rig.pitch,0,0);
                     this._pose.makeRotationFromEuler(this._e);
-                    this._pose.scale(this._v14.set(vw,1,vw));
+                    this._pose.scale(this._v14.set(vw*rig.bodyW,rig.bodyH,vw*rig.bodyW));
                 }
                 this._matrix.copy(this._root).multiply(bank.source.restMatrices[part]).multiply(this._pose);
                 bank.meshes[part].setMatrixAt(slot,this._matrix);
@@ -267,10 +303,11 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
                 e._v14EntranceFx=true;
                 var g=typeof window!=='undefined'?window.__game:null;
                 if(g && g.effects && g.world && !e.dying) {
+                    var fx = bp ? bp.fx : 0xFF6A55;
                     g.world.shake(.5);
-                    g.effects.shockwave(e.x,.06,e.z,0xFF5A4E);
-                    g.effects.flash(e.x,1.6,e.z,0xFF6A55,2.8);
-                    g.effects.burst(e.x,1.3,e.z,0xFF6A55,20,4.6,.7);
+                    g.effects.shockwave(e.x,.06,e.z,fx);
+                    g.effects.flash(e.x,1.6,e.z,fx,2.8);
+                    g.effects.burst(e.x,1.3,e.z,fx,20,4.6,.7);
                     g.effects.burst(e.x,.4,e.z,0x3A3F46,10,2.2,1.0);
                 }
             }
@@ -306,6 +343,48 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
         if(style==='shield')return r<0.5?'pauldron':null;
         if(style==='split')return r<0.35?'pauldron':null;
         return null;
+    }
+    /** V14.2: Boss 附件几何(back-sacs 背囊 / horns 双角 / plates 肩甲) */
+    static _bossAccGeometry(name) {
+        if (EnemyArmyRenderer._bossAccGeos && EnemyArmyRenderer._bossAccGeos[name]) return EnemyArmyRenderer._bossAccGeos[name];
+        if (!EnemyArmyRenderer._bossAccGeos) EnemyArmyRenderer._bossAccGeos = {};
+        var parts = [], matParams;
+        if (name === 'sacs') {
+            parts.push(colorize(new THREE.SphereGeometry(0.24, 8, 6), 0x9ADE3E).translate(-0.26, 0.42, -0.16));
+            parts.push(colorize(new THREE.SphereGeometry(0.29, 8, 6), 0x8AD03A).translate(0, 0.5, -0.2));
+            parts.push(colorize(new THREE.SphereGeometry(0.22, 8, 6), 0x9ADE3E).translate(0.26, 0.4, -0.16));
+            matParams = { color: 0xFFFFFF, roughness: 0.55, vertexColors: true };
+        } else if (name === 'horns') {
+            parts.push(colorize(new THREE.ConeGeometry(0.075, 0.34, 6), 0x3A2440).translate(-0.17, 0.2, 0).rotateZ(0.5));
+            parts.push(colorize(new THREE.ConeGeometry(0.075, 0.34, 6), 0x3A2440).translate(0.17, 0.2, 0).rotateZ(-0.5));
+            matParams = { color: 0xFFFFFF, roughness: 0.4, metalness: 0.3, vertexColors: true };
+        } else if (name === 'plates') {
+            parts.push(colorize(new THREE.BoxGeometry(0.3, 0.16, 0.34), 0x5E6A70).translate(-0.34, 0.42, 0).rotateZ(0.12));
+            parts.push(colorize(new THREE.BoxGeometry(0.3, 0.16, 0.34), 0x5E6A70).translate(0.34, 0.42, 0).rotateZ(-0.12));
+            matParams = { color: 0xFFFFFF, roughness: 0.6, metalness: 0.35, vertexColors: true };
+        }
+        var merged = mergeGeometries(parts);
+        merged.userData = { artSource: 'V14.2 boss attachment procedural: ' + name };
+        EnemyArmyRenderer._bossAccGeos[name] = { geo: merged, matParams: matParams };
+        return EnemyArmyRenderer._bossAccGeos[name];
+    }
+    /** V14.2: Boss 附件局部矩阵(Body/头 局部空间), sacs 附带呼吸脉动 */
+    static _bossAccLocal(name, time, z) {
+        if (!EnemyArmyRenderer._bossAccLocals) EnemyArmyRenderer._bossAccLocals = {};
+        var cached = EnemyArmyRenderer._bossAccLocals[name];
+        if (name === 'sacs') {
+            var pulse = 1 + Math.sin(time * 2.4 + (z || 0) * 1.7) * 0.06;
+            cached = cached || new THREE.Matrix4();
+            cached.makeScale(pulse, pulse, pulse);
+            EnemyArmyRenderer._bossAccLocals[name] = cached;
+            return cached;
+        }
+        if (!cached) {
+            cached = new THREE.Matrix4();
+            if (name === 'horns') cached.setPosition(0, 0.22, 0);
+            EnemyArmyRenderer._bossAccLocals[name] = cached;
+        }
+        return cached;
     }
     /** V14: 附件局部偏移(预建, 热循环零分配) — 头顶/躯干肩位 */
     static _accLocal(name) {

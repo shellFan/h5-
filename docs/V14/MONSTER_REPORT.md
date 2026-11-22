@@ -22,3 +22,13 @@ GLB 资产(V12)保留; 入场演出钩子(spawnT 完成: 震屏+冲击波+爆闪
 ## 动画
 保留刚性部件动画(腿部摆动/挥臂/头部晃动/受击缩放冲击); 相位由 e.phase 决定,
 大量怪物不会同相位 ✓(既有机制确认)。
+
+## V14.2 补充(第二轮)
+
+- **Boss 造型辨识表** BOSS_PRESENTATION: 六型专属染色/体态/附件/入场特效色;
+  逐型实机截图确认独立造型(bruiser 橙拳/bulwark 钢盾/hivelord 紫胀腹+背囊/
+  overlord 紫黑+双角/spitking 酸绿/titan 灰甲白角巨人)。
+- **僵尸体型 Rig** BODY_RIGS: standard/brute/huncher/wiry 四族骨架姿态,
+  fast=wiry 偏多, shield/split=brute 偏多; 彻底解决"变体只是颜色不同"。
+- **审计披露**: Boss GLB 异步续载未就绪时以 normal 模型渲染(V12 既有行为,
+  数秒后自行换回; 探针与验收必须等待 EnemyModelLoader.get().styles[style] 就绪)。

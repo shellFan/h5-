@@ -33,3 +33,10 @@
 
 ## 遗留问题
 见 V14_MASTER_REPORT.md §4(5 项, 全部如实未伪装)。
+
+## V14.2/V14.3 回归(第二三轮实测)
+
+全部套件复跑全绿(unit 102 · e2e 29 · combat-feedback 11 · ui-v118 7 · v51 39 ·
+vnext-boss 124 · mobile 29 · 微信 20/20 · H5/抖音构建通过)。
+Boss GLB 异步续载与渲染回退的审计披露见 MONSTER_REPORT(测试探针已加入就绪等待)。
+soak(最终轮)见 logs/soak-run.log。

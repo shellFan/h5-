@@ -177,3 +177,8 @@ html.v13-reduced-motion *, html.v13-reduced-motion *::before, html.v13-reduced-m
 
 /* V14: 首页宫格 SVG 图标统一规格 */
 .v60-nav-btn svg { width: 14px; height: 14px; vertical-align: -2.5px; margin-right: 4px; opacity: 0.92; }
+
+/* V14.2: 首页顶栏 SVG 图标规格 */
+.v14-tb-icon { width: 13px; height: 13px; vertical-align: -2.5px; margin-right: 2px; }
+.v51-coin-pill .v14-coin-icon { color: #FFC247; }
+.v51-coin-pill .v14-coin-icon .v14-coin-mark { stroke-width: 1.6; }

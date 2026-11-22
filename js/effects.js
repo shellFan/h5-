@@ -330,7 +330,8 @@ class Effects {
         flash.visible=true;flash.material.opacity=.95;
         flash.material.rotation = Math.random() * Math.PI; // V12视觉: 随机滚转, 齐射时火光不重复
         var mfScale = randRange(0.42, 0.52) * (sizeMul || 1); // V14: 重型武器火焰放大
-        flash.scale.set(mfScale, mfScale, 1); // V3.7: 枪口火焰更醒目
+        flash.scale.set(mfScale, mfScale, 1);
+        flash.userData.baseScale = mfScale; // V14.3 节奏: 峰值基准 // V3.7: 枪口火焰更醒目
         this.scene.add(flash);
         this.flashes.push({ mesh: flash, life: 0.07, maxLife: 0.07 });
     }
@@ -460,7 +461,7 @@ class Effects {
                 continue;
             }
             const t = 1 - sw.life / sw.maxLife;
-            const scale = 1 + t * 5;
+            const scale = 1 + easeOutCubic(t) * 5; // V14.3 节奏: 快出慢收(easeOut), 冲击感前置
             sw.mesh.scale.setScalar(scale);
             sw.mesh.material.opacity = 0.8 * (1 - t);
         }
@@ -479,7 +480,8 @@ class Effects {
             }
             const t = f.life / f.maxLife;
             f.mesh.material.opacity = t * 0.95;
-            var sc = 0.48 + (1 - t) * 0.55; // V3.7
+            // V14.3 节奏修正: 枪口火焰=瞬时峰值→衰减(旧曲线出生最小→长大, 与闪光语义相反)
+            var sc = (f.baseScale || 0.48) * (1.18 - t * 0.42);
             f.mesh.scale.set(sc, sc, 1);
         }
 
@@ -518,7 +520,8 @@ class Effects {
             }
             var bt = bm.life / bm.maxLife;
             bm.mesh.material.opacity = bt;
-            bm.mesh.scale.setScalar(bm.size * (0.55 + (1 - bt) * 0.6));
+            // V14.3 节奏: 白闪瞬时峰值(出生 1.25×)后收缩淡出
+            bm.mesh.scale.setScalar(bm.size * (1.25 - bt * 0.38));
         }
 
         this.particleMesh.count=this.particles.length;

@@ -580,6 +580,32 @@
         }
     };
 
+    /** V14.3: 草地噪点纹理 — 灰度细噪+修剪条纹, 与顶点色相乘提升地面质感(共享单张) */
+    var _grassTex = null;
+    V42Art.getGrassTexture = function () {
+        if (_grassTex) return _grassTex;
+        var cv = document.createElement('canvas');
+        cv.width = 128; cv.height = 128;
+        var ctx = cv.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, 128, 128);
+        for (var i = 0; i < 900; i++) {
+            var v = Math.random();
+            ctx.fillStyle = v < 0.5 ? 'rgba(120,160,90,0.16)' : 'rgba(255,255,255,0.12)';
+            ctx.fillRect(Math.random() * 128, Math.random() * 128, 2 + Math.random() * 2, 1 + Math.random() * 2);
+        }
+        // 修剪条纹(横向明暗带)
+        for (var b2 = 0; b2 < 4; b2++) {
+            ctx.fillStyle = b2 % 2 ? 'rgba(255,255,255,0.06)' : 'rgba(40,70,30,0.08)';
+            ctx.fillRect(0, b2 * 32, 128, 16);
+        }
+        var tex = new THREE.CanvasTexture(cv);
+        tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(4, 2);
+        _grassTex = tex;
+        return tex;
+    };
+
     /** V14: 主题地面纹理 — 程序化生成并缓存(柏油/龟裂/岩面/金属板/混凝土), 含三车道虚线保持跑道可读 */
     var _groundTexCache = {};
     V42Art.getGroundTexture = function (kind) {
@@ -718,7 +744,7 @@
             transparent: true, opacity: 0.92, fog: false
         });
 
-        var roadside = makeRecords(54, function (i) {
+        var roadside = makeRecords(76, function (i) {
             var side = i % 2 ? 1 : -1;
             return { x: side * (4.8 + random() * .4), y: 0, z: 10 - i * 3.08 + random() * .5, s: side };
         });
@@ -747,7 +773,7 @@
         addInstancedCategory(env, 'barriers', roundedRectGeometry(0.96, 0.27, 0.07, 0.14), cream,
             propBase.filter(function (_, i) { return i % 3 === 2; }).map(function (r) { return { x: r.x, y: 0.42, z: r.z, ry: r.s > 0 ? -0.15 : 0.15 }; }), { castShadow: true });
 
-        var buildings = makeRecords(44, function (i) {
+        var buildings = makeRecords(50, function (i) {
             var side = i % 2 ? 1 : -1;
             var h = 3.4 + random() * 4.6;
             var w = 2.4 + random() * 1.2;
@@ -849,6 +875,20 @@
             cxPanels.push(rec(hSide * 4.6, 0.26, hz, 0.16, 0.5, 0.2));
             cxGlow.push(rec(hSide * 4.6, 0.55, hz, 0.1, 0.12, 0.1));
         }
+        // 跨街横幅(高空, 城市族街道峡谷感): 门柱+旗面×2色
+        var banFrames = [], banClothA = [], banClothB = [];
+        for (var bn = 0; bn < 4; bn++) {
+            var bz = -10 - bn * 38;
+            banFrames.push(rec(-4.6, 3.1, bz, 0.08, 1.0, 0.08));
+            banFrames.push(rec(4.6, 3.1, bz, 0.08, 1.0, 0.08));
+            if (bn % 2 === 0) { banClothA.push(rec(0, 3.62, bz, 9.4, 0.5, 0.04)); }
+            else { banClothB.push(rec(0, 3.62, bz, 9.4, 0.5, 0.04)); }
+        }
+        addInstancedCategory(env, 'cityx-banner-frames', box, makeCityMaterial(0x3A4652, { roughness: 0.5, metalness: 0.3 }), banFrames, { themes: CITY_ALIVE });
+        var clothA = makeCityMaterial(0x2E4A6E, { roughness: 0.85 }); clothA.map = facade;
+        var clothB = makeCityMaterial(0x8E4A42, { roughness: 0.85 }); clothB.map = facade;
+        addInstancedCategory(env, 'cityx-banner-a', box, clothA, banClothA, { themes: CITY_ALIVE });
+        addInstancedCategory(env, 'cityx-banner-b', box, clothB, banClothB, { themes: CITY_ALIVE });
         addInstancedCategory(env, 'cityx-frames', box, makeCityMaterial(0x2E3A42, { roughness: 0.5, metalness: 0.3 }), cxFrames, { themes: CITY_ALIVE, castShadow: true });
         addInstancedCategory(env, 'cityx-panels', box, makeCityMaterial(0x9AAFA8), cxPanels, { themes: CITY_ALIVE, castShadow: true });
         var cityxGlowMat = new THREE.MeshBasicMaterial({ color: 0xFFE9A8, toneMapped: false }); cityxGlowMat.__noThemeTint = true;
@@ -856,13 +896,13 @@
 
         // —— 末日废墟(apocalypse): 坍塌楼板/瓦砾堆/烧毁车壳/余烬 ——
         var apoSlabs = [], apoRubble = [], apoWrecks = [], apoEmbers = [];
-        for (var ai = 0; ai < 9; ai++) {
+        for (var ai = 0; ai < 12; ai++) {
             var aSide = ai % 2 ? 1 : -1, az = 4 - ai * 19 + random() * 6;
             apoSlabs.push(rec(aSide * (5.7 + random() * 1.4), 0.9 + random() * 0.6, az, 2.8 + random() * 2.0, 0.6, 3.6 + random() * 1.8, random() * 1.2, (random() - 0.5) * 0.3, (random() - 0.5) * 0.24));
             for (var rb = 0; rb < 5; rb++) {
                 apoRubble.push(rec(aSide * (4.85 + random() * 2.4), 0.18 + random() * 0.26, az + random() * 6 - 3, 0.5 + random() * 0.9, 0.3 + random() * 0.55, 0.5 + random() * 0.9, random() * TAU));
             }
-            if (ai % 2 === 0) {
+            if (ai % 2 === 0 || ai % 3 === 1) {
                 apoWrecks.push(rec(aSide * 5.3, 0.3, az + 2.4, 0.95, 0.6, 2.0, random() * 0.5 - 0.25, 0, (random() - 0.5) * 0.14));
                 apoEmbers.push(rec(aSide * 5.3, 0.62, az + 2.0, 0.3, 0.1, 0.5));
             }
@@ -892,7 +932,7 @@
 
         // —— 机械废土(mechanical): 管线/机甲残骸/能源塔/金属碎板 ——
         var mechPipes = [], mechFrames = [], mechWrecks = [], mechStrips = [], mechDebris = [];
-        for (var mi2 = 0; mi2 < 10; mi2++) {
+        for (var mi2 = 0; mi2 < 14; mi2++) {
             var mSide = mi2 % 2 ? 1 : -1, mz = 6 - mi2 * 17 + random() * 6;
             mechPipes.push(rec(mSide * 5.1, 0.95 + random() * 0.3, mz, 0.18, 0.18, 4.2 + random() * 2));
             mechPipes.push(rec(mSide * 5.4, 0.5, mz - 1.4, 0.14, 1.0, 0.14));
@@ -946,6 +986,16 @@
         addInstancedCategory(env, 'fort-tank-hulls', roundedRectGeometry(1, 1, 0.1, 1), makeCityMaterial(0x4A5A50, { roughness: 0.6, metalness: 0.4 }), fortHulls, { themes: ['fortress'], castShadow: true });
         addInstancedCategory(env, 'fort-tank-turrets', box, makeCityMaterial(0x3E4E44, { roughness: 0.55, metalness: 0.5 }), fortTurrets, { themes: ['fortress'], castShadow: true });
         addInstancedCategory(env, 'fort-sandbags', box, makeCityMaterial(0x9A8E6A, { roughness: 0.95 }), fortSandbags, { themes: ['fortress'], castShadow: true });
+
+        // —— 城市斑马线(路面层次, 城市族): 每~44单位一组白色横道, 1 drawCall ——
+        var crosswalks = [];
+        for (var cw = 0; cw < 4; cw++) {
+            var cwz = 12 - cw * 44;
+            for (var cst = 0; cst < 5; cst++) {
+                crosswalks.push(rec(-2.8 + cst * 1.4, 0.012, cwz, 0.85, 1, 0.4));
+            }
+        }
+        addInstancedCategory(env, 'cityx-crosswalk', box, new THREE.MeshBasicMaterial({ color: 0xD8DCE0 }), crosswalks, { themes: CITY_ALIVE });
 
         // —— 远景剪影(各主题地平线补白, 每主题一类别, 1 drawCall) ——
         var distantSil = makeRecords(26, function (i) {
@@ -1052,24 +1102,31 @@
         if (startPanel && !document.getElementById('v42-home-top')) {
             var homeTop = makeElement('div', 'v42-home-top');
             homeTop.id = 'v42-home-top';
-            var best = makeElement('span', 'v42-best-record', '🏆 最高纪录: 第1关');
+            // V14.2: 顶栏静态图标替换系统Emoji(原创SVG, currentColor, 与宫格图标同规格)
+            var ICON = function (paths, cls) {
+                return '<svg class="v14-tb-icon ' + (cls || '') + '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
+            };
+            var best = makeElement('span', 'v42-best-record', '');
             best.id = 'v42-best-record';
+            best.innerHTML = ICON('<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/><path d="M12 14v3M9 21h6M10 18h4v3h-4z"/>') + ' <span class="v42-best-text">最高纪录: 第1关</span>';
             var soundBtn = makeElement('button', 'v42-home-sound', '🔊');
             soundBtn.id = 'btn-home-sound';
             soundBtn.setAttribute('aria-label', '音效开关');
             // V5.1: 金币 + 升级商店 + 免费补给
             var left = makeElement('div', 'v42-home-left');
             left.appendChild(best);
-            var supplyBtn = makeElement('button', 'v51-supply-btn', '🎁 免费补给');
+            var supplyBtn = makeElement('button', 'v51-supply-btn', '');
+            supplyBtn.innerHTML = ICON('<rect x="4" y="9" width="16" height="12" rx="1.6"/><path d="M4 12h16M12 9v12M8.5 9c-2 0-3-1-3-2.4C5.5 5 7 4.6 8.2 5.2L12 9l3.8-3.8C17 4.6 18.5 5 18.5 6.6 18.5 8 17.5 9 15.5 9"/>') + ' 免费补给';
             supplyBtn.id = 'btn-free-supply';
             supplyBtn.setAttribute('aria-label', '每日免费补给(广告)');
             left.appendChild(supplyBtn);
             homeTop.appendChild(left);
             var right = makeElement('div', 'v42-home-right');
             var coinPill = makeElement('span', 'v51-coin-pill');
-            coinPill.innerHTML = '🪙 <b data-coin-display>0</b>';
+            coinPill.innerHTML = ICON('<circle cx="12" cy="12" r="8.2"/><path d="M12 7.5v9M14.8 9.2c-.7-.9-1.7-1.3-2.8-1.3-1.6 0-2.9 1-2.9 2.2 0 2.6 5.8 1.5 5.8 4 0 1.3-1.3 2.2-2.9 2.2-1.1 0-2.1-.4-2.8-1.3" class="v14-coin-mark"/>', 'v14-coin-icon') + ' <b data-coin-display>0</b>';
             right.appendChild(coinPill);
-            var shopBtn = makeElement('button', 'v51-shop-btn', '⬆ 升级');
+            var shopBtn = makeElement('button', 'v51-shop-btn', '');
+            shopBtn.innerHTML = ICON('<path d="M12 19V6M6.5 11.5 12 6l5.5 5.5"/>') + ' 升级';
             shopBtn.id = 'btn-open-shop';
             right.appendChild(shopBtn);
             right.appendChild(soundBtn);

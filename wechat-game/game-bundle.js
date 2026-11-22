@@ -1,5 +1,5 @@
 // ===== game-bundle.js (V12 微信小游戏构建产物: 单一模块作用域, 源脚本按 index.html 顺序拼接) =====
-// 生成: tools/build-wechat.js @ 2026-11-22T17:27:46.648Z
+// 生成: tools/build-wechat.js @ 2026-11-22T17:57:27.014Z
 // 代码与 H5 完全同源; 平台差异收敛于入口 game.js
 /* ==== index.html 内联脚本(BootProgress/错误横幅, H5 中先于业务脚本执行 — 保序) ==== */
 
@@ -3662,7 +3662,7 @@ var WeaponShowcase = {
         var scene = new THREE.Scene();
         var camera = new THREE.PerspectiveCamera(32, w / h, 0.05, 10);
         // 三点布光: 主光暖白 + 冷色补光 + 金色轮辋光(呼应 Navy/Gold 设计系统)
-        var key = new THREE.DirectionalLight(0xFFF2DC, 1.05); key.position.set(1.5, 2.2, 1.6); scene.add(key);
+        var key = new THREE.DirectionalLight(0xFFF2DC, 1.2); key.position.set(1.5, 2.2, 1.6); scene.add(key);
         var fill = new THREE.DirectionalLight(0x9EC3E8, 0.5); fill.position.set(-2.2, 0.2, 1.4); scene.add(fill);
         var up = new THREE.DirectionalLight(0xFFE2B0, 0.35); up.position.set(0, -1.6, 0.8); scene.add(up);
         var rim = new THREE.DirectionalLight(0xFFC247, 0.8); rim.position.set(-0.6, 1.6, -2.4); scene.add(rim);
@@ -3694,7 +3694,7 @@ var WeaponShowcase = {
             if (self._active !== state || !state.canvas.isConnected) return;
             var clone = model.mesh.clone();
             clone.material = model.mesh.material; // 共享材质(GLB 自带), 不逐实例复制
-            clone.material.envMapIntensity = 0.45; // 环境反射降档防曝白
+            clone.material.envMapIntensity = 0.58; // 环境反射降档防曝白
             var group = new THREE.Group();
             // 归一化: 居中 + 按最长边缩放到 ~1.4 单位, 枪口朝向镜头左前(经典展示角)
             var maxDim = Math.max(model.size.x, model.size.y, model.size.z) || 1;
@@ -3702,17 +3702,17 @@ var WeaponShowcase = {
             clone.position.set(-model.center.x, -model.center.y, -model.center.z);
             group.add(clone);
             group.scale.setScalar(s);
-            group.rotation.set(0.0, -0.95, 0);
+            group.rotation.set(0.0, -0.35, 0);
             state.mesh = group;
             scene.add(group);
-            var dist = 2.15;
-            camera.position.set(1.3, 0.95, dist);
+            var dist = 1.78;
+            camera.position.set(1.5, 1.12, dist);
             camera.lookAt(0, -0.04, 0);
             var loop = function() {
                 if (!state.canvas.isConnected || self._active !== state) return; // 断开即停
                 state.t += 0.016;
                 if (state.mesh) {
-                    state.mesh.rotation.y = -0.95 + Math.sin(state.t * 0.8) * 0.38; // 缓慢摆动展示
+                    state.mesh.rotation.y = -0.35 + Math.sin(state.t * 0.8) * 0.35; // 缓慢摆动展示
                     state.mesh.position.y = Math.sin(state.t * 1.3) * 0.035;        // 悬浮呼吸
                 }
                 renderer.render(scene, camera);
@@ -10178,8 +10178,29 @@ var EnemyModelLoader = class EnemyModelLoader {
 EnemyModelLoader.PARTS=['Body','Head','Arms','LegL','LegR'];
 EnemyModelLoader.KEYS=['normal','fast','shield','split','spitter','elite','bruiser','bulwark','spitking','hivelord','titan','overlord'];
 EnemyModelLoader.status='idle';EnemyModelLoader.loadMs=0;
+// V14.2: Boss 造型辨识表 — 每型专属染色/体态/入场特效色(表现层; GLB 资产不动)。
+// 解决 hivelord/titan 等实机同形同色不可辨识的问题(逐型实机截图审计)。
+EnemyModelLoader.BOSS_PRESENTATION={
+    bruiser:  { tint:[1,1,1],          fx:0xFF8A4A },
+    bulwark:  { tint:[0.88,1.02,1.22], fx:0x57CFFF },
+    hivelord: { tint:[1.18,1.28,0.72], fx:0xA8E84A,
+                bodyScale:[1.30,1.02,1.30], headScale:[0.94,0.92,0.94], attach:'sacs' },
+    overlord: { tint:[1.12,0.82,1.38], fx:0xB26AE8,
+                bodyScale:[1.08,1.06,1.08], attach:'horns' },
+    spitking: { tint:[1.22,1.32,0.68], fx:0xC8E84A },
+    titan:    { tint:[0.86,0.92,0.98], fx:0x9AA8B4,
+                bodyScale:[1.26,1.14,1.26], headScale:[0.84,0.82,0.84], attach:'plates' }
+};
 // V14: 感染者外观变体 — 确定性实例染色族(乘法系数, 以e.phase为种子, 同一怪每帧一致)。
 // 只做轻微色偏保持贴图质感与全局风格统一; 精英/自爆/冰冻等状态染色在其后覆盖。
+// V14.2: 体型 Rig 侧影家族 — 解决"变体只是颜色不同": 壮硕/驼背/瘦长/标准
+// (仅躯干/头/臂, 腿不动防悬空; 与附件/染色正交叠加)
+EnemyModelLoader.BODY_RIGS={
+    standard:{ bodyW:1,    bodyH:1,    pitch:0,    armW:1,    armH:1,    headS:1,    headPitch:0    },
+    brute:   { bodyW:1.22, bodyH:1.04, pitch:0.06, armW:1.30, armH:1.04, headS:0.92, headPitch:0.05 },
+    huncher: { bodyW:1.06, bodyH:0.90, pitch:0.30, armW:1.02, armH:0.94, headS:1.0,  headPitch:0.34 },
+    wiry:    { bodyW:0.88, bodyH:1.10, pitch:0.04, armW:0.82, armH:1.14, headS:0.96, headPitch:0.02 }
+};
 EnemyModelLoader.VARIANT_TINTS={
     normal:[[1,1,1],[1.08,.96,.88],[.89,1.06,.92],[.96,.98,1.12],[1.02,1.06,.82]],
     fast:  [[1,1,1],[1.12,.92,.84],[.90,1.03,.90],[1.04,1.00,.88]],
@@ -10202,6 +10223,7 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
     }
     /** V14: 附件几何(头局部空间) — 程序化军盔/便帽/肩甲, 全部共享单材质(顶点色) */
     static _accGeometry(name) {
+        if (name === 'sacs' || name === 'horns' || name === 'plates') return EnemyArmyRenderer._bossAccGeometry(name);
         if (EnemyArmyRenderer._accGeos && EnemyArmyRenderer._accGeos[name]) return EnemyArmyRenderer._accGeos[name];
         if (!EnemyArmyRenderer._accGeos) EnemyArmyRenderer._accGeos={};
         var geos=[], mat;
@@ -10226,10 +10248,10 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
         EnemyArmyRenderer._accGeos[name] = { geo: merged, matParams: mat };
         return EnemyArmyRenderer._accGeos[name];
     }
-    _accBank(style, lod, name) {
+    _accBank(style, lod, name, geoKey) {
         var key = style + ':' + lod + ':' + name;
         if (this.accBanks[key]) return this.accBanks[key];
-        var acc = EnemyArmyRenderer._accGeometry(name);
+        var acc = EnemyArmyRenderer._accGeometry(geoKey || name);
         var mat = new THREE.MeshLambertMaterial(acc.matParams);
         mat.color.setHex(0xFFFFFF);
         var mesh = new THREE.InstancedMesh(acc.geo, mat, EnemyArmyRenderer.ACC_MAX || 448);
@@ -10276,6 +10298,9 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
             var walk=e.dying?0:Math.sin(phase)*(.45*(e.frozenT>0?.3:1));
             var attack=e.attackT||0,charge=e.chargeT||0;
             this._color.setRGB(1,1,1);
+            // V14.2: Boss 造型辨识染色(先于阶段/冰冻/受击覆盖)
+            var bp = e.isBoss ? EnemyModelLoader.BOSS_PRESENTATION[style] : null;
+            if (bp) this._color.setRGB(bp.tint[0], bp.tint[1], bp.tint[2]);
             // V14: 外观变体族染色(确定性, e.phase为种子; 精英/自爆/冰冻等状态染色随后覆盖)
             var tints=EnemyModelLoader.VARIANT_TINTS[style];
             if(tints && !e.isBoss && e.type!=='elite' && e.type!=='bomber') {
@@ -10290,8 +10315,11 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
             else if(e.phaseIndex===2)this._color.setRGB(1.12,.85,1.2);
             if(e.hitFlash>0)this._color.setRGB(2.8,2.4,1.8);
             // V14: 轮廓变体 — 体宽±5% + 前倾±9°(只动躯干/头/臂, 腿不动避免脚底悬空)
-            var vw=1,lean=0;
+            // V14.2: 体型 Rig 侧影家族 — 四种骨架姿态, 变体不再只有颜色差
+            var vw=1,lean=0,rig=EnemyModelLoader.BODY_RIGS.standard;
             if(!e.isBoss && e.type!=='elite' && !e.dying) {
+                var rigPool = (style==='fast') ? ['wiry','huncher','standard'] : (style==='shield'||style==='split') ? ['brute','standard'] : ['standard','brute','huncher','wiry'];
+                rig = EnemyModelLoader.BODY_RIGS[rigPool[Math.floor(((e.phase||0)*17.77)%1*rigPool.length)%rigPool.length]] || rig;
                 vw=1+((((e.phase||0)*5.51)%1)-0.5)*0.10;
                 lean=((((e.phase||0)*9.13)%1)-0.5)*0.18;
             }
@@ -10301,16 +10329,24 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
                 else if(part==='Arms') {
                     this._e.set(-.12-Math.sin(phase)*.05-attack*.65-charge*.4+lean*.5,0,Math.sin(phase)*.04);
                     this._pose.makeRotationFromEuler(this._e);
+                    this._pose.scale(this._v14.set(rig.armW,rig.armH,rig.armW));
                 } else if(part==='Head') {
-                    this._e.set(charge*.12+lean*.6,Math.sin(phase*.5)*.09,Math.sin(phase)*.025);
+                    this._e.set(charge*.12+lean*.6+rig.headPitch,Math.sin(phase*.5)*.09,Math.sin(phase)*.025);
                     this._pose.makeRotationFromEuler(this._e);
+                    var hs = bp ? bp.headScale : null;
+                    if (hs) this._pose.scale(this._v14.set(hs[0],hs[1],hs[2]));
+                    else this._pose.scale(this._v14.set(rig.headS,rig.headS,rig.headS));
                 } else if(part==='Body'&&e.isBoss) {
-                    this._pose.makeScale(1+charge*.035,1+charge*.05,1+charge*.035);
+                    var bs = bp && bp.bodyScale;
+                    this._pose.makeScale(
+                        (bs ? bs[0] : 1) * (1+charge*.035),
+                        (bs ? bs[1] : 1) * (1+charge*.05),
+                        (bs ? bs[2] : 1) * (1+charge*.035));
                 } else if(part==='Body') {
-                    // V14: 躯干宽度变体+前倾(感染者驼背/壮硕差异)
-                    this._e.set(lean,0,0);
+                    // V14+V14.2: 躯干宽度变体+前倾+Rig 侧影
+                    this._e.set(lean + rig.pitch,0,0);
                     this._pose.makeRotationFromEuler(this._e);
-                    this._pose.scale(this._v14.set(vw,1,vw));
+                    this._pose.scale(this._v14.set(vw*rig.bodyW,rig.bodyH,vw*rig.bodyW));
                 }
                 this._matrix.copy(this._root).multiply(bank.source.restMatrices[part]).multiply(this._pose);
                 bank.meshes[part].setMatrixAt(slot,this._matrix);
@@ -10337,10 +10373,11 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
                 e._v14EntranceFx=true;
                 var g=typeof window!=='undefined'?window.__game:null;
                 if(g && g.effects && g.world && !e.dying) {
+                    var fx = bp ? bp.fx : 0xFF6A55;
                     g.world.shake(.5);
-                    g.effects.shockwave(e.x,.06,e.z,0xFF5A4E);
-                    g.effects.flash(e.x,1.6,e.z,0xFF6A55,2.8);
-                    g.effects.burst(e.x,1.3,e.z,0xFF6A55,20,4.6,.7);
+                    g.effects.shockwave(e.x,.06,e.z,fx);
+                    g.effects.flash(e.x,1.6,e.z,fx,2.8);
+                    g.effects.burst(e.x,1.3,e.z,fx,20,4.6,.7);
                     g.effects.burst(e.x,.4,e.z,0x3A3F46,10,2.2,1.0);
                 }
             }
@@ -10376,6 +10413,48 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
         if(style==='shield')return r<0.5?'pauldron':null;
         if(style==='split')return r<0.35?'pauldron':null;
         return null;
+    }
+    /** V14.2: Boss 附件几何(back-sacs 背囊 / horns 双角 / plates 肩甲) */
+    static _bossAccGeometry(name) {
+        if (EnemyArmyRenderer._bossAccGeos && EnemyArmyRenderer._bossAccGeos[name]) return EnemyArmyRenderer._bossAccGeos[name];
+        if (!EnemyArmyRenderer._bossAccGeos) EnemyArmyRenderer._bossAccGeos = {};
+        var parts = [], matParams;
+        if (name === 'sacs') {
+            parts.push(colorize(new THREE.SphereGeometry(0.24, 8, 6), 0x9ADE3E).translate(-0.26, 0.42, -0.16));
+            parts.push(colorize(new THREE.SphereGeometry(0.29, 8, 6), 0x8AD03A).translate(0, 0.5, -0.2));
+            parts.push(colorize(new THREE.SphereGeometry(0.22, 8, 6), 0x9ADE3E).translate(0.26, 0.4, -0.16));
+            matParams = { color: 0xFFFFFF, roughness: 0.55, vertexColors: true };
+        } else if (name === 'horns') {
+            parts.push(colorize(new THREE.ConeGeometry(0.075, 0.34, 6), 0x3A2440).translate(-0.17, 0.2, 0).rotateZ(0.5));
+            parts.push(colorize(new THREE.ConeGeometry(0.075, 0.34, 6), 0x3A2440).translate(0.17, 0.2, 0).rotateZ(-0.5));
+            matParams = { color: 0xFFFFFF, roughness: 0.4, metalness: 0.3, vertexColors: true };
+        } else if (name === 'plates') {
+            parts.push(colorize(new THREE.BoxGeometry(0.3, 0.16, 0.34), 0x5E6A70).translate(-0.34, 0.42, 0).rotateZ(0.12));
+            parts.push(colorize(new THREE.BoxGeometry(0.3, 0.16, 0.34), 0x5E6A70).translate(0.34, 0.42, 0).rotateZ(-0.12));
+            matParams = { color: 0xFFFFFF, roughness: 0.6, metalness: 0.35, vertexColors: true };
+        }
+        var merged = mergeGeometries(parts);
+        merged.userData = { artSource: 'V14.2 boss attachment procedural: ' + name };
+        EnemyArmyRenderer._bossAccGeos[name] = { geo: merged, matParams: matParams };
+        return EnemyArmyRenderer._bossAccGeos[name];
+    }
+    /** V14.2: Boss 附件局部矩阵(Body/头 局部空间), sacs 附带呼吸脉动 */
+    static _bossAccLocal(name, time, z) {
+        if (!EnemyArmyRenderer._bossAccLocals) EnemyArmyRenderer._bossAccLocals = {};
+        var cached = EnemyArmyRenderer._bossAccLocals[name];
+        if (name === 'sacs') {
+            var pulse = 1 + Math.sin(time * 2.4 + (z || 0) * 1.7) * 0.06;
+            cached = cached || new THREE.Matrix4();
+            cached.makeScale(pulse, pulse, pulse);
+            EnemyArmyRenderer._bossAccLocals[name] = cached;
+            return cached;
+        }
+        if (!cached) {
+            cached = new THREE.Matrix4();
+            if (name === 'horns') cached.setPosition(0, 0.22, 0);
+            EnemyArmyRenderer._bossAccLocals[name] = cached;
+        }
+        return cached;
     }
     /** V14: 附件局部偏移(预建, 热循环零分配) — 头顶/躯干肩位 */
     static _accLocal(name) {
@@ -11022,6 +11101,32 @@ var V42BossController = {
         }
     };
 
+    /** V14.3: 草地噪点纹理 — 灰度细噪+修剪条纹, 与顶点色相乘提升地面质感(共享单张) */
+    var _grassTex = null;
+    V42Art.getGrassTexture = function () {
+        if (_grassTex) return _grassTex;
+        var cv = document.createElement('canvas');
+        cv.width = 128; cv.height = 128;
+        var ctx = cv.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, 128, 128);
+        for (var i = 0; i < 900; i++) {
+            var v = Math.random();
+            ctx.fillStyle = v < 0.5 ? 'rgba(120,160,90,0.16)' : 'rgba(255,255,255,0.12)';
+            ctx.fillRect(Math.random() * 128, Math.random() * 128, 2 + Math.random() * 2, 1 + Math.random() * 2);
+        }
+        // 修剪条纹(横向明暗带)
+        for (var b2 = 0; b2 < 4; b2++) {
+            ctx.fillStyle = b2 % 2 ? 'rgba(255,255,255,0.06)' : 'rgba(40,70,30,0.08)';
+            ctx.fillRect(0, b2 * 32, 128, 16);
+        }
+        var tex = new THREE.CanvasTexture(cv);
+        tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(4, 2);
+        _grassTex = tex;
+        return tex;
+    };
+
     /** V14: 主题地面纹理 — 程序化生成并缓存(柏油/龟裂/岩面/金属板/混凝土), 含三车道虚线保持跑道可读 */
     var _groundTexCache = {};
     V42Art.getGroundTexture = function (kind) {
@@ -11160,7 +11265,7 @@ var V42BossController = {
             transparent: true, opacity: 0.92, fog: false
         });
 
-        var roadside = makeRecords(54, function (i) {
+        var roadside = makeRecords(76, function (i) {
             var side = i % 2 ? 1 : -1;
             return { x: side * (4.8 + random() * .4), y: 0, z: 10 - i * 3.08 + random() * .5, s: side };
         });
@@ -11189,7 +11294,7 @@ var V42BossController = {
         addInstancedCategory(env, 'barriers', roundedRectGeometry(0.96, 0.27, 0.07, 0.14), cream,
             propBase.filter(function (_, i) { return i % 3 === 2; }).map(function (r) { return { x: r.x, y: 0.42, z: r.z, ry: r.s > 0 ? -0.15 : 0.15 }; }), { castShadow: true });
 
-        var buildings = makeRecords(44, function (i) {
+        var buildings = makeRecords(50, function (i) {
             var side = i % 2 ? 1 : -1;
             var h = 3.4 + random() * 4.6;
             var w = 2.4 + random() * 1.2;
@@ -11291,6 +11396,20 @@ var V42BossController = {
             cxPanels.push(rec(hSide * 4.6, 0.26, hz, 0.16, 0.5, 0.2));
             cxGlow.push(rec(hSide * 4.6, 0.55, hz, 0.1, 0.12, 0.1));
         }
+        // 跨街横幅(高空, 城市族街道峡谷感): 门柱+旗面×2色
+        var banFrames = [], banClothA = [], banClothB = [];
+        for (var bn = 0; bn < 4; bn++) {
+            var bz = -10 - bn * 38;
+            banFrames.push(rec(-4.6, 3.1, bz, 0.08, 1.0, 0.08));
+            banFrames.push(rec(4.6, 3.1, bz, 0.08, 1.0, 0.08));
+            if (bn % 2 === 0) { banClothA.push(rec(0, 3.62, bz, 9.4, 0.5, 0.04)); }
+            else { banClothB.push(rec(0, 3.62, bz, 9.4, 0.5, 0.04)); }
+        }
+        addInstancedCategory(env, 'cityx-banner-frames', box, makeCityMaterial(0x3A4652, { roughness: 0.5, metalness: 0.3 }), banFrames, { themes: CITY_ALIVE });
+        var clothA = makeCityMaterial(0x2E4A6E, { roughness: 0.85 }); clothA.map = facade;
+        var clothB = makeCityMaterial(0x8E4A42, { roughness: 0.85 }); clothB.map = facade;
+        addInstancedCategory(env, 'cityx-banner-a', box, clothA, banClothA, { themes: CITY_ALIVE });
+        addInstancedCategory(env, 'cityx-banner-b', box, clothB, banClothB, { themes: CITY_ALIVE });
         addInstancedCategory(env, 'cityx-frames', box, makeCityMaterial(0x2E3A42, { roughness: 0.5, metalness: 0.3 }), cxFrames, { themes: CITY_ALIVE, castShadow: true });
         addInstancedCategory(env, 'cityx-panels', box, makeCityMaterial(0x9AAFA8), cxPanels, { themes: CITY_ALIVE, castShadow: true });
         var cityxGlowMat = new THREE.MeshBasicMaterial({ color: 0xFFE9A8, toneMapped: false }); cityxGlowMat.__noThemeTint = true;
@@ -11298,13 +11417,13 @@ var V42BossController = {
 
         // —— 末日废墟(apocalypse): 坍塌楼板/瓦砾堆/烧毁车壳/余烬 ——
         var apoSlabs = [], apoRubble = [], apoWrecks = [], apoEmbers = [];
-        for (var ai = 0; ai < 9; ai++) {
+        for (var ai = 0; ai < 12; ai++) {
             var aSide = ai % 2 ? 1 : -1, az = 4 - ai * 19 + random() * 6;
             apoSlabs.push(rec(aSide * (5.7 + random() * 1.4), 0.9 + random() * 0.6, az, 2.8 + random() * 2.0, 0.6, 3.6 + random() * 1.8, random() * 1.2, (random() - 0.5) * 0.3, (random() - 0.5) * 0.24));
             for (var rb = 0; rb < 5; rb++) {
                 apoRubble.push(rec(aSide * (4.85 + random() * 2.4), 0.18 + random() * 0.26, az + random() * 6 - 3, 0.5 + random() * 0.9, 0.3 + random() * 0.55, 0.5 + random() * 0.9, random() * TAU));
             }
-            if (ai % 2 === 0) {
+            if (ai % 2 === 0 || ai % 3 === 1) {
                 apoWrecks.push(rec(aSide * 5.3, 0.3, az + 2.4, 0.95, 0.6, 2.0, random() * 0.5 - 0.25, 0, (random() - 0.5) * 0.14));
                 apoEmbers.push(rec(aSide * 5.3, 0.62, az + 2.0, 0.3, 0.1, 0.5));
             }
@@ -11334,7 +11453,7 @@ var V42BossController = {
 
         // —— 机械废土(mechanical): 管线/机甲残骸/能源塔/金属碎板 ——
         var mechPipes = [], mechFrames = [], mechWrecks = [], mechStrips = [], mechDebris = [];
-        for (var mi2 = 0; mi2 < 10; mi2++) {
+        for (var mi2 = 0; mi2 < 14; mi2++) {
             var mSide = mi2 % 2 ? 1 : -1, mz = 6 - mi2 * 17 + random() * 6;
             mechPipes.push(rec(mSide * 5.1, 0.95 + random() * 0.3, mz, 0.18, 0.18, 4.2 + random() * 2));
             mechPipes.push(rec(mSide * 5.4, 0.5, mz - 1.4, 0.14, 1.0, 0.14));
@@ -11388,6 +11507,16 @@ var V42BossController = {
         addInstancedCategory(env, 'fort-tank-hulls', roundedRectGeometry(1, 1, 0.1, 1), makeCityMaterial(0x4A5A50, { roughness: 0.6, metalness: 0.4 }), fortHulls, { themes: ['fortress'], castShadow: true });
         addInstancedCategory(env, 'fort-tank-turrets', box, makeCityMaterial(0x3E4E44, { roughness: 0.55, metalness: 0.5 }), fortTurrets, { themes: ['fortress'], castShadow: true });
         addInstancedCategory(env, 'fort-sandbags', box, makeCityMaterial(0x9A8E6A, { roughness: 0.95 }), fortSandbags, { themes: ['fortress'], castShadow: true });
+
+        // —— 城市斑马线(路面层次, 城市族): 每~44单位一组白色横道, 1 drawCall ——
+        var crosswalks = [];
+        for (var cw = 0; cw < 4; cw++) {
+            var cwz = 12 - cw * 44;
+            for (var cst = 0; cst < 5; cst++) {
+                crosswalks.push(rec(-2.8 + cst * 1.4, 0.012, cwz, 0.85, 1, 0.4));
+            }
+        }
+        addInstancedCategory(env, 'cityx-crosswalk', box, new THREE.MeshBasicMaterial({ color: 0xD8DCE0 }), crosswalks, { themes: CITY_ALIVE });
 
         // —— 远景剪影(各主题地平线补白, 每主题一类别, 1 drawCall) ——
         var distantSil = makeRecords(26, function (i) {
@@ -11494,24 +11623,31 @@ var V42BossController = {
         if (startPanel && !document.getElementById('v42-home-top')) {
             var homeTop = makeElement('div', 'v42-home-top');
             homeTop.id = 'v42-home-top';
-            var best = makeElement('span', 'v42-best-record', '🏆 最高纪录: 第1关');
+            // V14.2: 顶栏静态图标替换系统Emoji(原创SVG, currentColor, 与宫格图标同规格)
+            var ICON = function (paths, cls) {
+                return '<svg class="v14-tb-icon ' + (cls || '') + '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
+            };
+            var best = makeElement('span', 'v42-best-record', '');
             best.id = 'v42-best-record';
+            best.innerHTML = ICON('<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/><path d="M12 14v3M9 21h6M10 18h4v3h-4z"/>') + ' <span class="v42-best-text">最高纪录: 第1关</span>';
             var soundBtn = makeElement('button', 'v42-home-sound', '🔊');
             soundBtn.id = 'btn-home-sound';
             soundBtn.setAttribute('aria-label', '音效开关');
             // V5.1: 金币 + 升级商店 + 免费补给
             var left = makeElement('div', 'v42-home-left');
             left.appendChild(best);
-            var supplyBtn = makeElement('button', 'v51-supply-btn', '🎁 免费补给');
+            var supplyBtn = makeElement('button', 'v51-supply-btn', '');
+            supplyBtn.innerHTML = ICON('<rect x="4" y="9" width="16" height="12" rx="1.6"/><path d="M4 12h16M12 9v12M8.5 9c-2 0-3-1-3-2.4C5.5 5 7 4.6 8.2 5.2L12 9l3.8-3.8C17 4.6 18.5 5 18.5 6.6 18.5 8 17.5 9 15.5 9"/>') + ' 免费补给';
             supplyBtn.id = 'btn-free-supply';
             supplyBtn.setAttribute('aria-label', '每日免费补给(广告)');
             left.appendChild(supplyBtn);
             homeTop.appendChild(left);
             var right = makeElement('div', 'v42-home-right');
             var coinPill = makeElement('span', 'v51-coin-pill');
-            coinPill.innerHTML = '🪙 <b data-coin-display>0</b>';
+            coinPill.innerHTML = ICON('<circle cx="12" cy="12" r="8.2"/><path d="M12 7.5v9M14.8 9.2c-.7-.9-1.7-1.3-2.8-1.3-1.6 0-2.9 1-2.9 2.2 0 2.6 5.8 1.5 5.8 4 0 1.3-1.3 2.2-2.9 2.2-1.1 0-2.1-.4-2.8-1.3" class="v14-coin-mark"/>', 'v14-coin-icon') + ' <b data-coin-display>0</b>';
             right.appendChild(coinPill);
-            var shopBtn = makeElement('button', 'v51-shop-btn', '⬆ 升级');
+            var shopBtn = makeElement('button', 'v51-shop-btn', '');
+            shopBtn.innerHTML = ICON('<path d="M12 19V6M6.5 11.5 12 6l5.5 5.5"/>') + ' 升级';
             shopBtn.id = 'btn-open-shop';
             right.appendChild(shopBtn);
             right.appendChild(soundBtn);
@@ -11841,8 +11977,10 @@ class World {
                 patch.translate(side2 * randRange(6.5, 10.5), -0.015, randRange(-4, 4));
                 grassGeoList.push(colorize(patch, grassLight.clone().lerp(grassBase, 0.35)));
             }
-            var groundMesh = new THREE.Mesh(mergeGeometries(grassGeoList),
-                new THREE.MeshLambertMaterial({ vertexColors: true }));
+            var grassMat = new THREE.MeshLambertMaterial({ vertexColors: true });
+            // V14.3: 草地噪点贴图(与顶点色相乘, 提升地面材质质量; 共享单张纹理)
+            if (typeof V42Art !== 'undefined' && V42Art.getGrassTexture) grassMat.map = V42Art.getGrassTexture();
+            var groundMesh = new THREE.Mesh(mergeGeometries(grassGeoList), grassMat);
             groundMesh.receiveShadow = true;
             seg.add(groundMesh);
 
@@ -12412,7 +12550,8 @@ class Effects {
         flash.visible=true;flash.material.opacity=.95;
         flash.material.rotation = Math.random() * Math.PI; // V12视觉: 随机滚转, 齐射时火光不重复
         var mfScale = randRange(0.42, 0.52) * (sizeMul || 1); // V14: 重型武器火焰放大
-        flash.scale.set(mfScale, mfScale, 1); // V3.7: 枪口火焰更醒目
+        flash.scale.set(mfScale, mfScale, 1);
+        flash.userData.baseScale = mfScale; // V14.3 节奏: 峰值基准 // V3.7: 枪口火焰更醒目
         this.scene.add(flash);
         this.flashes.push({ mesh: flash, life: 0.07, maxLife: 0.07 });
     }
@@ -12542,7 +12681,7 @@ class Effects {
                 continue;
             }
             const t = 1 - sw.life / sw.maxLife;
-            const scale = 1 + t * 5;
+            const scale = 1 + easeOutCubic(t) * 5; // V14.3 节奏: 快出慢收(easeOut), 冲击感前置
             sw.mesh.scale.setScalar(scale);
             sw.mesh.material.opacity = 0.8 * (1 - t);
         }
@@ -12561,7 +12700,8 @@ class Effects {
             }
             const t = f.life / f.maxLife;
             f.mesh.material.opacity = t * 0.95;
-            var sc = 0.48 + (1 - t) * 0.55; // V3.7
+            // V14.3 节奏修正: 枪口火焰=瞬时峰值→衰减(旧曲线出生最小→长大, 与闪光语义相反)
+            var sc = (f.baseScale || 0.48) * (1.18 - t * 0.42);
             f.mesh.scale.set(sc, sc, 1);
         }
 
@@ -12600,7 +12740,8 @@ class Effects {
             }
             var bt = bm.life / bm.maxLife;
             bm.mesh.material.opacity = bt;
-            bm.mesh.scale.setScalar(bm.size * (0.55 + (1 - bt) * 0.6));
+            // V14.3 节奏: 白闪瞬时峰值(出生 1.25×)后收缩淡出
+            bm.mesh.scale.setScalar(bm.size * (1.25 - bt * 0.38));
         }
 
         this.particleMesh.count=this.particles.length;
