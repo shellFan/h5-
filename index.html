@@ -30,7 +30,11 @@
         // VNext: 加载进度追踪器(被 soldier-loader / enemy-models 调用; 仅统计真实文件进度, 无定时器伪造)
         window.__BootProgress = {
             files: {}, total: 26, // 2士兵 + 12×2 僵尸/Boss GLB
+            _done: false,
             file: function(url, loaded, total) {
+                // V15修复: done() 闩锁 — 后台续载的进度事件不得把"准备完毕!100%"
+                // 回写成"加载中 n/26"(加载屏曾出现完成态→加载态的视觉回退闪动)
+                if (this._done) return;
                 this.files[url] = { loaded: loaded, total: total };
                 var sum = 0, done = 0;
                 for (var k in this.files) {
@@ -57,6 +61,7 @@
                 if (bar && pct !== undefined) bar.style.width = pct + '%';
             },
             done: function() {
+                this._done = true; // V15: 闩锁完成态
                 var bar = document.getElementById('boot-bar-fill');
                 var pctEl = document.getElementById('boot-pct');
                 if (bar) bar.style.width = '100%';

@@ -1654,7 +1654,9 @@ class Game {
             }
             window.__BootProgress && window.__BootProgress.done();
             window.__BootProgress && window.__BootProgress.stage('准备完毕!', 100);
-            setTimeout(function() { loading.classList.add('boot-hidden'); }, 260);
+            // V15修复: 就绪即隐藏(原260ms延迟窗口内后台续载事件会回写进度条,
+            // 且使"100%后隐藏"成为竞态) — bar 宽度 .18s 过渡保留动画感
+            loading.classList.add('boot-hidden');
         }).catch(function(err) {
             starting = false;
             showError('角色资源加载失败：' + err.message);

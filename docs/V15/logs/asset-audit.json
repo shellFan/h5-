@@ -1,0 +1,31 @@
+{
+  "totalFiles": 95,
+  "totalKB": 5351,
+  "unreferenced": [
+    "assets/models/bosses/bruiser/bruiser-lod.glb (缺LOD)",
+    "assets/models/bosses/bulwark/bulwark-lod.glb (缺LOD)",
+    "assets/models/bosses/hivelord/hivelord-lod.glb (缺LOD)",
+    "assets/models/bosses/overlord/overlord-lod.glb (缺LOD)",
+    "assets/models/bosses/spitking/spitking-lod.glb (缺LOD)",
+    "assets/models/bosses/titan/titan-lod.glb (缺LOD)",
+    "assets/models/soldier/soldier-lod.glb (缺LOD)",
+    "assets/models/weapons/flamethrower/flamethrower.glb (缺LOD)",
+    "assets/models/weapons/freeze/freeze.glb (缺LOD)",
+    "assets/models/weapons/mg/mg.glb (缺LOD)",
+    "assets/models/weapons/rifle/rifle.glb (缺LOD)",
+    "assets/models/weapons/rocket/rocket.glb (缺LOD)",
+    "assets/models/weapons/shotgun/shotgun.glb (缺LOD)",
+    "assets/models/weapons/sniper/sniper.glb (缺LOD)",
+    "assets/models/weapons/tesla/tesla.glb (缺LOD)",
+    "assets/models/zombies/elite/elite-lod.glb (缺LOD)",
+    "assets/models/zombies/fast/fast-lod.glb (缺LOD)",
+    "assets/models/zombies/normal/normal-lod.glb (缺LOD)",
+    "assets/models/zombies/shield/shield-lod.glb (缺LOD)",
+    "assets/models/zombies/spitter/spitter-lod.glb (缺LOD)",
+    "assets/models/zombies/split/split-lod.glb (缺LOD)"
+  ],
+  "oversized": [
+    "assets/ui-v118/weapon-atlas.png 1276KB"
+  ],
+  "glbLodComplete": 34
+}

@@ -1,5 +1,5 @@
 // ===== game-bundle.js (V12 微信小游戏构建产物: 单一模块作用域, 源脚本按 index.html 顺序拼接) =====
-// 生成: tools/build-wechat.js @ 2026-11-22T17:57:27.014Z
+// 生成: tools/build-wechat.js @ 2026-11-22T19:25:29.272Z
 // 代码与 H5 完全同源; 平台差异收敛于入口 game.js
 /* ==== index.html 内联脚本(BootProgress/错误横幅, H5 中先于业务脚本执行 — 保序) ==== */
 
@@ -8,7 +8,11 @@
         // VNext: 加载进度追踪器(被 soldier-loader / enemy-models 调用; 仅统计真实文件进度, 无定时器伪造)
         window.__BootProgress = {
             files: {}, total: 26, // 2士兵 + 12×2 僵尸/Boss GLB
+            _done: false,
             file: function(url, loaded, total) {
+                // V15修复: done() 闩锁 — 后台续载的进度事件不得把"准备完毕!100%"
+                // 回写成"加载中 n/26"(加载屏曾出现完成态→加载态的视觉回退闪动)
+                if (this._done) return;
                 this.files[url] = { loaded: loaded, total: total };
                 var sum = 0, done = 0;
                 for (var k in this.files) {
@@ -35,6 +39,7 @@
                 if (bar && pct !== undefined) bar.style.width = pct + '%';
             },
             done: function() {
+                this._done = true; // V15: 闩锁完成态
                 var bar = document.getElementById('boot-bar-fill');
                 var pctEl = document.getElementById('boot-pct');
                 if (bar) bar.style.width = '100%';
@@ -17966,7 +17971,9 @@ class Game {
             }
             window.__BootProgress && window.__BootProgress.done();
             window.__BootProgress && window.__BootProgress.stage('准备完毕!', 100);
-            setTimeout(function() { loading.classList.add('boot-hidden'); }, 260);
+            // V15修复: 就绪即隐藏(原260ms延迟窗口内后台续载事件会回写进度条,
+            // 且使"100%后隐藏"成为竞态) — bar 宽度 .18s 过渡保留动画感
+            loading.classList.add('boot-hidden');
         }).catch(function(err) {
             starting = false;
             showError('角色资源加载失败：' + err.message);

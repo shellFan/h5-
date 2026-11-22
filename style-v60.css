@@ -295,9 +295,12 @@
     flex: 1 1 auto;
     min-height: 0;
     max-height: none;
+    overflow-y: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
 }
+/* V15修复: 列表容器限高但未裁剪(overflow visible), 第10关节点meta溢出遮挡返回按钮
+   (playwright几何实证: meta y788-802 与 back y773-817 重叠) — 补滚动裁剪 */
 /* 训练页背包夹在多个区块之间, 不参与flex伸展, 仅放宽上限 */
 #game-container.v42-ui .v60-page .v60-panel .v60-bag-list { flex: 0 0 auto; max-height: 40vh; }
 /* 图鉴双列表(图鉴+武器收藏)弹性分半 */
