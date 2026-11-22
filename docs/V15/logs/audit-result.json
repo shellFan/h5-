@@ -136,11 +136,11 @@
     "gateWindow": {
       "next": -28,
       "chosen": false,
-      "waitMs": 255
+      "waitMs": 251
     },
     "battleOutcome": {
       "state": "won",
-      "ms": 37601
+      "ms": 35603.90000000596
     },
     "settle": {
       "winVisible": true,
@@ -247,12 +247,12 @@
     {
       "step": "状态门: 可选窗口出现",
       "pass": true,
-      "detail": "{\"next\":-28,\"chosen\":false,\"waitMs\":255}"
+      "detail": "{\"next\":-28,\"chosen\":false,\"waitMs\":251}"
     },
     {
       "step": "战斗: 自然结束或持续游玩",
       "pass": true,
-      "detail": "{\"state\":\"won\",\"ms\":37601}"
+      "detail": "{\"state\":\"won\",\"ms\":35603.90000000596}"
     },
     {
       "step": "结算: 胜利界面+下一关按钮",
@@ -287,7 +287,7 @@
     {
       "step": "性能: 压力场景 FPS ≥ 25(软渲染基线)",
       "pass": true,
-      "detail": "avgFps=175 calls=109"
+      "detail": "avgFps=174 calls=114"
     }
   ],
   "uiOverflow": {
@@ -311,37 +311,37 @@
     }
   },
   "performance": {
-    "bootMs": 647,
+    "bootMs": 662,
     "battle": {
       "drawCalls": 103,
       "triangles": 130624,
-      "geometries": 100,
+      "geometries": 101,
       "textures": 21,
       "enemies": 0,
-      "heapMB": 24.141175270080566
+      "heapMB": 19.852645874023438
     },
     "stress": {
-      "avgFps": 175,
+      "avgFps": 174,
       "samples": [
         {
-          "t": 1204,
+          "t": 1201,
           "fps": 174
         },
         {
-          "t": 2406,
-          "fps": 174
-        },
-        {
-          "t": 3608,
-          "fps": 174
-        },
-        {
-          "t": 4810,
+          "t": 2405,
           "fps": 175
+        },
+        {
+          "t": 3607,
+          "fps": 174
+        },
+        {
+          "t": 4807,
+          "fps": 174
         }
       ],
-      "drawCalls": 109,
-      "triangles": 289962
+      "drawCalls": 114,
+      "triangles": 292034
     },
     "visibility": {
       "state": "playing",
