@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-22T13:01:22.818Z",
+  "timestamp": "2026-11-22T17:28:03.460Z",
   "passed": 20,
   "total": 20,
   "results": [
@@ -16,7 +16,7 @@
     {
       "name": "UI DOM 节点构建",
       "ok": true,
-      "detail": "nodes=388, rules=750, keyframes=20"
+      "detail": "nodes=419, rules=757, keyframes=20"
     },
     {
       "name": "首页开始按钮布局",
@@ -56,7 +56,7 @@
     {
       "name": "拖动输入桥接(队伍移动)",
       "ok": true,
-      "detail": "x: 0.00 → -2.02"
+      "detail": "x: 0.00 → -2.05"
     },
     {
       "name": "暂停按钮生效",
@@ -91,7 +91,7 @@
     {
       "name": "战斗帧率采样",
       "ok": true,
-      "detail": "101 FPS (模拟器软件渲染, 真机预期更高)"
+      "detail": "92 FPS (模拟器软件渲染, 真机预期更高)"
     },
     {
       "name": "无致命运行时错误",

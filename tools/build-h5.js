@@ -26,6 +26,7 @@ const COPY_LIST = [
     'js/economy.js',
     'js/energy-core.js',
     'js/ui-v60.js',
+    'js/weapon-showcase.js',
     'js/skills.js',
     'js/affixes.js',
     'js/growth.js',

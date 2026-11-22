@@ -1,6 +1,24 @@
 // ===== V6.0/V8.0 UI 模块: 关卡地图 / 训练中心 / 军械库 / 科技树 / 图鉴 / 挑战 / 成就 / 每日 / 设置 =====
 // 由 V42Art.installUI 后调用 V60UI.install(game) 装配; 全部数据来自 GameProfile。
 
+// V14: 首页功能宫格统一 SVG 图标(24x24, stroke=currentColor, 线宽1.8) — 替换系统Emoji占位
+var V60_NAV_ICONS = (function () {
+    var A = 'xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
+    function svg(paths) { return '<svg ' + A + '>' + paths + '</svg>'; }
+    return {
+        map: svg('<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>'),
+        train: svg('<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.6"/><path d="M12 5V2.5M12 21.5V19M5 12H2.5M21.5 12H19"/>'),
+        armory: svg('<path d="M14.7 6.3a4.5 4.5 0 0 0-5.9 5.9L3 18l3 3 5.8-5.8a4.5 4.5 0 0 0 5.9-5.9l-2.6 2.6-2.3-2.3 2.9-3.3z"/>'),
+        tech: svg('<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"/><path d="M7.5 15h9"/>'),
+        codex: svg('<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 1 2-2h13"/>'),
+        challenge: svg('<path d="M4 4l7 7M20 4l-7 7M4 20l6-6M20 20l-6-6"/><path d="M3 4h2M19 4h2M3 20h3M18 20h3"/>'),
+        rank: svg('<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/><path d="M12 14v3M9 21h6M10 18h4v3h-4z"/>'),
+        ach: svg('<circle cx="12" cy="9" r="5"/><path d="M9 13l-2 8 5-3 5 3-2-8"/>'),
+        daily: svg('<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3v3M15 3v3M8.5 12l2.2 2.2L15.5 9.5"/>'),
+        set: svg('<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.2 5.2l2.1 2.1M16.7 16.7l2.1 2.1M18.8 5.2l-2.1 2.1M7.3 16.7l-2.1 2.1"/>')
+    };
+})();
+
 var V60UI = {
     // V8.0: 十关元数据(名称取自 LEVELS[i].name, 去掉"第 X 关 "前缀)
     LEVEL_META: [
@@ -126,16 +144,16 @@ var V60UI = {
         if (startPanel && !document.getElementById('v60-home-nav')) {
             startPanel.insertAdjacentHTML('beforeend',
                 '<div id="v60-home-nav" class="v60-home-nav">' +
-                    '<button id="v60-btn-map" class="v60-nav-btn">🗺️ 地图</button>' +
-                    '<button id="v60-btn-train" class="v60-nav-btn">🎖️ 训练</button>' +
-                    '<button id="v60-btn-armory" class="v60-nav-btn">🔧 军械库</button>' +
-                    '<button id="v60-btn-tech" class="v60-nav-btn">🔬 科技</button>' +
-                    '<button id="v60-btn-codex" class="v60-nav-btn">📖 图鉴</button>' +
-                    '<button id="v60-btn-challenge" class="v60-nav-btn">⚔️ 挑战</button>' +
-                    '<button id="v60-btn-rank" class="v60-nav-btn">🏆 排行</button>' +
-                    '<button id="v60-btn-ach" class="v60-nav-btn">🏅 成就</button>' +
-                    '<button id="v60-btn-daily" class="v60-nav-btn">📋 每日</button>' +
-                    '<button id="v60-btn-set" class="v60-nav-btn">⚙️ 设置</button>' +
+                    '<button id="v60-btn-map" class="v60-nav-btn">' + V60_NAV_ICONS.map + ' 地图</button>' +
+                    '<button id="v60-btn-train" class="v60-nav-btn">' + V60_NAV_ICONS.train + ' 训练</button>' +
+                    '<button id="v60-btn-armory" class="v60-nav-btn">' + V60_NAV_ICONS.armory + ' 军械库</button>' +
+                    '<button id="v60-btn-tech" class="v60-nav-btn">' + V60_NAV_ICONS.tech + ' 科技</button>' +
+                    '<button id="v60-btn-codex" class="v60-nav-btn">' + V60_NAV_ICONS.codex + ' 图鉴</button>' +
+                    '<button id="v60-btn-challenge" class="v60-nav-btn">' + V60_NAV_ICONS.challenge + ' 挑战</button>' +
+                    '<button id="v60-btn-rank" class="v60-nav-btn">' + V60_NAV_ICONS.rank + ' 排行</button>' +
+                    '<button id="v60-btn-ach" class="v60-nav-btn">' + V60_NAV_ICONS.ach + ' 成就</button>' +
+                    '<button id="v60-btn-daily" class="v60-nav-btn">' + V60_NAV_ICONS.daily + ' 每日</button>' +
+                    '<button id="v60-btn-set" class="v60-nav-btn">' + V60_NAV_ICONS.set + ' 设置</button>' +
                 '</div>' +
                 '<div id="v60-class-row" class="v60-class-row"></div>' +
                 '<div id="v60-home-growth" class="v60-home-growth"></div>');
@@ -546,6 +564,7 @@ var V60UI = {
             var v14host = hero.querySelector('#v14-weapon-3d');
             if (v14host && typeof WeaponShowcase !== 'undefined' && WeaponShowcase.mount(v14host, current)) {
                 hero.classList.add('v14-3d-ready');
+                v14host.classList.add('v14-active');
             }
         } else {
             hero.innerHTML = '';

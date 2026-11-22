@@ -158,7 +158,8 @@ html.v13-reduced-motion *, html.v13-reduced-motion *::before, html.v13-reduced-m
 
 /* ===== V14: 军械库 3D 武器展示台 ===== */
 .v14-weapon-3d { display: none; }
-.v14-weapon-3d:not(:empty) { display: block; width: 160px; height: 132px; margin: 0 auto; position: relative; }
+/* V14.1: minidom 不支持 :not(:empty) — 改用 JS 挂载成功后加 v14-active 类 */
+.v14-weapon-3d.v14-active { display: block; width: 160px; height: 132px; margin: 0 auto; position: relative; }
 .v14-weapon-3d .v14-weapon-canvas { width: 100%; height: 100%; display: block; }
 /* 3D 就绪后隐藏 SVG 图集回退; 平台光环 + 地台阴影 */
 #v118-armory-hero.v14-3d-ready .v118-weapon-art { display: none; }
@@ -173,3 +174,6 @@ html.v13-reduced-motion *, html.v13-reduced-motion *::before, html.v13-reduced-m
     /* 展示台呼吸/摆动由 JS 驱动; 减少动态时首帧静置(渲染仍进行但幅度归零) */
     #v118-armory-hero.v14-3d-ready .v14-weapon-canvas { opacity: 1; }
 }
+
+/* V14: 首页宫格 SVG 图标统一规格 */
+.v60-nav-btn svg { width: 14px; height: 14px; vertical-align: -2.5px; margin-right: 4px; opacity: 0.92; }

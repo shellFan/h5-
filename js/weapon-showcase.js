@@ -10,7 +10,10 @@ var WeaponShowcase = {
 
     available: function() {
         if (typeof THREE === 'undefined' || !THREE.GLTFLoader || typeof document === 'undefined') return false;
-        // V14: 微信 minidom 等环境无 WebGL — 探测失败即回退 SVG 图集
+        // V14.1: 小游戏运行时(真机 wx / 模拟器 minidom)禁止挂载 — 真实 canvas 节点混入
+        // minidom 树会污染其样式引擎(bg-image 全部不再加载)。H5 端 SVG 图集保持回退。
+        if (typeof wx !== 'undefined') return false;
+        if (typeof window !== 'undefined' && window.__minidom) return false;
         try {
             var probe = document.createElement('canvas');
             return !!(probe.getContext && probe.getContext('webgl'));

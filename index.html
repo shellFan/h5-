@@ -13,7 +13,7 @@
     <!-- V12视觉升级层: 设计令牌/HUD精修/结算/排行榜/手机安全区 (docs/art/UI_DESIGN_SYSTEM.md) -->
     <link rel="stylesheet" href="style-v120.css?v=120">
     <link rel="stylesheet" href="style-v118.css?v=118">
-    <link rel="stylesheet" href="style-v130.css?v=130">
+    <link rel="stylesheet" href="style-v130.css?v=140">
 </head>
 <body>
     <!-- VNext: 真实资源加载进度(文件级统计, 阶段推进, 失败重试) -->
@@ -26,7 +26,7 @@
     </div>
     <script>
         // V11 QA: 游戏版本标识(首页品牌栏读取; 与package.json同步维护)
-        window.__GAME_VERSION = 'v12.0';
+        window.__GAME_VERSION = 'v14.0';
         // VNext: 加载进度追踪器(被 soldier-loader / enemy-models 调用; 仅统计真实文件进度, 无定时器伪造)
         window.__BootProgress = {
             files: {}, total: 26, // 2士兵 + 12×2 僵尸/Boss GLB
@@ -278,22 +278,22 @@
     <script src="js/leaderboard.js?v=81"></script>
     <script src="js/progression.js?v=60"></script>
     <script src="js/challenge.js?v=60"></script>
-    <script src="js/ui-v60.js?v=118"></script>
-    <script src="js/weapon-showcase.js?v=142"></script>
+    <script src="js/ui-v60.js?v=140"></script>
+    <script src="js/weapon-showcase.js?v=143"></script>
     <script src="js/upgrades.js?v=51"></script>
     <script src="js/movement.js"></script>
     <script src="js/vendor/GLTFLoader.js"></script>
     <script src="js/soldier-loader.js?v=50"></script>
     <script src="js/soldier-renderer.js?v=50"></script>
-    <script src="js/enemy-models.js?v=50"></script>
+    <script src="js/enemy-models.js?v=140"></script>
     <script src="js/boss-v42.js?v=50"></script>
-    <script src="js/art-v42.js?v=50"></script>
-    <script src="js/world.js?v=50"></script>
-    <script src="js/effects.js?v=117"></script>
+    <script src="js/art-v42.js?v=140"></script>
+    <script src="js/world.js?v=140"></script>
+    <script src="js/effects.js?v=140"></script>
     <script src="js/squad.js?v=117"></script>
     <script src="js/gates.js?v=117"></script>
-    <script src="js/enemies.js?v=117"></script>
-    <script src="js/combat.js?v=117"></script>
+    <script src="js/enemies.js?v=140"></script>
+    <script src="js/combat.js?v=140"></script>
     <script src="js/pacing.js"></script>
     <!-- V3.4: 平台抽象层 + 广告系统(在game.js之前装配) -->
     <script src="js/platform/storage-adapter.js"></script>
@@ -313,6 +313,6 @@
         Platform.initialize();
         window.__adService = setupAdService();
     </script>
-    <script src="js/game.js?v=117"></script>
+    <script src="js/game.js?v=140"></script>
 </body>
 </html>
