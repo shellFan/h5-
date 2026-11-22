@@ -36,11 +36,13 @@ var TechTree = {
         if (def.req && this.levelOf(profile, def.req) < 1) return { ok: false, reason: 'locked' };
         return { ok: true, lv: lv, cost: def.cost };
     },
-    /** 升级(原子) */
+    /** 升级(原子) — 消耗科技点(techPoints), 与金币(profile.spend)无关 */
     upgrade: function(profile, id) {
         var check = this.canUpgrade(profile, id);
         if (!check.ok) return check;
-        if (!profile.spend(check.cost)) return { ok: false, reason: 'insufficient' };
+        var tp = profile.data.techPoints || 0;
+        if (tp < check.cost) return { ok: false, reason: 'insufficient' };
+        profile.data.techPoints = tp - check.cost;
         if (!profile.data.tech) profile.data.tech = {};
         profile.data.tech[id] = (profile.data.tech[id] || 0) + 1;
         profile.save();
