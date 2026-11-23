@@ -69,6 +69,10 @@ class GateSystem {
         if (z === null || (outstanding === 0 && pacing.canChooseGate(z))) return null;
         // Hold before the choice area, including while waves rest or splits spawn.
         // Never pull a squad backwards when loading an already advanced position.
+        // V13.1恢复V12契约: 交战期也必须驻足 — 若交战中放行推进, 小队会在门仍隐形
+        // (syncVisibility要求outstanding=0)时直接穿过1单位触发窗口, 该排状态门被
+        // 永久跳过(combat-feedback-gates伏击回归稳定FAIL)。门不可见时窗口不可重入,
+        // 小队只前进, 因此唯一安全策略是推进到门前即驻足, 清场后开门通过。
         return Math.min(squadZ, z + 5);
     }
 
@@ -125,6 +129,12 @@ class GateSystem {
                     if (glass) {
                         glass.material.opacity = 0.45 + intensity * 0.3;
                     }
+                }
+                // V13: 稀有度光束呼吸脉动(相位取门z; 靠近时增强 — 复用上面的 intensity)
+                const beam = g.model.userData.beamMat;
+                if (beam) {
+                    const nearBoost = dist < 6 ? (1 - dist / 6) * 0.22 : 0;
+                    beam.opacity = 0.26 + Math.sin(time * 3 + g.z * 1.7) * 0.08 + nearBoost;
                 }
             }
 

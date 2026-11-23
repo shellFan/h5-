@@ -335,6 +335,30 @@
         ground.position.y = 0.015;
         group.add(ground);
 
+        // V13: 稀有度光束柱 — 双柱+顶梁合并为单 mesh(+1 drawCall/门), 加色混合;
+        // 让门在任意主题(洞穴/末日)下保持稀有度色可读性(玩法可读性优先级最高)
+        var beamH = 2.5;
+        var beamGeo = mergeGeometries([
+            colorize(new THREE.PlaneGeometry(0.09, beamH), style.light),
+            colorize(new THREE.PlaneGeometry(0.09, beamH).translate(width * 0.5 - postW * 0.5, 0, 0), style.light),
+            colorize(new THREE.PlaneGeometry(width - 0.34, 0.055).translate(0, beamH * 0.5 - 0.03, 0), style.light)
+        ]);
+        var beamMat = new THREE.MeshBasicMaterial({
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.34,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            toneMapped: false,
+            side: THREE.DoubleSide,
+            fog: false
+        });
+        var beam = new THREE.Mesh(beamGeo, beamMat);
+        beam.position.set(0, 0.45 + beamH * 0.5, -0.16);
+        beam.renderOrder = 2;
+        beam.userData.artSource = 'V13 稀有度光束柱(加色, 脉动由 gates.update 驱动)';
+        group.add(beam);
+
         var labelTexture = makeGateTextTexture(formatGateLabel(gateData), style);
         var labelMat = new THREE.SpriteMaterial({
             map: labelTexture,
@@ -358,6 +382,7 @@
         group.userData.qualityKind = style.kind;
         group.userData.label = label;
         group.userData.labelBaseY = 1.03;
+        group.userData.beamMat = beamMat; // V13: 光束脉动(gates.update)
         group.userData.glass = glass;
         group.userData.glow = ground;
         group.userData.ring = ground;
@@ -533,11 +558,127 @@
         mesh.userData.artSource = 'V42Art.buildEnvironment/instanced-' + name;
         mesh.userData.collidable = false;
         env.root.add(mesh);
-        var entry = { mesh: mesh, records: records };
+        // V14: 主题归属 — entry.themes 列出的主题可见, 未列出的隐藏(setEnvironmentTheme 切换)
+        var entry = { mesh: mesh, records: records, themes: options.themes || null };
+        if (entry.themes) mesh.visible = false; // 等待 setEnvironmentTheme 激活
         env.entries.push(entry);
         env.drawCalls++;
         return entry;
     }
+
+    /** V14: 主题道具包可见性切换 — 每主题只激活自己的道具类别; 重置 lastSquadZ 触发全量重排 */
+    V42Art.setEnvironmentTheme = function (env, themeName) {
+        if (!env || !env.entries) return;
+        for (var i = 0; i < env.entries.length; i++) {
+            var entry = env.entries[i];
+            if (!entry.themes) { entry.mesh.visible = true; continue; }
+            var on = entry.themes.indexOf(themeName) >= 0;
+            if (entry.mesh.visible !== on) {
+                entry.mesh.visible = on;
+                if (on) env.lastSquadZ = Number.POSITIVE_INFINITY; // 激活时全量重排矩阵
+            }
+        }
+    };
+
+    /** V14.3: 草地噪点纹理 — 灰度细噪+修剪条纹, 与顶点色相乘提升地面质感(共享单张) */
+    var _grassTex = null;
+    V42Art.getGrassTexture = function () {
+        if (_grassTex) return _grassTex;
+        var cv = document.createElement('canvas');
+        cv.width = 128; cv.height = 128;
+        var ctx = cv.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, 128, 128);
+        for (var i = 0; i < 900; i++) {
+            var v = Math.random();
+            ctx.fillStyle = v < 0.5 ? 'rgba(120,160,90,0.16)' : 'rgba(255,255,255,0.12)';
+            ctx.fillRect(Math.random() * 128, Math.random() * 128, 2 + Math.random() * 2, 1 + Math.random() * 2);
+        }
+        // 修剪条纹(横向明暗带)
+        for (var b2 = 0; b2 < 4; b2++) {
+            ctx.fillStyle = b2 % 2 ? 'rgba(255,255,255,0.06)' : 'rgba(40,70,30,0.08)';
+            ctx.fillRect(0, b2 * 32, 128, 16);
+        }
+        var tex = new THREE.CanvasTexture(cv);
+        tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(4, 2);
+        _grassTex = tex;
+        return tex;
+    };
+
+    /** V14: 主题地面纹理 — 程序化生成并缓存(柏油/龟裂/岩面/金属板/混凝土), 含三车道虚线保持跑道可读 */
+    var _groundTexCache = {};
+    V42Art.getGroundTexture = function (kind) {
+        if (_groundTexCache[kind]) return _groundTexCache[kind];
+        var cv = document.createElement('canvas');
+        cv.width = 256; cv.height = 512;
+        var ctx = cv.getContext('2d');
+        var palettes = {
+            asphalt: { base: '#7C8B96', line: '#F0EEF5', edge: '#E3C26B', noise: true },
+            cracked: { base: '#5E5A54', line: '#B8AE9C', edge: '#8A7A54', noise: true, cracks: true },
+            rock:    { base: '#3E4E52', line: '#7E9EA0', edge: '#5E7A78', noise: true, strata: true },
+            metal:   { base: '#5E6268', line: '#B8C4C8', edge: '#8E9EA6', noise: false, plates: true },
+            concrete:{ base: '#8E948E', line: '#E8ECE8', edge: '#C2B27E', noise: true, slabs: true }
+        };
+        var P = palettes[kind] || palettes.asphalt;
+        ctx.fillStyle = P.base;
+        ctx.fillRect(0, 0, 256, 512);
+        var i;
+        if (P.plates) {
+            // 金属甲板: 大板拼缝+铆钉
+            ctx.strokeStyle = 'rgba(20,26,30,0.55)'; ctx.lineWidth = 3;
+            for (i = 0; i < 4; i++) { ctx.beginPath(); ctx.moveTo(0, i * 128 + 8); ctx.lineTo(256, i * 128 + 8); ctx.stroke(); }
+            ctx.beginPath(); ctx.moveTo(85, 0); ctx.lineTo(85, 512); ctx.moveTo(171, 0); ctx.lineTo(171, 512); ctx.stroke();
+            ctx.fillStyle = 'rgba(200,210,214,0.5)';
+            for (i = 0; i < 40; i++) { ctx.beginPath(); ctx.arc(20 + (i % 4) * 60, 30 + Math.floor(i / 4) * 62, 3, 0, Math.PI * 2); ctx.fill(); }
+        } else if (P.slabs) {
+            // 混凝土: 伸缩缝+污渍
+            ctx.strokeStyle = 'rgba(60,66,60,0.5)'; ctx.lineWidth = 3;
+            for (i = 0; i < 3; i++) { ctx.beginPath(); ctx.moveTo(0, i * 170 + 40); ctx.lineTo(256, i * 170 + 40); ctx.stroke(); }
+            for (i = 0; i < 10; i++) {
+                ctx.fillStyle = 'rgba(50,54,48,' + (0.05 + Math.random() * 0.06) + ')';
+                ctx.beginPath(); ctx.ellipse(Math.random() * 256, Math.random() * 512, 12 + Math.random() * 30, 8 + Math.random() * 20, 0, 0, Math.PI * 2); ctx.fill();
+            }
+        } else if (P.strata) {
+            // 洞穴岩面: 水平岩层带+湿痕
+            for (i = 0; i < 7; i++) {
+                ctx.fillStyle = 'rgba(' + (i % 2 ? '28,42,46' : '52,68,72') + ',0.35)';
+                ctx.fillRect(0, i * 74, 256, 34 + (i % 3) * 12);
+            }
+            for (i = 0; i < 8; i++) {
+                ctx.fillStyle = 'rgba(90,140,140,0.12)';
+                ctx.beginPath(); ctx.ellipse(Math.random() * 256, Math.random() * 512, 14 + Math.random() * 26, 20 + Math.random() * 40, 0, 0, Math.PI * 2); ctx.fill();
+            }
+        } else {
+            // 柏油/龟裂: 大色调带 + 噪点 + 车辙
+            var bandTones = ['rgba(255,255,255,0.045)', 'rgba(30,44,56,0.06)', 'rgba(255,255,255,0.03)'];
+            for (i = 0; i < 3; i++) { ctx.fillStyle = bandTones[i]; ctx.fillRect((i * 83) % 256, 0, 60 + i * 14, 512); }
+            for (i = 0; i < 380; i++) {
+                ctx.fillStyle = Math.random() < 0.5 ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.035)';
+                ctx.fillRect(Math.random() * 256, Math.random() * 512, 2 + Math.random() * 3, 2 + Math.random() * 3);
+            }
+            ctx.fillStyle = 'rgba(24,34,40,0.10)';
+            ctx.fillRect(52, 0, 22, 512); ctx.fillRect(182, 0, 22, 512);
+        }
+        if (P.cracks) {
+            ctx.strokeStyle = 'rgba(16,14,10,0.5)'; ctx.lineWidth = 2;
+            for (i = 0; i < 12; i++) {
+                var sx = Math.random() * 256, sy = Math.random() * 512;
+                ctx.beginPath(); ctx.moveTo(sx, sy);
+                for (var c = 0; c < 3; c++) { sx += (Math.random() - 0.5) * 60; sy += 12 + Math.random() * 26; ctx.lineTo(sx, sy); }
+                ctx.stroke();
+            }
+        }
+        // 三车道虚线(与柏油版同位置: x≈90/165) + 路缘实线 — 保持跑道可读性
+        ctx.fillStyle = P.line;
+        for (i = 0; i < 512; i += 48) { ctx.fillRect(88, i, 5, 30); ctx.fillRect(163, i, 5, 30); }
+        ctx.fillStyle = 'rgba(40,44,40,0.4)'; ctx.fillRect(3, 0, 7, 512); ctx.fillRect(246, 0, 7, 512);
+        ctx.fillStyle = P.edge; ctx.fillRect(4, 0, 5, 512); ctx.fillRect(247, 0, 5, 512);
+        var tex = new THREE.CanvasTexture(cv);
+        tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping; tex.anisotropy = 4;
+        _groundTexCache[kind] = tex;
+        return tex;
+    };
 
     function setRecordMatrix(entry, index, tempObject) {
         var r = entry.records[index];
@@ -562,6 +703,11 @@
         world.decoItems = [];
         world.buildings = [];
         world.clouds = [];
+
+        // V14: 主题族定义 — CITY_FAMILY(含末日废墟态) / CITY_ALIVE(完好城市态)
+        var CITY_FAMILY = ['default', 'dawn', 'noon', 'overcast', 'sunset', 'dusk', 'apocalypse'];
+        var CITY_ALIVE = ['default', 'dawn', 'noon', 'overcast', 'sunset', 'dusk'];
+        var ALL_BUT_CAVE = ['default', 'dawn', 'noon', 'overcast', 'sunset', 'dusk', 'apocalypse', 'mechanical', 'fortress'];
 
         var random = seededRandom(42042);
         var root = new THREE.Group();
@@ -598,7 +744,7 @@
             transparent: true, opacity: 0.92, fog: false
         });
 
-        var roadside = makeRecords(54, function (i) {
+        var roadside = makeRecords(76, function (i) {
             var side = i % 2 ? 1 : -1;
             return { x: side * (4.8 + random() * .4), y: 0, z: 10 - i * 3.08 + random() * .5, s: side };
         });
@@ -624,7 +770,7 @@
             propBase.filter(function (_, i) { return i % 3 === 0; }).map(function (r) { return { x: r.x + r.s * 0.2, y: 0.67, z: r.z - 0.08, sx: 1, sy: 1, sz: 1, ry: r.s * 0.1 }; }));
         addInstancedCategory(env, 'cones', new THREE.ConeGeometry(0.13, 0.42, 7), coral,
             propBase.filter(function (_, i) { return i % 3 === 1; }).map(function (r) { return { x: r.x, y: 0.21, z: r.z, ry: random() * TAU }; }));
-        var buildings = makeRecords(44, function (i) {
+        var buildings = makeRecords(50, function (i) {
             var side = i % 2 ? 1 : -1;
             var h = 3.4 + random() * 4.6;
             var w = 2.4 + random() * 1.2;
@@ -677,6 +823,185 @@
         });
         addInstancedCategory(env, 'clouds', new THREE.IcosahedronGeometry(0.78, 1), cloudMat, clouds);
 
+        // ===== V14: 主题道具包 =====
+        // 每个主题族专属场景几何, 全部实例化+共享材质(按批合并), applyTheme 时按可见性切换。
+        // 装饰只出现在 |x|>=4.9 的路外区域, 不影响跑道/碰撞/镜头。
+        var box = new THREE.BoxGeometry(1, 1, 1);
+        function rec(x, y, z, sx, sy, sz, ry, rx, rz) {
+            return { x: x, y: y, z: z, sx: sx, sy: sy, sz: sz, ry: ry || 0, rx: rx || 0, rz: rz || 0 };
+        }
+
+        // —— 城市族加丰富(CITY_ALIVE): 候车亭/广告牌/信号灯/消防栓 ——
+        var cxFrames = [], cxPanels = [], cxGlow = [];
+        for (var ci = 0; ci < 6; ci++) {
+            var cSide = ci % 2 ? 1 : -1, cz = 6 - ci * 27 + random() * 5, cx = cSide * 5.05;
+            cxFrames.push(rec(cx, 1.2, cz, 0.09, 2.4, 1.85));                              // 候车亭背板
+            cxFrames.push(rec(cx - cSide * 0.9, 1.1, cz - 0.85, 0.09, 2.2, 0.1));
+            cxFrames.push(rec(cx - cSide * 0.9, 1.1, cz + 0.85, 0.09, 2.2, 0.1));
+            cxPanels.push(rec(cx - cSide * 0.42, 2.24, cz, 1.25, 0.1, 2.0));               // 顶棚
+            cxPanels.push(rec(cx - cSide * 0.42, 0.58, cz + 0.8, 0.12, 0.42, 1.2));        // 座椅
+            cxGlow.push(rec(cx + cSide * 0.02, 1.55, cz - 0.95, 0.5, 0.36, 0.05));         // 站牌灯箱
+        }
+        for (var bi2 = 0; bi2 < 4; bi2++) {
+            var bSide = bi2 % 2 ? 1 : -1, bz = -14 - bi2 * 36 + random() * 8, bx = bSide * 6.6;
+            cxFrames.push(rec(bx - bSide * 0.5, 1.5, bz, 0.14, 3.0, 0.14));
+            cxFrames.push(rec(bx + bSide * 0.5, 1.5, bz, 0.14, 3.0, 0.14));
+            cxPanels.push(rec(bx, 3.4, bz + (bi2 % 2 ? 0.05 : -0.05), 2.6, 1.5, 0.12, bSide * 0.06));
+            cxGlow.push(rec(bx - bSide * 0.09, 3.4, bz + (bi2 % 2 ? 0.1 : -0.1), 2.2, 1.1, 0.06));
+        }
+        for (var ti = 0; ti < 4; ti++) {
+            var tSide = ti % 2 ? 1 : -1, tz = 18 - ti * 39, tx = tSide * 4.55;
+            cxFrames.push(rec(tx, 1.35, tz, 0.11, 2.7, 0.11));
+            cxPanels.push(rec(tx - tSide * 0.14, 2.78, tz, 0.3, 0.85, 0.26));
+            cxGlow.push(rec(tx - tSide * 0.14, 2.95, tz, 0.16, 0.16, 0.05));
+        }
+        for (var hi = 0; hi < 4; hi++) {
+            var hSide = hi % 2 ? 1 : -1, hz = 22 - hi * 41 + random() * 6;
+            cxPanels.push(rec(hSide * 4.6, 0.26, hz, 0.16, 0.5, 0.2));
+            cxGlow.push(rec(hSide * 4.6, 0.55, hz, 0.1, 0.12, 0.1));
+        }
+        // Cross-street decorative banners removed: keep the battle sightline clear.
+        addInstancedCategory(env, 'cityx-frames', box, makeCityMaterial(0x2E3A42, { roughness: 0.5, metalness: 0.3 }), cxFrames, { themes: CITY_ALIVE, castShadow: true });
+        addInstancedCategory(env, 'cityx-panels', box, makeCityMaterial(0x9AAFA8), cxPanels, { themes: CITY_ALIVE, castShadow: true });
+        var cityxGlowMat = new THREE.MeshBasicMaterial({ color: 0xFFE9A8, toneMapped: false }); cityxGlowMat.__noThemeTint = true;
+        addInstancedCategory(env, 'cityx-glow', box, cityxGlowMat, cxGlow, { themes: CITY_ALIVE });
+
+        // —— 末日废墟(apocalypse): 坍塌楼板/瓦砾堆/烧毁车壳/余烬 ——
+        var apoSlabs = [], apoRubble = [], apoWrecks = [], apoEmbers = [];
+        for (var ai = 0; ai < 12; ai++) {
+            var aSide = ai % 2 ? 1 : -1, az = 4 - ai * 19 + random() * 6;
+            apoSlabs.push(rec(aSide * (5.7 + random() * 1.4), 0.9 + random() * 0.6, az, 2.8 + random() * 2.0, 0.6, 3.6 + random() * 1.8, random() * 1.2, (random() - 0.5) * 0.3, (random() - 0.5) * 0.24));
+            for (var rb = 0; rb < 5; rb++) {
+                apoRubble.push(rec(aSide * (4.85 + random() * 2.4), 0.18 + random() * 0.26, az + random() * 6 - 3, 0.5 + random() * 0.9, 0.3 + random() * 0.55, 0.5 + random() * 0.9, random() * TAU));
+            }
+            if (ai % 2 === 0 || ai % 3 === 1) {
+                apoWrecks.push(rec(aSide * 5.3, 0.3, az + 2.4, 0.95, 0.6, 2.0, random() * 0.5 - 0.25, 0, (random() - 0.5) * 0.14));
+                apoEmbers.push(rec(aSide * 5.3, 0.62, az + 2.0, 0.3, 0.1, 0.5));
+            }
+            if (ai % 3 === 1) apoEmbers.push(rec(aSide * (5.6 + random()), 0.34, az - 1.5, 0.24, 0.08, 0.3));
+        }
+        addInstancedCategory(env, 'apo-slabs', box, makeCityMaterial(0x4A4440, { roughness: 0.9 }), apoSlabs, { themes: ['apocalypse'], castShadow: true });
+        addInstancedCategory(env, 'apo-rubble', new THREE.IcosahedronGeometry(0.5, 0), makeCityMaterial(0x6E655C, { roughness: 0.95 }), apoRubble, { themes: ['apocalypse'], castShadow: true });
+        addInstancedCategory(env, 'apo-wrecks', roundedRectGeometry(1, 1, 0.12, 1), makeCityMaterial(0x26221E, { roughness: 0.6, metalness: 0.3 }), apoWrecks, { themes: ['apocalypse'], castShadow: true });
+        var apoEmberMat = new THREE.MeshBasicMaterial({ color: 0xFF6A3C, toneMapped: false }); apoEmberMat.__noThemeTint = true;
+        addInstancedCategory(env, 'apo-embers', box, apoEmberMat, apoEmbers, { themes: ['apocalypse'] });
+
+        // —— 地下巢穴(cave): 巨岩壁/石笋/发光晶体/荧光菌 ——
+        var caveBoulders = [], caveStalag = [], caveCrystals = [], caveShrooms = [];
+        for (var vi = 0; vi < 14; vi++) {
+            var vSide = vi % 2 ? 1 : -1, vz = 6 - vi * 12 + random() * 6;
+            caveBoulders.push(rec(vSide * (4.9 + random() * 2.6), 0.7 + random() * 1.2, vz, 2.6 + random() * 2.6, 1.9 + random() * 2.4, 2.8 + random() * 2.2, random() * TAU));
+            caveStalag.push(rec(vSide * (4.65 + random() * 1.0), 0.45 + random() * 0.5, vz + random() * 7 - 3.5, 0.28 + random() * 0.3, 0.9 + random() * 1.4, 0.28 + random() * 0.3));
+            if (vi % 2 === 0) caveCrystals.push(rec(vSide * (4.6 + random() * 0.6), 0.4 + random() * 0.3, vz + random() * 5 - 2.5, 0.2 + random() * 0.22, 0.45 + random() * 0.55, 0.2 + random() * 0.22, random() * TAU, (random() - 0.5) * 0.4));
+            if (vi % 3 === 0) caveShrooms.push(rec(vSide * (4.55 + random()), 0.2, vz - random() * 4, 0.14 + random() * 0.1, 0.13, 0.14 + random() * 0.1));
+        }
+        addInstancedCategory(env, 'cave-boulders', new THREE.IcosahedronGeometry(1, 0), makeCityMaterial(0x44565C, { roughness: 0.95 }), caveBoulders, { themes: ['cave'], castShadow: true });
+        addInstancedCategory(env, 'cave-stalagmites', new THREE.ConeGeometry(0.5, 1.6, 6), makeCityMaterial(0x3E5054, { roughness: 0.9 }), caveStalag, { themes: ['cave'], castShadow: true });
+        var caveCrystalMat = new THREE.MeshBasicMaterial({ color: 0x4FE3C0, toneMapped: false }); caveCrystalMat.__noThemeTint = true;
+        addInstancedCategory(env, 'cave-crystals', new THREE.OctahedronGeometry(0.5, 0), caveCrystalMat, caveCrystals, { themes: ['cave'] });
+        var caveShroomMat = new THREE.MeshBasicMaterial({ color: 0x6EE7A0, toneMapped: false }); caveShroomMat.__noThemeTint = true;
+        addInstancedCategory(env, 'cave-shrooms', new THREE.SphereGeometry(0.16, 7, 5, 0, Math.PI * 2, 0, Math.PI * 0.55), caveShroomMat, caveShrooms, { themes: ['cave'] });
+
+        // —— 机械废土(mechanical): 管线/机甲残骸/能源塔/金属碎板 ——
+        var mechPipes = [], mechFrames = [], mechWrecks = [], mechStrips = [], mechDebris = [];
+        for (var mi2 = 0; mi2 < 14; mi2++) {
+            var mSide = mi2 % 2 ? 1 : -1, mz = 6 - mi2 * 17 + random() * 6;
+            mechPipes.push(rec(mSide * 5.1, 0.95 + random() * 0.3, mz, 0.18, 0.18, 4.2 + random() * 2));
+            mechPipes.push(rec(mSide * 5.4, 0.5, mz - 1.4, 0.14, 1.0, 0.14));
+            mechPipes.push(rec(mSide * 5.4, 0.5, mz + 1.4, 0.14, 1.0, 0.14));
+            if (mi2 % 2 === 0) {
+                mechWrecks.push(rec(mSide * 6.6, 0.55, mz + 3, 1.0, 1.1, 0.9, random() * TAU));
+                mechWrecks.push(rec(mSide * 6.6, 1.25, mz + 3, 0.5, 0.4, 0.5, random() * TAU));
+                mechStrips.push(rec(mSide * 6.6, 0.9, mz + 3.42, 0.5, 0.08, 0.04));
+            }
+            if (mi2 % 3 === 1) {
+                mechFrames.push(rec(mSide * 5.2, 1.6, mz - 3, 0.5, 3.2, 0.5));
+                mechStrips.push(rec(mSide * 5.2, 2.6, mz - 3, 0.56, 0.3, 0.56));
+            }
+            mechDebris.push(rec(mSide * (4.8 + random() * 1.6), 0.05, mz + random() * 6 - 3, 0.5 + random() * 0.7, 0.04, 0.6 + random() * 0.8, random() * TAU));
+            mechDebris.push(rec(mSide * (4.95 + random() * 1.8), 0.05, mz + random() * 8 - 4, 0.4 + random() * 0.6, 0.04, 0.5 + random() * 0.7, random() * TAU));
+        }
+        addInstancedCategory(env, 'mech-pipes', new THREE.CylinderGeometry(0.5, 0.5, 1, 9), makeCityMaterial(0x6E7076, { roughness: 0.4, metalness: 0.6 }), mechPipes, { themes: ['mechanical'], castShadow: true });
+        addInstancedCategory(env, 'mech-wreck-frames', box, makeCityMaterial(0x4E5258, { roughness: 0.5, metalness: 0.55 }), mechWrecks, { themes: ['mechanical'], castShadow: true });
+        addInstancedCategory(env, 'mech-pylons', box, makeCityMaterial(0x565A60, { roughness: 0.45, metalness: 0.6 }), mechFrames, { themes: ['mechanical'], castShadow: true });
+        var mechStripMat = new THREE.MeshBasicMaterial({ color: 0x54D8E8, toneMapped: false }); mechStripMat.__noThemeTint = true;
+        addInstancedCategory(env, 'mech-strips', box, mechStripMat, mechStrips, { themes: ['mechanical'] });
+        addInstancedCategory(env, 'mech-debris', box, makeCityMaterial(0x3E4248, { roughness: 0.7, metalness: 0.4 }), mechDebris, { themes: ['mechanical'] });
+
+        // —— 最终防线(fortress): 防御墙/瞭望塔/废弃坦克/沙袋 ——
+        var fortWalls = [], fortTowers = [], fortHulls = [], fortTurrets = [], fortSandbags = [];
+        for (var fi = 0; fi < 9; fi++) {
+            var fSide = fi % 2 ? 1 : -1, fz = 4 - fi * 18 + random() * 5;
+            fortWalls.push(rec(fSide * 5.15, 0.85, fz, 1.2, 1.7, 6.5 + random() * 2));
+            if (fi % 3 === 0) {
+                fortTowers.push(rec(fSide * 6.8, 1.9, fz + 2, 1.3, 3.8, 1.3));
+                fortTowers.push(rec(fSide * 6.8, 3.95, fz + 2, 1.7, 0.24, 1.7));
+            }
+            if (fi % 3 === 1) {
+                fortHulls.push(rec(fSide * 6.0, 0.55, fz + 2.6, 1.7, 0.8, 3.2, random() * 0.4 - 0.2));
+                fortTurrets.push(rec(fSide * 6.0, 1.12, fz + 2.4, 0.9, 0.45, 1.2, random() * 0.4 - 0.2));
+            }
+            for (var sb = 0; sb < 3; sb++) {
+                fortSandbags.push(rec(fSide * 4.85, 0.1 + sb * 0.11, fz + 1.2 + sb * 0.3, 0.5, 0.18, 0.3, random() * 0.2));
+            }
+        }
+        // Decorative arches removed; gameplay gate rows are separate.
+        addInstancedCategory(env, 'fort-walls', box, makeCityMaterial(0x5E6E7C, { roughness: 0.85 }), fortWalls, { themes: ['fortress'], castShadow: true });
+        addInstancedCategory(env, 'fort-towers', box, makeCityMaterial(0x5E6E7C, { roughness: 0.8, metalness: 0.2 }), fortTowers, { themes: ['fortress'], castShadow: true });
+        addInstancedCategory(env, 'fort-tank-hulls', roundedRectGeometry(1, 1, 0.1, 1), makeCityMaterial(0x4A5A50, { roughness: 0.6, metalness: 0.4 }), fortHulls, { themes: ['fortress'], castShadow: true });
+        addInstancedCategory(env, 'fort-tank-turrets', box, makeCityMaterial(0x3E4E44, { roughness: 0.55, metalness: 0.5 }), fortTurrets, { themes: ['fortress'], castShadow: true });
+        addInstancedCategory(env, 'fort-sandbags', box, makeCityMaterial(0x9A8E6A, { roughness: 0.95 }), fortSandbags, { themes: ['fortress'], castShadow: true });
+
+        // —— 城市斑马线(路面层次, 城市族): 每~44单位一组白色横道, 1 drawCall ——
+        var crosswalks = [];
+        for (var cw = 0; cw < 4; cw++) {
+            var cwz = 12 - cw * 44;
+            for (var cst = 0; cst < 5; cst++) {
+                crosswalks.push(rec(-2.8 + cst * 1.4, 0.012, cwz, 0.85, 0.012, 0.4));
+            }
+        }
+        addInstancedCategory(env, 'cityx-crosswalk', box, new THREE.MeshBasicMaterial({ color: 0xD8DCE0 }), crosswalks, { themes: CITY_ALIVE });
+
+        // —— 远景剪影(各主题地平线补白, 每主题一类别, 1 drawCall) ——
+        var distantSil = makeRecords(26, function (i) {
+            var h = 6 + random() * 9;
+            return rec((i % 2 ? 1 : -1) * (13 + random() * 8), h * 0.5, 10 - i * 6.2, 3 + random() * 3, h, 3 + random() * 3);
+        });
+        addInstancedCategory(env, 'apo-silhouette', box, makeCityMaterial(0x3E3038, { roughness: 0.9 }), distantSil, { themes: ['apocalypse'] });
+        var mechSil = makeRecords(24, function (i) {
+            var h = 7 + random() * 12;
+            return rec((i % 2 ? 1 : -1) * (14 + random() * 8), h * 0.5, 10 - i * 6.6, 2.4 + random() * 2.2, h, 2.6 + random() * 2.4);
+        });
+        addInstancedCategory(env, 'mech-silhouette', box, makeCityMaterial(0x4A4E54, { roughness: 0.6, metalness: 0.4 }), mechSil, { themes: ['mechanical'] });
+        var fortSil = makeRecords(22, function (i) {
+            var h = 5 + random() * 8;
+            return rec((i % 2 ? 1 : -1) * (13 + random() * 9), h * 0.5, 10 - i * 7.0, 3.4 + random() * 3, h, 3.4 + random() * 3);
+        });
+        addInstancedCategory(env, 'fort-silhouette', box, makeCityMaterial(0x42566A, { roughness: 0.85 }), fortSil, { themes: ['fortress'] });
+
+        // V14: 既有城市类别主题归属 — 末日态保留楼体/枯树/远景, 隐藏商业街具与完好设施
+        var membership = {
+            'tree-trunks': CITY_FAMILY, 'tree-canopies': CITY_ALIVE, 'tree-crowns': CITY_ALIVE,
+            'lamp-poles': CITY_ALIVE, 'lamp-heads': CITY_ALIVE,
+            'parked-cars': CITY_ALIVE, 'car-glass': CITY_ALIVE, 'cones': CITY_ALIVE, 'barriers': CITY_ALIVE,
+            'cream-buildings': CITY_FAMILY, 'teal-buildings': CITY_FAMILY, 'coral-buildings': CITY_FAMILY,
+            'roof-trims': CITY_FAMILY, 'windows': CITY_FAMILY, 'distant-skyline': CITY_FAMILY,
+            'street-concrete': CITY_ALIVE, 'shop-windows': CITY_ALIVE, 'shop-frames': CITY_ALIVE,
+            'striped-awnings': CITY_ALIVE, 'awning-stripes': CITY_ALIVE, 'planter-shrubs': CITY_ALIVE,
+            'parked-car-wheels': CITY_ALIVE, 'street-reflectors': CITY_ALIVE,
+            'shop-sign-0': CITY_ALIVE, 'shop-sign-1': CITY_ALIVE, 'shop-sign-2': CITY_ALIVE,
+            'clouds': ALL_BUT_CAVE
+        };
+        for (var mi3 = 0; mi3 < env.entries.length; mi3++) {
+            var mEntry = env.entries[mi3];
+            var mKey = mEntry.mesh.name.replace('v42-', '');
+            if (membership[mKey]) {
+                mEntry.themes = membership[mKey];
+                mEntry.mesh.visible = false;
+            }
+        }
+        V42Art.setEnvironmentTheme(env, world._themeApplied || 'default');
+
         for (var ei = 0; ei < env.entries.length; ei++) {
             var entry = env.entries[ei];
             for (var ri = 0; ri < entry.records.length; ri++) setRecordMatrix(entry, ri, env.tempObject);
@@ -695,6 +1020,7 @@
         var front = squadZ + env.front;
         for (var ei = 0; ei < env.entries.length; ei++) {
             var entry = env.entries[ei];
+            if (!entry.mesh.visible) continue; // V14: 隐藏主题的类别不参与滚动重排
             var changed = false;
             for (var ri = 0; ri < entry.records.length; ri++) {
                 var record = entry.records[ri];
@@ -741,24 +1067,31 @@
         if (startPanel && !document.getElementById('v42-home-top')) {
             var homeTop = makeElement('div', 'v42-home-top');
             homeTop.id = 'v42-home-top';
-            var best = makeElement('span', 'v42-best-record', '🏆 最高纪录: 第1关');
+            // V14.2: 顶栏静态图标替换系统Emoji(原创SVG, currentColor, 与宫格图标同规格)
+            var ICON = function (paths, cls) {
+                return '<svg class="v14-tb-icon ' + (cls || '') + '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
+            };
+            var best = makeElement('span', 'v42-best-record', '');
             best.id = 'v42-best-record';
+            best.innerHTML = ICON('<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/><path d="M12 14v3M9 21h6M10 18h4v3h-4z"/>') + ' <span class="v42-best-text">最高纪录: 第1关</span>';
             var soundBtn = makeElement('button', 'v42-home-sound', '🔊');
             soundBtn.id = 'btn-home-sound';
             soundBtn.setAttribute('aria-label', '音效开关');
             // V5.1: 金币 + 升级商店 + 免费补给
             var left = makeElement('div', 'v42-home-left');
             left.appendChild(best);
-            var supplyBtn = makeElement('button', 'v51-supply-btn', '🎁 免费补给');
+            var supplyBtn = makeElement('button', 'v51-supply-btn', '');
+            supplyBtn.innerHTML = ICON('<rect x="4" y="9" width="16" height="12" rx="1.6"/><path d="M4 12h16M12 9v12M8.5 9c-2 0-3-1-3-2.4C5.5 5 7 4.6 8.2 5.2L12 9l3.8-3.8C17 4.6 18.5 5 18.5 6.6 18.5 8 17.5 9 15.5 9"/>') + ' 免费补给';
             supplyBtn.id = 'btn-free-supply';
             supplyBtn.setAttribute('aria-label', '每日免费补给(广告)');
             left.appendChild(supplyBtn);
             homeTop.appendChild(left);
             var right = makeElement('div', 'v42-home-right');
             var coinPill = makeElement('span', 'v51-coin-pill');
-            coinPill.innerHTML = '🪙 <b data-coin-display>0</b>';
+            coinPill.innerHTML = ICON('<circle cx="12" cy="12" r="8.2"/><path d="M12 7.5v9M14.8 9.2c-.7-.9-1.7-1.3-2.8-1.3-1.6 0-2.9 1-2.9 2.2 0 2.6 5.8 1.5 5.8 4 0 1.3-1.3 2.2-2.9 2.2-1.1 0-2.1-.4-2.8-1.3" class="v14-coin-mark"/>', 'v14-coin-icon') + ' <b data-coin-display>0</b>';
             right.appendChild(coinPill);
-            var shopBtn = makeElement('button', 'v51-shop-btn', '⬆ 升级');
+            var shopBtn = makeElement('button', 'v51-shop-btn', '');
+            shopBtn.innerHTML = ICON('<path d="M12 19V6M6.5 11.5 12 6l5.5 5.5"/>') + ' 升级';
             shopBtn.id = 'btn-open-shop';
             right.appendChild(shopBtn);
             right.appendChild(soundBtn);

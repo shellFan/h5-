@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-23T02:58:19.568Z",
+  "timestamp": "2026-11-23T03:01:31.187Z",
   "passed": 21,
   "total": 21,
   "results": [
@@ -21,7 +21,7 @@
     {
       "name": "UI DOM 节点构建",
       "ok": true,
-      "detail": "nodes=388, rules=715, keyframes=18"
+      "detail": "nodes=428, rules=767, keyframes=21"
     },
     {
       "name": "首页开始按钮布局",
@@ -61,7 +61,7 @@
     {
       "name": "拖动输入桥接(队伍移动)",
       "ok": true,
-      "detail": "x: 0.00 → -2.00"
+      "detail": "x: 0.00 → -2.02"
     },
     {
       "name": "暂停按钮生效",

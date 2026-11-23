@@ -1176,7 +1176,9 @@ class Game {
                 ne.takeDamage(Math.max(20, ne.maxHp * 0.5), this.effects, ne.x, false);
                 nuked++;
             }
-            this.effects.shockwave(this.squad.x, 0.05, this.squad.z - 6, 0xFFC247);
+            // V14: tier3 分级爆炸(全屏爆炸门) + 既有金色飘字/震屏
+            if (this.effects.explosion) this.effects.explosion(this.squad.x, 1.0, this.squad.z - 6, 3);
+            if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('boom'); // V16: 全屏爆炸音效(原为静默)
             this.world.shake(0.5);
             this.effects.floatText(this.squad.x, 2.4, this.squad.z, '全屏爆炸!', '#FFC247', true);
         }
@@ -1653,7 +1655,9 @@ class Game {
             }
             window.__BootProgress && window.__BootProgress.done();
             window.__BootProgress && window.__BootProgress.stage('准备完毕!', 100);
-            setTimeout(function() { loading.classList.add('boot-hidden'); }, 260);
+            // V15修复: 就绪即隐藏(原260ms延迟窗口内后台续载事件会回写进度条,
+            // 且使"100%后隐藏"成为竞态) — bar 宽度 .18s 过渡保留动画感
+            loading.classList.add('boot-hidden');
         }).catch(function(err) {
             starting = false;
             showError('角色资源加载失败：' + err.message);

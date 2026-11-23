@@ -1,0 +1,207 @@
+/* ============================================================
+   V13 视觉精修层 — 交互动效统一 / 军械库剪影图标 / 科技树连线 / 排行榜状态
+   规范来源: docs/art/UI_DESIGN_SYSTEM.md + docs/V13/UI_DESIGN_SYSTEM.md
+   加载顺序: style.css → v42 → v51 → v60 → v120 → v130(末层)
+   原则: 只做表现层; 复用 --v12-* 令牌; 不改任何数据与业务规则。
+   ============================================================ */
+
+/* ---- 全局: 动效时长令牌(所有页面切换/弹窗统一节奏, 参照 game-feel 技能) ---- */
+:root {
+    --v13-dur-fast: 0.12s;
+    --v13-dur: 0.22s;
+    --v13-dur-slow: 0.34s;
+    --v13-ease: cubic-bezier(0.34, 1.3, 0.64, 1); /* 轻回弹 */
+}
+
+/* ---- 军械库/图鉴: 武器剪影图标 ---- */
+.v60-armory-icon .v13-wicon,
+.v60-codex-icon .v13-wicon {
+    display: block;
+    filter: drop-shadow(0 1.5px 2px rgba(23, 59, 121, 0.28));
+}
+.v60-armory-row.locked .v13-wicon { opacity: 0.42; filter: grayscale(0.7); }
+.v60-armory-row.equipped .v13-wicon { filter: drop-shadow(0 1.5px 3px rgba(255, 194, 71, 0.45)); }
+
+/* ---- 科技树: 分支导轨 + 节点连线 + 等级点(不改节点关系) ---- */
+#v60-tech-page .v60-tech-list { position: relative; }
+.v13-tech-branch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 10px;
+    position: relative;
+}
+.v13-tech-branch-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 9px;
+    background: linear-gradient(180deg, #EAF3FF, #C6DCFA);
+    box-shadow: inset 0 0 0 1.5px rgba(26, 111, 212, 0.35), var(--v12-shadow-sm);
+    font-size: 14px;
+}
+.v13-tech-rail {
+    position: absolute;
+    left: 22px;
+    top: 28px;
+    bottom: -14px;
+    width: 3px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, rgba(26, 111, 212, 0.42), rgba(26, 111, 212, 0.12));
+    pointer-events: none;
+}
+.v13-tech-node { position: relative; }
+.v13-tech-node .v13-tech-connector {
+    position: absolute;
+    left: 12px;
+    top: -10px;
+    width: 3px;
+    height: 16px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, rgba(26, 111, 212, 0.42), rgba(26, 111, 212, 0.18));
+    pointer-events: none;
+}
+.v13-tech-node.locked .v13-tech-connector { background: rgba(23, 59, 121, 0.14); }
+.v13-tech-pips {
+    display: inline-flex;
+    gap: 3px;
+    margin-left: 7px;
+    vertical-align: middle;
+}
+.v13-tech-pips i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(23, 59, 121, 0.16);
+    box-shadow: inset 0 0 0 1px rgba(23, 59, 121, 0.2);
+    transition: background var(--v13-dur) ease, transform var(--v13-dur) var(--v13-ease);
+}
+.v13-tech-pips i.on {
+    background: linear-gradient(180deg, var(--v12-blue-soft), var(--v12-blue));
+    transform: scale(1.12);
+    box-shadow: 0 0 4px rgba(77, 168, 255, 0.55);
+}
+
+/* ---- 排行榜: 空态精修 + 数据源错误态(不伪造数据) ---- */
+.v60-rank-empty.v13-rank-empty-rich {
+    text-align: center;
+    padding: 26px 14px;
+    color: var(--v12-sub);
+    line-height: 1.5;
+}
+.v13-rank-empty-medals {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 12px;
+    opacity: 0.9;
+}
+.v13-rank-empty-medals span { font-size: 22px; filter: grayscale(1); opacity: 0.5; }
+.v13-rank-empty-medals span.gold { font-size: 30px; filter: none; opacity: 1; }
+.v13-rank-error { color: var(--v12-red); }
+.v13-rank-error-tip { font-size: 12px; color: var(--v12-sub); }
+
+/* ---- 页面切换/弹窗动效统一(白名单属性, 不引起重排) ---- */
+#game-container.v42-ui .v60-page {
+    transition: opacity var(--v13-dur-slow) ease, transform var(--v13-dur-slow) var(--v13-ease);
+}
+#game-container.v42-ui .v60-page:not(.hidden) { will-change: opacity, transform; }
+#game-container.v42-ui .v60-page .v60-panel,
+#game-container.v42-ui .panel {
+    animation: v13-panel-in var(--v13-dur-slow) var(--v13-ease) both;
+}
+@keyframes v13-panel-in {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- 卡片/列表行 hover 级反馈(触摸设备按下态增强) ---- */
+#game-container.v42-ui .v60-armory-row,
+#game-container.v42-ui .v60-tech-row,
+#game-container.v42-ui .v60-rank-row,
+#game-container.v42-ui .v60-map-btn,
+#game-container.v42-ui .v60-ach-row,
+#game-container.v42-ui .v60-daily-row {
+    transition: transform var(--v13-dur-fast) ease, box-shadow var(--v13-dur) ease;
+}
+#game-container.v42-ui .v60-armory-row:active,
+#game-container.v42-ui .v60-tech-row.clickable:active,
+#game-container.v42-ui .v60-map-btn:active {
+    transform: scale(0.985);
+}
+
+/* ---- 结算数字获得感(金币行轻微弹跳入) ---- */
+#win-coins .v13-coin-line,
+#lose-coins .v13-coin-line { animation: v13-coin-pop 0.4s var(--v13-ease) both; }
+@keyframes v13-coin-pop {
+    from { opacity: 0; transform: translateY(8px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---- 减少动态效果: 尊重系统设置 + 游戏内设置联动 ---- */
+@media (prefers-reduced-motion: reduce) {
+    #game-container.v42-ui *, #game-container.v42-ui *::before, #game-container.v42-ui *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+/* 游戏内"减少动态"开关(documentElement 类, 由设置页控制; minidom 端同步支持) */
+html.v13-reduced-motion *, html.v13-reduced-motion *::before, html.v13-reduced-motion *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+}
+
+/* ===== V14: 军械库 3D 武器展示台 ===== */
+.v14-weapon-3d { display: none; }
+/* V14.1: minidom 不支持 :not(:empty) — 改用 JS 挂载成功后加 v14-active 类 */
+.v14-weapon-3d.v14-active { display: block; width: 160px; height: 132px; margin: 0 auto; position: relative; }
+.v14-weapon-3d .v14-weapon-canvas { width: 100%; height: 100%; display: block; }
+/* 3D 就绪后隐藏 SVG 图集回退; 平台光环 + 地台阴影 */
+#v118-armory-hero.v14-3d-ready .v118-weapon-art { display: none; }
+#v118-armory-hero.v14-3d-ready { position: relative; }
+#v118-armory-hero.v14-3d-ready::before {
+    content: ''; position: absolute; left: 50%; top: 54%; width: 150px; height: 30px;
+    transform: translateX(-50%); border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(255,194,71,0.28) 0%, rgba(255,194,71,0) 70%);
+    pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    /* 展示台呼吸/摆动由 JS 驱动; 减少动态时首帧静置(渲染仍进行但幅度归零) */
+    #v118-armory-hero.v14-3d-ready .v14-weapon-canvas { opacity: 1; }
+}
+
+/* V14: 首页宫格 SVG 图标统一规格 */
+.v60-nav-btn svg { width: 14px; height: 14px; vertical-align: -2.5px; margin-right: 4px; opacity: 0.92; }
+
+/* V14.2: 首页顶栏 SVG 图标规格 */
+.v14-tb-icon { width: 13px; height: 13px; vertical-align: -2.5px; margin-right: 2px; }
+.v51-coin-pill .v14-coin-icon { color: #FFC247; }
+.v51-coin-pill .v14-coin-icon .v14-coin-mark { stroke-width: 1.6; }
+
+/* ===== V16: 横屏引导(仅触屏+横屏+矮屏; 桌面指针设备不受影响) ===== */
+#orientation-hint {
+    display: none; position: fixed; inset: 0; z-index: 999998;
+    background: rgba(8, 18, 34, 0.94); align-items: center; justify-content: center;
+}
+#orientation-hint .oh-inner { text-align: center; color: #EAF4FB; }
+#orientation-hint .oh-icon {
+    font-size: 44px; font-weight: 900; color: #FFC247; margin-bottom: 10px;
+    animation: v16-rotate-hint 1.6s ease-in-out infinite;
+}
+@keyframes v16-rotate-hint {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+}
+#orientation-hint .oh-text { font-size: 16px; font-weight: 800; line-height: 1.7; }
+#orientation-hint .oh-text span { font-size: 11px; color: #8FA9C2; font-weight: 600; }
+/* V16.1: 显示由 JS 驱动(触屏+横屏+矮屏三条件; headless/桌面 pointer 探测不可靠) */
+#orientation-hint.v16-show { display: flex; }
+/* 减少动态: 引导动画停用 */
+@media (prefers-reduced-motion: reduce) {
+    #orientation-hint .oh-icon { animation: none; }
+}

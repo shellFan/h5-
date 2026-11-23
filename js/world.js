@@ -42,6 +42,7 @@ class World {
         // 半球光: 天空蓝 -> 地面绿
         const hemi = new THREE.HemisphereLight(0xB0DFFF, 0x8FBC8F, 0.5);
         this.scene.add(hemi);
+        this.hemiLight = hemi; // V13: 主题系统需要调整半球光色/强度
 
         // 主方向光 (暖白色, 产生阴影)
         const dir = new THREE.DirectionalLight(0xFFF4E0, 0.72);
@@ -72,6 +73,7 @@ class World {
         const cv = document.createElement('canvas');
         cv.width = 16; cv.height = 256;
         const ctx = cv.getContext('2d');
+        this._skyCanvas = cv; // V13: 主题系统重绘渐变用
         var g = ctx.createLinearGradient(0, 0, 0, 256);
         // 顶:饱和天蓝 → 中:晴空蓝 → 地平线:暖白(与雾色衔接, 远景建筑融入天际)
         g.addColorStop(0.00, '#4FA3DF');
@@ -93,8 +95,9 @@ class World {
         dome.userData.artSource = 'js/world.js:_buildSky() 渐变天空穹顶 16x256';
         this.scene.add(dome);
         this._skyDome = dome;
-        // 雾色向地平线色靠拢 — 远处路段/建筑自然融入天际
-        if (this._themeApplied !== 'apocalypse') this.scene.fog.color.setHex(0xC9E4F2);
+        // 雾色向地平线色靠拢(V13: 雾色统一由主题预设决定, 与 applyTheme 一致)
+        var T0 = (CONFIG.WORLD_THEMES && (CONFIG.WORLD_THEMES[this._themeApplied || 'default'])) || CONFIG.WORLD_THEMES.default;
+        this.scene.fog.color.setHex(T0.fog);
     }
 
     _buildRoad() {
@@ -184,6 +187,7 @@ class World {
 
         const roadMat = new THREE.MeshLambertMaterial({ map: roadTex });
         this._v121RoadMaterial = roadMat;
+        this.roadMat = roadMat; // V14: 主题地面纹理切换需要引用
 
         // V3.5: 每段合并为3个mesh(路面/路侧结构/草地) — 原9个, drawCalls 108→36
         for (let i = 0; i < SEG_COUNT; i++) {
@@ -196,7 +200,7 @@ class World {
             road.receiveShadow = true;
             seg.add(road);
 
-            // 仅保留两侧低矮人行道；移除护栏与顶盖，保持战斗视野开放。
+            // Keep low sidewalks; remove decorative guardrails and caps.
             var structGeos = [
                 { g: new THREE.BoxGeometry(0.8, 0.1, SEG_LEN), x: -3.8, y: 0.05, z: 0, c: 0xC5CDC9 },
                 { g: new THREE.BoxGeometry(0.8, 0.1, SEG_LEN), x: 3.8, y: 0.05, z: 0, c: 0xC5CDC9 }
@@ -240,8 +244,10 @@ class World {
                 patch.translate(side2 * randRange(6.5, 10.5), -0.015, randRange(-4, 4));
                 grassGeoList.push(colorize(patch, grassLight.clone().lerp(grassBase, 0.35)));
             }
-            var groundMesh = new THREE.Mesh(mergeGeometries(grassGeoList),
-                new THREE.MeshLambertMaterial({ vertexColors: true }));
+            var grassMat = new THREE.MeshLambertMaterial({ vertexColors: true });
+            // V14.3: 草地噪点贴图(与顶点色相乘, 提升地面材质质量; 共享单张纹理)
+            if (typeof V42Art !== 'undefined' && V42Art.getGrassTexture) grassMat.map = V42Art.getGrassTexture();
+            var groundMesh = new THREE.Mesh(mergeGeometries(grassGeoList), grassMat);
             groundMesh.receiveShadow = true;
             seg.add(groundMesh);
 
@@ -355,41 +361,75 @@ class World {
         this.sunLight.target.updateMatrixWorld();
     }
 
-    /** V6.0: 关卡主题 — 末日核心等场景换装(天空/雾/灯光), 'default'还原 */
+    /** V6.0: 关卡主题 — 场景换装(天空/雾/灯光), 'default'还原
+     *  V13: 泛化为 CONFIG.WORLD_THEMES 预设查表 — 10 关全覆盖(城市时段族+末日/洞穴/机械/要塞),
+     *       天穹渐变按主题重绘(16x256 Canvas, 单drawCall不变), 环境实例染色目标泛化。
+     *       仅表现层; 关卡结构/刷怪/胜负不受影响。'apocalypse' 保持与旧 APOCALYPSE_THEME 完全一致。 */
     applyTheme(themeName) {
-        var T = themeName === 'apocalypse' ? CONFIG.APOCALYPSE_THEME : null;
-        if (!T) {
+        var themes = CONFIG.WORLD_THEMES || {};
+        var T = themes[themeName] || themes.default;
+        if (!T) return;
+        if (this._skyCanvas && this._paintSky) {
+            this._paintSky(T.sky);
+            this.scene.background = null;
+        } else {
             this.scene.background = new THREE.Color(CONFIG.COLORS.sky);
-            this.scene.fog = new THREE.Fog(0xC9E4F2, 45, 130);
-            if (this._skyDome) this._skyDome.material.color.setHex(0xFFFFFF);
-            this.sunLight.color.setHex(0xFFF4E0);
-            this.sunLight.intensity = 0.72;
-            this._themeApplied = 'default';
-            if (this._v121Scenery) { this._v121Scenery.setTheme(themeName); this._themeApplied = this._v121Scenery.theme; }
-            return;
         }
-        this.scene.background = new THREE.Color(T.sky);
         this.scene.fog = new THREE.Fog(T.fog, T.fogNear, T.fogFar);
-        // V12视觉: 末日主题时天空穹顶整体压暗染色(乘色), 雾色不变
-        if (this._skyDome) this._skyDome.material.color.setHex(0x8A5060);
+        if (this._skyDome) this._skyDome.material.color.setHex(T.domeTint || 0xFFFFFF);
         this.sunLight.color.setHex(T.sunColor);
         this.sunLight.intensity = T.sunIntensity;
-        // 环境实例材质染色(草地/路面/建筑向末日色过渡)
+        if (this.hemiLight) {
+            this.hemiLight.color.setHex(T.hemiSky);
+            this.hemiLight.groundColor.setHex(T.hemiGround);
+            this.hemiLight.intensity = T.hemiIntensity;
+        }
+        // 环境实例材质染色(草地/建筑向主题色过渡; __themeBaseHex 记录初始色, 幂等)
         if (this._v42Environment && this._v42Environment.root) {
-            var mix = { done: false };
             this._v42Environment.root.traverse(function(o) {
-                if (o.isInstancedMesh && o.material && o.material.color) {
+                if (o.isInstancedMesh && o.material && o.material.color && !o.material.__noThemeTint) {
                     if (o.material.__themeBaseHex === undefined) o.material.__themeBaseHex = o.material.color.getHex();
                     var base = new THREE.Color(o.material.__themeBaseHex);
-                    var target = new THREE.Color(T.grass).lerp(base, 0.35);
+                    var target = new THREE.Color(T.envTint).lerp(base, 0.35);
                     o.material.color.copy(base.lerp(target, 0.55));
                     o.material.needsUpdate = true;
                 }
             });
-            mix.done = true;
+        }
+        // V14: 主题道具包可见性切换 + 地面纹理切换(柏油/龟裂/岩面/金属板/混凝土)
+        if (this._v42Environment && V42Art.setEnvironmentTheme) {
+            V42Art.setEnvironmentTheme(this._v42Environment, themeName);
+        }
+        if (this.roadMat && V42Art.getGroundTexture) {
+            var groundTex = V42Art.getGroundTexture(T.ground || 'asphalt');
+            if (this.roadMat.map !== groundTex) {
+                this.roadMat.map = groundTex;
+                this.roadMat.needsUpdate = true;
+            }
         }
         this._themeApplied = themeName;
-        if (this._v121Scenery) this._v121Scenery.setTheme(themeName);
+        if(this._v121Scenery)this._v121Scenery.setTheme(themeName);
+    }
+
+    /** V13: 按主题重绘天穹渐变(与 _buildSky 同规格: 4 停靠点 + 顶部太阳光晕) */
+    _paintSky(stops) {
+        if (!this._skyCanvas || !stops || stops.length < 4) return;
+        var ctx = this._skyCanvas.getContext('2d');
+        var g = ctx.createLinearGradient(0, 0, 0, 256);
+        g.addColorStop(0.00, stops[0]);
+        g.addColorStop(0.45, stops[1]);
+        g.addColorStop(0.80, stops[2]);
+        g.addColorStop(1.00, stops[3]);
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, 16, 256);
+        var sun = ctx.createRadialGradient(8, 36, 2, 8, 36, 90);
+        sun.addColorStop(0, 'rgba(255,246,214,0.35)');
+        sun.addColorStop(1, 'rgba(255,246,214,0)');
+        ctx.fillStyle = sun;
+        ctx.fillRect(0, 0, 16, 256);
+        if (this._skyDome && this._skyDome.material && this._skyDome.material.map) {
+            this._skyDome.material.map.needsUpdate = true;
+        }
     }
 
     /** V4.0: 触发屏幕震动(amp≈世界单位幅度) */

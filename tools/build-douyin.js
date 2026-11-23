@@ -36,6 +36,7 @@ const GAME_SCRIPTS = [
     'js/progression.js',
     'js/challenge.js',
     'js/ui-v60.js',
+    'js/weapon-showcase.js',
     'js/upgrades.js',
     'js/movement.js',
     'js/vendor/GLTFLoader.js',

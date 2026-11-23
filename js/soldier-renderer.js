@@ -34,10 +34,49 @@ var SoldierRenderer = class SoldierRenderer {
         this._temp = new THREE.Matrix4();
         this._muzzleWorld = new THREE.Matrix4();
         this._outPos = new THREE.Vector3();
+        // V16: 职业辨识 — 实例染色 scratch + 职业附件库(gunner肩甲/medic急救包)
+        this._v16Color = new THREE.Color();
+        this._v16AccBanks = {};
 
         this._createBank('hero');
         this._createBank('lod');
         this._selectBank('hero', 0);
+    }
+
+    /** V16: 职业附件几何(Body 局部空间, 程序化, 顶点色+共享材质) */
+    static _classAccGeometry(name) {
+        if (SoldierRenderer._accGeos && SoldierRenderer._accGeos[name]) return SoldierRenderer._accGeos[name];
+        if (!SoldierRenderer._accGeos) SoldierRenderer._accGeos = {};
+        var parts = [];
+        if (name === 'heavyplate') {
+            parts.push(colorize(new THREE.BoxGeometry(0.34, 0.14, 0.3), 0x8A5A34).translate(-0.36, 0.34, 0).rotateZ(0.1));
+            parts.push(colorize(new THREE.BoxGeometry(0.34, 0.14, 0.3), 0x8A5A34).translate(0.36, 0.34, 0).rotateZ(-0.1));
+            parts.push(colorize(new THREE.BoxGeometry(0.3, 0.18, 0.1), 0x9C6A3E).translate(0, 0.3, -0.28));
+        } else if (name === 'scoutcap') {
+            parts.push(colorize(new THREE.CylinderGeometry(0.21, 0.23, 0.09, 9), 0x4E3A66).translate(0, 0.34, 0));
+            parts.push(colorize(new THREE.BoxGeometry(0.18, 0.03, 0.14), 0x3C2C50).translate(0, 0.3, 0.22));
+            parts.push(colorize(new THREE.BoxGeometry(0.08, 0.26, 0.06), 0x5E4680).translate(0.24, 0.22, -0.1).rotateZ(-0.15));
+        } else if (name === 'medickit') {
+            parts.push(colorize(new THREE.BoxGeometry(0.3, 0.24, 0.16), 0xE8EDE8).translate(0, 0.32, -0.26));
+            parts.push(colorize(new THREE.BoxGeometry(0.16, 0.05, 0.02), 0xD84848).translate(0, 0.34, -0.345));
+            parts.push(colorize(new THREE.BoxGeometry(0.05, 0.16, 0.02), 0xD84848).translate(0, 0.34, -0.345));
+        }
+        var merged = mergeGeometries(parts);
+        merged.userData = { artSource: 'V16 class attachment procedural: ' + name };
+        SoldierRenderer._accGeos[name] = merged;
+        return merged;
+    }
+    _classAccBank(name) {
+        if (this._v16AccBanks[name]) return this._v16AccBanks[name];
+        var geo = SoldierRenderer._classAccGeometry(name);
+        var mat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF, vertexColors: true });
+        var mesh = new THREE.InstancedMesh(geo, mat, this.capacity);
+        mesh.name = 'Soldier_clsacc_' + name;
+        mesh.count = 0; mesh.frustumCulled = false;
+        mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        mesh.userData.artSource = 'V16 class attachment ' + name;
+        this.scene.add(mesh);
+        return this._v16AccBanks[name] = { mesh: mesh, count: 0 };
     }
 
     _createBank(name) {
@@ -138,6 +177,12 @@ var SoldierRenderer = class SoldierRenderer {
         if (this._denseSample) this._denseSampleTime = time;
 
         var bank = this.banks[bankName];
+        // V16: 职业辨识 — 每实例染色 + 职业附件(读取 squad._gameRef._classStats.id)
+        var clsId = (squad._gameRef && squad._gameRef._classStats && squad._gameRef._classStats.id) || 'rifleman';
+        var clsPres = SoldierRenderer.CLASS_PRESENTATION[clsId] || SoldierRenderer.CLASS_PRESENTATION.rifleman;
+        this._v16Color.setRGB(clsPres.tint[0], clsPres.tint[1], clsPres.tint[2]);
+        for (var k in this._v16AccBanks) this._v16AccBanks[k].count = 0;
+        var accBank = clsPres.attach ? this._classAccBank(clsPres.attach) : null;
         for (var index = 0; index < squad.count; index++) {
             this._composeRoot(index, squad, moving, lean, tilt, this._root);
             if (!this._lastRoots[index]) this._lastRoots[index] = new THREE.Matrix4();
@@ -147,6 +192,12 @@ var SoldierRenderer = class SoldierRenderer {
                 var part = this.parts[p];
                 this._partMatrix(part, bank.source, this._root, pose, this._temp);
                 bank.meshes[part].setMatrixAt(index, this._temp);
+                bank.meshes[part].setColorAt(index, this._v16Color);
+            }
+            if (accBank && index < SoldierRenderer.ACC_MAX) {
+                var aSlot = accBank.count++;
+                this._partMatrix('Body', bank.source, this._root, pose, this._temp);
+                accBank.mesh.setMatrixAt(aSlot, this._temp);
             }
         }
 
@@ -158,6 +209,7 @@ var SoldierRenderer = class SoldierRenderer {
                 var ghostPart = this.parts[gp];
                 this._partMatrix(ghostPart, bank.source, ghost.root, deathPose, this._temp);
                 bank.meshes[ghostPart].setMatrixAt(slot, this._temp);
+                bank.meshes[ghostPart].setColorAt(slot, this._v16Color);
             }
         }
 
@@ -169,6 +221,20 @@ var SoldierRenderer = class SoldierRenderer {
             partMesh.instanceMatrix.updateRange.offset = 0;
             partMesh.instanceMatrix.updateRange.count = visibleCount * 16;
             partMesh.instanceMatrix.needsUpdate = true;
+            if (partMesh.instanceColor) {
+                partMesh.instanceColor.updateRange.offset = 0;
+                partMesh.instanceColor.updateRange.count = visibleCount * 3;
+                partMesh.instanceColor.needsUpdate = true;
+            }
+        }
+        // V16: 职业附件上传(仅 hero 银行可见; LOD 大编制隐藏以省调用)
+        for (var ak in this._v16AccBanks) {
+            var am = this._v16AccBanks[ak].mesh, au = this._v16AccBanks[ak].count;
+            am.count = au;
+            am.visible = au > 0 && bankName === 'hero';
+            am.instanceMatrix.updateRange.offset = 0;
+            am.instanceMatrix.updateRange.count = au * 16;
+            am.instanceMatrix.needsUpdate = true;
         }
     }
 
@@ -303,6 +369,14 @@ var SoldierRenderer = class SoldierRenderer {
     }
 };
 
+// V16: 职业士兵辨识表 — 乘法染色(与 CLASS_DEFS.color 身份色呼应) + 职业附件
+SoldierRenderer.CLASS_PRESENTATION = {
+    rifleman: { tint: [1, 1, 1] },
+    gunner:   { tint: [1.22, 0.98, 0.82], attach: 'heavyplate' },
+    marksman: { tint: [1.05, 0.9, 1.28], attach: 'scoutcap' },
+    medic:    { tint: [0.82, 1.18, 0.94], attach: 'medickit' }
+};
+SoldierRenderer.ACC_MAX = 600;
 SoldierRenderer.HERO_LIMIT = 100;
 SoldierRenderer.MAX_GHOSTS = 16;
 SoldierRenderer.SHOOT_DURATION = 0.16;

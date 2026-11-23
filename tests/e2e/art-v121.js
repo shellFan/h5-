@@ -59,7 +59,7 @@ const PORT = 8410;
                     g.world.applyTheme('default');
                     return {names,roadMaxY:road.boundingBox.max.y,crossing,gates:g.gates.gates.length};
                 });
-                assert(!result.names.includes('v42-barriers') && !result.names.includes('v42-roof-trims'));
+                for (const name of ['barriers','roof-trims','cityx-banner-frames','cityx-banner-a','cityx-banner-b','fort-arches']) assert(!result.names.includes('v42-'+name),name);
                 assert(result.roadMaxY<=.101,JSON.stringify(result));
                 assert.equal(result.crossing.length,0); assert(result.gates>0);
             });

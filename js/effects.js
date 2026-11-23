@@ -93,6 +93,19 @@ class Effects {
         this.splats = [];
         this._splatQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
 
+        // V16: 碎片粒子(四面体, 旋转+重力) — 死亡/爆炸的形状层次, 与球形火花区分
+        this.shards = [];
+        this._shardPool = Array.from({ length: 48 }, () => new THREE.Object3D());
+        this._shardGeo = new THREE.TetrahedronGeometry(0.085, 0);
+        this.shardMesh = new THREE.InstancedMesh(this._shardGeo,
+            new THREE.MeshBasicMaterial({ color: 0xffffff }), 48);
+        this.shardMesh.count = 0; this.shardMesh.frustumCulled = false;
+        this.shardMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        this.shardMesh.userData.artSource = 'V16 pooled tetra shards (spinning body fragments)';
+        scene.add(this.shardMesh);
+        this._shardQuat = new THREE.Quaternion();
+        this._shardEuler = new THREE.Euler();
+
         // V12视觉: 爆炸白闪(径向亮核, 8上限) — 自爆/Boss死亡/爆炸弹的瞬间亮度冲击
         this._boomPool = [];
         this.booms = [];
@@ -147,6 +160,8 @@ class Effects {
         // notice, and bound the expensive world effects to one pulse per 0.4s.
         if (!(this._recruitFxT > 0)) {
             this._recruitFxT = 0.4;
+            // V16: 补员成长音效('grow' 音色既有但从未被调用)
+            if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('grow');
             this.floatText(squad.x, 2.2, squad.z, source + ' +' + added + '人', '#75FFB5', true);
             this.shockwave(squad.x, 0.06, squad.z, 0x39D98A);
             this.burst(squad.x, 0.6, squad.z, 0x75FFB5, 10, 2.2, 0.6);
@@ -160,6 +175,61 @@ class Effects {
         p.userData = { life: .16, maxLife: .16, size: lethal ? .9 : critical ? .78 : .48,
             color: critical ? 0xFF9C47 : 0xFFF0AF, angle: Math.random() * Math.PI };
         this.impacts.push(p);
+    }
+
+    /** V14: 分级爆炸组合器 — 闪光+冲击波+火花+烟尘按档位组合(tier 1小/2普/3大/4Boss)
+     *  全部复用既有池(flash/shockwave/burst), 不新增材质/几何; 供自爆/Boss死亡/全屏爆炸接入 */
+    explosion(x, y, z, tier) {
+        var cfg = [
+            { flash: 1.0, ring: 0, sparks: 10, speed: 3.0, smoke: 0 },
+            { flash: 1.7, ring: 1, sparks: 16, speed: 4.2, smoke: 4 },
+            { flash: 2.4, ring: 1, sparks: 24, speed: 5.5, smoke: 7 },
+            { flash: 3.4, ring: 2, sparks: 34, speed: 7.0, smoke: 12 }
+        ][Math.max(0, Math.min(3, (tier | 0) - 1))];
+        if (!cfg) return;
+        this.flash(x, y, z, 0xFFC26B, cfg.flash);
+        for (var r = 0; r < cfg.ring; r++) this.shockwave(x, Math.max(0.06, y - r * 0.12), z, r ? 0xFFB055 : 0xFFE1A0);
+        // 火花: 橙芯+白热双层
+        this.burst(x, y, z, 0xFFA03C, Math.ceil(cfg.sparks * 0.7), cfg.speed, 0.5);
+        this.burst(x, y, z, 0xFFF3C0, Math.ceil(cfg.sparks * 0.3), cfg.speed * 0.7, 0.35);
+        // 烟尘: 深灰慢速上飘(vy低+重力自然衰减), 落点略有散布
+        for (var s = 0; s < cfg.smoke; s++) {
+            var p = this.pool.pop();
+            if (!p) break;
+            p.visible = true;
+            p.position.set(x + randRange(-0.4, 0.4), y + randRange(0, 0.5), z + randRange(-0.4, 0.4));
+            p.material.color.setHex(0x3A3F46);
+            p.material.opacity = 0.75;
+            var ss = randRange(1.6, 2.6);
+            p.scale.setScalar(ss);
+            p.userData = {
+                vx: randRange(-1, 1) * 0.9, vy: randRange(0.9, 1.8), vz: randRange(-1, 1) * 0.9,
+                life: randRange(0.55, 0.85), maxLife: 0.8, s0: ss, smoke: true
+            };
+            this.particles.push(p);
+        }
+    }
+
+    /** V16: 旋转碎片(死亡肢体残片/爆炸碎片) — 与球形火花形成形状层次 */
+    spawnShards(x, y, z, color, count, speed, life) {
+        count = count || 6;
+        speed = speed || 3.4;
+        life = life || 0.7;
+        for (let i = 0; i < count; i++) {
+            const p = this._shardPool.pop();
+            if (!p) break;
+            p.visible = true;
+            p.position.set(x + randRange(-0.15, 0.15), y, z + randRange(-0.15, 0.15));
+            p.rotation.set(Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, 0);
+            const s = randRange(0.7, 1.5);
+            p.scale.setScalar(s);
+            p.userData = {
+                vx: randRange(-1, 1) * speed, vy: randRange(0.9, 2.4) * speed, vz: randRange(-1, 1) * speed,
+                rx: randRange(-9, 9), rz: randRange(-9, 9),
+                life: life * randRange(0.7, 1.15), maxLife: life, s0: s, color: color
+            };
+            this.shards.push(p);
+        }
     }
 
     /** 生成粒子爆发 */
@@ -260,7 +330,7 @@ class Effects {
     }
 
     /** 枪口闪光 (星形+加法混合发光) */
-    muzzleFlash(x, y, z) {
+    muzzleFlash(x, y, z, sizeMul) {
         // 惰性创建星形闪光纹理
         if (!this._muzzleTex) {
             var c = document.createElement('canvas');
@@ -296,8 +366,9 @@ class Effects {
         flash.position.set(x, y, z);
         flash.visible=true;flash.material.opacity=.95;
         flash.material.rotation = Math.random() * Math.PI; // V12视觉: 随机滚转, 齐射时火光不重复
-        var mfScale = randRange(0.42, 0.52);
-        flash.scale.set(mfScale, mfScale, 1); // V3.7: 枪口火焰更醒目
+        var mfScale = randRange(0.42, 0.52) * (sizeMul || 1); // V14: 重型武器火焰放大
+        flash.scale.set(mfScale, mfScale, 1);
+        flash.userData.baseScale = mfScale; // V14.3 节奏: 峰值基准 // V3.7: 枪口火焰更醒目
         this.scene.add(flash);
         this.flashes.push({ mesh: flash, life: 0.07, maxLife: 0.07 });
     }
@@ -322,6 +393,10 @@ class Effects {
         for(var sp of this.splats) this._splatPool.push(sp);
         this.splats.length = 0;
         this.splatMesh.count = 0;
+        // V16: 碎片回收
+        for(var sh of this.shards) this._shardPool.push(sh);
+        this.shards.length = 0;
+        this.shardMesh.count = 0;
         for(var bm of this.booms){this.scene.remove(bm.mesh);bm.mesh.visible=false;this._boomPool.push(bm.mesh);}
         this.booms.length = 0;
     }
@@ -375,11 +450,13 @@ class Effects {
                 this.particles.splice(i, 1);
                 continue;
             }
-            u.vy -= 7 * dt;
+            // V14: 烟尘粒子 buoyancy(缓升缓散), 与火花(重力弹跳)区分
+            u.vy -= (u.smoke ? -0.5 : 7) * dt;
+            if (u.smoke) u.vx *= (1 - 0.8 * dt);
             p.position.x += u.vx * dt;
             p.position.y += u.vy * dt;
             p.position.z += u.vz * dt;
-            if (p.position.y < 0.03) {
+            if (p.position.y < 0.03 && !u.smoke) {
                 p.position.y = 0.03;
                 u.vy *= -0.25;
                 u.vx *= 0.7;
@@ -425,7 +502,7 @@ class Effects {
                 continue;
             }
             const t = 1 - sw.life / sw.maxLife;
-            const scale = 1 + t * 5;
+            const scale = 1 + easeOutCubic(t) * 5; // V14.3 节奏: 快出慢收(easeOut), 冲击感前置
             sw.mesh.scale.setScalar(scale);
             sw.mesh.material.opacity = 0.8 * (1 - t);
         }
@@ -444,7 +521,8 @@ class Effects {
             }
             const t = f.life / f.maxLife;
             f.mesh.material.opacity = t * 0.95;
-            var sc = 0.48 + (1 - t) * 0.55; // V3.7
+            // V14.3 节奏修正: 枪口火焰=瞬时峰值→衰减(旧曲线出生最小→长大, 与闪光语义相反)
+            var sc = (f.baseScale || 0.48) * (1.18 - t * 0.42);
             f.mesh.scale.set(sc, sc, 1);
         }
 
@@ -483,8 +561,33 @@ class Effects {
             }
             var bt = bm.life / bm.maxLife;
             bm.mesh.material.opacity = bt;
-            bm.mesh.scale.setScalar(bm.size * (0.55 + (1 - bt) * 0.6));
+            // V14.3 节奏: 白闪瞬时峰值(出生 1.25×)后收缩淡出
+            bm.mesh.scale.setScalar(bm.size * (1.25 - bt * 0.38));
         }
+
+        // V16: 碎片粒子(重力+自旋+落地反弹; 实例色+矩阵前缀上传)
+        var liveShards = 0;
+        for (var si3 = this.shards.length - 1; si3 >= 0; si3--) {
+            var sh = this.shards[si3], su = sh.userData;
+            su.life -= dt;
+            if (su.life <= 0) { sh.visible = false; this._shardPool.push(sh); this.shards.splice(si3, 1); continue; }
+            su.vy -= 9.5 * dt;
+            sh.position.x += su.vx * dt; sh.position.y += su.vy * dt; sh.position.z += su.vz * dt;
+            if (sh.position.y < 0.05) { sh.position.y = 0.05; su.vy *= -0.32; su.vx *= 0.6; su.vz *= 0.6; su.rx *= 0.5; su.rz *= 0.5; }
+            sh.rotation.x += su.rx * dt; sh.rotation.z += su.rz * dt;
+            var st = su.life / su.maxLife;
+            sh.scale.setScalar(su.s0 * (0.35 + st * 0.65));
+            sh.updateMatrix();
+        }
+        for (var spi = 0; spi < this.shards.length; spi++) {
+            this.shardMesh.setMatrixAt(spi, this.shards[spi].matrix);
+            this._particleColor.setHex(this.shards[spi].userData.color || 0xffffff);
+            this.shardMesh.setColorAt(spi, this._particleColor);
+            liveShards++;
+        }
+        this.shardMesh.count = liveShards;
+        this.shardMesh.instanceMatrix.needsUpdate = true;
+        if (this.shardMesh.instanceColor) this.shardMesh.instanceColor.needsUpdate = true;
 
         this.particleMesh.count=this.particles.length;
         for(var pi=0;pi<this.particles.length;pi++) {

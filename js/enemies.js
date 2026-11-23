@@ -83,6 +83,8 @@ class Enemy {
         if (effects) {
             // 卡通粒子爆开
             effects.burst(this.x, 0.5, this.z, this.cfg.color, 12, 3.5, 0.6);
+            // V16: 身体碎片(旋转四面体, 大体型更多; 池上限48自动限流)
+            if (effects.spawnShards) effects.spawnShards(this.x, 0.55, this.z, this.cfg.color, this.isBoss ? 14 : 6, this.isBoss ? 4.6 : 3.4, 0.75);
             effects.burst(this.x, 0.5, this.z, 0xFFFFFF, 4, 2, 0.3);
             // 金色积分光点
             effects.burst(this.x, 0.7, this.z, 0xFFD700, 3, 2.2, 0.8);
@@ -353,10 +355,11 @@ class EnemyManager {
                         squad.killSoldiers(2, this.effects);
                     }
                     if (this.effects) {
-                        this.effects.shockwave(e.x, 0.05, e.z, 0xFF5A4B);
-                        this.effects.burst(e.x, 0.6, e.z, 0xFF5A4B, 16, 3.5, 0.55);
-                        // V12视觉: 自爆白闪(瞬间亮度冲击)
-                        if (this.effects.flash) this.effects.flash(e.x, 0.7, e.z, 0xFFB060, 2.4);
+                        // V14: 分级爆炸组合(闪光+双冲击波+橙白火花+烟尘), 保留红色自爆身份
+                        if (this.effects.explosion) this.effects.explosion(e.x, 0.6, e.z, 2);
+                        this.effects.burst(e.x, 0.6, e.z, 0xFF5A4B, 14, 4.0, 0.55);
+                        // V16: 自爆爆炸音效(原为静默)
+                        if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('boom');
                     }
                 }
                 // V6.0: 分裂词缀
@@ -365,14 +368,11 @@ class EnemyManager {
                 if (e.isBoss) {
                     this.bossKills = (this.bossKills || 0) + 1;
                     this.boss = this.enemies.find(other=>other!==e && other.isBoss && other.alive) || null;
-                    // Boss死亡大爆炸 + 金色粒子
-                    this.effects.burst(e.x, 1, e.z, 0xFF4444, 30, 5, 1);
+                    // V14: Boss死亡 — tier4 分级爆炸(白闪+双冲击波+橙白火花+烟尘)
+                    if (this.effects.explosion) this.effects.explosion(e.x, 1.0, e.z, 4);
+                    // 金色身份粒子 + 红色余烬(与既有配色一致)
                     this.effects.burst(e.x, 1, e.z, 0xFFD700, 20, 4, 0.8);
                     this.effects.burst(e.x, 1.2, e.z, 0xFFFFFF, 15, 3, 0.6);
-                    // 冲击波
-                    this.effects.shockwave(e.x, 0.05, e.z, 0xFFD700);
-                    // V12视觉: Boss死亡爆闪(大尺寸金色)
-                    if (this.effects.flash) this.effects.flash(e.x, 1.1, e.z, 0xFFD980, 3.4);
                 }
             }
             // 死亡动画完成: 移除

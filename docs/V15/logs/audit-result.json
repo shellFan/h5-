@@ -1,0 +1,353 @@
+{
+  "functional": {
+    "boot": {
+      "hasProgressUI": true,
+      "state": "idle",
+      "modelStatus": "partial"
+    },
+    "home": {
+      "startBtn": true,
+      "bestRecord": " 最高纪录: 第1关",
+      "coins": "0",
+      "navBtns": [
+        {
+          "id": "v60-btn-map",
+          "ok": true
+        },
+        {
+          "id": "v60-btn-train",
+          "ok": true
+        },
+        {
+          "id": "v60-btn-armory",
+          "ok": true
+        },
+        {
+          "id": "v60-btn-tech",
+          "ok": true
+        },
+        {
+          "id": "v60-btn-codex",
+          "ok": true
+        },
+        {
+          "id": "v60-btn-challenge",
+          "ok": true
+        },
+        {
+          "id": "v60-btn-rank",
+          "ok": true
+        },
+        {
+          "id": "v60-btn-ach",
+          "ok": true
+        },
+        {
+          "id": "v60-btn-daily",
+          "ok": true
+        },
+        {
+          "id": "v60-btn-set",
+          "ok": true
+        }
+      ],
+      "classRow": 4
+    },
+    "v60-map-page": {
+      "visible": true,
+      "backBtn": true,
+      "scrollH": 844,
+      "clientH": 844
+    },
+    "v60-train-page": {
+      "visible": true,
+      "backBtn": true,
+      "scrollH": 844,
+      "clientH": 844
+    },
+    "v60-armory-page": {
+      "visible": true,
+      "backBtn": true,
+      "scrollH": 844,
+      "clientH": 844
+    },
+    "v60-tech-page": {
+      "visible": true,
+      "backBtn": true,
+      "scrollH": 844,
+      "clientH": 844
+    },
+    "v60-codex-page": {
+      "visible": true,
+      "backBtn": true,
+      "scrollH": 844,
+      "clientH": 844
+    },
+    "v60-challenge-page": {
+      "visible": true,
+      "backBtn": true,
+      "scrollH": 844,
+      "clientH": 844
+    },
+    "v60-rank-page": {
+      "visible": true,
+      "backBtn": true,
+      "scrollH": 844,
+      "clientH": 844
+    },
+    "v60-ach-page": {
+      "visible": true,
+      "backBtn": true,
+      "scrollH": 844,
+      "clientH": 844
+    },
+    "v60-daily-page": {
+      "visible": true,
+      "backBtn": true,
+      "scrollH": 844,
+      "clientH": 844
+    },
+    "v60-settings-page": {
+      "visible": true,
+      "backBtn": true,
+      "scrollH": 844,
+      "clientH": 844
+    },
+    "armory": {
+      "rows": 8,
+      "hero3d": 1,
+      "actionBtns": 9,
+      "current": "rifle"
+    },
+    "settings": {
+      "btns": [
+        "🔊 开",
+        "低",
+        "💥 开",
+        "返回"
+      ]
+    },
+    "battle": {
+      "state": "playing",
+      "kills": 0,
+      "hudCount": "7",
+      "level": 1
+    },
+    "gateWindow": {
+      "next": -28,
+      "chosen": false,
+      "waitMs": 251
+    },
+    "battleOutcome": {
+      "state": "won",
+      "ms": 35603.90000000596
+    },
+    "settle": {
+      "winVisible": true,
+      "nextBtn": true,
+      "coins": "1680"
+    },
+    "persistence": {
+      "coins": 1680,
+      "weapon": "shotgun",
+      "unlocked": 10
+    }
+  },
+  "playtest": [
+    {
+      "step": "资源加载: 关键模型就绪",
+      "pass": true,
+      "detail": "EnemyModelLoader=partial"
+    },
+    {
+      "step": "首页: 开始按钮存在",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "step": "首页: 10个功能入口齐全",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "step": "页面开合: v60-map-page",
+      "pass": true,
+      "detail": "{\"visible\":true,\"backBtn\":true,\"scrollH\":844,\"clientH\":844,\"closed\":true}"
+    },
+    {
+      "step": "页面开合: v60-train-page",
+      "pass": true,
+      "detail": "{\"visible\":true,\"backBtn\":true,\"scrollH\":844,\"clientH\":844,\"closed\":true}"
+    },
+    {
+      "step": "页面开合: v60-armory-page",
+      "pass": true,
+      "detail": "{\"visible\":true,\"backBtn\":true,\"scrollH\":844,\"clientH\":844,\"closed\":true}"
+    },
+    {
+      "step": "页面开合: v60-tech-page",
+      "pass": true,
+      "detail": "{\"visible\":true,\"backBtn\":true,\"scrollH\":844,\"clientH\":844,\"closed\":true}"
+    },
+    {
+      "step": "页面开合: v60-codex-page",
+      "pass": true,
+      "detail": "{\"visible\":true,\"backBtn\":true,\"scrollH\":844,\"clientH\":844,\"closed\":true}"
+    },
+    {
+      "step": "页面开合: v60-challenge-page",
+      "pass": true,
+      "detail": "{\"visible\":true,\"backBtn\":true,\"scrollH\":844,\"clientH\":844,\"closed\":true}"
+    },
+    {
+      "step": "页面开合: v60-rank-page",
+      "pass": true,
+      "detail": "{\"visible\":true,\"backBtn\":true,\"scrollH\":844,\"clientH\":844,\"closed\":true}"
+    },
+    {
+      "step": "页面开合: v60-ach-page",
+      "pass": true,
+      "detail": "{\"visible\":true,\"backBtn\":true,\"scrollH\":844,\"clientH\":844,\"closed\":true}"
+    },
+    {
+      "step": "页面开合: v60-daily-page",
+      "pass": true,
+      "detail": "{\"visible\":true,\"backBtn\":true,\"scrollH\":844,\"clientH\":844,\"closed\":true}"
+    },
+    {
+      "step": "页面开合: v60-settings-page",
+      "pass": true,
+      "detail": "{\"visible\":true,\"backBtn\":true,\"scrollH\":844,\"clientH\":844,\"closed\":true}"
+    },
+    {
+      "step": "军械库: 8行+3D展示+操作按钮",
+      "pass": true,
+      "detail": "{\"rows\":8,\"hero3d\":1,\"actionBtns\":9,\"current\":\"rifle\"}"
+    },
+    {
+      "step": "军械库: 切换武器真实生效",
+      "pass": true,
+      "detail": "{\"clicked\":true,\"weaponNow\":\"shotgun\"}"
+    },
+    {
+      "step": "排行榜: 真实本机数据(空态/来源标识)",
+      "pass": true,
+      "detail": "{\"hasList\":true,\"emptyState\":true,\"source\":\"仅记录此设备上的真实对局\"}"
+    },
+    {
+      "step": "战斗: 点击开始进入 playing",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "step": "战斗: HUD 人数在更新",
+      "pass": true,
+      "detail": "{\"state\":\"playing\",\"kills\":0,\"hudCount\":\"7\",\"level\":1}"
+    },
+    {
+      "step": "状态门: 可选窗口出现",
+      "pass": true,
+      "detail": "{\"next\":-28,\"chosen\":false,\"waitMs\":251}"
+    },
+    {
+      "step": "战斗: 自然结束或持续游玩",
+      "pass": true,
+      "detail": "{\"state\":\"won\",\"ms\":35603.90000000596}"
+    },
+    {
+      "step": "结算: 胜利界面+下一关按钮",
+      "pass": true,
+      "detail": "{\"winVisible\":true,\"nextBtn\":true,\"coins\":\"1680\"}"
+    },
+    {
+      "step": "结算: 下一关进入",
+      "pass": true,
+      "detail": "{\"state\":\"playing\",\"level\":2}"
+    },
+    {
+      "step": "结算: 失败界面可达",
+      "pass": true,
+      "detail": "{\"loseVisible\":true,\"state\":\"lost\"}"
+    },
+    {
+      "step": "失败: 重开流程",
+      "pass": true,
+      "detail": "{\"state\":\"playing\"}"
+    },
+    {
+      "step": "存档: 刷新后金币/武器/解锁保留",
+      "pass": true,
+      "detail": "{\"before\":1680,\"after\":{\"coins\":1680,\"weapon\":\"shotgun\",\"unlocked\":10}}"
+    },
+    {
+      "step": "UI: 六视口无横向溢出",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "step": "性能: 压力场景 FPS ≥ 25(软渲染基线)",
+      "pass": true,
+      "detail": "avgFps=174 calls=114"
+    }
+  ],
+  "uiOverflow": {
+    "320x640": {
+      "docOverflowX": 0
+    },
+    "360x640": {
+      "docOverflowX": 0
+    },
+    "375x812": {
+      "docOverflowX": 0
+    },
+    "390x844": {
+      "docOverflowX": 0
+    },
+    "414x896": {
+      "docOverflowX": 0
+    },
+    "430x932": {
+      "docOverflowX": 0
+    }
+  },
+  "performance": {
+    "bootMs": 662,
+    "battle": {
+      "drawCalls": 103,
+      "triangles": 130624,
+      "geometries": 101,
+      "textures": 21,
+      "enemies": 0,
+      "heapMB": 19.852645874023438
+    },
+    "stress": {
+      "avgFps": 174,
+      "samples": [
+        {
+          "t": 1201,
+          "fps": 174
+        },
+        {
+          "t": 2405,
+          "fps": 175
+        },
+        {
+          "t": 3607,
+          "fps": 174
+        },
+        {
+          "t": 4807,
+          "fps": 174
+        }
+      ],
+      "drawCalls": 114,
+      "triangles": 292034
+    },
+    "visibility": {
+      "state": "playing",
+      "paused": false
+    }
+  },
+  "defects": [],
+  "pageErrors": []
+}

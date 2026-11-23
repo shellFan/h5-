@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-11-23T02:57:51.012Z",
+  "generatedAt": "2026-11-23T03:00:10.407Z",
   "note": "微信小游戏资源清单(构建生成); P0=首局必需, P1=当前关卡, P2=Boss/后续, P3=装饰",
-  "totalSize": 4332215,
+  "totalSize": 4372739,
   "files": [
     {
       "path": "assets/art-v1/effects/bullet-glow.svg",
@@ -135,6 +135,62 @@
       "priority": "P0",
       "role": "士兵模型(首局必需)",
       "sha1": "2e121728f98c"
+    },
+    {
+      "path": "assets/models/weapons/flamethrower/flamethrower.glb",
+      "size": 3948,
+      "priority": "P3",
+      "role": "other",
+      "sha1": "042869911587"
+    },
+    {
+      "path": "assets/models/weapons/freeze/freeze.glb",
+      "size": 3936,
+      "priority": "P3",
+      "role": "other",
+      "sha1": "b0d54838161c"
+    },
+    {
+      "path": "assets/models/weapons/mg/mg.glb",
+      "size": 6104,
+      "priority": "P3",
+      "role": "other",
+      "sha1": "a944b905bcab"
+    },
+    {
+      "path": "assets/models/weapons/rifle/rifle.glb",
+      "size": 5396,
+      "priority": "P3",
+      "role": "other",
+      "sha1": "ce4e6f2e554b"
+    },
+    {
+      "path": "assets/models/weapons/rocket/rocket.glb",
+      "size": 5644,
+      "priority": "P3",
+      "role": "other",
+      "sha1": "932130ad07a4"
+    },
+    {
+      "path": "assets/models/weapons/shotgun/shotgun.glb",
+      "size": 5368,
+      "priority": "P3",
+      "role": "other",
+      "sha1": "b64a3be31609"
+    },
+    {
+      "path": "assets/models/weapons/sniper/sniper.glb",
+      "size": 6112,
+      "priority": "P3",
+      "role": "other",
+      "sha1": "63a7bd6e414a"
+    },
+    {
+      "path": "assets/models/weapons/tesla/tesla.glb",
+      "size": 4016,
+      "priority": "P3",
+      "role": "other",
+      "sha1": "c5dd034ef7a3"
     },
     {
       "path": "assets/models/zombies/bomber/bomber-lod.glb",

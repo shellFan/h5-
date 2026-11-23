@@ -169,10 +169,6 @@ var SceneryV121 = class SceneryV121 {
         var w = this.world;
         if (w._v42Environment) {
             w._v42Environment.root.visible = theme === 'default';
-            // The old apocalypse tint must not leak into a later city restart.
-            if (theme === 'default') w._v42Environment.root.traverse(o => {
-                if (o.isMesh && o.material.__themeBaseHex !== undefined) o.material.color.setHex(o.material.__themeBaseHex);
-            });
         }
         var palettes = {
             default: [0xbfd9e6, 0xfff0d3, 0xffffff], cave: [0x252239, 0x9eb8ed, 0x88729c],
@@ -180,10 +176,13 @@ var SceneryV121 = class SceneryV121 {
             apocalypse: [0x4c3557, 0xc1bded, 0x90749d]
         };
         var palette = palettes[theme];
+        if (theme !== 'default') {
         w.scene.fog.color.setHex(palette[0]); w.scene.fog.near = theme === 'cave' ? 22 : 38; w.scene.fog.far = theme === 'cave' ? 80 : 110;
-        w.scene.background.setHex(palette[0]);
+        w.scene.background = new THREE.Color(palette[0]);
         w.sunLight.color.setHex(palette[1]); w.sunLight.intensity = theme === 'cave' ? .65 : .78;
-        if (w._skyDome) { w._skyDome.visible = theme !== 'cave'; w._skyDome.material.color.setHex(palette[2]); }
+        if (w._skyDome) w._skyDome.material.color.setHex(palette[2]);
+        }
+        if (w._skyDome) w._skyDome.visible = theme !== 'cave';
         for (var side of this._roadSides) side.material.color.copy(side.color).multiply(new THREE.Color(palette[2]));
         this._applyRoad(theme);
         this.update(w._v42Environment && isFinite(w._v42Environment.lastSquadZ) ? w._v42Environment.lastSquadZ : 0);
