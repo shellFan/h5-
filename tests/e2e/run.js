@@ -177,7 +177,7 @@ async function suiteBasics(page) {
     // ===== V4.0 移动手感专项 =====
     await step('V4拖动映射: 像素位移按灵敏度换算世界坐标', async () => {
         // 固定状态: 远离门区(z=-2)/1人/目标归零, 消除磁吸与前序测试干扰
-        await gameApi(page, '(g) => { g.squad.z = -2; g.squad.targetX = 0; g.squad.x = 0; }');
+        await gameApi(page, '(g) => { g.squad.setCount(1); g.squad.z = -2; g.squad.targetX = 0; g.squad.x = 0; }');
         await page.waitForTimeout(120);
         const cw = await page.evaluate(() => document.getElementById('game-canvas').clientWidth || 390);
         const maxX = await gameApi(page, '(g) => MovementMath.centerBounds(g.squad.getHalfWidth())');
