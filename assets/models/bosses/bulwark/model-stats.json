@@ -1,9 +1,10 @@
 {
   "key": "bulwark",
+  "assetVersion": 121,
   "blender": "4.2.15 LTS",
   "generator": "tools/create-enemies.py",
-  "triangles": 4600,
-  "lodTriangles": 1232,
+  "triangles": 4624,
+  "lodTriangles": 1240,
   "height": 1.285,
   "forward": "+Z",
   "up": "+Y",

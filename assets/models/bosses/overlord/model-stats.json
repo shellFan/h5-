@@ -1,9 +1,10 @@
 {
   "key": "overlord",
+  "assetVersion": 121,
   "blender": "4.2.15 LTS",
   "generator": "tools/create-enemies.py",
-  "triangles": 4276,
-  "lodTriangles": 1146,
+  "triangles": 4532,
+  "lodTriangles": 1216,
   "height": 1.2725,
   "forward": "+Z",
   "up": "+Y",

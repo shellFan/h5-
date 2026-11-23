@@ -1,9 +1,10 @@
 {
   "key": "spitking",
+  "assetVersion": 121,
   "blender": "4.2.15 LTS",
   "generator": "tools/create-enemies.py",
-  "triangles": 4348,
-  "lodTriangles": 1160,
+  "triangles": 4544,
+  "lodTriangles": 1214,
   "height": 1.16,
   "forward": "+Z",
   "up": "+Y",

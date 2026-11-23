@@ -28,10 +28,10 @@ class Enemy {
         this.spawnT = this.isBoss ? 0 : 1; // V4.0: Boss弹性入场动画
 
         // V3.5: 大众僵尸使用合并批处理模型(2 mesh/只), Boss/精英保留Group模型(细节动画+独立材质)
-        this.artStyle = styleOverride || (this.isBoss ? 'bruiser' : (type === 'bomber' ? 'fast' : type)); // V11.5: 爆炸僵尸复用快速尸模型(红染/小体)
+        this.artStyle = styleOverride || (this.isBoss ? 'bruiser' : type); // V12.1: bomber owns a distinct round hazard-canister silhouette
         this.model = new THREE.Group();
         this.model.userData.merged = true;
-        this.model.userData.artSource = 'assets/models/'+(['normal','fast','shield','split','spitter','elite'].includes(this.artStyle)?'zombies':'bosses')+'/'+this.artStyle+'/'+this.artStyle+'.glb (instanced anchor)';
+        this.model.userData.artSource = 'assets/models/'+(['normal','fast','shield','split','spitter','elite','bomber'].includes(this.artStyle)?'zombies':'bosses')+'/'+this.artStyle+'/'+this.artStyle+'.glb (instanced anchor)';
         this.model.position.set(x, 0, z);
         this.model.scale.setScalar(this.cfg.scale); // V2.2修复: 存活时应用类型scale
         this.visScale = this.cfg.scale; // 实际视觉scale(分裂僵尸会缩小)

@@ -1,9 +1,10 @@
 {
   "key": "spitter",
+  "assetVersion": 121,
   "blender": "4.2.15 LTS",
   "generator": "tools/create-enemies.py",
-  "triangles": 3920,
-  "lodTriangles": 1126,
+  "triangles": 4116,
+  "lodTriangles": 1182,
   "height": 1.16,
   "forward": "+Z",
   "up": "+Y",

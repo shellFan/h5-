@@ -624,9 +624,6 @@
             propBase.filter(function (_, i) { return i % 3 === 0; }).map(function (r) { return { x: r.x + r.s * 0.2, y: 0.67, z: r.z - 0.08, sx: 1, sy: 1, sz: 1, ry: r.s * 0.1 }; }));
         addInstancedCategory(env, 'cones', new THREE.ConeGeometry(0.13, 0.42, 7), coral,
             propBase.filter(function (_, i) { return i % 3 === 1; }).map(function (r) { return { x: r.x, y: 0.21, z: r.z, ry: random() * TAU }; }));
-        addInstancedCategory(env, 'barriers', roundedRectGeometry(0.96, 0.27, 0.07, 0.14), cream,
-            propBase.filter(function (_, i) { return i % 3 === 2; }).map(function (r) { return { x: r.x, y: 0.42, z: r.z, ry: r.s > 0 ? -0.15 : 0.15 }; }), { castShadow: true });
-
         var buildings = makeRecords(44, function (i) {
             var side = i % 2 ? 1 : -1;
             var h = 3.4 + random() * 4.6;
@@ -642,19 +639,7 @@
         addInstancedCategory(env, 'coral-buildings', roundedRectGeometry(1, 1, 0.08, 1), coral,
             buildings.filter(function (_, i) { return i % 3 === 2; }));
 
-        // A single overhanging cap gives the skyline a deliberate toy-city
-        // silhouette without multiplying each building into several meshes.
-        addInstancedCategory(env, 'roof-trims', new THREE.BoxGeometry(1, 0.14, 1), teal,
-            buildings.map(function (b) {
-                return {
-                    x: b.x,
-                    y: b.h * 1.06,
-                    z: b.z,
-                    sx: b.w * 1.08,
-                    sy: 1,
-                    sz: b.sz * 1.07
-                };
-            }));
+        // No decorative roof caps or roadside rails in the combat view.
 
         var windows = [];
         for (var bi = 0; bi < buildings.length; bi++) {

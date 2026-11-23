@@ -1,4 +1,4 @@
-"""Small Blender-only toolkit for the original V42 enemy family."""
+"""Small Blender-only toolkit for the original V121 enemy family."""
 import bpy
 import json
 import math
@@ -49,9 +49,11 @@ class EnemyArt:
                 if orm:
                     rgb = (1.0, rough, metal)
                 else:
-                    # Broad hand-painted gradient, kept quiet on faces and cloth.
-                    shade = .94 + .07 * ((yy % 64) / 63.0)
-                    shade += self.random.uniform(-.003, .003)
+                    # A broad, quantized hand-painted gradient reads as soft toy material while
+                    # remaining highly compressible inside every GLB (continuous random noise in
+                    # V42 made thirteen tiny atlases needlessly expensive on mobile).
+                    band = (yy % 64) // 8
+                    shade = .945 + .008 * band
                     rgb = tuple(max(0, min(1, c * shade)) for c in color)
                 pixels.extend((*rgb, 1.0))
         image.pixels = pixels
@@ -232,7 +234,8 @@ class EnemyArt:
         self.join_parts(origins)
         if mouth_anchor:
             self.add_mouth_anchor(mouth_anchor)
-        bpy.context.scene['author'] = f'Original V42 {self.key} enemy; procedural profile sculpture, no external meshes'
+        bpy.context.scene['author'] = f'Original V121 {self.key} enemy; procedural profile sculpture, no external meshes'
+        bpy.context.scene['assetVersion'] = 121
         bpy.context.scene['front'] = '+Z'
         hero_path = os.path.join(self.out_dir, f'{self.key}.glb')
         bpy.ops.export_scene.gltf(filepath=hero_path, export_format='GLB', export_yup=True,

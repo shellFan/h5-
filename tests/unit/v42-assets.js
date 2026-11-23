@@ -5,7 +5,7 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '../../assets/models/enemies');
 const MODELS_ROOT = path.resolve(ROOT, '..');
-const KEYS = ['normal', 'fast', 'shield', 'split', 'spitter', 'elite',
+const KEYS = ['normal', 'fast', 'shield', 'split', 'spitter', 'elite', 'bomber',
   'bruiser', 'bulwark', 'spitking', 'hivelord', 'titan', 'overlord'];
 const BOSSES = new Set(['bruiser', 'bulwark', 'spitking', 'hivelord', 'titan', 'overlord']);
 const PARTS = ['Body', 'Head', 'Arms', 'LegL', 'LegR'];
@@ -138,4 +138,4 @@ for (const key of KEYS) {
   }
 }
 
-console.log('PASS V42: 12 original five-part enemy GLB pairs, PBR atlases, budgets, bounds, and catalog');
+console.log('PASS V42: 13 original five-part enemy GLB pairs, PBR atlases, budgets, bounds, and catalog');

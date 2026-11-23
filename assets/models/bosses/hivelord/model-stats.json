@@ -1,9 +1,10 @@
 {
   "key": "hivelord",
+  "assetVersion": 121,
   "blender": "4.2.15 LTS",
   "generator": "tools/create-enemies.py",
-  "triangles": 4204,
-  "lodTriangles": 1125,
+  "triangles": 4504,
+  "lodTriangles": 1205,
   "height": 1.2725,
   "forward": "+Z",
   "up": "+Y",

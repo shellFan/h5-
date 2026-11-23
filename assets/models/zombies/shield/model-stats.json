@@ -1,9 +1,10 @@
 {
   "key": "shield",
+  "assetVersion": 121,
   "blender": "4.2.15 LTS",
   "generator": "tools/create-enemies.py",
-  "triangles": 4468,
-  "lodTriangles": 1285,
+  "triangles": 4484,
+  "lodTriangles": 1290,
   "height": 1.22,
   "forward": "+Z",
   "up": "+Y",

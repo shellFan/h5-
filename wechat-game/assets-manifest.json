@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-11-21T12:44:54.381Z",
+  "generatedAt": "2026-11-23T02:57:51.012Z",
   "note": "微信小游戏资源清单(构建生成); P0=首局必需, P1=当前关卡, P2=Boss/后续, P3=装饰",
-  "totalSize": 4835269,
+  "totalSize": 4332215,
   "files": [
     {
       "path": "assets/art-v1/effects/bullet-glow.svg",
@@ -32,88 +32,95 @@
       "sha1": "55ea2c9d0d27"
     },
     {
+      "path": "assets/art-v121/world-materials.jpg",
+      "size": 81298,
+      "priority": "P3",
+      "role": "other",
+      "sha1": "63a790a7a9ef"
+    },
+    {
       "path": "assets/models/bosses/bruiser/bruiser-lod.glb",
-      "size": 82728,
+      "size": 46364,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "b05ced775a10"
+      "sha1": "da6d0071ee83"
     },
     {
       "path": "assets/models/bosses/bruiser/bruiser.glb",
-      "size": 180756,
+      "size": 144396,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "b694cddbb03a"
+      "sha1": "2e7d73883d85"
     },
     {
       "path": "assets/models/bosses/bulwark/bulwark-lod.glb",
-      "size": 85100,
+      "size": 48644,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "7ccc56b7aa4b"
+      "sha1": "95f454aa2327"
     },
     {
       "path": "assets/models/bosses/bulwark/bulwark.glb",
-      "size": 187340,
+      "size": 151336,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "7ace2402a9be"
+      "sha1": "4f2cee6266c8"
     },
     {
       "path": "assets/models/bosses/hivelord/hivelord-lod.glb",
-      "size": 81016,
+      "size": 46196,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "854ab738d24d"
+      "sha1": "05a46f6b37bb"
     },
     {
       "path": "assets/models/bosses/hivelord/hivelord.glb",
-      "size": 170272,
+      "size": 140292,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "e316b03046f6"
+      "sha1": "9c77d77f19d3"
     },
     {
       "path": "assets/models/bosses/overlord/overlord-lod.glb",
-      "size": 81632,
+      "size": 49124,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "7e862571e246"
+      "sha1": "23aef8da2b87"
     },
     {
       "path": "assets/models/bosses/overlord/overlord.glb",
-      "size": 172108,
+      "size": 147272,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "6a2715468e72"
+      "sha1": "b60a256aa697"
     },
     {
       "path": "assets/models/bosses/spitking/spitking-lod.glb",
-      "size": 80952,
+      "size": 45960,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "063abe333ea3"
+      "sha1": "08b3df833096"
     },
     {
       "path": "assets/models/bosses/spitking/spitking.glb",
-      "size": 174628,
+      "size": 142760,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "0cba52dcc95d"
+      "sha1": "484ac2d5fc5f"
     },
     {
       "path": "assets/models/bosses/titan/titan-lod.glb",
-      "size": 79424,
+      "size": 48624,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "3d691f77aed0"
+      "sha1": "a018d022b3fb"
     },
     {
       "path": "assets/models/bosses/titan/titan.glb",
-      "size": 169104,
+      "size": 148232,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "ded7d32abcb5"
+      "sha1": "b19703cfa55d"
     },
     {
       "path": "assets/models/soldier/soldier-lod.glb",
@@ -130,88 +137,102 @@
       "sha1": "2e121728f98c"
     },
     {
-      "path": "assets/models/zombies/elite/elite-lod.glb",
-      "size": 80472,
+      "path": "assets/models/zombies/bomber/bomber-lod.glb",
+      "size": 51228,
       "priority": "P1",
       "role": "特型僵尸",
-      "sha1": "e94c550c840f"
+      "sha1": "4f9144e252cf"
+    },
+    {
+      "path": "assets/models/zombies/bomber/bomber.glb",
+      "size": 150408,
+      "priority": "P1",
+      "role": "特型僵尸",
+      "sha1": "172fa549f0cb"
+    },
+    {
+      "path": "assets/models/zombies/elite/elite-lod.glb",
+      "size": 49300,
+      "priority": "P1",
+      "role": "特型僵尸",
+      "sha1": "4afda2e0853d"
     },
     {
       "path": "assets/models/zombies/elite/elite.glb",
-      "size": 164976,
+      "size": 143616,
       "priority": "P1",
       "role": "特型僵尸",
-      "sha1": "525772817365"
+      "sha1": "58b86008ead5"
     },
     {
       "path": "assets/models/zombies/fast/fast-lod.glb",
-      "size": 81368,
+      "size": 45488,
       "priority": "P0",
       "role": "基础僵尸(首局必需)",
-      "sha1": "e8703aa1d45e"
+      "sha1": "d4f667de2fff"
     },
     {
       "path": "assets/models/zombies/fast/fast.glb",
-      "size": 160708,
+      "size": 125316,
       "priority": "P0",
       "role": "基础僵尸(首局必需)",
-      "sha1": "70dc081c19eb"
+      "sha1": "5ef505a39862"
     },
     {
       "path": "assets/models/zombies/normal/normal-lod.glb",
-      "size": 77936,
+      "size": 43080,
       "priority": "P0",
       "role": "基础僵尸(首局必需)",
-      "sha1": "bbb1361b76c2"
+      "sha1": "967b8fe49637"
     },
     {
       "path": "assets/models/zombies/normal/normal.glb",
-      "size": 156236,
+      "size": 123796,
       "priority": "P0",
       "role": "基础僵尸(首局必需)",
-      "sha1": "f40509e2452e"
+      "sha1": "5b78f93c6ed7"
     },
     {
       "path": "assets/models/zombies/shield/shield-lod.glb",
-      "size": 86136,
+      "size": 48816,
       "priority": "P1",
       "role": "特型僵尸",
-      "sha1": "2159ce992e9d"
+      "sha1": "f5f92e7455c1"
     },
     {
       "path": "assets/models/zombies/shield/shield.glb",
-      "size": 178016,
+      "size": 141024,
       "priority": "P1",
       "role": "特型僵尸",
-      "sha1": "b3c0db697365"
+      "sha1": "7ba5492c0f26"
     },
     {
       "path": "assets/models/zombies/spitter/spitter-lod.glb",
-      "size": 80420,
+      "size": 44788,
       "priority": "P1",
       "role": "特型僵尸",
-      "sha1": "33c3234ec6bd"
+      "sha1": "1ed665f1e773"
     },
     {
       "path": "assets/models/zombies/spitter/spitter.glb",
-      "size": 163016,
+      "size": 130468,
       "priority": "P1",
       "role": "特型僵尸",
-      "sha1": "3e5a476c6a9f"
+      "sha1": "9f82f748c78a"
     },
     {
       "path": "assets/models/zombies/split/split-lod.glb",
-      "size": 83248,
+      "size": 47688,
       "priority": "P1",
       "role": "特型僵尸",
-      "sha1": "6aeafe253538"
+      "sha1": "806741a256b9"
     },
     {
       "path": "assets/models/zombies/split/split.glb",
-      "size": 169620,
+      "size": 138644,
       "priority": "P1",
       "role": "特型僵尸",
-      "sha1": "1bc083e26f2c"
+      "sha1": "158689947aba"
     },
     {
       "path": "ui-art/weapon-atlas.png",

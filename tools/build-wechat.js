@@ -48,6 +48,7 @@ const GAME_SCRIPTS = [
     'js/boss-v42.js',
     'js/art-v42.js',
     'js/world.js',
+    'js/scenery-v121.js',
     'js/effects.js',
     'js/squad.js',
     'js/gates.js',
@@ -169,7 +170,8 @@ function copyAssets() {
                 const lower = e.name.toLowerCase();
                 const isGlb = lower.endsWith('.glb');
                 const isSvg = lower.endsWith('.svg');
-                if (!isGlb && !isSvg) continue; // UI atlas is placed in the main package below.
+                const isWorldAtlas = relPath === 'art-v121/world-materials.jpg';
+                if (!isGlb && !isSvg && !isWorldAtlas) continue; // UI atlas is placed in the main package below.
                 const rule = ASSET_RULES.find(r => r.match.test('assets/' + relPath)) || { priority: 'P3', role: 'other' };
                 const dst = path.join(outRoot, relPath);
                 fs.mkdirSync(path.dirname(dst), { recursive: true });

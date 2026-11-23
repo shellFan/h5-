@@ -51,8 +51,9 @@ var EnemyModelLoader = class EnemyModelLoader {
             window.__BootProgress.total = 2 + this.KEYS.length * 2; // 士兵2 + 全部僵尸/Boss
         }
         return Promise.allSettled(keys.flatMap(key => ['hero','lod'].map(lod=>new Promise((resolve,reject)=>{
-            var category=['normal','fast','shield','split','spitter','elite'].includes(key)?'zombies':'bosses';
+            var category=['normal','fast','shield','split','spitter','elite','bomber'].includes(key)?'zombies':'bosses';
             var url='assets/models/'+category+'/'+key+'/'+key+(lod==='lod'?'-lod':'')+'.glb';
+            if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=121';
             loader.load(url,g=>{
                 try {
                     g.scene.updateMatrixWorld(true);
@@ -83,9 +84,10 @@ var EnemyModelLoader = class EnemyModelLoader {
                 if(l.material!==h.material)SoldierModelLoader._disposeMaterial(l.material);
                 l.material=h.material;
                 h.material.onBeforeCompile=function(shader){shader.fragmentShader=shader.fragmentShader.replace('#include <encodings_fragment>','gl_FragColor = LinearTosRGB( gl_FragColor );');};
-                if(['spitter','spitking','hivelord','overlord'].includes(key)) {
+                if(['spitter','spitking','hivelord','overlord','bomber'].includes(key)) {
                     var image=h.material.map.image,canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;
-                    var ctx=canvas.getContext('2d');ctx.drawImage(image,0,0);var pixels=ctx.getImageData(0,0,canvas.width,canvas.height);
+                    var ctx=canvas.getContext('2d');ctx.drawImage(image._impl || image,0,0);var pixels=ctx.getImageData(0,0,canvas.width,canvas.height);
+                    // Blender cell 11 is bottom-origin row 2; PNG/canvas flips it to top-origin row 1.
                     for(var py=0;py<canvas.height;py++)for(var px=0;px<canvas.width;px++) {
                         if(px<canvas.width*.75 || py<canvas.height*.25 || py>=canvas.height*.5) {
                             var off=(py*canvas.width+px)*4;pixels.data[off]=pixels.data[off+1]=pixels.data[off+2]=0;
@@ -98,7 +100,7 @@ var EnemyModelLoader = class EnemyModelLoader {
                         shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n\n#ifdef USE_INSTANCING_COLOR\nfloat glowPower=max(totalEmissiveRadiance.r,max(totalEmissiveRadiance.g,totalEmissiveRadiance.b));\nif(vColor.r>1.25 && vColor.g<.8)totalEmissiveRadiance=vec3(1.,.08,.15)*glowPower;\nelse if(vColor.r>1.05 && vColor.g<.95 && vColor.b>1.15)totalEmissiveRadiance=vec3(.7,.15,1.)*glowPower;\n#endif');
                     };
                 }
-                h.material.customProgramCacheKey=function(){return 'v42-pbr-display';};
+                h.material.customProgramCacheKey=function(){return 'v121-pbr-display';};
             }
             return styles;
         }).catch(e=>{loaded.forEach(s=>SoldierModelLoader._disposeScene(s));throw e;});
@@ -106,7 +108,7 @@ var EnemyModelLoader = class EnemyModelLoader {
     static get(){return this._data;}
 };
 EnemyModelLoader.PARTS=['Body','Head','Arms','LegL','LegR'];
-EnemyModelLoader.KEYS=['normal','fast','shield','split','spitter','elite','bruiser','bulwark','spitking','hivelord','titan','overlord'];
+EnemyModelLoader.KEYS=['normal','fast','shield','split','spitter','elite','bomber','bruiser','bulwark','spitking','hivelord','titan','overlord'];
 EnemyModelLoader.status='idle';EnemyModelLoader.loadMs=0;
 
 var EnemyArmyRenderer = class EnemyArmyRenderer {
@@ -154,7 +156,6 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
             this._color.setRGB(1,1,1);
             // V12视觉: 特殊体型染色(冰冻/受击闪烁随后覆盖)
             if(e.type==='elite')this._color.setRGB(1.22,1.08,.72);          // 精英金染
-            else if(e.type==='bomber')this._color.setRGB(1.5,.55,.5);       // 自爆尸红染(fast模型区分)
             if(e.frozenT>0)this._color.setRGB(.50,.85,1.35);
             if(e.phaseIndex>=3)this._color.setRGB(1.35,.72,.75);
             else if(e.phaseIndex===2)this._color.setRGB(1.12,.85,1.2);

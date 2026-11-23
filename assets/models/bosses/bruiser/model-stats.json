@@ -1,5 +1,6 @@
 {
   "key": "bruiser",
+  "assetVersion": 121,
   "blender": "4.2.15 LTS",
   "generator": "tools/create-enemies.py",
   "triangles": 4532,

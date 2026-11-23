@@ -1,9 +1,10 @@
 {
   "key": "split",
+  "assetVersion": 121,
   "blender": "4.2.15 LTS",
   "generator": "tools/create-enemies.py",
-  "triangles": 4184,
-  "lodTriangles": 1202,
+  "triangles": 4472,
+  "lodTriangles": 1286,
   "height": 1.16,
   "forward": "+Z",
   "up": "+Y",

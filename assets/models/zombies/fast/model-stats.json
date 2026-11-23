@@ -1,10 +1,11 @@
 {
   "key": "fast",
+  "assetVersion": 121,
   "blender": "4.2.15 LTS",
   "generator": "tools/create-enemies.py",
-  "triangles": 3744,
-  "lodTriangles": 1076,
-  "height": 1.19,
+  "triangles": 3776,
+  "lodTriangles": 1086,
+  "height": 1.2792,
   "forward": "+Z",
   "up": "+Y",
   "parts": [
