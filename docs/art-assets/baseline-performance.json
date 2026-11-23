@@ -1,0 +1,571 @@
+{
+  "environment": "Windows Edge headless desktop, 390x844; not device benchmark",
+  "bootMs": 427,
+  "fps": 58.69284079424606,
+  "renderer": {
+    "memory": {
+      "geometries": 109,
+      "textures": 25
+    },
+    "render": {
+      "frame": 277,
+      "calls": 101,
+      "triangles": 197298,
+      "points": 0,
+      "lines": 0
+    },
+    "programs": [
+      {
+        "name": "MeshBasicMaterial",
+        "id": 0,
+        "cacheKey": "basic,highp,3000,,,0,true,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,1073741843,16781313,3000,onBeforeCompile(){}",
+        "usedTimes": 1,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshStandardMaterial",
+        "id": 1,
+        "cacheKey": "physical,STANDARD,,highp,3000,,,,true,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,1098915871,16779267,3000,v41-gltf-srgb-display",
+        "usedTimes": 1,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshLambertMaterial",
+        "id": 2,
+        "cacheKey": "lambert,highp,3000,,,0,true,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,1073750035,16777219,3000,onBeforeCompile(){}",
+        "usedTimes": 1,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshLambertMaterial",
+        "id": 3,
+        "cacheKey": "lambert,highp,3000,,,0,true,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,1342185491,16777219,3000,onBeforeCompile(){}",
+        "usedTimes": 12,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshLambertMaterial",
+        "id": 4,
+        "cacheKey": "lambert,highp,3000,,,0,false,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,268443651,16777219,3000,onBeforeCompile(){}",
+        "usedTimes": 24,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshBasicMaterial",
+        "id": 5,
+        "cacheKey": "basic,highp,3000,,,0,false,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,268435459,16777219,3000,onBeforeCompile(){}",
+        "usedTimes": 3,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshStandardMaterial",
+        "id": 6,
+        "cacheKey": "physical,STANDARD,,highp,3000,,,,true,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,1073750039,16777219,3000,v42-pbr-r149-display",
+        "usedTimes": 3,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshStandardMaterial",
+        "id": 7,
+        "cacheKey": "physical,STANDARD,,highp,3000,,,,false,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,8199,16777219,3000,v42-pbr-r149-display",
+        "usedTimes": 14,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshBasicMaterial",
+        "id": 8,
+        "cacheKey": "basic,highp,3000,,,0,false,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,7,16777219,3000,onBeforeCompile(){}",
+        "usedTimes": 8,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshBasicMaterial",
+        "id": 9,
+        "cacheKey": "basic,highp,3000,,,0,true,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,1073741847,16779267,3000,onBeforeCompile(){}",
+        "usedTimes": 3,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshLambertMaterial",
+        "id": 10,
+        "cacheKey": "lambert,highp,3000,,,0,false,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,8199,16777219,3000,onBeforeCompile(){}",
+        "usedTimes": 7,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshLambertMaterial",
+        "id": 11,
+        "cacheKey": "lambert,highp,3000,,,0,false,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,8199,1,3000,onBeforeCompile(){}",
+        "usedTimes": 1,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshBasicMaterial",
+        "id": 12,
+        "cacheKey": "basic,highp,3000,,,0,true,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,1207959575,3,3000,onBeforeCompile(){}",
+        "usedTimes": 1,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshBasicMaterial",
+        "id": 13,
+        "cacheKey": "basic,highp,3000,,,0,false,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,7,3,3000,onBeforeCompile(){}",
+        "usedTimes": 1,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshBasicMaterial",
+        "id": 14,
+        "cacheKey": "basic,highp,3000,,,0,true,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,1073741847,3,3000,onBeforeCompile(){}",
+        "usedTimes": 2,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshLambertMaterial",
+        "id": 15,
+        "cacheKey": "lambert,highp,3000,,,0,true,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,1073750039,16777219,3000,onBeforeCompile(){}",
+        "usedTimes": 3,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshStandardMaterial",
+        "id": 16,
+        "cacheKey": "physical,STANDARD,,highp,3000,,,,false,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,268443651,16777219,3000,v42-pbr-r149-display",
+        "usedTimes": 2,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshBasicMaterial",
+        "id": 17,
+        "cacheKey": "basic,highp,3000,,,0,false,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,268435459,4099,3000,onBeforeCompile(){}",
+        "usedTimes": 2,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshBasicMaterial",
+        "id": 18,
+        "cacheKey": "basic,highp,3000,,,0,false,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,268435459,3,3000,onBeforeCompile(){}",
+        "usedTimes": 2,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshPhysicalMaterial",
+        "id": 19,
+        "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,3000,,,,true,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,1073766419,4099,3000,v42-pbr-r149-display",
+        "usedTimes": 2,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshPhysicalMaterial",
+        "id": 20,
+        "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,3000,,,,true,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,1073766419,3,3000,v42-pbr-r149-display",
+        "usedTimes": 2,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "SpriteMaterial",
+        "id": 21,
+        "cacheKey": "sprite,highp,3000,,,,true,,true,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,1073741843,3,3000,onBeforeCompile(){}",
+        "usedTimes": 5,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshBasicMaterial",
+        "id": 22,
+        "cacheKey": "basic,highp,3000,,,0,true,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,1073741855,3,3000,onBeforeCompile(){}",
+        "usedTimes": 1,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshBasicMaterial",
+        "id": 23,
+        "cacheKey": "basic,highp,3000,,,0,false,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,268435459,4097,3000,onBeforeCompile(){}",
+        "usedTimes": 2,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshBasicMaterial",
+        "id": 24,
+        "cacheKey": "basic,highp,3000,,,0,false,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,268435459,1,3000,onBeforeCompile(){}",
+        "usedTimes": 2,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "SpriteMaterial",
+        "id": 25,
+        "cacheKey": "sprite,highp,3000,,,,true,,true,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,1073741843,1,3000,onBeforeCompile(){}",
+        "usedTimes": 2,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshBasicMaterial",
+        "id": 26,
+        "cacheKey": "basic,highp,3000,,,0,false,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,3,4099,3000,onBeforeCompile(){}",
+        "usedTimes": 2,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshBasicMaterial",
+        "id": 27,
+        "cacheKey": "basic,highp,3000,,,0,false,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,3,3,3000,onBeforeCompile(){}",
+        "usedTimes": 2,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshPhysicalMaterial",
+        "id": 28,
+        "cacheKey": "physical,STANDARD,,PHYSICAL,,highp,3000,,,,true,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,1098915871,16779267,3000,v121-pbr-display",
+        "usedTimes": 1,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      },
+      {
+        "name": "MeshLambertMaterial",
+        "id": 29,
+        "cacheKey": "lambert,highp,3000,,,0,false,,,0,,2,0,0,0,1,0,1,0,0,0,2,0,0,0,0,268443655,16777219,3000,onBeforeCompile(){}",
+        "usedTimes": 2,
+        "program": {},
+        "vertexShader": {},
+        "fragmentShader": {}
+      }
+    ],
+    "autoReset": true
+  },
+  "heap": 20206273,
+  "resources": [
+    {
+      "name": "http://localhost:8250/style.css?v=117",
+      "bytes": 26042
+    },
+    {
+      "name": "http://localhost:8250/style-v42.css",
+      "bytes": 16915
+    },
+    {
+      "name": "http://localhost:8250/style-v51.css",
+      "bytes": 7447
+    },
+    {
+      "name": "http://localhost:8250/style-v60.css",
+      "bytes": 22996
+    },
+    {
+      "name": "http://localhost:8250/style-v118.css?v=118",
+      "bytes": 20760
+    },
+    {
+      "name": "http://localhost:8250/style-v120.css?v=120",
+      "bytes": 9902
+    },
+    {
+      "name": "http://localhost:8250/style-v130.css?v=140",
+      "bytes": 8801
+    },
+    {
+      "name": "http://localhost:8250/assets/art-v1/ui/soldier-avatar.svg",
+      "bytes": 1707
+    },
+    {
+      "name": "http://localhost:8250/assets/art-v1/ui/zombie-avatar.svg",
+      "bytes": 1383
+    },
+    {
+      "name": "http://localhost:8250/js/config.js?v=51",
+      "bytes": 33681
+    },
+    {
+      "name": "http://localhost:8250/js/vendor/three.min.js",
+      "bytes": 608381
+    },
+    {
+      "name": "http://localhost:8250/js/utils.js?v=50",
+      "bytes": 6148
+    },
+    {
+      "name": "http://localhost:8250/js/economy.js?v=51",
+      "bytes": 10008
+    },
+    {
+      "name": "http://localhost:8250/js/energy-core.js?v=60",
+      "bytes": 8594
+    },
+    {
+      "name": "http://localhost:8250/js/skills.js?v=80",
+      "bytes": 9303
+    },
+    {
+      "name": "http://localhost:8250/js/affixes.js?v=60",
+      "bytes": 4207
+    },
+    {
+      "name": "http://localhost:8250/js/growth.js?v=80",
+      "bytes": 14302
+    },
+    {
+      "name": "http://localhost:8250/js/classes.js?v=81",
+      "bytes": 6770
+    },
+    {
+      "name": "http://localhost:8250/js/weapons.js?v=80",
+      "bytes": 10031
+    },
+    {
+      "name": "http://localhost:8250/js/tech-tree.js?v=80",
+      "bytes": 4682
+    },
+    {
+      "name": "http://localhost:8250/js/random-events.js?v=117",
+      "bytes": 7689
+    },
+    {
+      "name": "http://localhost:8250/js/leaderboard.js?v=81",
+      "bytes": 2805
+    },
+    {
+      "name": "http://localhost:8250/js/progression.js?v=60",
+      "bytes": 11133
+    },
+    {
+      "name": "http://localhost:8250/js/weapon-showcase.js?v=143",
+      "bytes": 8178
+    },
+    {
+      "name": "http://localhost:8250/js/challenge.js?v=60",
+      "bytes": 5804
+    },
+    {
+      "name": "http://localhost:8250/js/ui-v60.js?v=140",
+      "bytes": 54604
+    },
+    {
+      "name": "http://localhost:8250/js/upgrades.js?v=51",
+      "bytes": 3392
+    },
+    {
+      "name": "http://localhost:8250/js/movement.js",
+      "bytes": 3202
+    },
+    {
+      "name": "http://localhost:8250/js/soldier-loader.js?v=50",
+      "bytes": 10453
+    },
+    {
+      "name": "http://localhost:8250/js/soldier-renderer.js?v=50",
+      "bytes": 18753
+    },
+    {
+      "name": "http://localhost:8250/js/vendor/GLTFLoader.js",
+      "bytes": 131472
+    },
+    {
+      "name": "http://localhost:8250/js/boss-v42.js?v=50",
+      "bytes": 2789
+    },
+    {
+      "name": "http://localhost:8250/js/enemy-models.js?v=16122",
+      "bytes": 27527
+    },
+    {
+      "name": "http://localhost:8250/js/scenery-v121.js?v=16122",
+      "bytes": 13614
+    },
+    {
+      "name": "http://localhost:8250/js/world.js?v=16122",
+      "bytes": 24978
+    },
+    {
+      "name": "http://localhost:8250/js/art-v42.js?v=16122",
+      "bytes": 66875
+    },
+    {
+      "name": "http://localhost:8250/js/effects.js?v=141",
+      "bytes": 28655
+    },
+    {
+      "name": "http://localhost:8250/js/squad.js?v=117",
+      "bytes": 23630
+    },
+    {
+      "name": "http://localhost:8250/js/gates.js?v=117",
+      "bytes": 22896
+    },
+    {
+      "name": "http://localhost:8250/js/pacing.js",
+      "bytes": 14521
+    },
+    {
+      "name": "http://localhost:8250/js/enemies.js?v=16122",
+      "bytes": 22700
+    },
+    {
+      "name": "http://localhost:8250/js/combat.js?v=140",
+      "bytes": 24730
+    },
+    {
+      "name": "http://localhost:8250/js/platform/storage-adapter.js",
+      "bytes": 9829
+    },
+    {
+      "name": "http://localhost:8250/js/platform/lifecycle-adapter.js",
+      "bytes": 2803
+    },
+    {
+      "name": "http://localhost:8250/js/platform/share-adapter.js",
+      "bytes": 2586
+    },
+    {
+      "name": "http://localhost:8250/js/platform/platform.js",
+      "bytes": 4778
+    },
+    {
+      "name": "http://localhost:8250/js/platform/audio-adapter.js",
+      "bytes": 9643
+    },
+    {
+      "name": "http://localhost:8250/js/ads/ad-service.js",
+      "bytes": 8911
+    },
+    {
+      "name": "http://localhost:8250/js/ads/web-mock-ad.js",
+      "bytes": 8172
+    },
+    {
+      "name": "http://localhost:8250/js/ads/douyin-ad.js",
+      "bytes": 5067
+    },
+    {
+      "name": "http://localhost:8250/js/ads/wechat-ad.js",
+      "bytes": 5773
+    },
+    {
+      "name": "http://localhost:8250/js/ads/game-ad-coordinator.js",
+      "bytes": 7128
+    },
+    {
+      "name": "http://localhost:8250/js/game.js?v=140",
+      "bytes": 89208
+    },
+    {
+      "name": "http://localhost:8250/assets/models/soldier/soldier.glb",
+      "bytes": 348368
+    },
+    {
+      "name": "http://localhost:8250/assets/models/soldier/soldier-lod.glb",
+      "bytes": 149420
+    },
+    {
+      "name": "http://localhost:8250/assets/models/zombies/normal/normal.glb?v=121",
+      "bytes": 124096
+    },
+    {
+      "name": "http://localhost:8250/assets/models/zombies/normal/normal-lod.glb?v=121",
+      "bytes": 43380
+    },
+    {
+      "name": "http://localhost:8250/assets/models/zombies/fast/fast.glb?v=121",
+      "bytes": 125616
+    },
+    {
+      "name": "http://localhost:8250/assets/models/zombies/fast/fast-lod.glb?v=121",
+      "bytes": 45788
+    },
+    {
+      "name": "http://localhost:8250/assets/art-v121/world-materials.jpg?v=121",
+      "bytes": 81598
+    },
+    {
+      "name": "http://localhost:8250/assets/models/zombies/shield/shield.glb?v=121",
+      "bytes": 141324
+    },
+    {
+      "name": "http://localhost:8250/assets/models/zombies/shield/shield-lod.glb?v=121",
+      "bytes": 49116
+    },
+    {
+      "name": "http://localhost:8250/assets/models/zombies/split/split.glb?v=121",
+      "bytes": 138944
+    },
+    {
+      "name": "http://localhost:8250/assets/models/zombies/split/split-lod.glb?v=121",
+      "bytes": 47988
+    },
+    {
+      "name": "http://localhost:8250/assets/models/zombies/spitter/spitter.glb?v=121",
+      "bytes": 130768
+    },
+    {
+      "name": "http://localhost:8250/assets/models/zombies/spitter/spitter-lod.glb?v=121",
+      "bytes": 45088
+    },
+    {
+      "name": "http://localhost:8250/assets/models/zombies/elite/elite.glb?v=121",
+      "bytes": 143916
+    },
+    {
+      "name": "http://localhost:8250/assets/models/zombies/elite/elite-lod.glb?v=121",
+      "bytes": 49600
+    }
+  ],
+  "game": {
+    "state": "playing",
+    "count": 7
+  },
+  "three": "149"
+}

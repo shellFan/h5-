@@ -1,0 +1,1748 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "kind": "user_provided_archive",
+    "license": "not_externally_verified",
+    "note": "User-provided source archive; usage rights require human verification."
+  },
+  "archive": {
+    "name": "《膨胀小队》H5全套美术资产库.zip",
+    "sha256": "d69816b8ac7fa88eb11a032b213206824d82efa6b52a9f9353e8963ae8331496",
+    "bytes": 63731366,
+    "entry_count": 90,
+    "unique_asset_count": 86,
+    "duplicate_entry_count": 4
+  },
+  "entries": [
+    {
+      "id": 1,
+      "original_name": "Game_combat_VFX_sprite_sheet_d2833228.jpg",
+      "sha256": "fcebfa127d7b75dcb3dbda50a2b27ad8aaf4baf64814abe778113b9602b212f7",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 761132,
+      "category": "effects",
+      "target_name": "game_combat_vfx_sprite_sheet_d2833228.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Game_combat_VFX_sprite_sheet_d2833228.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 2,
+      "original_name": "3D_game_multiplier_gates_asset_e44638c9.jpg",
+      "sha256": "6f4e8bc9e6b2a3c76577a7d7c6f0f2d8e96bd9a3e06f0ceed9acbf33b4a3592f",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 822443,
+      "category": "gameplay",
+      "target_name": "3d_game_multiplier_gates_asset_e44638c9.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "3D_game_multiplier_gates_asset_e44638c9.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 3,
+      "original_name": "3D_game_UI_asset_sheet_3b8190b1.jpg",
+      "sha256": "2d7bd076b8c6521e58cf9ec86e73a499d346a3fd62470235555f34825475820c",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 729537,
+      "category": "ui",
+      "target_name": "3d_game_ui_asset_sheet_3b8190b1.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "3D_game_UI_asset_sheet_3b8190b1.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 4,
+      "original_name": "3D_game_UI_asset_sheet_91d99e4c.jpg",
+      "sha256": "a3a16dd03ff99a2359f7afabf84d8eb44c802914a0e3389d58a96ef309bba32d",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 683591,
+      "category": "ui",
+      "target_name": "3d_game_ui_asset_sheet_91d99e4c.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "3D_game_UI_asset_sheet_91d99e4c.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 5,
+      "original_name": "Game_UI_asset_sheet_green_635c7ff5.jpg",
+      "sha256": "5d039973ee8ed2d5ff1759cdbe85192ee56e1c98ee45446a3bc241b09bccd98a",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 615949,
+      "category": "ui",
+      "target_name": "game_ui_asset_sheet_green_635c7ff5.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Game_UI_asset_sheet_green_635c7ff5.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 6,
+      "original_name": "Gold_coins_bursting_upward_f57548f2.jpg",
+      "sha256": "6a3341c5a70b50b6d7341ce921f193b00855894c8e14eb11409fe0d55ef8429c",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 647135,
+      "category": "effects",
+      "target_name": "gold_coins_bursting_upward_f57548f2.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Gold_coins_bursting_upward_f57548f2.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 7,
+      "original_name": "Gunfire_muzzle_flashes_particle_…_113fe16c.jpg",
+      "sha256": "0b34267bac5df44e3e7a371cd4b0957646238e3d00a3ab10cf8070e26bfb7be2",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 546136,
+      "category": "effects",
+      "target_name": "gunfire_muzzle_flashes_particle_113fe16c.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Gunfire_muzzle_flashes_particle_…_113fe16c.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 8,
+      "original_name": "Explosion_VFX_with_debris_and_87e5f30f.jpg",
+      "sha256": "d4ac78683b64ba4c8f1b56a1d7cf50d6210596de90e30a6815c3899adc454708",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 656673,
+      "category": "effects",
+      "target_name": "explosion_vfx_with_debris_and_87e5f30f.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Explosion_VFX_with_debris_and_87e5f30f.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 9,
+      "original_name": "Bullet_trails_glowing_laser_streaks_91395c98.jpg",
+      "sha256": "fa2bb59fc5f19615ff0a23a3ef8fc76259afc0e65c325a55b96dc14b1d67c77d",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 514499,
+      "category": "effects",
+      "target_name": "bullet_trails_glowing_laser_streaks_91395c98.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Bullet_trails_glowing_laser_streaks_91395c98.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 10,
+      "original_name": "Golden_rays_level_up_aura_20863dc0.jpg",
+      "sha256": "e85316dbcb312ee1bd7e6eac3f2d1137fddd94af858510239499cac5531a9f45",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 564871,
+      "category": "effects",
+      "target_name": "golden_rays_level_up_aura_20863dc0.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Golden_rays_level_up_aura_20863dc0.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 11,
+      "original_name": "Game_particle_hit_sparks_asset_3cad9b0a.jpg",
+      "sha256": "ddde691556e9cf8499b16f2c24d5dafaa72340adb085b4b664ad0ff759cb3db1",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 640607,
+      "category": "effects",
+      "target_name": "game_particle_hit_sparks_asset_3cad9b0a.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Game_particle_hit_sparks_asset_3cad9b0a.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 12,
+      "original_name": "Boss_death_mechanical_explosion_854a83bb.jpg",
+      "sha256": "947dc43e44044da4d9c41de6c61f863801e78a9fc12dc7f0668d8b5eec799e67",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 803012,
+      "category": "effects",
+      "target_name": "boss_death_mechanical_explosion_854a83bb.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Boss_death_mechanical_explosion_854a83bb.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 13,
+      "original_name": "Boss_entrance_particle_effect_asset_325f54e3.jpg",
+      "sha256": "2ed40e9ce88c032595f5a2991f15747356c1deb0290ba5babed2c818b8d8a807",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 806079,
+      "category": "effects",
+      "target_name": "boss_entrance_particle_effect_asset_325f54e3.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Boss_entrance_particle_effect_asset_325f54e3.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 14,
+      "original_name": "Defeat_popup_UI_window_1077a0c5.jpg",
+      "sha256": "2bc5e17487b4c96b9acb704248f06a843a784b2ea53183c017b36b90e6a9140d",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 767458,
+      "category": "ui",
+      "target_name": "defeat_popup_ui_window_1077a0c5.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Defeat_popup_UI_window_1077a0c5.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 15,
+      "original_name": "Mobile_game_leaderboard_UI_screen_239141aa.jpg",
+      "sha256": "b0634ab05bbc3be947f4b7075cec9648a8661eb01ba889ec9288fc400b96d10f",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 872453,
+      "category": "ui",
+      "target_name": "mobile_game_leaderboard_ui_screen_239141aa.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Mobile_game_leaderboard_UI_screen_239141aa.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 16,
+      "original_name": "Mobile_game_combat_HUD_UI_49d770df.jpg",
+      "sha256": "19ee51b19629ec8862339f86b8258a674a418a5c205cfd91784e0858af0dab9a",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 619118,
+      "category": "ui",
+      "target_name": "mobile_game_combat_hud_ui_49d770df.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Mobile_game_combat_HUD_UI_49d770df.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 17,
+      "original_name": "Victory_popup_UI_window_df2096f3.jpg",
+      "sha256": "f816df6d191d9c5c4c46d1baa04296a91e700f4b8a1c54e988f9e0ec3111a844",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 812720,
+      "category": "ui",
+      "target_name": "victory_popup_ui_window_df2096f3.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Victory_popup_UI_window_df2096f3.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 18,
+      "original_name": "3D_Mobile_Game_Settings_UI_76f99ce0.jpg",
+      "sha256": "bbe693d8e186aad1bc6d374dca3904114d7796bb13303f6299e9ecf7640f2ae7",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 638483,
+      "category": "ui",
+      "target_name": "3d_mobile_game_settings_ui_76f99ce0.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "3D_Mobile_Game_Settings_UI_76f99ce0.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 19,
+      "original_name": "Mobile_game_main_menu_layout_24896b5e.jpg",
+      "sha256": "03475e9d310e200be182a485956629574f3785b2cd3bb84617017698aa69491a",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 818960,
+      "category": "ui",
+      "target_name": "mobile_game_main_menu_layout_24896b5e.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Mobile_game_main_menu_layout_24896b5e.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 20,
+      "original_name": "Game_upgrade_UI_panel_3cdb96f6.jpg",
+      "sha256": "1de7d35939b1b8e939da94a6f94cffbd7a838588ca4c5befa1c670f00c5baed0",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 732459,
+      "category": "ui",
+      "target_name": "game_upgrade_ui_panel_3cdb96f6.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Game_upgrade_UI_panel_3cdb96f6.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 21,
+      "original_name": "Shop_UI_screen_grid_items_d8d6c9d5.jpg",
+      "sha256": "633dc1aca83c8386b11082a83f9c78380bd047d11f28c6ae447492c0113b8247",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 834886,
+      "category": "ui",
+      "target_name": "shop_ui_screen_grid_items_d8d6c9d5.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Shop_UI_screen_grid_items_d8d6c9d5.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 22,
+      "original_name": "3D_game_reward_chest_banner_1caa2ddb.jpg",
+      "sha256": "4b46d473c72120d864077657c4a0d4203d690c3918736dde33bd70107dfcc564",
+      "width": 1376,
+      "height": 768,
+      "format": "JPEG",
+      "bytes": 974010,
+      "category": "ui",
+      "target_name": "3d_game_reward_chest_banner_1caa2ddb.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "3D_game_reward_chest_banner_1caa2ddb.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 23,
+      "original_name": "3D_game_icon_asset_sheet_8a64239f.jpg",
+      "sha256": "fc1e5a09bff0b967e5fe64e7af131d69f19e89a1a3a1acf73e3471d4fc7cee08",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 591007,
+      "category": "ui",
+      "target_name": "3d_game_icon_asset_sheet_8a64239f.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "3D_game_icon_asset_sheet_8a64239f.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 24,
+      "original_name": "Game_leaderboard_badges_and_frames_bcd47cc0.jpg",
+      "sha256": "7ed3e9afdbefecfa33dc09796f66c9a0c7ae4fdaa5e0424b10ade677e48fe58c",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 625894,
+      "category": "ui",
+      "target_name": "game_leaderboard_badges_and_frames_bcd47cc0.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Game_leaderboard_badges_and_frames_bcd47cc0.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 25,
+      "original_name": "3D_game_icon_asset_sheet_82f32e58.jpg",
+      "sha256": "59ed2c60ccbd7a56acc11be44b53d47f3a080f446f99300c687251438c2305af",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 775545,
+      "category": "ui",
+      "target_name": "3d_game_icon_asset_sheet_82f32e58.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "3D_game_icon_asset_sheet_82f32e58.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 26,
+      "original_name": "Toy_military_weapons_icon_sheet_646139ec.jpg",
+      "sha256": "02f082b7cffb4035533f0eeb810b46e6f1f7861a893540540d7c1c7539723ee7",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 656301,
+      "category": "weapons",
+      "target_name": "toy_military_weapons_icon_sheet_646139ec.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Toy_military_weapons_icon_sheet_646139ec.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 27,
+      "original_name": "Weapon_asset_design_sheet_3827c811.jpg",
+      "sha256": "dea4c5d099111a08b45637a34561808c32850e02121dc3a7cecfe336f92b6495",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 562310,
+      "category": "weapons",
+      "target_name": "weapon_asset_design_sheet_3827c811.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Weapon_asset_design_sheet_3827c811.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 28,
+      "original_name": "Sniper_rifle_progression_design_…_46e71ee1.jpg",
+      "sha256": "441d650befdc8f4a285675394481eb56f3db2cc648a1cc331ca79be2284ddd5e",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 526428,
+      "category": "weapons",
+      "target_name": "sniper_rifle_progression_design_46e71ee1.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Sniper_rifle_progression_design_…_46e71ee1.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 29,
+      "original_name": "Rocket_launcher_design_asset_e2ffd857.jpg",
+      "sha256": "8b8a5980965c166491cedc45c3ac39c7caf45a8d8367f2634158cdca266a66f4",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 584811,
+      "category": "weapons",
+      "target_name": "rocket_launcher_design_asset_e2ffd857.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Rocket_launcher_design_asset_e2ffd857.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 30,
+      "original_name": "Grenade_launcher_weapon_design_s…_3171317b.jpg",
+      "sha256": "e7b4932a4141230fe32d12609bb7e7c8cd3b14145119bffdbeb8792111122a5d",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 562228,
+      "category": "weapons",
+      "target_name": "grenade_launcher_weapon_design_s_3171317b.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Grenade_launcher_weapon_design_s…_3171317b.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 31,
+      "original_name": "Laser_rifle_design_sheet_progres…_f05c1816.jpg",
+      "sha256": "7f69b2801f135451557936055dd90d09119f71a2951cbc3c5cf5588826872ca6",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 565538,
+      "category": "weapons",
+      "target_name": "laser_rifle_design_sheet_progres_f05c1816.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Laser_rifle_design_sheet_progres…_f05c1816.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 32,
+      "original_name": "Gatling_gun_asset_design_sheet_edb93245.jpg",
+      "sha256": "94081d260f22e2f1ef65c93b88f08e82358e8fa1544306337453ae3e3a016e40",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 558754,
+      "category": "weapons",
+      "target_name": "gatling_gun_asset_design_sheet_edb93245.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Gatling_gun_asset_design_sheet_edb93245.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 33,
+      "original_name": "Assault_rifle_weapon_design_sheet_c5c8d455.jpg",
+      "sha256": "f62d5d4713abd63f27223817d185ae7ad6d3123562ab109b1c3f254fc0f435df",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 521883,
+      "category": "weapons",
+      "target_name": "assault_rifle_weapon_design_sheet_c5c8d455.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Assault_rifle_weapon_design_sheet_c5c8d455.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 34,
+      "original_name": "Shotgun_weapon_design_progressio…_d83ed789.jpg",
+      "sha256": "a6e5d1d8b3c16841992edde78eb6a41b8511d59a0a2571a3d70abee918cd98f9",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 475677,
+      "category": "weapons",
+      "target_name": "shotgun_weapon_design_progressio_d83ed789.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Shotgun_weapon_design_progressio…_d83ed789.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 35,
+      "original_name": "Submachine_gun_progression_sheet…_4a601561.jpg",
+      "sha256": "0c4067083bb89ed11b0cf1e5d098059902b69622a9bc0f444b136680d140012d",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 434682,
+      "category": "weapons",
+      "target_name": "submachine_gun_progression_sheet_4a601561.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Submachine_gun_progression_sheet…_4a601561.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 36,
+      "original_name": "Heavy_machine_gun_design_sheet_8f21568e.jpg",
+      "sha256": "d7e8e51bb78c6986dba1e927927c8e69ad273d64d3b036d33c4ca2f9cf8dd342",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 527778,
+      "category": "weapons",
+      "target_name": "heavy_machine_gun_design_sheet_8f21568e.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Heavy_machine_gun_design_sheet_8f21568e.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 37,
+      "original_name": "Plasma_cannon_design_progression…_43e66a48.jpg",
+      "sha256": "1f2ca3d879583515daeb002ae0b2397618ebe860fc1d53b99d3a1fde85deb054",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 511224,
+      "category": "weapons",
+      "target_name": "plasma_cannon_design_progression_43e66a48.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Plasma_cannon_design_progression…_43e66a48.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 38,
+      "original_name": "Railgun_weapon_asset_design_sheet_5eca0af5.jpg",
+      "sha256": "816e708350f583ac3918a56e5c9d52f1f1104e4551fe037200bd1127262ad7a6",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 571631,
+      "category": "weapons",
+      "target_name": "railgun_weapon_asset_design_sheet_5eca0af5.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Railgun_weapon_asset_design_sheet_5eca0af5.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 39,
+      "original_name": "Cartoon_monster_game_sprite_sheet_17f803de.jpg",
+      "sha256": "5505ab850af58e756a8a8400365f0a335e1f7c576ed244c473c46db879da54db",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 426498,
+      "category": "enemies",
+      "target_name": "cartoon_monster_game_sprite_sheet_17f803de.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Cartoon_monster_game_sprite_sheet_17f803de.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 40,
+      "original_name": "Green_toxic_blob_monster_dripping_96bc028b.jpg",
+      "sha256": "7a5a5dd9317f2319228a5244ff888d66e9c496a013bb24f61f92829d711352ba",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 553515,
+      "category": "enemies",
+      "target_name": "green_toxic_blob_monster_dripping_96bc028b.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Green_toxic_blob_monster_dripping_96bc028b.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 41,
+      "original_name": "Red_monster_wearing_spiked_armor_687d1791.jpg",
+      "sha256": "5aa9f75dfc46eea654619ccbc010e4dac456c8d47863ccbb7bd2a3ade3bf229b",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 587178,
+      "category": "enemies",
+      "target_name": "red_monster_wearing_spiked_armor_687d1791.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Red_monster_wearing_spiked_armor_687d1791.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 42,
+      "original_name": "Bomb_monster_with_ticking_fuse_98b4d3de.jpg",
+      "sha256": "f347ff4300a17ef567d42e6e52b5081fe1c3379bededcde8b08fdaaac93ffa4e",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 501664,
+      "category": "enemies",
+      "target_name": "bomb_monster_with_ticking_fuse_98b4d3de.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Bomb_monster_with_ticking_fuse_98b4d3de.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 43,
+      "original_name": "Orange_mutant_monster_asset_f981d5e7.jpg",
+      "sha256": "98d888991a817cd4a099c89ae18fac5285adef0195ad95ed428be0848dde24aa",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 402418,
+      "category": "enemies",
+      "target_name": "orange_mutant_monster_asset_f981d5e7.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Orange_mutant_monster_asset_f981d5e7.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 44,
+      "original_name": "Purple_cartoon_monster_game_asset_3a0bbbda.jpg",
+      "sha256": "b38283d8ccd23a835911894f679e7f3e5b950fab201db880444e019a95ca6e1b",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 442521,
+      "category": "enemies",
+      "target_name": "purple_cartoon_monster_game_asset_3a0bbbda.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Purple_cartoon_monster_game_asset_3a0bbbda.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 45,
+      "original_name": "Armored_mecha_monster_game_asset_96179c59.jpg",
+      "sha256": "0b9c52a9eb0f0d1f24b73ab5b82300bab19cbc3bcf7519d4264d13768d7307c6",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 639042,
+      "category": "enemies",
+      "target_name": "armored_mecha_monster_game_asset_96179c59.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Armored_mecha_monster_game_asset_96179c59.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 46,
+      "original_name": "Mecha_T-Rex_character_design_sheet_39d41347.jpg",
+      "sha256": "836bc6c153f14502f8960131ad056edbc35a5b855f8535f0011916c3c0c1d690",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 689203,
+      "category": "enemies",
+      "target_name": "mecha_t_rex_character_design_sheet_39d41347.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Mecha_T-Rex_character_design_sheet_39d41347.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 47,
+      "original_name": "Tank_robot_character_design_sheet_dc7c17c0.jpg",
+      "sha256": "abeb84b25944da12650bc2e6f44eda42e9aa4ace5f968c6949a25b963740b967",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 608435,
+      "category": "enemies",
+      "target_name": "tank_robot_character_design_sheet_dc7c17c0.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Tank_robot_character_design_sheet_dc7c17c0.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 48,
+      "original_name": "Mutant_gorilla_character_design_…_50a274d3.jpg",
+      "sha256": "50e90d5acf941ce84aad4384acc54e6cefb5afd7c5a6404d21753cb23f848dd5",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 602260,
+      "category": "enemies",
+      "target_name": "mutant_gorilla_character_design_50a274d3.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Mutant_gorilla_character_design_…_50a274d3.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 49,
+      "original_name": "Mecha_robot_design_sheet_cce753aa.jpg",
+      "sha256": "58aaef90e18f9453da1d64033d95c37786217d7b2e6d2be0bf238bc97f35faa8",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 589006,
+      "category": "enemies",
+      "target_name": "mecha_robot_design_sheet_cce753aa.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Mecha_robot_design_sheet_cce753aa.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 50,
+      "original_name": "Mecha_behemoth_character_design_…_06bb52c7.jpg",
+      "sha256": "2e705407ff08850f4a5c224a70d67135d022cf9ea7e3e5dee05e52962d64ca3b",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 689970,
+      "category": "enemies",
+      "target_name": "mecha_behemoth_character_design_06bb52c7.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Mecha_behemoth_character_design_…_06bb52c7.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 51,
+      "original_name": "Toy_soldiers_fighting_cartoon_mo…_0fe3b85a.jpg",
+      "sha256": "fa7be38da0eacd5266ba0b9421670cdca3a677ceef052f99ea0aa14ad67fe9a6",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 1074074,
+      "category": "marketing",
+      "target_name": "toy_soldiers_fighting_cartoon_mo_0fe3b85a.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Toy_soldiers_fighting_cartoon_mo…_0fe3b85a.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_4b26931e.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_55eb1bbd.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_6b4d9cb7.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_6eac1b73.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 52,
+      "original_name": "Toy_soldiers_fighting_cartoon_mo…_4b26931e.jpg",
+      "sha256": "fa7be38da0eacd5266ba0b9421670cdca3a677ceef052f99ea0aa14ad67fe9a6",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 1074074,
+      "category": "marketing",
+      "target_name": "toy_soldiers_fighting_cartoon_mo_0fe3b85a.jpg",
+      "duplicate_of": 51,
+      "merged_names": [
+        "Toy_soldiers_fighting_cartoon_mo…_0fe3b85a.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_4b26931e.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_55eb1bbd.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_6b4d9cb7.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_6eac1b73.jpg"
+      ],
+      "processing_status": "duplicate",
+      "integration_status": "deduplicated",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 53,
+      "original_name": "Toy_soldiers_fighting_cartoon_mo…_55eb1bbd.jpg",
+      "sha256": "fa7be38da0eacd5266ba0b9421670cdca3a677ceef052f99ea0aa14ad67fe9a6",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 1074074,
+      "category": "marketing",
+      "target_name": "toy_soldiers_fighting_cartoon_mo_0fe3b85a.jpg",
+      "duplicate_of": 51,
+      "merged_names": [
+        "Toy_soldiers_fighting_cartoon_mo…_0fe3b85a.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_4b26931e.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_55eb1bbd.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_6b4d9cb7.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_6eac1b73.jpg"
+      ],
+      "processing_status": "duplicate",
+      "integration_status": "deduplicated",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 54,
+      "original_name": "Toy_soldiers_fighting_cartoon_mo…_6b4d9cb7.jpg",
+      "sha256": "fa7be38da0eacd5266ba0b9421670cdca3a677ceef052f99ea0aa14ad67fe9a6",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 1074074,
+      "category": "marketing",
+      "target_name": "toy_soldiers_fighting_cartoon_mo_0fe3b85a.jpg",
+      "duplicate_of": 51,
+      "merged_names": [
+        "Toy_soldiers_fighting_cartoon_mo…_0fe3b85a.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_4b26931e.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_55eb1bbd.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_6b4d9cb7.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_6eac1b73.jpg"
+      ],
+      "processing_status": "duplicate",
+      "integration_status": "deduplicated",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 55,
+      "original_name": "Soldiers_shooting_enemy_robot_bugs_a51af57e.jpg",
+      "sha256": "fcf57c699dd2a6a0f0651e752720c778afa58d2ba290a4bc1dd4f7b929186c14",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 844655,
+      "category": "marketing",
+      "target_name": "soldiers_shooting_enemy_robot_bugs_a51af57e.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Soldiers_shooting_enemy_robot_bugs_a51af57e.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 56,
+      "original_name": "Soldiers_shooting_robot_bugs_0f6ccbd5.jpg",
+      "sha256": "e30a206d21e62d704fcb547bc9b813de79500c31ea1f21672d986642bfdec272",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 873032,
+      "category": "marketing",
+      "target_name": "soldiers_shooting_robot_bugs_0f6ccbd5.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Soldiers_shooting_robot_bugs_0f6ccbd5.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 57,
+      "original_name": "Toy_soldiers_charging_down_road_86cf4255.jpg",
+      "sha256": "315fa25c20e8eca944d24b7551e3147000a99209b3ca422c4ffee98d9ff6eed9",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 1045160,
+      "category": "marketing",
+      "target_name": "toy_soldiers_charging_down_road_86cf4255.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Toy_soldiers_charging_down_road_86cf4255.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 58,
+      "original_name": "Toy_soldiers_fighting_cartoon_mo…_6eac1b73.jpg",
+      "sha256": "fa7be38da0eacd5266ba0b9421670cdca3a677ceef052f99ea0aa14ad67fe9a6",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 1074074,
+      "category": "marketing",
+      "target_name": "toy_soldiers_fighting_cartoon_mo_0fe3b85a.jpg",
+      "duplicate_of": 51,
+      "merged_names": [
+        "Toy_soldiers_fighting_cartoon_mo…_0fe3b85a.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_4b26931e.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_55eb1bbd.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_6b4d9cb7.jpg",
+        "Toy_soldiers_fighting_cartoon_mo…_6eac1b73.jpg"
+      ],
+      "processing_status": "duplicate",
+      "integration_status": "deduplicated",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 59,
+      "original_name": "Mech_soldiers_charging_in_factory_462985a6.jpg",
+      "sha256": "617aef439b6015b31a5a96b4e0a019825a86618895e46cbf045d71d97a5c0822",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 1073545,
+      "category": "marketing",
+      "target_name": "mech_soldiers_charging_in_factory_462985a6.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Mech_soldiers_charging_in_factory_462985a6.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 60,
+      "original_name": "Sci-fi_mech_squad_fighting_boss_01f87b64.jpg",
+      "sha256": "c719bf44515f98a10be2cbcee6769680620938fcdcf5f5401c3496d82561b7b3",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 1134038,
+      "category": "marketing",
+      "target_name": "sci_fi_mech_squad_fighting_boss_01f87b64.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Sci-fi_mech_squad_fighting_boss_01f87b64.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 61,
+      "original_name": "Squad_fighting_zombies_in_city_84b59619.jpg",
+      "sha256": "cedbf94a06dc40d17c9e1931c413517eb1d6bfa8f7650270ca6431ab7b264c41",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 1174748,
+      "category": "marketing",
+      "target_name": "squad_fighting_zombies_in_city_84b59619.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Squad_fighting_zombies_in_city_84b59619.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 62,
+      "original_name": "Soldiers_fighting_zombies_in_bunker_13c70f3a.jpg",
+      "sha256": "d364715fe82e221fa2001349ef83d60481f9c3393ea4464dac75435c3e6dcede",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 1007058,
+      "category": "marketing",
+      "target_name": "soldiers_fighting_zombies_in_bunker_13c70f3a.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Soldiers_fighting_zombies_in_bunker_13c70f3a.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 63,
+      "original_name": "Green_toy_soldier_holding_rifle_3b540778.jpg",
+      "sha256": "f8bccfd33b95b24cb7a6d53c5b456b893d35e018f0db0c51fce117286606ea0a",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 633838,
+      "category": "marketing",
+      "target_name": "green_toy_soldier_holding_rifle_3b540778.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Green_toy_soldier_holding_rifle_3b540778.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 64,
+      "original_name": "Toy_soldiers_firing_weapons_2b4449f3.jpg",
+      "sha256": "030405046a0abc5fd253fa18e07e5fc33f9401da19e120b93fa52c50b1993d00",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 867177,
+      "category": "marketing",
+      "target_name": "toy_soldiers_firing_weapons_2b4449f3.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Toy_soldiers_firing_weapons_2b4449f3.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 65,
+      "original_name": "3D_game_modular_environment_props_5fd99a9c.jpg",
+      "sha256": "fe8b08d5080e92a41eac46b526b4163a63274b2a6bfed7c1f0a0ba9b41061f0d",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 684330,
+      "category": "environment",
+      "target_name": "3d_game_modular_environment_props_5fd99a9c.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "3D_game_modular_environment_props_5fd99a9c.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 66,
+      "original_name": "3D_military_battleground_map_sho…_67f2fe30.jpg",
+      "sha256": "adc0caf523467e3973d61d5bc64f717e1ed87cbdd4a195d35e9084f34f03cefd",
+      "width": 1376,
+      "height": 768,
+      "format": "JPEG",
+      "bytes": 1095457,
+      "category": "environment",
+      "target_name": "3d_military_battleground_map_sho_67f2fe30.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "3D_military_battleground_map_sho…_67f2fe30.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 67,
+      "original_name": "Golden_energy_platform_in_space_8c8c2c64.jpg",
+      "sha256": "132d266d2551f28017968876ccf11a6dbd45baa95829be7aa9d1d6061bd3e05c",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 1030569,
+      "category": "environment",
+      "target_name": "golden_energy_platform_in_space_8c8c2c64.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Golden_energy_platform_in_space_8c8c2c64.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 68,
+      "original_name": "Sunny_military_base_game_map_98a69a46.jpg",
+      "sha256": "fb393aaac96e0977800658d00222133fcba9040b3f239b71c2edbd166dc6d0d3",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 1121244,
+      "category": "environment",
+      "target_name": "sunny_military_base_game_map_98a69a46.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Sunny_military_base_game_map_98a69a46.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 69,
+      "original_name": "Ruined_urban_avenue_background_9d5622e0.jpg",
+      "sha256": "043c66bd429c72dc8b4727329c33ebf163d2fe62a7a67e66767c8ccc24ff4a24",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 1120648,
+      "category": "environment",
+      "target_name": "ruined_urban_avenue_background_9d5622e0.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Ruined_urban_avenue_background_9d5622e0.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 70,
+      "original_name": "Forest_military_camp_game_map_02f67f12.jpg",
+      "sha256": "d632d613c90bc4b0aad49073c4786ed1bccba747dc44e021fb00c100b7ec985b",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 1207837,
+      "category": "environment",
+      "target_name": "forest_military_camp_game_map_02f67f12.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Forest_military_camp_game_map_02f67f12.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 71,
+      "original_name": "Snow_military_base_game_map_b51bd919.jpg",
+      "sha256": "a25ae45dbf7ce58fbc741a9597a695e1696a82c2eb4216bc8459a29b82458857",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 1072737,
+      "category": "environment",
+      "target_name": "snow_military_base_game_map_b51bd919.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Snow_military_base_game_map_b51bd919.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 72,
+      "original_name": "Desert_training_base_map_background_2deaba68.jpg",
+      "sha256": "01be21d7677136338b409f84b5e27db86ca2b7953e0c0a210cbaa4ff85028f7d",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 991657,
+      "category": "environment",
+      "target_name": "desert_training_base_map_background_2deaba68.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Desert_training_base_map_background_2deaba68.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 73,
+      "original_name": "Volcano_research_base_game_map_18bd70de.jpg",
+      "sha256": "d2744085c864d06253be6c63e6079cff3ee0472424e4165e61d3c9c082b9a109",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 988584,
+      "category": "environment",
+      "target_name": "volcano_research_base_game_map_18bd70de.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Volcano_research_base_game_map_18bd70de.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 74,
+      "original_name": "Industrial_factory_game_map_back…_c37df917.jpg",
+      "sha256": "ef9a54e7f42451b71d5727ba2a86155015d32ca9a91ea8fffc8d9d8c6082a46c",
+      "width": 768,
+      "height": 1376,
+      "format": "JPEG",
+      "bytes": 975831,
+      "category": "environment",
+      "target_name": "industrial_factory_game_map_back_c37df917.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Industrial_factory_game_map_back…_c37df917.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 75,
+      "original_name": "Green_grass_lawn_tile_d39dd91f.jpg",
+      "sha256": "fd9559fb4f0ccb7fed5fcacb493fcdd3b9644654cc7aff6b2cb27ef150421a13",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 588853,
+      "category": "environment",
+      "target_name": "green_grass_lawn_tile_d39dd91f.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Green_grass_lawn_tile_d39dd91f.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 76,
+      "original_name": "Military_roadblock_barrier_game_…_73cae8a9.jpg",
+      "sha256": "1396d8ed71ce86f1630aa319503d64cdb0f36ca734ccd92a5279826367f15ea2",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 562489,
+      "category": "environment",
+      "target_name": "military_roadblock_barrier_game_73cae8a9.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Military_roadblock_barrier_game_…_73cae8a9.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 77,
+      "original_name": "Wooden_watchtower_with_searchlight_6fcba15b.jpg",
+      "sha256": "4da13906efa24c7341e4c0e57be93d6cf381bb4421fed9605c25fe4f5693391b",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 534169,
+      "category": "environment",
+      "target_name": "wooden_watchtower_with_searchlight_6fcba15b.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Wooden_watchtower_with_searchlight_6fcba15b.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 78,
+      "original_name": "Sandbag_barricade_3D_asset_184c3724.jpg",
+      "sha256": "99ebfc60e9507ad02d721ae1a7d64ea8c882fbcbaa3ea8ee5c2eeabbd443f578",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 531866,
+      "category": "environment",
+      "target_name": "sandbag_barricade_3d_asset_184c3724.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Sandbag_barricade_3D_asset_184c3724.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 79,
+      "original_name": "Wooden_ammo_boxes_stack_469d2943.jpg",
+      "sha256": "108964b7c80129bfdde808b9dc1388d80ed507118e375ecafa0774c5f7fbcbca",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 731207,
+      "category": "environment",
+      "target_name": "wooden_ammo_boxes_stack_469d2943.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Wooden_ammo_boxes_stack_469d2943.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 80,
+      "original_name": "Barbed_wire_fence_barricade_7a4d64e6.jpg",
+      "sha256": "27d587253c3cbcb2a8b4328013d701128931da554fe75ec9545e91ca6dbf6976",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 715072,
+      "category": "environment",
+      "target_name": "barbed_wire_fence_barricade_7a4d64e6.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Barbed_wire_fence_barricade_7a4d64e6.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 81,
+      "original_name": "Destroyed_military_tank_wreckage_09c66cf2.jpg",
+      "sha256": "d5eca6e038d5b7e2a016df84ed9845d94c79ff43e5e050fee80525d2d26a03c7",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 539952,
+      "category": "environment",
+      "target_name": "destroyed_military_tank_wreckage_09c66cf2.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Destroyed_military_tank_wreckage_09c66cf2.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 82,
+      "original_name": "Concrete_military_road_segment_3…_15913314.jpg",
+      "sha256": "3e93efe9907a937313af5b68c29ea90cf4832f76cee158753c9145f0b1c0a917",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 545884,
+      "category": "environment",
+      "target_name": "concrete_military_road_segment_3_15913314.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Concrete_military_road_segment_3…_15913314.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 83,
+      "original_name": "Green_toy_soldier_character_design_7e430005.jpg",
+      "sha256": "42d274b9db45f5af4550aa221b18f5964c7827408a693cacd5abc5fe180e17b1",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 317876,
+      "category": "characters",
+      "target_name": "green_toy_soldier_character_design_7e430005.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Green_toy_soldier_character_design_7e430005.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 84,
+      "original_name": "Toy_medic_soldier_holding_injector_6b0cdce4.jpg",
+      "sha256": "9a6bef28fd2a51f9a9cdfbae41b0a723e68639e82b3eeeec7fdc9523e3b0d867",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 378010,
+      "category": "characters",
+      "target_name": "toy_medic_soldier_holding_injector_6b0cdce4.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Toy_medic_soldier_holding_injector_6b0cdce4.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 85,
+      "original_name": "Toy_rocket_launcher_soldier_e04ac1e3.jpg",
+      "sha256": "4a00aabcaa3b67aa8fd3ec168ed833fdd3fb39ac1c9ac4f51988a523fd2530f6",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 367411,
+      "category": "characters",
+      "target_name": "toy_rocket_launcher_soldier_e04ac1e3.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Toy_rocket_launcher_soldier_e04ac1e3.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 86,
+      "original_name": "Toy_soldier_holding_shotgun_6ef8722e.jpg",
+      "sha256": "d7bae2dfbd91f06fd6cef95deb199e1d99500330bd1baff47bd0710c1fa11b23",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 374761,
+      "category": "characters",
+      "target_name": "toy_soldier_holding_shotgun_6ef8722e.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Toy_soldier_holding_shotgun_6ef8722e.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 87,
+      "original_name": "Toy_soldier_holding_rifle_69b4b58a.jpg",
+      "sha256": "58f5a4422528f1b243c0dd67eca73f36e67beecd144ea0ca71e69377da32d6b5",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 369093,
+      "category": "characters",
+      "target_name": "toy_soldier_holding_rifle_69b4b58a.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Toy_soldier_holding_rifle_69b4b58a.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 88,
+      "original_name": "Toy_soldier_holding_energy_pistols_040697ec.jpg",
+      "sha256": "cf05f6bc4a4b15ab1162881a7d247b75b3d57ad59df9fc8412e2d0dc4422a5d6",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 462417,
+      "category": "characters",
+      "target_name": "toy_soldier_holding_energy_pistols_040697ec.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Toy_soldier_holding_energy_pistols_040697ec.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 89,
+      "original_name": "Toy_soldier_holding_twin_SMGs_56b84425.jpg",
+      "sha256": "105543ec20713a807d6360917fe2fa6a7ab192510dc16d7fbbd7753c8dd07658",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 361414,
+      "category": "characters",
+      "target_name": "toy_soldier_holding_twin_smgs_56b84425.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Toy_soldier_holding_twin_SMGs_56b84425.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    },
+    {
+      "id": 90,
+      "original_name": "Green_toy_sniper_soldier_asset_80c8366d.jpg",
+      "sha256": "478566880ac8337fa9c1c22ded6fdef990905978af2c0109e93c10f0b8347d8b",
+      "width": 1024,
+      "height": 1024,
+      "format": "JPEG",
+      "bytes": 376057,
+      "category": "characters",
+      "target_name": "green_toy_sniper_soldier_asset_80c8366d.jpg",
+      "duplicate_of": null,
+      "merged_names": [
+        "Green_toy_sniper_soldier_asset_80c8366d.jpg"
+      ],
+      "processing_status": "preserved",
+      "integration_status": "pending_review",
+      "usage_refs": [],
+      "crop_refs": []
+    }
+  ]
+}
