@@ -40,25 +40,7 @@ class GateSystem {
 
     _applyMilitaryPalette(model, data) {
         var category = typeof _gateCategory === 'function' ? _gateCategory(data.op, data.value) : 'special';
-        var color = category === 'count' ? 0x39b96b : (category === 'coin' ? 0xf1b83b : 0x3f91e8);
-        var dark = category === 'count' ? 0x174f31 : (category === 'coin' ? 0x6e4b11 : 0x183e6d);
-        var light = new THREE.Color(color).lerp(new THREE.Color(0xffffff), .28);
-        function paint(mesh, hex) {
-            if (!mesh || !mesh.geometry || !mesh.geometry.attributes || !mesh.geometry.attributes.color) return;
-            var attribute = mesh.geometry.attributes.color;
-            var c = hex && hex.isColor ? hex : new THREE.Color(hex);
-            for (var i = 0; i < attribute.count; i++) attribute.setXYZ(i, c.r, c.g, c.b);
-            attribute.needsUpdate = true;
-        }
-        paint(model.children[0], dark);
-        paint(model.children[1], light);
-        paint(model.children[3], color);
-        paint(model.children[4], light);
-        var glass = model.userData.glass;
-        if (glass && glass.material) {
-            glass.material.color.setHex(color);
-            if (glass.material.emissive) glass.material.emissive.setHex(color).multiplyScalar(.28);
-        }
+        var color = category === 'count' ? 0x22c56a : (category === 'coin' ? 0xf5a623 : (data.op === 'mul' ? 0xa84dff : 0x2692ff));
         model.userData.militaryGateColor = color;
     }
 

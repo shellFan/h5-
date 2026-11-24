@@ -6,10 +6,11 @@
     var TAU = Math.PI * 2;
 
     var GATE_STYLES = {
-        add:  { kind: 'common', title: '增援', frame: 0x2F77D0, dark: 0x173E82, light: 0x78E6FF, glass: 0x47BCEB },
-        mul:  { kind: 'epic',   title: '倍增', frame: 0xEAAE32, dark: 0x8C4D13, light: 0xFFF09A, glass: 0xE8BC48 },
-        buff: { kind: 'rare',   title: '强化', frame: 0x8454D6, dark: 0x43227C, light: 0xE8B8FF, glass: 0xA96DE1 },
-        risk: { kind: 'danger', title: '风险', frame: 0xD94B55, dark: 0x711F35, light: 0xFF9C82, glass: 0xE45B68 }
+        add:  { kind: 'common', title: '增援', frame: 0x22C56A, dark: 0x11492B, light: 0x98FFD4, glass: 0x24D878 },
+        mul:  { kind: 'epic',   title: '倍增', frame: 0xA84DFF, dark: 0x451873, light: 0xF0C2FF, glass: 0xB85CFF },
+        buff: { kind: 'rare',   title: '火力', frame: 0x2692FF, dark: 0x113870, light: 0x9CE6FF, glass: 0x2EA8FF },
+        coin: { kind: 'epic',   title: '金币', frame: 0xF5A623, dark: 0x734206, light: 0xFFF09A, glass: 0xFFBE2E },
+        risk: { kind: 'danger', title: '高危', frame: 0xEB3B4E, dark: 0x6B1320, light: 0xFFA6B0, glass: 0xFF4757 }
     };
 
     function clampNumber(value, low, high) {
@@ -86,29 +87,33 @@
         canvas.height = 512;
         var ctx = canvas.getContext('2d');
         var c = new THREE.Color(style.glass);
+        var l = new THREE.Color(style.light);
+        var d = new THREE.Color(style.dark);
         var rgb = Math.round(c.r * 255) + ',' + Math.round(c.g * 255) + ',' + Math.round(c.b * 255);
-        var grad = ctx.createLinearGradient(0, 0, 256, 512);
-        grad.addColorStop(0, 'rgba(255,255,255,.72)');
-        grad.addColorStop(0.14, 'rgba(' + rgb + ',.48)');
-        grad.addColorStop(0.72, 'rgba(' + rgb + ',.18)');
-        grad.addColorStop(1, 'rgba(255,255,255,.38)');
+        var lrgb = Math.round(l.r * 255) + ',' + Math.round(l.g * 255) + ',' + Math.round(l.b * 255);
+        var drgb = Math.round(d.r * 255) + ',' + Math.round(d.g * 255) + ',' + Math.round(d.b * 255);
+        var grad = ctx.createLinearGradient(0, 0, 0, 512);
+        grad.addColorStop(0.00, 'rgba(' + lrgb + ',0.95)');
+        grad.addColorStop(0.10, 'rgba(' + rgb + ',0.84)');
+        grad.addColorStop(0.55, 'rgba(' + drgb + ',0.66)');
+        grad.addColorStop(0.88, 'rgba(' + rgb + ',0.86)');
+        grad.addColorStop(1.00, 'rgba(' + lrgb + ',0.96)');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, 256, 512);
-        ctx.strokeStyle = 'rgba(255,255,255,.28)';
-        ctx.lineWidth = 3;
-        for (var y = -220; y < 640; y += 92) {
-            ctx.beginPath();
-            ctx.moveTo(-30, y);
-            ctx.lineTo(286, y + 160);
-            ctx.stroke();
-        }
-        var edge = ctx.createLinearGradient(0, 0, 256, 0);
-        edge.addColorStop(0, 'rgba(255,255,255,.7)');
-        edge.addColorStop(.07, 'rgba(255,255,255,.08)');
-        edge.addColorStop(.93, 'rgba(255,255,255,.05)');
-        edge.addColorStop(1, 'rgba(255,255,255,.55)');
-        ctx.fillStyle = edge;
-        ctx.fillRect(0, 0, 256, 512);
+
+        ctx.fillStyle = 'rgba(255,255,255,0.16)';
+        ctx.beginPath();
+        ctx.moveTo(16, 0); ctx.lineTo(106, 0); ctx.lineTo(0, 210); ctx.lineTo(0, 120);
+        ctx.closePath(); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.10)';
+        ctx.beginPath();
+        ctx.moveTo(180, 0); ctx.lineTo(224, 0); ctx.lineTo(36, 512); ctx.lineTo(0, 512);
+        ctx.closePath(); ctx.fill();
+
+        ctx.strokeStyle = 'rgba(' + lrgb + ',0.88)';
+        ctx.lineWidth = 10;
+        ctx.strokeRect(5, 5, 246, 502);
+
         var texture = new THREE.CanvasTexture(canvas);
         texture.wrapS = THREE.ClampToEdgeWrapping;
         texture.wrapT = THREE.ClampToEdgeWrapping;
@@ -127,25 +132,17 @@
     }
 
     function makeGateTextTexture(label, style) {
-        var measure = document.createElement('canvas').getContext('2d');
-        measure.font = '900 164px "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
         var lines = [label];
-        var fullWidth = measure.measureText(label).width;
-        if (/\s/.test(label) && fullWidth > 650) {
+        var buffMatch = label.match(/^([\u4e00-\u9fff]+)\s*([+×\-]\d+%?)$/);
+        if (buffMatch) {
+            lines = [buffMatch[1], buffMatch[2]];
+        } else if (/\s/.test(label) && label.length > 5) {
             var words = label.trim().split(/\s+/);
             lines = [words.shift(), words.join(' ')];
         }
-        var buffMatch=label.match(/^([\u4e00-\u9fff]+)([+×]\d+%?)$/);
-        if(buffMatch)lines=[buffMatch[1],buffMatch[2]];
-        var measuredWidth = 0;
-        for (var li = 0; li < lines.length; li++) {
-            measuredWidth = Math.max(measuredWidth, measure.measureText(lines[li]).width);
-        }
         var canvas = document.createElement('canvas');
-        // Crop short values much tighter than long Chinese buffs. The sprite can
-        // then use the full pane width without making "+25" look like footnote text.
-        canvas.width = Math.round(clampNumber(measuredWidth + 190, 480, 1024));
-        canvas.height = 256;
+        canvas.width = 512;
+        canvas.height = 384;
         var ctx = canvas.getContext('2d');
         var glow = new THREE.Color(style.light);
         var frame = new THREE.Color(style.dark);
@@ -153,59 +150,80 @@
         var frameCss = '#' + frame.getHexString();
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        var panel = ctx.createLinearGradient(0, 20, 0, 238);
-        // V12视觉: 面板加深提高文字对比(浅色玻璃上白字不再发虚)
-        panel.addColorStop(0, 'rgba(255,255,255,.16)');
-        panel.addColorStop(0.46, 'rgba(8,17,44,.74)');
-        panel.addColorStop(1, 'rgba(4,10,28,.55)');
-        ctx.fillStyle = panel;
-        ctx.strokeStyle = 'rgba(255,255,255,.62)';
-        ctx.lineWidth = 7;
-        if (ctx.roundRect) {
-            ctx.beginPath();
-            ctx.roundRect(24, 24, canvas.width - 48, 208, 42);
-            ctx.fill();
-            ctx.stroke();
-        } else {
-            ctx.fillRect(24, 24, canvas.width - 48, 208);
-            ctx.strokeRect(24, 24, canvas.width - 48, 208);
-        }
+
+        var halo = ctx.createRadialGradient(256, 200, 20, 256, 200, 230);
+        halo.addColorStop(0, 'rgba(8, 16, 30, 0.56)');
+        halo.addColorStop(0.7, 'rgba(8, 16, 30, 0.22)');
+        halo.addColorStop(1, 'rgba(8, 16, 30, 0)');
+        ctx.fillStyle = halo;
+        ctx.fillRect(0, 0, 512, 384);
 
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.font = '800 30px "Microsoft YaHei", Arial, sans-serif';
-        ctx.letterSpacing = '7px';
-        ctx.fillStyle = glowCss;
-        if (lines.length === 1) {
-            ctx.fillText('◆  ' + style.title + '  ◆', canvas.width * 0.5, 62);
-        }
-
-        ctx.letterSpacing='0px';
-        var fontSize = lines.length > 1 ? 128 : 164;
-        var maxWidth = canvas.width - 112;
-        do {
-            ctx.font = '900 ' + fontSize + 'px "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
-            var widest = 0;
-            for (var ti = 0; ti < lines.length; ti++) widest = Math.max(widest, ctx.measureText(lines[ti]).width);
-            if (widest <= maxWidth) break;
-            fontSize -= 4;
-        } while (fontSize > 54);
         ctx.lineJoin = 'round';
-        ctx.strokeStyle = frameCss;
-        ctx.lineWidth = Math.max(6, fontSize * 0.065);
-        ctx.shadowColor = glowCss;
-        ctx.shadowBlur = 10;
-        ctx.fillStyle = '#FFFFFF';
+
         if (lines.length > 1) {
-            ctx.strokeText(lines[0], canvas.width * 0.5, 78);
-            ctx.fillText(lines[0], canvas.width * 0.5, 78);
-            ctx.strokeText(lines[1], canvas.width * 0.5, 178);
-            ctx.fillText(lines[1], canvas.width * 0.5, 178);
+            var topText = lines[0];
+            var botText = lines[1];
+            var topSize = 76;
+            do {
+                ctx.font = '900 ' + topSize + 'px "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
+                if (ctx.measureText(topText).width <= 420) break;
+                topSize -= 4;
+            } while (topSize > 42);
+            ctx.strokeStyle = frameCss;
+            ctx.lineWidth = Math.max(8, topSize * 0.14);
+            ctx.fillStyle = glowCss;
+            ctx.strokeText(topText, 256, 106);
+            ctx.fillText(topText, 256, 106);
+
+            var botSize = 148;
+            do {
+                ctx.font = '900 ' + botSize + 'px "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
+                if (ctx.measureText(botText).width <= 440) break;
+                botSize -= 6;
+            } while (botSize > 64);
+            ctx.strokeStyle = frameCss;
+            ctx.lineWidth = Math.max(12, botSize * 0.11);
+            ctx.shadowColor = 'rgba(0,0,0,0.45)';
+            ctx.shadowOffsetY = 8;
+            ctx.shadowBlur = 10;
+            ctx.fillStyle = '#FFFFFF';
+            ctx.strokeText(botText, 256, 254);
+            ctx.fillText(botText, 256, 254);
+            ctx.shadowOffsetY = 0;
+            ctx.shadowBlur = 0;
         } else {
-            ctx.strokeText(label, canvas.width * 0.5, 157);
-            ctx.fillText(label, canvas.width * 0.5, 157);
+            var badgeW = 196, badgeH = 54, bx = 256 - badgeW / 2, by = 48;
+            ctx.fillStyle = 'rgba(10, 20, 36, 0.68)';
+            ctx.strokeStyle = glowCss;
+            ctx.lineWidth = 4;
+            if (ctx.roundRect) {
+                ctx.beginPath(); ctx.roundRect(bx, by, badgeW, badgeH, 27); ctx.fill(); ctx.stroke();
+            } else {
+                ctx.fillRect(bx, by, badgeW, badgeH); ctx.strokeRect(bx, by, badgeW, badgeH);
+            }
+            ctx.font = '800 32px "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
+            ctx.fillStyle = glowCss;
+            ctx.fillText(style.title, 256, by + badgeH / 2 + 1);
+
+            var fontSize = 158;
+            do {
+                ctx.font = '900 ' + fontSize + 'px "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
+                if (ctx.measureText(label).width <= 440) break;
+                fontSize -= 6;
+            } while (fontSize > 64);
+            ctx.strokeStyle = frameCss;
+            ctx.lineWidth = Math.max(12, fontSize * 0.11);
+            ctx.shadowColor = 'rgba(0,0,0,0.45)';
+            ctx.shadowOffsetY = 8;
+            ctx.shadowBlur = 10;
+            ctx.fillStyle = '#FFFFFF';
+            ctx.strokeText(label, 256, 232);
+            ctx.fillText(label, 256, 232);
+            ctx.shadowOffsetY = 0;
+            ctx.shadowBlur = 0;
         }
-        ctx.shadowBlur = 0;
 
         var texture = new THREE.CanvasTexture(canvas);
         texture.needsUpdate = true;
@@ -256,36 +274,43 @@
 
     V42Art.createGateModel = function (gateData, gateWidth) {
         gateData = gateData || { op: 'add', value: 1, label: '+1' };
-        var style = GATE_STYLES[gateData.op] || GATE_STYLES.add;
-        // ExtrudeGeometry's size + thickness bevel envelope adds ~.065 per edge.
-        // Capping the design width at 1.77 keeps the measured Box3 <= 1.9.
+        var styleKey = gateData.op;
+        if (gateData.op === 'coin' || gateData.op === 'gold' || /金币|\+\d+金/.test(String(gateData.label || ''))) styleKey = 'coin';
+        else if (gateData.op === 'addpct') styleKey = 'add';
+        else if (gateData.op === 'skill' || gateData.op === 'damage' || gateData.op === 'damage2' || gateData.op === 'firerate') styleKey = 'buff';
+        var style = GATE_STYLES[styleKey] || GATE_STYLES.add;
         var width = clampNumber(Number(gateWidth) || 1.8, 1.35, 1.77);
         var group = new THREE.Group();
         var frameParts = [];
         var trimParts = [];
-        var postW = 0.22;
-        var postH = 1.68;
+        var postW = 0.20;
+        var postH = 1.66;
+        var postX = width * 0.5 - postW * 0.5;
+        var steelDark = 0x2B3442;
+        var steelMid = 0x455264;
 
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(postW, postH, 0.09, 0.24), -width * 0.5 + postW * 0.5, 0.90, 0), color: style.frame });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(postW, postH, 0.09, 0.24),  width * 0.5 - postW * 0.5, 0.90, 0), color: style.frame });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(width, 0.22, 0.09, 0.25), 0, 1.74, 0), color: style.frame });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.30, 0.16, 0.07, 0.32), -width * 0.5 + postW * 0.5, 0.11, 0.01), color: style.dark });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.30, 0.16, 0.07, 0.32),  width * 0.5 - postW * 0.5, 0.11, 0.01), color: style.dark });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(width * 0.48, 0.11, 0.05, 0.28), 0, 1.84, 0), color: style.dark });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(postW, postH, 0.06, 0.22), -postX, 0.88, 0), color: steelMid });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(postW, postH, 0.06, 0.22),  postX, 0.88, 0), color: steelMid });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(width, 0.16, 0.06, 0.24), 0, 1.72, 0), color: style.frame });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.30, 0.18, 0.06, 0.32), -postX, 0.10, 0.01), color: steelDark });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.30, 0.18, 0.06, 0.32),  postX, 0.10, 0.01), color: steelDark });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.24, 0.10, 0.04, 0.26), -postX, 1.78, 0), color: steelDark });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.24, 0.10, 0.04, 0.26),  postX, 1.78, 0), color: steelDark });
 
-        var insetX = width * 0.5 - 0.155;
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.034, 1.42, 0.014, 0.035), -insetX, 0.94, -0.145), color: style.light });
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.034, 1.42, 0.014, 0.035),  insetX, 0.94, -0.145), color: style.light });
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.30, 0.034, 0.014, 0.035), 0, 1.64, -0.145), color: style.light });
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.30, 0.034, 0.014, 0.035), 0, 0.24, -0.145), color: style.light });
-        addGateOrnament(trimParts, style, gateData.op, width);
+        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.14, 0.11, 0.14), -postX, 1.88, 0), color: 0xFFB830 });
+        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.14, 0.11, 0.14),  postX, 1.88, 0), color: 0xFFB830 });
+        var insetX = width * 0.5 - 0.145;
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.036, 1.44, 0.014, 0.035), -insetX, 0.92, -0.125), color: style.light });
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.036, 1.44, 0.014, 0.035),  insetX, 0.92, -0.125), color: style.light });
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.28, 0.036, 0.014, 0.035), 0, 1.63, -0.125), color: style.light });
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.28, 0.036, 0.014, 0.035), 0, 0.21, -0.125), color: style.light });
 
         var frameMat = preparePbr(new THREE.MeshStandardMaterial({
             vertexColors: true,
-            roughness: 0.29,
-            metalness: 0.43,
+            roughness: 0.38,
+            metalness: 0.45,
             emissive: new THREE.Color(style.dark),
-            emissiveIntensity: 0.13
+            emissiveIntensity: 0.08
         }));
         var frame = new THREE.Mesh(mergeColored(frameParts), frameMat);
         frame.castShadow = true;
@@ -298,55 +323,46 @@
 
         var glassTexture = makeGateGlassTexture(style);
         var glassMat = preparePbr(new THREE.MeshPhysicalMaterial({
-            color: style.glass,
+            color: 0xFFFFFF,
             map: glassTexture,
             transparent: true,
-            opacity: 0.5,
-            roughness: 0.13,
-            metalness: 0.04,
-            clearcoat: 0.8,
+            opacity: 0.84,
+            roughness: 0.14,
+            metalness: 0.02,
+            clearcoat: 0.65,
             clearcoatRoughness: 0.18,
-            emissive: new THREE.Color(style.glass).multiplyScalar(0.28),
-            emissiveIntensity: 0.35,
+            emissive: new THREE.Color(style.glass),
+            emissiveIntensity: 0.36,
             side: THREE.DoubleSide,
             depthWrite: false
         }));
-        var glass = new THREE.Mesh(new THREE.PlaneGeometry(width - 0.31, 1.39), glassMat);
-        glass.position.set(0, 0.94, -0.105);
+        var glass = new THREE.Mesh(new THREE.PlaneGeometry(width - 0.28, 1.42), glassMat);
+        glass.position.set(0, 0.92, -0.105);
         group.add(glass);
 
-        // Keep every visible component, including the soft floor wash, inside
-        // the single-lane 1.9-unit footprint.
-        var glowPlane = new THREE.PlaneGeometry(Math.min(1.9, width + 0.08), 0.62);
-        var ringGeo = new THREE.RingGeometry(width * 0.31, width * 0.47, 28);
+        var glowPlane = new THREE.PlaneGeometry(Math.min(1.88, width + 0.04), 0.56);
+        var ringGeo = new THREE.RingGeometry(width * 0.28, width * 0.44, 28);
         var groundGeo = mergeGeometries([colorize(glowPlane, style.glass), colorize(ringGeo, style.light)]);
         glowPlane.dispose();
         ringGeo.dispose();
         var groundMat = new THREE.MeshBasicMaterial({
             vertexColors: true,
             transparent: true,
-            opacity: 0.24,
+            opacity: 0.32,
             side: THREE.DoubleSide,
             depthWrite: false,
             toneMapped: false
         });
         var ground = new THREE.Mesh(groundGeo, groundMat);
         ground.rotation.x = -Math.PI * 0.5;
-        ground.position.y = 0.015;
+        ground.position.y = 0.032;
         group.add(ground);
 
-        // V13: 稀有度光束柱 — 双柱+顶梁合并为单 mesh(+1 drawCall/门), 加色混合;
-        // 让门在任意主题(洞穴/末日)下保持稀有度色可读性(玩法可读性优先级最高)
-        var beamH = 2.5;
-        var beamGeo = mergeGeometries([
-            colorize(new THREE.PlaneGeometry(0.09, beamH), style.light),
-            colorize(new THREE.PlaneGeometry(0.09, beamH).translate(width * 0.5 - postW * 0.5, 0, 0), style.light),
-            colorize(new THREE.PlaneGeometry(width - 0.34, 0.055).translate(0, beamH * 0.5 - 0.03, 0), style.light)
-        ]);
+        var beamGeo = colorize(new THREE.PlaneGeometry(width - 0.30, 0.22), style.light);
         var beamMat = new THREE.MeshBasicMaterial({
             vertexColors: true,
             transparent: true,
-            opacity: 0.34,
+            opacity: 0.38,
             blending: THREE.AdditiveBlending,
             depthWrite: false,
             toneMapped: false,
@@ -354,9 +370,9 @@
             fog: false
         });
         var beam = new THREE.Mesh(beamGeo, beamMat);
-        beam.position.set(0, 0.45 + beamH * 0.5, -0.16);
+        beam.position.set(0, 0.30, -0.115);
         beam.renderOrder = 2;
-        beam.userData.artSource = 'V13 稀有度光束柱(加色, 脉动由 gates.update 驱动)';
+        beam.userData.artSource = '能量门底部脉动光带';
         group.add(beam);
 
         var labelTexture = makeGateTextTexture(formatGateLabel(gateData), style);
@@ -366,15 +382,13 @@
             depthWrite: false,
             depthTest: true,
             toneMapped: false,
-            fog: false // V5.0: 门文字不受雾影响, 远距离仍清晰可读(玩法可读性)
+            fog: false
         });
         var label = new THREE.Sprite(labelMat);
-        var labelWidth = width - 0.30;
+        var labelWidth = width - 0.22;
         var labelHeight = labelWidth * labelTexture.image.height / labelTexture.image.width;
-        if (labelTexture.userData.v42Multiline) labelHeight = Math.max(labelHeight, 0.72);
         label.scale.set(labelWidth, labelHeight, 1);
-        // V5.0: 文字置于玻璃前侧(-0.105为玻璃), 避免金/红等亮色玻璃洗白文字
-        label.position.set(0, 1.03, -0.055);
+        label.position.set(0, 0.96, -0.04);
         label.renderOrder = 3;
         group.add(label);
 
