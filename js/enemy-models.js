@@ -113,15 +113,15 @@ EnemyModelLoader.status='idle';EnemyModelLoader.loadMs=0;
 // V14.2: Boss 造型辨识表 — 每型专属染色/体态/入场特效色(表现层; GLB 资产不动)。
 // 解决 hivelord/titan 等实机同形同色不可辨识的问题(逐型实机截图审计)。
 EnemyModelLoader.BOSS_PRESENTATION={
-    bruiser:  { tint:[1,1,1],          fx:0xFF8A4A },
-    bulwark:  { tint:[0.88,1.02,1.22], fx:0x57CFFF },
+    bruiser:  { tint:[1.06,0.88,1.24], fx:0xFF8A4A, bodyScale:[1.18,1.10,1.18], headScale:[0.96,0.96,0.96], attach:'ironfist' },
+    bulwark:  { tint:[0.88,1.02,1.22], fx:0x57CFFF, bodyScale:[1.24,1.08,1.24], headScale:[0.92,0.92,0.92], attach:'ironfist' },
     hivelord: { tint:[1.18,1.28,0.72], fx:0xA8E84A,
                 bodyScale:[1.30,1.02,1.30], headScale:[0.94,0.92,0.94], attach:'sacs' },
-    overlord: { tint:[1.12,0.82,1.38], fx:0xB26AE8,
-                bodyScale:[1.08,1.06,1.08], attach:'horns' },
-    spitking: { tint:[1.22,1.32,0.68], fx:0xC8E84A },
+    overlord: { tint:[1.10,0.78,1.36], fx:0xB26AE8,
+                bodyScale:[1.22,1.12,1.22], headScale:[0.96,0.96,0.96], attach:'ironfist' },
+    spitking: { tint:[1.22,1.32,0.68], fx:0xC8E84A, bodyScale:[1.18,1.06,1.18], attach:'sacs' },
     titan:    { tint:[0.86,0.92,0.98], fx:0x9AA8B4,
-                bodyScale:[1.26,1.14,1.26], headScale:[0.84,0.82,0.84], attach:'plates' }
+                bodyScale:[1.26,1.14,1.26], headScale:[0.86,0.84,0.86], attach:'ironfist' }
 };
 // V14: 感染者外观变体 — 确定性实例染色族(乘法系数, 以e.phase为种子, 同一怪每帧一致)。
 // 只做轻微色偏保持贴图质感与全局风格统一; 精英/自爆/冰冻等状态染色在其后覆盖。
@@ -152,28 +152,58 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
         this.shieldMesh=new THREE.InstancedMesh(new THREE.SphereGeometry(1,20,12),new THREE.MeshBasicMaterial({color:0x57cfff,transparent:true,opacity:.14,depthWrite:false}),8);
         this.shieldMesh.count=0;this.shieldMesh.frustumCulled=false;this.shieldMesh.userData.artSource='V42 boss shield energy shell';scene.add(this.shieldMesh);
         this._shieldLocal=new THREE.Matrix4().makeScale(.65,.85,.60);this._shieldLocal.setPosition(0,.65,0);
+
+        // V15-ART-002: 怪物与Boss柔和接地阴影 (单 InstancedMesh, 彻底消除漂浮感)
+        var shCv = document.createElement('canvas'); shCv.width = shCv.height = 64;
+        var shCtx = shCv.getContext('2d');
+        var shGrad = shCtx.createRadialGradient(32, 32, 4, 32, 32, 30);
+        shGrad.addColorStop(0, 'rgba(14, 18, 24, 0.52)');
+        shGrad.addColorStop(0.6, 'rgba(14, 18, 24, 0.28)');
+        shGrad.addColorStop(1, 'rgba(14, 18, 24, 0)');
+        shCtx.fillStyle = shGrad; shCtx.fillRect(0, 0, 64, 64);
+        var shPlane = new THREE.PlaneGeometry(1, 1); shPlane.rotateX(-Math.PI * 0.5);
+        this.shadowMesh = new THREE.InstancedMesh(shPlane, new THREE.MeshBasicMaterial({
+            map: new THREE.CanvasTexture(shCv), transparent: true, depthWrite: false
+        }), 448);
+        this.shadowMesh.count = 0; this.shadowMesh.frustumCulled = false; this.shadowMesh.renderOrder = 1;
+        this.shadowMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        scene.add(this.shadowMesh);
     }
-    /** V14: 附件几何(头局部空间) — 程序化军盔/便帽/肩甲, 全部共享单材质(顶点色) */
+    /** V14+V15: 怪物/Boss附件几何(程序化共享顶点色材质) */
     static _accGeometry(name) {
-        if (name === 'sacs' || name === 'horns' || name === 'plates') return EnemyArmyRenderer._bossAccGeometry(name);
+        if (name === 'sacs' || name === 'horns' || name === 'plates' || name === 'ironfist' || name === 'bossGauntlets' || name === 'bossHorns') return EnemyArmyRenderer._bossAccGeometry(name);
         if (EnemyArmyRenderer._accGeos && EnemyArmyRenderer._accGeos[name]) return EnemyArmyRenderer._accGeos[name];
         if (!EnemyArmyRenderer._accGeos) EnemyArmyRenderer._accGeos={};
         var geos=[], mat;
-        if (name === 'helmet') {
-            // 军绿战术盔: 半球壳+帽檐+护目沿(贴头顶, 头局部原点在颈位)
+        if (name === 'monsterHorns') {
+            // V15: 紫色卡通怪兽标志性双角 + 尖耳 (取代普通方块僵尸感)
+            geos.push(colorize(new THREE.ConeGeometry(0.068, 0.24, 7), 0xE6D8F5).rotateZ(0.46).translate(-0.15, 0.16, 0.02));
+            geos.push(colorize(new THREE.ConeGeometry(0.068, 0.24, 7), 0xE6D8F5).rotateZ(-0.46).translate(0.15, 0.16, 0.02));
+            geos.push(colorize(new THREE.ConeGeometry(0.052, 0.16, 6), 0x6A2CA8).rotateZ(1.15).translate(-0.22, -0.02, 0));
+            geos.push(colorize(new THREE.ConeGeometry(0.052, 0.16, 6), 0x6A2CA8).rotateZ(-1.15).translate(0.22, -0.02, 0));
+            mat = { color: 0xFFFFFF, roughness: 0.45, metalness: 0.12, vertexColors: true };
+        } else if (name === 'fastSpikes') {
+            // V15: 快速型怪兽背鳍/尖耳轮廓
+            geos.push(colorize(new THREE.ConeGeometry(0.06, 0.26, 6), 0xFF9F43).rotateX(-0.35).translate(0, 0.19, -0.04));
+            geos.push(colorize(new THREE.ConeGeometry(0.05, 0.20, 6), 0xF2D5FF).rotateZ(0.75).translate(-0.19, 0.08, 0));
+            geos.push(colorize(new THREE.ConeGeometry(0.05, 0.20, 6), 0xF2D5FF).rotateZ(-0.75).translate(0.19, 0.08, 0));
+            mat = { color: 0xFFFFFF, roughness: 0.45, metalness: 0.15, vertexColors: true };
+        } else if (name === 'helmet') {
             geos.push(colorize(new THREE.SphereGeometry(0.21, 10, 6, 0, Math.PI * 2, 0, Math.PI * 0.52), 0x5A6B4A));
             geos.push(colorize(new THREE.CylinderGeometry(0.215, 0.23, 0.04, 10), 0x46523C).translate(0, -0.015, 0));
             geos.push(colorize(new THREE.BoxGeometry(0.24, 0.04, 0.09), 0x37402E).translate(0, -0.04, 0.17));
             mat = { color: 0xFFFFFF, roughness: 0.55, metalness: 0.35, vertexColors: true };
         } else if (name === 'cap') {
-            // 便帽: 扁圆柱+前檐(快速型幸存者遗留)
             geos.push(colorize(new THREE.CylinderGeometry(0.17, 0.185, 0.10, 9), 0x3C4658));
             geos.push(colorize(new THREE.BoxGeometry(0.17, 0.025, 0.13), 0x2F3745).translate(0, -0.04, 0.20));
             mat = { color: 0xFFFFFF, roughness: 0.8, metalness: 0.05, vertexColors: true };
         } else if (name === 'pauldron') {
-            // 肩甲(盾尸/分裂体重装变体) — 注意: 此几何在**Body局部空间**
-            geos.push(colorize(new THREE.SphereGeometry(0.16, 8, 5, 0, Math.PI * 2, 0, Math.PI * 0.5), 0x51626E));
-            mat = { color: 0xFFFFFF, roughness: 0.45, metalness: 0.5, vertexColors: true };
+            // V15: 重装怪兽双侧尖刺护肩 + 铁环项圈 (Body 局部空间)
+            geos.push(colorize(new THREE.SphereGeometry(0.20, 8, 6, 0, Math.PI * 2, 0, Math.PI * 0.58), 0x495664).translate(-0.34, 0.28, 0));
+            geos.push(colorize(new THREE.SphereGeometry(0.20, 8, 6, 0, Math.PI * 2, 0, Math.PI * 0.58), 0x495664).translate(0.34, 0.28, 0));
+            geos.push(colorize(new THREE.ConeGeometry(0.055, 0.18, 6), 0xF5B82E).rotateZ(0.55).translate(-0.44, 0.40, 0));
+            geos.push(colorize(new THREE.ConeGeometry(0.055, 0.18, 6), 0xF5B82E).rotateZ(-0.55).translate(0.44, 0.40, 0));
+            mat = { color: 0xFFFFFF, roughness: 0.4, metalness: 0.55, vertexColors: true };
         }
         var merged = mergeGeometries(geos);
         merged.userData = { artSource: 'V14 enemy accessory procedural: ' + name };
@@ -216,7 +246,7 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
         return this.banks[key]={meshes,source,count:0};
     }
     update(dt,time,enemies,squadZ) {
-        var shieldCount=0;
+        var shieldCount=0, shadowCount=0;
         for(var k in this.banks)this.banks[k].count=0;
         for(var k2 in this.accBanks)this.accBanks[k2].count=0;
         for(var e of enemies) {
@@ -226,6 +256,13 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
             var bank=this._bank(style,lod),slot=bank.count++;
             if(slot>=448){bank.count=448;continue;}
             e.model.updateMatrix();this._root.copy(e.model.matrix);
+            // V15: 怪物/Boss柔和接地阴影
+            if (!e.dying && shadowCount < 448) {
+                var shS = (e.visScale || 1) * (e.isBoss ? 1.55 : 0.96);
+                this._pose.makeScale(shS, 1, shS * 0.86);
+                this._pose.setPosition(e.x, 0.032, e.z);
+                this.shadowMesh.setMatrixAt(shadowCount++, this._pose);
+            }
             if(e.alive && e.shieldT>0 && shieldCount<8) {this._matrix.copy(this._root).multiply(this._shieldLocal);this.shieldMesh.setMatrixAt(shieldCount++,this._matrix);}
             var speed=e.type==='fast'?10:(e.isBoss?3:4.5),phase=time*speed+e.phase;
             var walk=e.dying?0:Math.sin(phase)*(.45*(e.frozenT>0?.3:1));
@@ -284,8 +321,37 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
                 bank.meshes[part].setMatrixAt(slot,this._matrix);
                 bank.meshes[part].setColorAt(slot,this._color);
             }
-            // V14: 头部/肩部附件(军盔/便帽/肩甲) — 复用对应部件姿态, 附件随动
-            if(!e.isBoss && !e.dying && e.type!=='elite') {
+            // V15-ART-002: 怪物尖角/重甲附件 + Boss 独立重装机械拳套/肩甲/胸核/皇冠角
+            if(e.isBoss && !e.dying) {
+                var bAttach = (bp && bp.attach) || 'ironfist';
+                // 1) Boss 躯干重甲 + 宽大肩甲 + 发光红橙能量核心
+                var bb = this._accBank(style, lod, bAttach);
+                if (bb.count < 16) {
+                    var bSlot = bb.count++;
+                    var bs2 = bp && bp.bodyScale;
+                    this._pose.makeScale((bs2 ? bs2[0] : 1) * (1 + charge * .035), (bs2 ? bs2[1] : 1) * (1 + charge * .05), (bs2 ? bs2[2] : 1) * (1 + charge * .035));
+                    this._matrix.copy(this._root).multiply(bank.source.restMatrices.Body).multiply(this._pose);
+                    bb.mesh.setMatrixAt(bSlot, this._matrix);
+                }
+                // 2) Boss 巨型机械拳套 (随手臂挥动!)
+                var gb = this._accBank(style, lod, 'bossGauntlets');
+                if (gb.count < 16) {
+                    var gSlot = gb.count++;
+                    this._e.set(-.12 - Math.sin(phase) * .05 - attack * .65 - charge * .4, 0, Math.sin(phase) * .04);
+                    this._pose.makeRotationFromEuler(this._e);
+                    this._matrix.copy(this._root).multiply(bank.source.restMatrices.Arms).multiply(this._pose);
+                    gb.mesh.setMatrixAt(gSlot, this._matrix);
+                }
+                // 3) Boss 头部巨角皇冠 (随头部摆动!)
+                var hb = this._accBank(style, lod, 'bossHorns');
+                if (hb.count < 16) {
+                    var hSlot = hb.count++;
+                    this._e.set(charge * .12, Math.sin(phase * .5) * .09, Math.sin(phase) * .025);
+                    this._pose.makeRotationFromEuler(this._e);
+                    this._matrix.copy(this._root).multiply(bank.source.restMatrices.Head).multiply(this._pose);
+                    hb.mesh.setMatrixAt(hSlot, this._matrix);
+                }
+            } else if(!e.isBoss && !e.dying) {
                 var accName=this._pickAccessory(style,e);
                 if(accName) {
                     var ab=this._accBank(style,lod,accName);
@@ -336,22 +402,56 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
         this.shieldMesh.count=shieldCount; // V11.6: 前缀上传
         this.shieldMesh.instanceMatrix.updateRange.count=shieldCount*16;
         this.shieldMesh.instanceMatrix.needsUpdate=true;
+        if (this.shadowMesh) {
+            this.shadowMesh.count = shadowCount;
+            this.shadowMesh.visible = shadowCount > 0;
+            this.shadowMesh.instanceMatrix.updateRange.offset = 0;
+            this.shadowMesh.instanceMatrix.updateRange.count = shadowCount * 16;
+            this.shadowMesh.instanceMatrix.needsUpdate = true;
+        }
     }
-    /** V14: 附件分配 — 按体型确定性(普通=军盔, 快速=便帽, 盾/分裂=肩甲) */
+    /** V15: 怪物差异化轮廓分配 — 普通=怪兽双角, 快速=尖刺背鳍, 重装/精英=尖刺肩甲 */
     _pickAccessory(style,e) {
-        var r=((e.phase||0)*7.77)%1;
-        if(style==='normal')return r<0.24?'helmet':null;
-        if(style==='fast')return r<0.18?'cap':null;
-        if(style==='shield')return r<0.5?'pauldron':null;
-        if(style==='split')return r<0.35?'pauldron':null;
-        return null;
+        if(e.type==='elite'||style==='shield'||style==='split')return 'pauldron';
+        if(style==='fast')return 'fastSpikes';
+        return 'monsterHorns';
     }
-    /** V14.2: Boss 附件几何(back-sacs 背囊 / horns 双角 / plates 肩甲) */
+    /** V15-ART-002: Boss 独立重装机械套装 (宽大肩甲+胸甲+发光核心+巨型机械拳套+皇冠角) */
     static _bossAccGeometry(name) {
         if (EnemyArmyRenderer._bossAccGeos && EnemyArmyRenderer._bossAccGeos[name]) return EnemyArmyRenderer._bossAccGeos[name];
         if (!EnemyArmyRenderer._bossAccGeos) EnemyArmyRenderer._bossAccGeos = {};
         var parts = [], matParams;
-        if (name === 'sacs') {
+        if (name === 'ironfist') {
+            // V15-ART-002 R2: 精校准贴合 Boss 躯干的重装护甲 (注意 Boss 根节点自带 ~2.4x 缩放!)
+            for (var s = -1; s <= 1; s += 2) {
+                parts.push(colorize(new THREE.SphereGeometry(0.13, 10, 7, 0, Math.PI * 2, 0, Math.PI * 0.62), 0x394452).scale(1.15, 0.90, 1.05).translate(s * 0.24, 0.20, 0));
+                parts.push(colorize(new THREE.BoxGeometry(0.13, 0.04, 0.18), 0xE8A82C).translate(s * 0.24, 0.17, 0));
+                parts.push(colorize(new THREE.ConeGeometry(0.035, 0.12, 6), 0xF0F4FA).rotateZ(s * -0.58).translate(s * 0.31, 0.28, 0));
+                parts.push(colorize(new THREE.SphereGeometry(0.032, 8, 6), 0xFF4238).translate(s * 0.21, 0.26, 0.08));
+            }
+            // 贴合胸甲 + 发光红橙色反应堆核心
+            parts.push(colorize(new THREE.BoxGeometry(0.32, 0.22, 0.08), 0x2F3844).translate(0, 0.10, 0.14));
+            parts.push(colorize(new THREE.CylinderGeometry(0.075, 0.075, 0.04, 12), 0x5A687A).rotateX(Math.PI * 0.5).translate(0, 0.11, 0.18));
+            parts.push(colorize(new THREE.SphereGeometry(0.055, 10, 8), 0xFF5A26).scale(1, 1, 0.55).translate(0, 0.11, 0.195));
+            // 战术腰带扣
+            parts.push(colorize(new THREE.BoxGeometry(0.35, 0.06, 0.25), 0x2A323D).translate(0, -0.06, 0));
+            parts.push(colorize(new THREE.BoxGeometry(0.09, 0.07, 0.05), 0xF5B82E).translate(0, -0.06, 0.13));
+            matParams = { color: 0xFFFFFF, roughness: 0.36, metalness: 0.55, vertexColors: true };
+        } else if (name === 'bossGauntlets') {
+            // 精校准重装机械拳套 (紧贴 Boss 双拳, 附带金属指节与橙红充能条)
+            for (var gs = -1; gs <= 1; gs += 2) {
+                parts.push(colorize(new THREE.BoxGeometry(0.15, 0.16, 0.17), 0x3B4654).translate(gs * 0.25, -0.18, 0.08));
+                parts.push(colorize(new THREE.BoxGeometry(0.16, 0.05, 0.18), 0xF2B233).translate(gs * 0.25, -0.12, 0.08));
+                parts.push(colorize(new THREE.BoxGeometry(0.13, 0.045, 0.06), 0xFF5526).translate(gs * 0.25, -0.19, 0.16));
+            }
+            matParams = { color: 0xFFFFFF, roughness: 0.35, metalness: 0.60, vertexColors: true };
+        } else if (name === 'bossHorns') {
+            // 威慑力弯曲双巨角 + 中央红角
+            parts.push(colorize(new THREE.ConeGeometry(0.05, 0.20, 7), 0xF0E6FF).rotateZ(0.55).translate(-0.13, 0.18, 0.01));
+            parts.push(colorize(new THREE.ConeGeometry(0.05, 0.20, 7), 0xF0E6FF).rotateZ(-0.55).translate(0.13, 0.18, 0.01));
+            parts.push(colorize(new THREE.ConeGeometry(0.04, 0.15, 6), 0xFF5A36).translate(0, 0.21, 0.02));
+            matParams = { color: 0xFFFFFF, roughness: 0.4, metalness: 0.2, vertexColors: true };
+        } else if (name === 'sacs') {
             parts.push(colorize(new THREE.SphereGeometry(0.24, 8, 6), 0x9ADE3E).translate(-0.26, 0.42, -0.16));
             parts.push(colorize(new THREE.SphereGeometry(0.29, 8, 6), 0x8AD03A).translate(0, 0.5, -0.2));
             parts.push(colorize(new THREE.SphereGeometry(0.22, 8, 6), 0x9ADE3E).translate(0.26, 0.4, -0.16));
@@ -366,7 +466,7 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
             matParams = { color: 0xFFFFFF, roughness: 0.6, metalness: 0.35, vertexColors: true };
         }
         var merged = mergeGeometries(parts);
-        merged.userData = { artSource: 'V14.2 boss attachment procedural: ' + name };
+        merged.userData = { artSource: 'V15 boss mecha attachment procedural: ' + name };
         EnemyArmyRenderer._bossAccGeos[name] = { geo: merged, matParams: matParams };
         return EnemyArmyRenderer._bossAccGeos[name];
     }
@@ -388,16 +488,18 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
         }
         return cached;
     }
-    /** V14: 附件局部偏移(预建, 热循环零分配) — 头顶/躯干肩位 */
+    /** V14+V15: 附件局部偏移(预建, 热循环零分配) — 头顶/躯干肩位 */
     static _accLocal(name) {
         if(!EnemyArmyRenderer._accLocals) {
             EnemyArmyRenderer._accLocals={
+                monsterHorns:new THREE.Matrix4().setPosition(0,0.20,0),
+                fastSpikes:new THREE.Matrix4().setPosition(0,0.20,0),
                 helmet:new THREE.Matrix4().setPosition(0,0.26,0),
                 cap:new THREE.Matrix4().setPosition(0,0.28,0),
-                pauldron:new THREE.Matrix4().setPosition(-0.34,0.30,0)
+                pauldron:new THREE.Matrix4().setPosition(0,0,0)
             };
         }
         return EnemyArmyRenderer._accLocals[name];
     }
-    clear(){for(var key in this.banks)for(var p of this.data.parts)this.banks[key].meshes[p].count=0;for(var ak in this.accBanks)this.accBanks[ak].mesh.count=0;this.shieldMesh.count=0;}
+    clear(){for(var key in this.banks)for(var p of this.data.parts)this.banks[key].meshes[p].count=0;for(var ak in this.accBanks)this.accBanks[ak].mesh.count=0;this.shieldMesh.count=0;if(this.shadowMesh)this.shadowMesh.count=0;}
 };

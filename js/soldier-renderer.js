@@ -41,14 +41,36 @@ var SoldierRenderer = class SoldierRenderer {
         this._createBank('hero');
         this._createBank('lod');
         this._selectBank('hero', 0);
+
+        // V15-ART-002: 士兵柔和接地阴影 (单 InstancedMesh, 彻底增强立体落地感)
+        var sCv = document.createElement('canvas'); sCv.width = sCv.height = 64;
+        var sCtx = sCv.getContext('2d');
+        var sGrad = sCtx.createRadialGradient(32, 32, 4, 32, 32, 30);
+        sGrad.addColorStop(0, 'rgba(12, 18, 22, 0.50)');
+        sGrad.addColorStop(0.62, 'rgba(12, 18, 22, 0.24)');
+        sGrad.addColorStop(1, 'rgba(12, 18, 22, 0)');
+        sCtx.fillStyle = sGrad; sCtx.fillRect(0, 0, 64, 64);
+        var sPlane = new THREE.PlaneGeometry(0.88, 0.78); sPlane.rotateX(-Math.PI * 0.5);
+        this._shadowMesh = new THREE.InstancedMesh(sPlane, new THREE.MeshBasicMaterial({
+            map: new THREE.CanvasTexture(sCv), transparent: true, depthWrite: false
+        }), this.capacity);
+        this._shadowMesh.count = 0; this._shadowMesh.frustumCulled = false; this._shadowMesh.renderOrder = 1;
+        this._shadowMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        this.scene.add(this._shadowMesh);
     }
 
-    /** V16: 职业附件几何(Body 局部空间, 程序化, 顶点色+共享材质) */
+    /** V16+V15: 士兵背部与肩部精致玩具战术附件(Body 局部空间, 顶点色+共享材质) */
     static _classAccGeometry(name) {
         if (SoldierRenderer._accGeos && SoldierRenderer._accGeos[name]) return SoldierRenderer._accGeos[name];
         if (!SoldierRenderer._accGeos) SoldierRenderer._accGeos = {};
         var parts = [];
-        if (name === 'heavyplate') {
+        if (name === 'tacticalpack') {
+            // V15 R2: 紧贴士兵背部的精致战术背包扣件与白色五角星徽章 (无多余凸起)
+            parts.push(colorize(new THREE.BoxGeometry(0.24, 0.045, 0.14), 0x4E4229).translate(0, 0.32, -0.18));
+            parts.push(colorize(new THREE.BoxGeometry(0.09, 0.09, 0.025), 0xFAF6E1).translate(0, 0.22, -0.245));
+            parts.push(colorize(new THREE.BoxGeometry(0.08, 0.06, 0.04), 0xE6B84C).translate(-0.11, 0.12, -0.17));
+            parts.push(colorize(new THREE.BoxGeometry(0.08, 0.06, 0.04), 0xE6B84C).translate(0.11, 0.12, -0.17));
+        } else if (name === 'heavyplate') {
             parts.push(colorize(new THREE.BoxGeometry(0.34, 0.14, 0.3), 0x8A5A34).translate(-0.36, 0.34, 0).rotateZ(0.1));
             parts.push(colorize(new THREE.BoxGeometry(0.34, 0.14, 0.3), 0x8A5A34).translate(0.36, 0.34, 0).rotateZ(-0.1));
             parts.push(colorize(new THREE.BoxGeometry(0.3, 0.18, 0.1), 0x9C6A3E).translate(0, 0.3, -0.28));
@@ -182,11 +204,20 @@ var SoldierRenderer = class SoldierRenderer {
         var clsPres = SoldierRenderer.CLASS_PRESENTATION[clsId] || SoldierRenderer.CLASS_PRESENTATION.rifleman;
         this._v16Color.setRGB(clsPres.tint[0], clsPres.tint[1], clsPres.tint[2]);
         for (var k in this._v16AccBanks) this._v16AccBanks[k].count = 0;
-        var accBank = clsPres.attach ? this._classAccBank(clsPres.attach) : null;
+        var accName = clsPres.attach || 'tacticalpack';
+        var accBank = this._classAccBank(accName);
         for (var index = 0; index < squad.count; index++) {
             this._composeRoot(index, squad, moving, lean, tilt, this._root);
             if (!this._lastRoots[index]) this._lastRoots[index] = new THREE.Matrix4();
             this._lastRoots[index].copy(this._root);
+            // V15: 士兵脚底接地阴影
+            if (this._shadowMesh) {
+                var sObj = squad.soldiers[index];
+                var sSc = (squad._formationScale || 1) * Math.max(0.01, easeOutBack(sObj ? sObj.spawnT : 1));
+                this._temp.makeScale(sSc, 1, sSc);
+                this._temp.setPosition(squad.x + (sObj ? sObj.x : 0), 0.032, squad.z + (sObj ? sObj.z : 0));
+                this._shadowMesh.setMatrixAt(index, this._temp);
+            }
             var pose = this._poseFor(index, squad.soldiers[index], moving, time, this._denseSample);
             for (var p = 0; p < this.parts.length; p++) {
                 var part = this.parts[p];
@@ -235,6 +266,13 @@ var SoldierRenderer = class SoldierRenderer {
             am.instanceMatrix.updateRange.offset = 0;
             am.instanceMatrix.updateRange.count = au * 16;
             am.instanceMatrix.needsUpdate = true;
+        }
+        if (this._shadowMesh) {
+            this._shadowMesh.count = squad.count;
+            this._shadowMesh.visible = squad.count > 0;
+            this._shadowMesh.instanceMatrix.updateRange.offset = 0;
+            this._shadowMesh.instanceMatrix.updateRange.count = squad.count * 16;
+            this._shadowMesh.instanceMatrix.needsUpdate = true;
         }
     }
 
