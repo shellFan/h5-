@@ -22,51 +22,89 @@ var MilitaryArt = class MilitaryArt {
         var cv = document.createElement('canvas');
         cv.width = 512; cv.height = 512;
         var ctx = cv.getContext('2d');
-        // V15: 高对比度军用混凝土底色(微深冷灰, 让军绿士兵、紫色怪兽、发光门和子弹更突出)
-        ctx.fillStyle = '#808890';
+        // V15-ART-006: 做旧军用混凝土战术跑道 (分块微色差 + 柔和车辙 + 细裂纹 + 路肩尘土过渡)
+        ctx.fillStyle = '#7E868C';
         ctx.fillRect(0, 0, 512, 512);
-        // 路边两侧轻微阴影渐变(增强道路立体凹陷感)
-        var edgeL = ctx.createLinearGradient(0, 0, 48, 0);
-        edgeL.addColorStop(0, 'rgba(24,32,38,0.28)');
+        // 4块混凝土板块细微明暗冷暖变化 (打破死板单色网格感)
+        var slabTones = ['rgba(255,252,244,0.05)', 'rgba(30,38,44,0.05)', 'rgba(245,248,255,0.04)', 'rgba(42,38,32,0.05)'];
+        for (var sb = 0; sb < 4; sb++) {
+            ctx.fillStyle = slabTones[sb];
+            ctx.fillRect(0, sb * 128, 512, 128);
+        }
+        // 大尺度风化斑驳油污/水渍
+        for (var p = 0; p < 44; p++) {
+            var px = (p * 131 + 29) % 512;
+            var py = (p * 179 + 47) % 512;
+            var pr = 18 + (p % 4) * 12;
+            var gP = ctx.createRadialGradient(px, py, 2, px, py, pr);
+            var darkPatch = (p % 2 === 0);
+            gP.addColorStop(0, darkPatch ? 'rgba(34,40,46,0.11)' : 'rgba(225,222,210,0.09)');
+            gP.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = gP;
+            ctx.beginPath(); ctx.arc(px, py, pr, 0, Math.PI * 2); ctx.fill();
+        }
+        // 柔和渐变三车道车辙印 (边缘羽化, 告别硬矩形)
+        var laneCenters = [100, 256, 412];
+        for (var lc = 0; lc < laneCenters.length; lc++) {
+            var cx = laneCenters[lc];
+            var gLane = ctx.createLinearGradient(cx - 46, 0, cx + 46, 0);
+            gLane.addColorStop(0, 'rgba(28,34,40,0)');
+            gLane.addColorStop(0.28, 'rgba(28,34,40,0.13)');
+            gLane.addColorStop(0.5, 'rgba(34,40,46,0.07)');
+            gLane.addColorStop(0.72, 'rgba(28,34,40,0.13)');
+            gLane.addColorStop(1, 'rgba(28,34,40,0)');
+            ctx.fillStyle = gLane;
+            ctx.fillRect(cx - 46, 0, 92, 512);
+        }
+        // 路边两侧沙尘积灰与凹陷阴影渐变 (自然衔接路肩泥土)
+        var edgeL = ctx.createLinearGradient(0, 0, 58, 0);
+        edgeL.addColorStop(0, 'rgba(92,82,62,0.44)');
+        edgeL.addColorStop(0.45, 'rgba(54,52,44,0.18)');
         edgeL.addColorStop(1, 'rgba(24,32,38,0)');
-        ctx.fillStyle = edgeL; ctx.fillRect(0, 0, 48, 512);
-        var edgeR = ctx.createLinearGradient(464, 0, 512, 0);
+        ctx.fillStyle = edgeL; ctx.fillRect(0, 0, 58, 512);
+        var edgeR = ctx.createLinearGradient(454, 0, 512, 0);
         edgeR.addColorStop(0, 'rgba(24,32,38,0)');
-        edgeR.addColorStop(1, 'rgba(24,32,38,0.28)');
-        ctx.fillStyle = edgeR; ctx.fillRect(464, 0, 48, 512);
-        // 三条车辙压痕带
-        ctx.fillStyle = 'rgba(32, 40, 46, 0.12)';
-        ctx.fillRect(68, 0, 64, 512);
-        ctx.fillRect(224, 0, 64, 512);
-        ctx.fillRect(380, 0, 64, 512);
-        // 细腻混凝土颗粒质感
-        for (var i = 0; i < 800; i++) {
-            var x = (i * 97) % 512;
-            var y = (i * 193) % 512;
-            ctx.fillStyle = (i % 2) ? 'rgba(255,255,255,0.06)' : 'rgba(22,28,34,0.07)';
-            ctx.fillRect(x, y, 3, 3);
+        edgeR.addColorStop(0.55, 'rgba(54,52,44,0.18)');
+        edgeR.addColorStop(1, 'rgba(92,82,62,0.44)');
+        ctx.fillStyle = edgeR; ctx.fillRect(454, 0, 58, 512);
+        // 细腻骨料砂砾与风化微颗粒
+        for (var i = 0; i < 1400; i++) {
+            var x = (i * 97 + (i % 7) * 13) % 512;
+            var y = (i * 193 + (i % 5) * 11) % 512;
+            ctx.fillStyle = (i % 3 === 0) ? 'rgba(255,252,240,0.07)' : ((i % 3 === 1) ? 'rgba(20,26,32,0.09)' : 'rgba(138,124,98,0.06)');
+            ctx.fillRect(x, y, 2 + (i % 2), 2 + ((i + 1) % 2));
         }
-        // 横向混凝土分块伸缩缝
+        // 横向混凝土板块伸缩缝 + 自然微裂纹
         for (var sy = 0; sy < 512; sy += 128) {
-            ctx.fillStyle = 'rgba(30, 36, 42, 0.30)';
+            ctx.fillStyle = 'rgba(26, 32, 38, 0.28)';
             ctx.fillRect(14, sy, 484, 3);
-            ctx.fillStyle = 'rgba(255,255,255,0.14)';
+            ctx.fillStyle = 'rgba(255,255,250,0.11)';
             ctx.fillRect(14, sy + 3, 484, 2);
+            // 缝边细小分支裂纹
+            ctx.strokeStyle = 'rgba(28,34,40,0.22)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            var cx0 = 60 + ((sy * 3) % 340);
+            ctx.moveTo(cx0, sy + 2);
+            ctx.lineTo(cx0 + 18, sy + 14);
+            ctx.lineTo(cx0 + 34, sy + 9);
+            ctx.lineTo(cx0 + 48, sy + 22);
+            ctx.stroke();
         }
-        // 两侧明快暖黄实边线(带深色衬边)
-        ctx.fillStyle = 'rgba(30, 34, 28, 0.45)';
+        // 两侧暖黄军用实边线 (带深色衬边与轻微磨损)
+        ctx.fillStyle = 'rgba(26, 30, 26, 0.42)';
         ctx.fillRect(12, 0, 14, 512);
         ctx.fillRect(486, 0, 14, 512);
-        ctx.fillStyle = '#F4C946';
+        ctx.fillStyle = '#EBBF3F';
         ctx.fillRect(14, 0, 10, 512);
         ctx.fillRect(488, 0, 10, 512);
-        // 三跑道高对比度白色虚线分隔(对齐三车道)
-        ctx.fillStyle = 'rgba(26, 32, 38, 0.25)';
+        // 三跑道清晰白色虚线分隔 (对齐三车道, 轻微做旧)
+        ctx.fillStyle = 'rgba(26, 32, 38, 0.22)';
         for (var ly0 = 16; ly0 < 512; ly0 += 85) {
             ctx.fillRect(165, ly0 + 2, 12, 50);
             ctx.fillRect(335, ly0 + 2, 12, 50);
         }
-        ctx.fillStyle = '#FAFCF8';
+        ctx.fillStyle = '#F2F5EE';
         for (var ly = 16; ly < 512; ly += 85) {
             ctx.fillRect(166, ly, 10, 50);
             ctx.fillRect(336, ly, 10, 50);
@@ -83,25 +121,40 @@ var MilitaryArt = class MilitaryArt {
         var cv = document.createElement('canvas');
         cv.width = 512; cv.height = 512;
         var ctx = cv.getContext('2d');
-        // V15-ART-002: 彻底取消规则棋盘条纹! 改为自然阳光草地+泥土斑驳+草簇肌理
-        ctx.fillStyle = '#DAE8CE';
+        // V15-ART-006: 柔和手绘军营草地 (低饱和鼠尾草橄榄绿 + 泥土斑驳 + 手绘V形草簇 + 碎石)
+        ctx.fillStyle = '#CBD6B6';
         ctx.fillRect(0, 0, 512, 512);
-        // 大尺度柔和阳光草地与林荫色块 (确定性伪随机, 无缝自然)
-        for (var i = 0; i < 65; i++) {
+        // 大尺度有机草地明暗、泥土色块 (彻底告别荧光绿塑料平面)
+        for (var i = 0; i < 85; i++) {
             var px = (i * 173 + 37) % 512;
             var py = (i * 109 + 61) % 512;
-            var rx = 28 + (i % 5) * 16;
-            var ry = 22 + ((i + 2) % 4) * 14;
-            var tone = i % 3;
-            ctx.fillStyle = tone === 0 ? 'rgba(255,250,210,0.16)' : (tone === 1 ? 'rgba(42,74,36,0.10)' : 'rgba(166,144,96,0.12)');
+            var rx = 26 + (i % 5) * 18;
+            var ry = 20 + ((i + 2) % 4) * 15;
+            var tone = i % 4;
+            ctx.fillStyle = tone === 0 ? 'rgba(232,226,184,0.22)'
+                : (tone === 1 ? 'rgba(48,76,40,0.16)'
+                : (tone === 2 ? 'rgba(156,132,88,0.18)' : 'rgba(72,98,54,0.14)'));
             ctx.beginPath(); ctx.ellipse(px, py, rx, ry, (i % 6) * 0.5, 0, Math.PI * 2); ctx.fill();
         }
-        // 细腻小草簇与沙土颗粒
-        for (var g = 0; g < 320; g++) {
+        // 手绘卡通 V 形小草簇 (增加地表细节层次)
+        ctx.lineWidth = 2;
+        for (var g = 0; g < 220; g++) {
             var gx = (g * 97 + 19) % 512;
             var gy = (g * 191 + 43) % 512;
-            ctx.fillStyle = (g % 3 === 0) ? 'rgba(38,68,32,0.18)' : 'rgba(255,255,230,0.14)';
-            ctx.fillRect(gx, gy, 3 + (g % 3), 2 + (g % 4));
+            var h = 6 + (g % 5);
+            ctx.strokeStyle = (g % 3 === 0) ? 'rgba(42,68,34,0.30)' : ((g % 3 === 1) ? 'rgba(242,238,196,0.26)' : 'rgba(76,102,52,0.24)');
+            ctx.beginPath();
+            ctx.moveTo(gx, gy); ctx.lineTo(gx - 3, gy - h);
+            ctx.moveTo(gx, gy); ctx.lineTo(gx + 1, gy - h - 2);
+            ctx.moveTo(gx, gy); ctx.lineTo(gx + 4, gy - h + 1);
+            ctx.stroke();
+        }
+        // 零星小碎石与沙土点缀
+        for (var s = 0; s < 140; s++) {
+            var sx = (s * 149 + 71) % 512;
+            var sy = (s * 211 + 23) % 512;
+            ctx.fillStyle = (s % 2 === 0) ? 'rgba(154,142,118,0.26)' : 'rgba(84,78,62,0.20)';
+            ctx.beginPath(); ctx.arc(sx, sy, 1.5 + (s % 3) * 0.8, 0, Math.PI * 2); ctx.fill();
         }
         var tex = new THREE.CanvasTexture(cv);
         tex.wrapS = THREE.RepeatWrapping;
@@ -250,8 +303,8 @@ var MilitaryArt = class MilitaryArt {
 
         this.materials = {
             road: this._material('road', 0xffffff, { map: roadTex, roughness: .88 }),
-            shoulder: this._material('shoulder', 0x76a353, { map: groundTex, roughness: .92 }),
-            ground: this._material('ground', 0x6ea04c, { map: groundTex, roughness: .94 }),
+            shoulder: this._material('shoulder', 0x9E9172, { map: groundTex, roughness: .94 }),
+            ground: this._material('ground', 0x597D47, { map: groundTex, roughness: .94 }),
             curbA: this._material('curb-a', 0xF3F0DF, { roughness: .78 }),
             curbB: this._material('curb-b', 0xE6A93B, { roughness: .78 }),
             concrete: this._material('concrete', 0xb6b5a4, { roughness: .85 }),
@@ -285,6 +338,13 @@ var MilitaryArt = class MilitaryArt {
         // 2. 三跑道军事混凝土主路(sz=24.12 轻微重叠彻底消除接缝漏蓝天!)
         this._add('road', plane, this.materials.road, this._repeat(function() {
             return [{ x: 0, y: .02, z: 0, sx: 8.0, sy: 1, sz: 24.12 }];
+        }));
+        // 2b. V15-ART-006: 路边两侧沙砾泥土路肩过渡带 (消除混凝土与草地硬切边)
+        this._add('shoulders', plane, this.materials.shoulder, this._repeat(function() {
+            return [
+                { x: -5.15, y: -.02, z: 0, sx: 2.1, sy: 1, sz: 24.14 },
+                { x:  5.15, y: -.02, z: 0, sx: 2.1, sy: 1, sz: 24.14 }
+            ];
         }));
         // 3. 左右立体混凝土/黄黑防撞护栏 (V15: 加厚立体防撞墩, 强军事通道纵深)
         this._add('curb-a', box, this.materials.curbA, this._repeat(function() {
@@ -603,10 +663,10 @@ var MilitaryArt = class MilitaryArt {
                     var gateMesh = new THREE.Mesh(geos.BunkerGate, sharedMat);
                     gateMesh.name = 'v15-glb-bunker-gate';
                     gateMesh.scale.setScalar(1.12);
-                    // 隐藏旧方块门楼, 保留远景山脉背景
+                    // 隐藏旧方块门楼, 保留三层远景山脉
                     for (var ci = 0; ci < self._horizonFortress.children.length; ci++) {
                         var ch = self._horizonFortress.children[ci];
-                        if (ch.geometry && ch.geometry.type !== 'DodecahedronGeometry') ch.visible = false;
+                        if (!ch.userData.v15Mountain) ch.visible = false;
                     }
                     self._horizonFortress.add(gateMesh);
                 }
@@ -629,18 +689,27 @@ var MilitaryArt = class MilitaryArt {
         var goldMat = this.materials.accent;
         var hillMat = this.materials.hill;
 
-        // 两侧远景绵延山脉(围绕基地大门)
+        // V15-ART-006: 三层大气透视远景山脉 (近景青绿丘陵 -> 中景岩石山脊 -> 远景淡蓝灰雪峰)
+        var nearMtnMat = this._material('mtn-near', 0x5B8654, { roughness: .96 });
+        var midMtnMat  = this._material('mtn-mid',  0x6C8D7E, { roughness: .96 });
+        var farMtnMat  = this._material('mtn-far',  0x8BAEC2, { roughness: .98 });
         var mtns = [
-            [-30, 5.5, -14, 22, 11, 14], [30, 6.0, -14, 24, 12, 14],
-            [-14, 4.2, -22, 18, 8.5, 12], [14, 4.6, -22, 18, 9.2, 12],
-            [0, 5.2, -26, 26, 10.5, 14]
+            // 近景丘陵
+            [-28, 4.8, -10, 20, 9.5, 13, nearMtnMat], [29, 5.2, -10, 21, 10.2, 13, nearMtnMat],
+            // 中景岩石山脉
+            [-18, 7.2, -20, 22, 14.5, 15, midMtnMat], [19, 7.8, -20, 23, 15.2, 15, midMtnMat],
+            // 远景蓝灰高耸山脊
+            [-34, 10.5, -30, 26, 20.0, 16, farMtnMat], [34, 11.2, -30, 26, 21.0, 16, farMtnMat],
+            [0, 9.2, -32, 32, 17.5, 16, farMtnMat]
         ];
-        var mtnGeo = new THREE.DodecahedronGeometry(1, 1);
+        var mtnGeo = new THREE.ConeGeometry(1, 1.4, 7);
         for (var mi = 0; mi < mtns.length; mi++) {
             var m = mtns[mi];
-            var mm = new THREE.Mesh(mtnGeo, hillMat);
+            var mm = new THREE.Mesh(mtnGeo, m[6]);
             mm.position.set(m[0], m[1], m[2]);
             mm.scale.set(m[3], m[4], m[5]);
+            mm.rotation.y = mi * 0.85;
+            mm.userData.v15Mountain = true;
             g.add(mm);
         }
 
@@ -690,16 +759,16 @@ var MilitaryArt = class MilitaryArt {
         };
         var biome = themeToBiome[themeName] || 'sunny';
         var palettes = {
-            sunny:  { road: 0xf4f6f0, ground: 0x6ca64b, structure: 0x9bb089, roof: 0x35543e, accent: 0xf0b636, hill: 0x73a860, curbB: 0xe8a838 },
-            desert: { road: 0xf2ead9, ground: 0xc9a062, structure: 0xc2a478, roof: 0x6b5b47, accent: 0xe6882e, hill: 0xb8864b, curbB: 0xd97d2b },
-            city:   { road: 0xdce2e6, ground: 0x738282, structure: 0x86979e, roof: 0x3c4d57, accent: 0xeeb544, hill: 0x64757c, curbB: 0xe3a83b },
-            forest: { road: 0xe5ebe0, ground: 0x4f7d43, structure: 0x6c855c, roof: 0x2d4834, accent: 0xdca03c, hill: 0x456e3e, curbB: 0xd99e36 },
-            snow:   { road: 0xeef3f6, ground: 0xd2e5ee, structure: 0x8ea6b0, roof: 0x3f5b69, accent: 0xf0a63e, hill: 0xb4cedb, curbB: 0xe89438 }
+            sunny:  { road: 0xf4f6f0, ground: 0x597D47, shoulder: 0x9C8F70, structure: 0x9bb089, roof: 0x35543e, accent: 0xf0b636, hill: 0x689458, curbB: 0xe8a838 },
+            desert: { road: 0xf2ead9, ground: 0xc9a062, shoulder: 0xb38a52, structure: 0xc2a478, roof: 0x6b5b47, accent: 0xe6882e, hill: 0xb8864b, curbB: 0xd97d2b },
+            city:   { road: 0xdce2e6, ground: 0x738282, shoulder: 0x677276, structure: 0x86979e, roof: 0x3c4d57, accent: 0xeeb544, hill: 0x64757c, curbB: 0xe3a83b },
+            forest: { road: 0xe5ebe0, ground: 0x4b743f, shoulder: 0x7d7055, structure: 0x6c855c, roof: 0x2d4834, accent: 0xdca03c, hill: 0x456e3e, curbB: 0xd99e36 },
+            snow:   { road: 0xeef3f6, ground: 0xd2e5ee, shoulder: 0xaabcc6, structure: 0x8ea6b0, roof: 0x3f5b69, accent: 0xf0a63e, hill: 0xb4cedb, curbB: 0xe89438 }
         };
         var palette = palettes[biome];
         this.materials.road.color.setHex(palette.road);
         this.materials.ground.color.setHex(palette.ground);
-        this.materials.shoulder.color.setHex(palette.ground);
+        this.materials.shoulder.color.setHex(palette.shoulder || palette.ground);
         this.materials.structure.color.setHex(palette.structure);
         this.materials.roof.color.setHex(palette.roof);
         this.materials.accent.color.setHex(palette.accent);

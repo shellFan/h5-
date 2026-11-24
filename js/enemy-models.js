@@ -147,20 +147,21 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
         this._v14=new THREE.Vector3();
         // V14: 头部/肩部附件库(军盔/便帽/肩甲) — 每附件每(style,lod)一个InstancedMesh, 用到才可见
         this.accBanks={};
-        // V15-ART-005: 商业级半透明六边形蜂巢能量护盾 (不遮挡 Boss 本体紫/钢甲配色, 边缘发光!)
+        // V15-ART-006: 极清透边缘发光六边形护盾 (常态内部近乎全透明, 绝不抢眼或遮挡Boss装甲与表情!)
         var hexCv = document.createElement('canvas'); hexCv.width = 256; hexCv.height = 128;
         var hctx = hexCv.getContext('2d');
         hctx.clearRect(0, 0, 256, 128);
         var hGrad = hctx.createLinearGradient(0, 0, 0, 128);
-        hGrad.addColorStop(0.0, 'rgba(90, 235, 255, 0.36)');
-        hGrad.addColorStop(0.5, 'rgba(60, 210, 255, 0.08)');
-        hGrad.addColorStop(1.0, 'rgba(90, 235, 255, 0.36)');
+        hGrad.addColorStop(0.0, 'rgba(90, 235, 255, 0.28)');
+        hGrad.addColorStop(0.22, 'rgba(70, 215, 255, 0.04)');
+        hGrad.addColorStop(0.78, 'rgba(70, 215, 255, 0.04)');
+        hGrad.addColorStop(1.0, 'rgba(90, 235, 255, 0.28)');
         hctx.fillStyle = hGrad; hctx.fillRect(0, 0, 256, 128);
-        hctx.strokeStyle = 'rgba(130, 245, 255, 0.58)';
-        hctx.lineWidth = 2;
-        var hr = 14, dx = hr * 1.5, dy = hr * Math.sqrt(3);
-        for (var row = -1; row < 10; row++) {
-            for (var col = -1; col < 15; col++) {
+        hctx.strokeStyle = 'rgba(130, 245, 255, 0.24)';
+        hctx.lineWidth = 1.4;
+        var hr = 22, dx = hr * 1.5, dy = hr * Math.sqrt(3);
+        for (var row = -1; row < 7; row++) {
+            for (var col = -1; col < 10; col++) {
                 var cx = col * dx, cy = row * dy + (col % 2 ? dy * 0.5 : 0);
                 hctx.beginPath();
                 for (var si = 0; si < 6; si++) {
@@ -174,8 +175,8 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
         var hexTex = new THREE.CanvasTexture(hexCv);
         hexTex.wrapS = hexTex.wrapT = THREE.RepeatWrapping;
         hexTex.repeat.set(2, 1);
-        this.shieldMesh=new THREE.InstancedMesh(new THREE.SphereGeometry(1,24,14),new THREE.MeshBasicMaterial({map:hexTex,color:0x78EEFF,transparent:true,opacity:.68,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide}),8);
-        this.shieldMesh.count=0;this.shieldMesh.frustumCulled=false;this.shieldMesh.renderOrder=4;this.shieldMesh.userData.artSource='V15 boss translucent hexagonal energy shield';scene.add(this.shieldMesh);
+        this.shieldMesh=new THREE.InstancedMesh(new THREE.SphereGeometry(1,24,14),new THREE.MeshBasicMaterial({map:hexTex,color:0x66E6FF,transparent:true,opacity:.42,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide}),8);
+        this.shieldMesh.count=0;this.shieldMesh.frustumCulled=false;this.shieldMesh.renderOrder=4;this.shieldMesh.userData.artSource='V15-ART-006 subtle Fresnel hex energy shield';scene.add(this.shieldMesh);
         this._shieldLocal=new THREE.Matrix4().makeScale(.96,1.10,.96);this._shieldLocal.setPosition(0,.80,0);
 
         // V15-ART-002: 怪物与Boss柔和接地阴影 (单 InstancedMesh, 彻底消除漂浮感)

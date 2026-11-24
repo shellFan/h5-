@@ -896,3 +896,58 @@
     #game-container.art-military .game-title { font-size:24px; }
 }
 @media(prefers-reduced-motion:reduce) { .art-home-hero { animation:none; } }
+
+/* V15-ART-006: 次级业务页(军械库/训练/排行榜/商店/结算)彻底清除旧海军蓝与青色条, 统一暖军绿金徽视觉体系 */
+#game-container.art-military.v42-ui #v118-armory-hero {
+    border: 1.5px solid #6b9158;
+    background: radial-gradient(ellipse at 50% 40%, rgba(92, 134, 78, 0.38), transparent 65%), linear-gradient(160deg, #243f2c, #15281c);
+}
+#game-container.art-military.v42-ui #v118-armory-hero::after {
+    background: rgba(244, 206, 102, 0.32);
+    box-shadow: 0 0 18px rgba(244, 206, 102, 0.42);
+}
+#game-container.art-military.v42-ui .v118-armory-hero-level {
+    background: rgba(46, 74, 48, 0.85);
+    border: 1px solid rgba(235, 198, 92, 0.45);
+    color: #ffe388;
+}
+#game-container.art-military.v42-ui .v60-armory-row {
+    border: 1.5px solid #567954;
+    background: linear-gradient(155deg, #25402d, #182c1f);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+#game-container.art-military.v42-ui .v60-armory-row.equipped {
+    border: 2px solid #f4c852;
+    background: linear-gradient(155deg, #325236, #1d3523);
+    box-shadow: 0 0 12px rgba(244, 200, 82, 0.28);
+}
+#game-container.art-military.v42-ui .v60-armory-btn:disabled {
+    color: #a9bea8;
+    background: #243829;
+    border-color: #4a664b;
+}
+#game-container.art-military.v42-ui .v60-rank-empty,
+#game-container.art-military.v42-ui .v60-bag-empty {
+    border: 1.5px dashed #698d5c;
+    background: rgba(18, 36, 24, 0.88);
+    color: #cbe0c8;
+}
+#game-container.art-military.v42-ui .v60-rank-row {
+    border: 1.5px solid #567954;
+    background: linear-gradient(135deg, #26422e, #192e20);
+}
+#game-container.art-military.v42-ui #win-screen .title-panel::before,
+#game-container.art-military.v42-ui #lose-screen .title-panel::before,
+#game-container.art-military.v42-ui #pause-screen .title-panel::before {
+    background: linear-gradient(90deg, transparent, #f5c94c, transparent) !important;
+    height: 3px !important;
+}
+#game-container.art-military.v42-ui #shop-screen .shop-info > div:last-child,
+#game-container.art-military.v42-ui #shop-screen .shop-cur,
+#game-container.art-military.v42-ui #shop-screen .shop-val {
+    color: #f4ce66 !important;
+}
+#game-container.art-military.v42-ui #v60-train-page .v60-train-rank,
+#game-container.art-military.v42-ui #v60-train-page [class*="rank"] {
+    color: #f4ce66;
+}

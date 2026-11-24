@@ -375,19 +375,18 @@ class World {
         // V5.1修复: formationDepth 未平滑直接进相机 — 人数每次增减(被杀/吸血/穿门)相机前后跳,
         // 是"人物向后移动的视觉效果"的主因之一。改为阻尼平滑。
         if (this._depthSmooth === undefined) this._depthSmooth = depth;
-        this._depthSmooth = damp(this._depthSmooth, depth, 2.5, dt);
+        this._depthSmooth = damp(this._depthSmooth, depth, 5.5, dt);
         var sDepth = this._depthSmooth;
-        // V15-ART-005: 基于实际投影包围盒的自适应相机构图 (36人左右绝不裁切, 底部不留大片空路, Boss护盾无突兀缩放)
-        var halfW = (squadCount > 1) ? Math.min(2.6, 0.55 + Math.sqrt(squadCount) * 0.28) : 0.45;
+        // V15-ART-006: 稳定投影包围盒自适应相机 (护盾/状态切换零突兀缩放, 36人宽度占屏65%-86%, 底部86%-93%)
+        var halfW = (squadCount > 1) ? Math.min(2.45, 0.50 + Math.sqrt(squadCount) * 0.255) : 0.45;
         var aspect = (cam.aspect && cam.aspect > 0.2) ? cam.aspect : (390 / 844);
         var halfVRad = (cam.fov * Math.PI / 180) * 0.5;
         var halfHRad = Math.atan(Math.tan(halfVRad) * aspect);
-        // 保证队伍左右边缘(含14%安全边距)完整落入屏幕内
-        var minDistForWidth = (halfW / 0.78) / Math.max(0.22, Math.tan(halfHRad));
-        var baseOffZ = 8.4 + this._camScale * 1.9 + sDepth * 0.85;
-        var offZ = Math.max(baseOffZ, minDistForWidth * 0.86);
-        var offY = 5.8 + this._camScale * 2.85 + Math.max(0, offZ - baseOffZ) * 0.48;
-        var lookAhead = CONFIG.CAMERA_LOOK_AHEAD - this._camScale * 1.6 + sDepth * 0.72;
+        var minDistForWidth = (halfW / 0.80) / Math.max(0.22, Math.tan(halfHRad));
+        var baseOffZ = 8.2 + this._camScale * 1.8 + sDepth * 0.78;
+        var offZ = Math.max(baseOffZ, minDistForWidth * 0.82);
+        var offY = 5.7 + this._camScale * 2.75 + Math.max(0, offZ - baseOffZ) * 0.45;
+        var lookAhead = CONFIG.CAMERA_LOOK_AHEAD - this._camScale * 1.5 + sDepth * 0.68;
 
         const targetX = squadX * CONFIG.CAMERA_FOLLOW_X;
         const targetPos = new THREE.Vector3(

@@ -128,12 +128,17 @@ def join_prop(name, objs):
     o.data.materials.clear(); o.data.materials.append(mat)
     return o
 
-# 1. Stylized 3-Tier Pine Tree
+# 1. V15-ART-006 Organic Multi-Cluster Stylized Toy Pine Tree (no longer 3 plain stacked cones!)
 pts = []
-cyl(pts, (0, 0.7, 0), 0.22, 1.4, 'wood_dk', 8)
-cone(pts, (0, 1.85, 0), 1.35, 1.65, 'pine_dk', 9)
-cone(pts, (0, 2.75, 0), 1.05, 1.45, 'pine_lt', 9)
-cone(pts, (0, 3.55, 0), 0.72, 1.25, 'pine_lt', 9)
+cyl(pts, (0, 0.72, 0), 0.24, 1.45, 'wood_dk', 9)
+# Asymmetric organic bough clusters with natural tilt & warm/cool evergreen variation
+cone(pts, (0, 1.75, 0), 1.42, 1.55, 'pine_dk', 7, (0.06, -0.05, 0.2))
+ell(pts, (-0.52, 1.58, 0.35), (0.68, 0.45, 0.62), 'pine_dk', 9, 6)
+ell(pts, (0.55, 1.65, -0.28), (0.65, 0.42, 0.58), 'pine_lt', 9, 6)
+cone(pts, (0.06, 2.68, -0.04), 1.12, 1.48, 'pine_lt', 7, (-0.05, 0.06, 0.9))
+ell(pts, (0.42, 2.48, 0.36), (0.52, 0.36, 0.48), 'pine_dk', 8, 5)
+ell(pts, (-0.38, 2.55, -0.32), (0.48, 0.35, 0.46), 'pine_lt', 8, 5)
+cone(pts, (-0.04, 3.55, 0.03), 0.76, 1.32, 'pine_lt', 7, (0.04, 0.05, 1.6))
 join_prop('PineTree', pts)
 
 # 2. Wooden X-Braced Military Watchtower
