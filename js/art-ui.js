@@ -60,7 +60,28 @@ var ArtUI = {
             if (p) p.insertAdjacentHTML('afterbegin', self.image('ui/' + pair[1] + '.png', '', 'art-panel-emblem'));
         });
         var pause = document.getElementById('btn-pause');
-        if (pause) { pause.innerHTML = this.image('ui/pause.png', '', 'art-control-icon'); pause.setAttribute('aria-label', '暂停游戏'); }
+        if (pause) { pause.innerHTML = '<span class="v15-pause-bars"><i></i><i></i></span>'; pause.setAttribute('aria-label', '暂停游戏'); }
+        // V15 战斗 HUD: 注入右上角「金币+士兵数」双军工胶囊与进度百分比/Boss骷髅徽标
+        var topBar = document.getElementById('top-bar');
+        if (topBar && !document.getElementById('v15-hud-right')) {
+            var rightCol = document.createElement('div');
+            rightCol.id = 'v15-hud-right';
+            rightCol.innerHTML =
+                '<div class="v15-pill v15-pill-coin">' + this.image('ui/coin.png', '', 'v15-pill-ico') + '<span id="v15-hud-coins">0</span></div>' +
+                '<div class="v15-pill v15-pill-squad">' + this.image('ui/avatar.png', '', 'v15-pill-ico') + '<span id="v15-hud-squad">1</span></div>';
+            topBar.appendChild(rightCol);
+        }
+        var progBar = document.getElementById('progress-bar-container');
+        if (progBar && !document.getElementById('v15-progress-pct')) {
+            var pctEl = document.createElement('span');
+            pctEl.id = 'v15-progress-pct';
+            pctEl.textContent = '0%';
+            progBar.appendChild(pctEl);
+            var skullEl = document.createElement('span');
+            skullEl.className = 'v15-boss-skull';
+            skullEl.textContent = '☠';
+            progBar.appendChild(skullEl);
+        }
         this._wrap('renderArmory', function() { self.decorateWeapons(); });
         this._wrap('renderMap', function() { self.decorateMap(); });
         this._wrap('renderClassSelector', function() { self.decorateClasses(); });

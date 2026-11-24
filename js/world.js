@@ -51,32 +51,32 @@ class World {
     _setupLights() {
         // V3.1: 灯光再平衡。旧参数合计~1.85x导致Lambert钳制发白(路面/草地洗成白蓝)。
         // raw-linear工作流下, 水平面有效光照 ≈ 0.7*0.85 + 0.5*0.6 + 0.15 ≈ 1.1, 保留少量高光余量。
-        // 半球光: 天空蓝 -> 地面绿
-        const hemi = new THREE.HemisphereLight(0xB0DFFF, 0x8FBC8F, 0.5);
+        // 半球光: 晴空天蓝 -> 军绿草地反光 (V15 阳光军事基地)
+        const hemi = new THREE.HemisphereLight(0xB8E4FF, 0x6A9650, 0.56);
         this.scene.add(hemi);
         this.hemiLight = hemi; // V13: 主题系统需要调整半球光色/强度
 
-        // 主方向光 (暖白色, 产生阴影)
-        const dir = new THREE.DirectionalLight(0xFFF4E0, 0.72);
-        dir.position.set(4, 12, 6);
+        // 主方向光 (暖阳日光, 清晰立体投影)
+        const dir = new THREE.DirectionalLight(0xFFF3D4, 0.92);
+        dir.position.set(5, 14, 7);
         dir.castShadow = true;
         // V10.1: 阴影贴图按画质分档 — 中画质(多数手机)2048→1024, GPU负担减半
         var shadowRes = this.quality >= 2 ? 2048 : 1024;
         dir.shadow.mapSize.set(shadowRes, shadowRes);
-        dir.shadow.camera.left = -8;
-        dir.shadow.camera.right = 8;
-        dir.shadow.camera.top = 12;
-        dir.shadow.camera.bottom = -12;
+        dir.shadow.camera.left = -10;
+        dir.shadow.camera.right = 10;
+        dir.shadow.camera.top = 16;
+        dir.shadow.camera.bottom = -14;
         dir.shadow.camera.near = 1;
-        dir.shadow.camera.far = 35;
-        dir.shadow.bias = -0.001;
+        dir.shadow.camera.far = 42;
+        dir.shadow.bias = -0.0008;
         this.scene.add(dir);
         this.scene.add(dir.target); // target必须加入场景才能正确更新matrixWorld
         this.sunLight = dir;
 
-        // 补光 (淡蓝色, 从前方照射)
-        const fill = new THREE.DirectionalLight(0xC8E0FF, 0.30);
-        fill.position.set(-3, 6, -8);
+        // 补光 (晴空冷蓝轮廓补光, 增强玩具模型立体感)
+        const fill = new THREE.DirectionalLight(0xC2E4FF, 0.34);
+        fill.position.set(-4, 7, -9);
         this.scene.add(fill);
     }
 
@@ -102,11 +102,38 @@ class World {
         ctx.fillRect(0, 0, 16, 256);
         var tex = new THREE.CanvasTexture(cv);
         var mat = new THREE.MeshBasicMaterial({ map: tex, side: THREE.BackSide, fog: false, depthWrite: false });
-        var dome = new THREE.Mesh(new THREE.SphereGeometry(88, 24, 16), mat);
+        var dome = new THREE.Mesh(new THREE.SphereGeometry(96, 24, 16), mat);
         dome.renderOrder = -10;
-        dome.userData.artSource = 'js/world.js:_buildSky() 渐变天空穹顶 16x256';
+        dome.userData.artSource = 'js/world.js:_buildSky() V15 阳光晴空穹顶 16x256';
         this.scene.add(dome);
         this._skyDome = dome;
+
+        // V15: 立体卡通蓬松白云群 (单 InstancedMesh, 1 drawCall, 跟随相机地平线, 清晰可见于远景山脉与要塞上方)
+        var cloudSpecs = [
+            [-22, 13.5, -62, 4.4, 2.0, 2.8], [-18.2, 14.8, -61.5, 3.6, 2.3, 2.6], [-25.5, 13.2, -62.2, 3.0, 1.7, 2.3],
+            [20, 14.0, -64, 4.8, 2.2, 3.0], [24.2, 15.2, -63.5, 3.7, 2.2, 2.6], [16.2, 13.5, -64.2, 3.2, 1.8, 2.4],
+            [-4, 15.6, -66, 5.2, 2.2, 3.0], [0.4, 16.6, -65.5, 3.8, 2.4, 2.6], [-8.2, 15.1, -66.2, 3.3, 1.9, 2.4],
+            [9, 12.6, -58, 3.2, 1.6, 2.2], [11.8, 13.4, -57.8, 2.5, 1.7, 2.0],
+            [-32, 12.2, -56, 3.8, 1.8, 2.4], [32, 12.8, -58, 4.0, 1.9, 2.6]
+        ];
+        var cloudGeo = new THREE.SphereGeometry(1, 10, 8);
+        var cloudMat = new THREE.MeshBasicMaterial({ color: 0xF8FCFF, fog: false, transparent: true, opacity: 0.94 });
+        var cloudMesh = new THREE.InstancedMesh(cloudGeo, cloudMat, cloudSpecs.length);
+        cloudMesh.frustumCulled = false;
+        cloudMesh.renderOrder = -5;
+        var dummy = new THREE.Object3D();
+        for (var ci = 0; ci < cloudSpecs.length; ci++) {
+            var cs = cloudSpecs[ci];
+            dummy.position.set(cs[0], cs[1], cs[2]);
+            dummy.scale.set(cs[3], cs[4], cs[5]);
+            dummy.updateMatrix();
+            cloudMesh.setMatrixAt(ci, dummy.matrix);
+        }
+        cloudMesh.instanceMatrix.needsUpdate = true;
+        cloudMesh.userData.artSource = 'js/world.js:_buildSky() V15 卡通蓬松白云群';
+        this.scene.add(cloudMesh);
+        this._skyClouds = cloudMesh;
+
         // 雾色向地平线色靠拢(V13: 雾色统一由主题预设决定, 与 applyTheme 一致)
         var T0 = (CONFIG.WORLD_THEMES && (CONFIG.WORLD_THEMES[this._themeApplied || 'default'])) || CONFIG.WORLD_THEMES.default;
         this.scene.fog.color.setHex(T0.fog);
@@ -372,8 +399,9 @@ class World {
             cam.position.y += Math.sin(this._shakePhase * 2.3) * sAmp * 0.55;
         }
         cam.lookAt(targetX * 0.5, 0, squadZ + lookAhead);
-        // V12视觉: 天空穹顶跟随相机(XZ), 保持地平线稳定
+        // V12视觉: 天空穹顶与V15白云跟随相机(XZ), 保持地平线稳定
         if (this._skyDome) this._skyDome.position.set(cam.position.x, 0, cam.position.z);
+        if (this._skyClouds) this._skyClouds.position.set(cam.position.x * 0.4, 0, cam.position.z);
 
         // 阴影相机跟随
         this.sunLight.position.set(squadX + 4, 12, squadZ + 6);

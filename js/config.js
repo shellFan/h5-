@@ -75,18 +75,18 @@ const CONFIG = {
     // sky: 穹顶渐变 4 停靠点(顶→地平线) | envTint: 环境(草地/建筑实例)染色目标 | domeTint: 穹顶乘色
     WORLD_THEMES: {
         default: {
-            sky: ['#4FA3DF', '#87CEEB', '#C9E6F5', '#EAF4FA'],
-            fog: 0xC9E4F2, fogNear: 45, fogFar: 130,
-            sunColor: 0xFFF4E0, sunIntensity: 0.72,
-            hemiSky: 0xB0DFFF, hemiGround: 0x8FBC8F, hemiIntensity: 0.5,
-            envTint: 0x719C80, domeTint: 0xFFFFFF, ground: 'asphalt'
+            sky: ['#257EE0', '#63B5F6', '#B5E0FA', '#E4F4FE'],
+            fog: 0xC6E5F7, fogNear: 60, fogFar: 155,
+            sunColor: 0xFFF3D4, sunIntensity: 0.92,
+            hemiSky: 0xB8E4FF, hemiGround: 0x6A9650, hemiIntensity: 0.56,
+            envTint: 0x6A9B66, domeTint: 0xFFFFFF, ground: 'asphalt'
         },
-        dawn: { // L1 新兵训练 — 柔和晨光
-            sky: ['#5E9FD8', '#93C4E8', '#D8E8F2', '#F2F0EA'],
-            fog: 0xDCEAF2, fogNear: 45, fogFar: 128,
-            sunColor: 0xFFE8C8, sunIntensity: 0.68,
-            hemiSky: 0xBADCF2, hemiGround: 0x8FBC8F, hemiIntensity: 0.52,
-            envTint: 0x7BA486, domeTint: 0xFFFFFF, ground: 'asphalt'
+        dawn: { // L1 新兵训练 — V15 阳光军事基地晴空日光
+            sky: ['#257EE0', '#63B5F6', '#B5E0FA', '#E4F4FE'],
+            fog: 0xC8E6F8, fogNear: 60, fogFar: 155,
+            sunColor: 0xFFF3D4, sunIntensity: 0.92,
+            hemiSky: 0xBCE6FF, hemiGround: 0x6A9650, hemiIntensity: 0.56,
+            envTint: 0x6A9B66, domeTint: 0xFFFFFF, ground: 'asphalt'
         },
         noon: { // L2 快速尸潮 — 明快正午
             sky: ['#3E96DE', '#7FC4EE', '#CFE9F8', '#EAF6FB'],

@@ -22,38 +22,51 @@ var MilitaryArt = class MilitaryArt {
         var cv = document.createElement('canvas');
         cv.width = 512; cv.height = 512;
         var ctx = cv.getContext('2d');
-        // 温暖干净的军事混凝土底色
-        ctx.fillStyle = '#9EA49F';
+        // V15: 高对比度军用混凝土底色(微深冷灰, 让军绿士兵、紫色怪兽、发光门和子弹更突出)
+        ctx.fillStyle = '#808890';
         ctx.fillRect(0, 0, 512, 512);
-        // 柔和纵向压痕与车道微色调
-        ctx.fillStyle = 'rgba(42, 50, 48, 0.08)';
-        ctx.fillRect(72, 0, 60, 512);
-        ctx.fillRect(226, 0, 60, 512);
-        ctx.fillRect(380, 0, 60, 512);
-        // 细腻颗粒质感(非凌乱脏点)
-        for (var i = 0; i < 650; i++) {
+        // 路边两侧轻微阴影渐变(增强道路立体凹陷感)
+        var edgeL = ctx.createLinearGradient(0, 0, 48, 0);
+        edgeL.addColorStop(0, 'rgba(24,32,38,0.28)');
+        edgeL.addColorStop(1, 'rgba(24,32,38,0)');
+        ctx.fillStyle = edgeL; ctx.fillRect(0, 0, 48, 512);
+        var edgeR = ctx.createLinearGradient(464, 0, 512, 0);
+        edgeR.addColorStop(0, 'rgba(24,32,38,0)');
+        edgeR.addColorStop(1, 'rgba(24,32,38,0.28)');
+        ctx.fillStyle = edgeR; ctx.fillRect(464, 0, 48, 512);
+        // 三条车辙压痕带
+        ctx.fillStyle = 'rgba(32, 40, 46, 0.12)';
+        ctx.fillRect(68, 0, 64, 512);
+        ctx.fillRect(224, 0, 64, 512);
+        ctx.fillRect(380, 0, 64, 512);
+        // 细腻混凝土颗粒质感
+        for (var i = 0; i < 800; i++) {
             var x = (i * 97) % 512;
             var y = (i * 193) % 512;
-            ctx.fillStyle = (i % 2) ? 'rgba(255,255,255,0.05)' : 'rgba(30,38,36,0.055)';
+            ctx.fillStyle = (i % 2) ? 'rgba(255,255,255,0.06)' : 'rgba(22,28,34,0.07)';
             ctx.fillRect(x, y, 3, 3);
         }
         // 横向混凝土分块伸缩缝
-        ctx.fillStyle = 'rgba(45, 52, 48, 0.24)';
         for (var sy = 0; sy < 512; sy += 128) {
+            ctx.fillStyle = 'rgba(30, 36, 42, 0.30)';
             ctx.fillRect(14, sy, 484, 3);
-            ctx.fillStyle = 'rgba(255,255,255,0.12)';
+            ctx.fillStyle = 'rgba(255,255,255,0.14)';
             ctx.fillRect(14, sy + 3, 484, 2);
-            ctx.fillStyle = 'rgba(45, 52, 48, 0.24)';
         }
-        // 两侧明快暖黄实边线(带深色衬边提升清晰度)
-        ctx.fillStyle = 'rgba(48, 52, 44, 0.35)';
+        // 两侧明快暖黄实边线(带深色衬边)
+        ctx.fillStyle = 'rgba(30, 34, 28, 0.45)';
         ctx.fillRect(12, 0, 14, 512);
         ctx.fillRect(486, 0, 14, 512);
-        ctx.fillStyle = '#F2C94C';
+        ctx.fillStyle = '#F4C946';
         ctx.fillRect(14, 0, 10, 512);
         ctx.fillRect(488, 0, 10, 512);
-        // 三跑道清晰白色虚线分隔(对齐三车道)
-        ctx.fillStyle = '#F7F8F2';
+        // 三跑道高对比度白色虚线分隔(对齐三车道)
+        ctx.fillStyle = 'rgba(26, 32, 38, 0.25)';
+        for (var ly0 = 16; ly0 < 512; ly0 += 85) {
+            ctx.fillRect(165, ly0 + 2, 12, 50);
+            ctx.fillRect(335, ly0 + 2, 12, 50);
+        }
+        ctx.fillStyle = '#FAFCF8';
         for (var ly = 16; ly < 512; ly += 85) {
             ctx.fillRect(166, ly, 10, 50);
             ctx.fillRect(336, ly, 10, 50);
@@ -135,6 +148,33 @@ var MilitaryArt = class MilitaryArt {
         tex.wrapS = THREE.ClampToEdgeWrapping;
         tex.wrapT = THREE.ClampToEdgeWrapping;
         return tex;
+    }
+
+    _makeBannerTexture() {
+        var cv = document.createElement('canvas');
+        cv.width = 128; cv.height = 192;
+        var ctx = cv.getContext('2d');
+        ctx.fillStyle = '#C9342C';
+        ctx.fillRect(0, 0, 128, 192);
+        // 顶部和底部金边
+        ctx.fillStyle = '#F5C946';
+        ctx.fillRect(0, 0, 128, 12);
+        ctx.fillRect(0, 168, 128, 10);
+        // 中央金色圆形五角星徽章
+        ctx.fillStyle = '#FFE072';
+        ctx.beginPath(); ctx.arc(64, 88, 34, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#B82820';
+        ctx.beginPath(); ctx.arc(64, 88, 28, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#FFE47A';
+        ctx.beginPath();
+        for (var i = 0; i < 10; i++) {
+            var a = -Math.PI / 2 + i * Math.PI / 5;
+            var r = (i % 2 === 0) ? 22 : 9.5;
+            if (i === 0) ctx.moveTo(64 + Math.cos(a) * r, 88 + Math.sin(a) * r);
+            else ctx.lineTo(64 + Math.cos(a) * r, 88 + Math.sin(a) * r);
+        }
+        ctx.closePath(); ctx.fill();
+        return new THREE.CanvasTexture(cv);
     }
 
     _makeCrateTexture() {
@@ -219,10 +259,15 @@ var MilitaryArt = class MilitaryArt {
             dark: this._material('dark', 0x354046, { metalness: .35, roughness: .55 }),
             foliage: this._material('foliage', 0x459445, { roughness: .82 }),
             foliageLight: this._material('foliage-light', 0x67b854, { roughness: .82 }),
-            hill: this._material('hill', 0x76a564, { roughness: .95 }),
+            hill: this._material('hill', 0x679B58, { roughness: .94 }),
             snow: this._material('snow', 0xeaf4f8, { roughness: .94 }),
             rock: this._material('rock', 0xb48454, { roughness: .9 }),
             city: this._material('city', 0x7c8a94, { map: bldgTex, metalness: .12, roughness: .72 }),
+            tankOlive: this._material('tank-olive', 0x5A7342, { metalness: .18, roughness: .56 }),
+            tankTrack: this._material('tank-track', 0x262C30, { metalness: .28, roughness: .72 }),
+            tentCanvas: this._material('tent-canvas', 0x5D7B47, { roughness: .88 }),
+            bannerRed: this._material('banner-red', 0xFFFFFF, { map: this._makeBannerTexture(), roughness: .68 }),
+            fortressStone: this._material('fortress-stone', 0x7B8C80, { roughness: .84 }),
             lamp: new THREE.MeshBasicMaterial({ color: 0xFFF3B0 })
         };
 
@@ -234,55 +279,107 @@ var MilitaryArt = class MilitaryArt {
         this._add('road', plane, this.materials.road, this._repeat(function() {
             return [{ x: 0, y: .02, z: 0, sx: 8.0, sy: 1, sz: 24.12 }];
         }));
-        // 3. 左右立体路缘石(白/暖金交替, 强空间纵深引导)
+        // 3. 左右立体混凝土/黄黑防撞护栏 (V15: 加厚立体防撞墩, 强军事通道纵深)
         this._add('curb-a', box, this.materials.curbA, this._repeat(function() {
             var rows = [];
             for (var z = -10.5; z <= 10.5; z += 4) {
-                rows.push({ x: -4.16, y: .09, z: z, sx: .32, sy: .18, sz: 1.92 });
-                rows.push({ x:  4.16, y: .09, z: z, sx: .32, sy: .18, sz: 1.92 });
+                rows.push({ x: -4.22, y: .22, z: z, sx: .42, sy: .44, sz: 1.88 });
+                rows.push({ x:  4.22, y: .22, z: z, sx: .42, sy: .44, sz: 1.88 });
             }
             return rows;
         }));
         this._add('curb-b', box, this.materials.curbB, this._repeat(function() {
             var rows = [];
             for (var z = -8.5; z <= 11.5; z += 4) {
-                rows.push({ x: -4.16, y: .09, z: z, sx: .32, sy: .18, sz: 1.92 });
-                rows.push({ x:  4.16, y: .09, z: z, sx: .32, sy: .18, sz: 1.92 });
+                rows.push({ x: -4.22, y: .22, z: z, sx: .42, sy: .44, sz: 1.88 });
+                rows.push({ x:  4.22, y: .22, z: z, sx: .42, sy: .44, sz: 1.88 });
             }
             return rows;
         }));
 
-        // 4. 军事基地营房与坡屋顶(带瓦楞墙/窗户/大门/警示底边贴图)
+        // 4. 军事基地营房与军用帆布帐篷
         this._add('hangars', box, this.materials.structure, this._repeat(function(segment) {
             var side = segment % 2 ? 1 : -1;
-            return [{ x: side * 10.2, y: 1.75, z: -3.5, sx: 6.2, sy: 3.5, sz: 7.2 }];
+            return [{ x: side * 10.2, y: 1.8, z: -3.5, sx: 6.2, sy: 3.6, sz: 7.4 }];
         }));
         this._add('hangar-roofs', box, this.materials.roof, this._repeat(function(segment) {
             var side = segment % 2 ? 1 : -1;
-            return [{ x: side * 10.2, y: 3.66, z: -3.5, sx: 6.7, sy: .36, sz: 7.7, rz: side * .03 }];
+            return [{ x: side * 10.2, y: 3.74, z: -3.5, sx: 6.7, sy: .38, sz: 7.9, rz: side * .03 }];
         }));
+        // V15: 军用橄榄绿帆布帐篷 (对侧交替, 丰富中景军事营地)
+        this._add('tent-bodies', box, this.materials.tentCanvas, this._repeat(function(segment) {
+            var side = segment % 2 ? -1 : 1;
+            return [{ x: side * 9.8, y: 1.05, z: 3.8, sx: 4.4, sy: 2.1, sz: 5.2 }];
+        }), ['sunny', 'forest', 'desert']);
+        this._add('tent-roofs', cone, this.materials.roof, this._repeat(function(segment) {
+            var side = segment % 2 ? -1 : 1;
+            return [{ x: side * 9.8, y: 2.65, z: 3.8, sx: 4.9, sy: 1.35, sz: 5.7, ry: Math.PI * 0.25 }];
+        }), ['sunny', 'forest', 'desert']);
 
-        // 5. 瞭望哨塔 + 发光探照灯
+        // V15: 路边停放军绿玩具坦克 (更贴近中景道路两侧, 清晰呈现军事基地氛围!)
+        this._add('tank-hulls', box, this.materials.tankOlive, this._repeat(function(segment) {
+            var side = segment % 2 ? 1 : -1;
+            return [{ x: side * 6.5, y: .72, z: -11.5, sx: 2.3, sy: .78, sz: 3.4, ry: side * -.28 }];
+        }), ['sunny', 'desert', 'city', 'forest']);
+        this._add('tank-tracks', box, this.materials.tankTrack, this._repeat(function(segment) {
+            var side = segment % 2 ? 1 : -1;
+            return [
+                { x: side * 6.5 - 1.05, y: .42, z: -11.3, sx: .52, sy: .68, sz: 3.6, ry: side * -.28 },
+                { x: side * 6.5 + 1.05, y: .42, z: -11.7, sx: .52, sy: .68, sz: 3.6, ry: side * -.28 }
+            ];
+        }), ['sunny', 'desert', 'city', 'forest']);
+        this._add('tank-turrets', box, this.materials.tankOlive, this._repeat(function(segment) {
+            var side = segment % 2 ? 1 : -1;
+            return [{ x: side * 6.5, y: 1.38, z: -11.6, sx: 1.5, sy: .66, sz: 1.8, ry: side * -.42 }];
+        }), ['sunny', 'desert', 'city', 'forest']);
+        this._add('tank-barrels', cylinder, this.materials.dark, this._repeat(function(segment) {
+            var side = segment % 2 ? 1 : -1;
+            return [{ x: side * 5.6, y: 1.46, z: -10.8, sx: .22, sy: 2.4, sz: .22, rx: Math.PI * 0.48, rz: side * .48 }];
+        }), ['sunny', 'desert', 'city', 'forest']);
+
+        // 5. V15 四柱木质/钢架瞭望哨塔 + 哨亭主体 + 坡顶 + 探照灯
         this._add('watch-posts', cylinder, this.materials.trunk, this._repeat(function(segment) {
             if (segment % 2) return [];
-            return [{ x: -6.8, y: 1.4, z: 6.5, sx: .34, sy: 2.8, sz: .34 },
-                { x: 6.8, y: 1.4, z: -7.5, sx: .34, sy: 2.8, sz: .34 }];
+            var posts = [];
+            var centers = [{ x: -6.8, z: 6.5 }, { x: 6.8, z: -7.5 }];
+            for (var c = 0; c < centers.length; c++) {
+                var cx = centers[c].x, cz = centers[c].z;
+                posts.push({ x: cx - .72, y: 1.85, z: cz - .72, sx: .2, sy: 3.7, sz: .2 });
+                posts.push({ x: cx + .72, y: 1.85, z: cz - .72, sx: .2, sy: 3.7, sz: .2 });
+                posts.push({ x: cx - .72, y: 1.85, z: cz + .72, sx: .2, sy: 3.7, sz: .2 });
+                posts.push({ x: cx + .72, y: 1.85, z: cz + .72, sx: .2, sy: 3.7, sz: .2 });
+            }
+            return posts;
         }));
         this._add('watch-decks', box, this.materials.concrete, this._repeat(function(segment) {
             if (segment % 2) return [];
-            return [{ x: -6.8, y: 2.9, z: 6.5, sx: 2.0, sy: .24, sz: 2.0 },
-                { x: 6.8, y: 2.9, z: -7.5, sx: 2.0, sy: .24, sz: 2.0 }];
+            return [{ x: -6.8, y: 3.18, z: 6.5, sx: 2.3, sy: .65, sz: 2.3 },
+                { x: 6.8, y: 3.18, z: -7.5, sx: 2.3, sy: .65, sz: 2.3 }];
         }));
         this._add('watch-roofs', cone, this.materials.roof, this._repeat(function(segment) {
             if (segment % 2) return [];
-            return [{ x: -6.8, y: 3.72, z: 6.5, sx: 2.1, sy: .95, sz: 2.1 },
-                { x: 6.8, y: 3.72, z: -7.5, sx: 2.1, sy: .95, sz: 2.1 }];
+            return [{ x: -6.8, y: 4.18, z: 6.5, sx: 2.6, sy: 1.0, sz: 2.6, ry: Math.PI * 0.25 },
+                { x: 6.8, y: 4.18, z: -7.5, sx: 2.6, sy: 1.0, sz: 2.6, ry: Math.PI * 0.25 }];
         }));
         this._add('watch-lamps', sphere, this.materials.lamp, this._repeat(function(segment) {
             if (segment % 2) return [];
-            return [{ x: -6.0, y: 3.15, z: 6.5, sx: .28, sy: .28, sz: .28 },
-                { x: 6.0, y: 3.15, z: -7.5, sx: .28, sy: .28, sz: .28 }];
+            return [{ x: -5.85, y: 3.65, z: 6.5, sx: .32, sy: .32, sz: .32 },
+                { x: 5.85, y: 3.65, z: -7.5, sx: .32, sy: .32, sz: .32 }];
         }));
+
+        // V15: 路侧红星战旗 (提升军事基地氛围与暖色点缀)
+        this._add('banner-poles', cylinder, this.materials.dark, this._repeat(function(segment) {
+            return [
+                { x: -5.05, y: 1.9, z: -10.0, sx: .12, sy: 3.8, sz: .12 },
+                { x:  5.05, y: 1.9, z:   1.5, sx: .12, sy: 3.8, sz: .12 }
+            ];
+        }), ['sunny', 'forest', 'city']);
+        this._add('banner-cloth', box, this.materials.bannerRed, this._repeat(function(segment) {
+            return [
+                { x: -5.05, y: 2.95, z: -9.92, sx: .76, sy: 1.35, sz: .06 },
+                { x:  5.05, y: 2.95, z:  1.58, sx: .76, sy: 1.35, sz: .06 }
+            ];
+        }), ['sunny', 'forest', 'city']);
 
         // 5.5 军事基地要塞细节: 雷达通信塔 + 双联军用储油罐 + 混凝土防爆墙
         this._add('radar-posts', cylinder, this.materials.dark, this._repeat(function(segment) {
@@ -386,6 +483,72 @@ var MilitaryArt = class MilitaryArt {
             return [{ x: -8.6, y: 2.5, z: -6, sx: 2.4, sy: 5.0, sz: 2.4 },
                 { x: 8.4, y: 2.1, z: 5, sx: 2.0, sy: 4.2, sz: 2.0 }];
         }), ['snow']);
+
+        // 10. V15: 远景阳光军事基地要塞大门 (跟随地平线, 彻底消除道路尽头空旷感!)
+        this._buildHorizonFortress();
+    }
+
+    _buildHorizonFortress() {
+        var g = new THREE.Group();
+        g.name = 'v15-horizon-fortress';
+        var wallMat = this.materials.fortressStone;
+        var roofMat = this.materials.roof;
+        var darkMat = this.materials.dark;
+        var goldMat = this.materials.accent;
+        var hillMat = this.materials.hill;
+
+        // 两侧远景绵延山脉(围绕基地大门)
+        var mtns = [
+            [-30, 5.5, -14, 22, 11, 14], [30, 6.0, -14, 24, 12, 14],
+            [-14, 4.2, -22, 18, 8.5, 12], [14, 4.6, -22, 18, 9.2, 12],
+            [0, 5.2, -26, 26, 10.5, 14]
+        ];
+        var mtnGeo = new THREE.DodecahedronGeometry(1, 1);
+        for (var mi = 0; mi < mtns.length; mi++) {
+            var m = mtns[mi];
+            var mm = new THREE.Mesh(mtnGeo, hillMat);
+            mm.position.set(m[0], m[1], m[2]);
+            mm.scale.set(m[3], m[4], m[5]);
+            g.add(mm);
+        }
+
+        // 要塞主城墙(左右两翼 + 跨路门楼)
+        var leftWall = new THREE.Mesh(new THREE.BoxGeometry(16, 6.2, 3.2), wallMat);
+        leftWall.position.set(-14.5, 3.1, 0); g.add(leftWall);
+        var rightWall = new THREE.Mesh(new THREE.BoxGeometry(16, 6.2, 3.2), wallMat);
+        rightWall.position.set(14.5, 3.1, 0); g.add(rightWall);
+
+        // 跨路门楼顶梁 + 门洞阴影
+        var archTop = new THREE.Mesh(new THREE.BoxGeometry(13.6, 3.8, 3.8), wallMat);
+        archTop.position.set(0, 7.6, 0); g.add(archTop);
+        var archRoof = new THREE.Mesh(new THREE.BoxGeometry(14.4, 0.7, 4.4), roofMat);
+        archRoof.position.set(0, 9.8, 0); g.add(archRoof);
+        var gateVoid = new THREE.Mesh(new THREE.BoxGeometry(8.6, 5.8, 2.2), darkMat);
+        gateVoid.position.set(0, 2.9, -0.4); g.add(gateVoid);
+
+        // 左右门楼双碉堡塔
+        for (var s = -1; s <= 1; s += 2) {
+            var tower = new THREE.Mesh(new THREE.BoxGeometry(4.4, 10.8, 4.6), wallMat);
+            tower.position.set(s * 6.4, 5.4, 0.3); g.add(tower);
+            var cap = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.9, 5.2), roofMat);
+            cap.position.set(s * 6.4, 11.1, 0.3); g.add(cap);
+            // 碉堡高光警示条
+            var band = new THREE.Mesh(new THREE.BoxGeometry(4.5, 0.45, 4.7), goldMat);
+            band.position.set(s * 6.4, 9.6, 0.3); g.add(band);
+        }
+
+        // 门楼正中军工金星徽章
+        var emblemBg = new THREE.Mesh(new THREE.CylinderGeometry(1.45, 1.45, 0.35, 16), roofMat);
+        emblemBg.rotation.x = Math.PI * 0.5;
+        emblemBg.position.set(0, 7.6, 2.0); g.add(emblemBg);
+        var emblemStar = new THREE.Mesh(new THREE.OctahedronGeometry(0.92, 0), goldMat);
+        emblemStar.scale.set(1, 1, 0.35);
+        emblemStar.position.set(0, 7.6, 2.25); g.add(emblemStar);
+
+        g.scale.setScalar(0.68);
+        g.position.set(0, 0, -74);
+        this.root.add(g);
+        this._horizonFortress = g;
     }
 
     setTheme(themeName) {
@@ -426,6 +589,9 @@ var MilitaryArt = class MilitaryArt {
     }
 
     update(squadZ) {
+        if (this._horizonFortress) {
+            this._horizonFortress.position.z = (squadZ || 0) - 74;
+        }
         var anchor = Math.floor((squadZ || 0) / this._segmentLength) * this._segmentLength;
         if (anchor === this._anchor) return;
         this._anchor = anchor;

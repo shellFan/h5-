@@ -1320,6 +1320,20 @@ class Game {
             this._cachedProgress = progPct;
             if (this.ui.progressFill) this.ui.progressFill.style.width = progPct + '%';
             if (this.ui.progressFlag) this.ui.progressFlag.style.left = progPct + '%';
+            var pctText = document.getElementById('v15-progress-pct');
+            if (pctText) pctText.textContent = Math.round(progress * 100) + '%';
+        }
+        // V15 顶栏右上角真实金币与人数绑定
+        var v15Coins = (this.profile ? (this.profile.coins || 0) : 0) + (this.runCoins || 0);
+        if (this._cachedV15Coins !== v15Coins) {
+            this._cachedV15Coins = v15Coins;
+            var coinEl = document.getElementById('v15-hud-coins');
+            if (coinEl) coinEl.textContent = v15Coins.toLocaleString();
+        }
+        if (this._cachedV15Squad !== this.squad.count) {
+            this._cachedV15Squad = this.squad.count;
+            var sqEl = document.getElementById('v15-hud-squad');
+            if (sqEl) sqEl.textContent = this.squad.count;
         }
 
         // 进度节点

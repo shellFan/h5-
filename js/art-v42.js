@@ -6,11 +6,11 @@
     var TAU = Math.PI * 2;
 
     var GATE_STYLES = {
-        add:  { kind: 'common', title: '增援', frame: 0x22C56A, dark: 0x11492B, light: 0x98FFD4, glass: 0x24D878 },
-        mul:  { kind: 'epic',   title: '倍增', frame: 0xA84DFF, dark: 0x451873, light: 0xF0C2FF, glass: 0xB85CFF },
-        buff: { kind: 'rare',   title: '火力', frame: 0x2692FF, dark: 0x113870, light: 0x9CE6FF, glass: 0x2EA8FF },
-        coin: { kind: 'epic',   title: '金币', frame: 0xF5A623, dark: 0x734206, light: 0xFFF09A, glass: 0xFFBE2E },
-        risk: { kind: 'danger', title: '高危', frame: 0xEB3B4E, dark: 0x6B1320, light: 0xFFA6B0, glass: 0xFF4757 }
+        add:  { kind: 'common', icon: 'helmet', title: '增援', frame: 0x26D96B, dark: 0x0C4A26, light: 0xB8FFCE, glass: 0x22E06B, hex: '#26D96B' },
+        mul:  { kind: 'epic',   icon: 'star',   title: '倍增', frame: 0xB44CFF, dark: 0x3F146B, light: 0xF2C6FF, glass: 0xC45CFF, hex: '#B44CFF' },
+        buff: { kind: 'rare',   icon: 'rifle',  title: '火力', frame: 0x2898FF, dark: 0x0E3A73, light: 0xACE8FF, glass: 0x2AA8FF, hex: '#2898FF' },
+        coin: { kind: 'epic',   icon: 'coin',   title: '金币', frame: 0xFFB824, dark: 0x6E3C04, light: 0xFFF29E, glass: 0xFFC533, hex: '#FFB824' },
+        risk: { kind: 'danger', icon: 'skull',  title: '高危', frame: 0xF03E4E, dark: 0x6B101C, light: 0xFFABB4, glass: 0xFF4757, hex: '#F03E4E' }
     };
 
     function clampNumber(value, low, high) {
@@ -131,6 +131,101 @@
         return String(value === undefined ? '' : value);
     }
 
+    function drawGateIcon(ctx, iconType, cx, cy) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.scale(1.32, 1.32);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.strokeStyle = 'rgba(0,0,0,0.52)';
+        ctx.lineWidth = 7;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        if (iconType === 'helmet') {
+            // Stylized military helmet + face silhouette (matches V15 +20 gate)
+            ctx.beginPath();
+            ctx.arc(0, -10, 48, Math.PI, 0, false);
+            ctx.lineTo(54, 4);
+            ctx.quadraticCurveTo(0, 14, -54, 4);
+            ctx.closePath();
+            ctx.stroke(); ctx.fill();
+            // Head/chin under helmet
+            ctx.beginPath();
+            ctx.arc(0, 14, 30, 0, Math.PI, false);
+            ctx.stroke(); ctx.fill();
+        } else if (iconType === 'rifle') {
+            // Stylized assault rifle angled diagonally (matches V15 +50% gate)
+            ctx.rotate(-0.42);
+            ctx.beginPath();
+            ctx.roundRect(-62, -11, 108, 22, 6);
+            ctx.stroke(); ctx.fill();
+            // Barrel
+            ctx.fillRect(42, -5, 28, 10);
+            // Magazine & stock
+            ctx.fillRect(-10, 8, 16, 26);
+            ctx.fillRect(-62, -6, 18, 26);
+            // Sight
+            ctx.fillRect(-14, -22, 24, 10);
+        } else if (iconType === 'coin') {
+            // Stylized gold coin with inner star (matches V15 +100 gate)
+            ctx.beginPath(); ctx.arc(0, 0, 48, 0, TAU); ctx.stroke(); ctx.fill();
+            ctx.fillStyle = '#FFE47A';
+            ctx.beginPath(); ctx.arc(0, 0, 38, 0, TAU); ctx.fill();
+            ctx.fillStyle = '#B87208';
+            ctx.beginPath();
+            for (var s = 0; s < 10; s++) {
+                var a = -Math.PI / 2 + s * Math.PI / 5;
+                var r = (s % 2 === 0) ? 24 : 11;
+                if (s === 0) ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+                else ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+            }
+            ctx.closePath(); ctx.fill();
+        } else if (iconType === 'star') {
+            ctx.beginPath();
+            for (var k = 0; k < 10; k++) {
+                var ak = -Math.PI / 2 + k * Math.PI / 5;
+                var rk = (k % 2 === 0) ? 48 : 22;
+                if (k === 0) ctx.moveTo(Math.cos(ak) * rk, Math.sin(ak) * rk);
+                else ctx.lineTo(Math.cos(ak) * rk, Math.sin(ak) * rk);
+            }
+            ctx.closePath(); ctx.stroke(); ctx.fill();
+        } else {
+            // Danger skull / warning diamond
+            ctx.beginPath(); ctx.arc(0, -6, 40, 0, TAU); ctx.stroke(); ctx.fill();
+            ctx.fillStyle = '#6B101C';
+            ctx.beginPath(); ctx.arc(-15, -8, 9, 0, TAU); ctx.arc(15, -8, 9, 0, TAU); ctx.fill();
+        }
+        ctx.restore();
+    }
+
+    function makeGateChevronTexture(style) {
+        var canvas = document.createElement('canvas');
+        canvas.width = 256; canvas.height = 256;
+        var ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, 256, 256);
+        var lightCss = '#' + new THREE.Color(style.light).getHexString();
+        var mainCss = '#' + new THREE.Color(style.glass).getHexString();
+        for (var i = 0; i < 3; i++) {
+            var y = 40 + i * 74;
+            var alpha = 1.0 - i * 0.18;
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.strokeStyle = mainCss;
+            ctx.lineWidth = 30;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(48, y + 40); ctx.lineTo(128, y); ctx.lineTo(208, y + 40);
+            ctx.stroke();
+            ctx.strokeStyle = lightCss;
+            ctx.lineWidth = 13;
+            ctx.stroke();
+            ctx.restore();
+        }
+        var tex = new THREE.CanvasTexture(canvas);
+        tex.needsUpdate = true;
+        return tex;
+    }
+
     function makeGateTextTexture(label, style) {
         var lines = [label];
         var buffMatch = label.match(/^([\u4e00-\u9fff]+)\s*([+×\-]\d+%?)$/);
@@ -142,7 +237,7 @@
         }
         var canvas = document.createElement('canvas');
         canvas.width = 512;
-        canvas.height = 384;
+        canvas.height = 512;
         var ctx = canvas.getContext('2d');
         var glow = new THREE.Color(style.light);
         var frame = new THREE.Color(style.dark);
@@ -151,79 +246,42 @@
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        var halo = ctx.createRadialGradient(256, 200, 20, 256, 200, 230);
-        halo.addColorStop(0, 'rgba(8, 16, 30, 0.56)');
-        halo.addColorStop(0.7, 'rgba(8, 16, 30, 0.22)');
-        halo.addColorStop(1, 'rgba(8, 16, 30, 0)');
-        ctx.fillStyle = halo;
-        ctx.fillRect(0, 0, 512, 384);
+        // V15: 上半部大号高对比度立体图标 (头盔 / 步枪 / 金币 / 星标)
+        drawGateIcon(ctx, style.icon || 'helmet', 256, 138);
 
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.lineJoin = 'round';
 
+        var mainText = lines.length > 1 ? lines[1] : label;
         if (lines.length > 1) {
-            var topText = lines[0];
-            var botText = lines[1];
-            var topSize = 76;
-            do {
-                ctx.font = '900 ' + topSize + 'px "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
-                if (ctx.measureText(topText).width <= 420) break;
-                topSize -= 4;
-            } while (topSize > 42);
+            // 小标题紧贴图标下方
+            ctx.font = '900 44px "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
             ctx.strokeStyle = frameCss;
-            ctx.lineWidth = Math.max(8, topSize * 0.14);
+            ctx.lineWidth = 9;
             ctx.fillStyle = glowCss;
-            ctx.strokeText(topText, 256, 106);
-            ctx.fillText(topText, 256, 106);
-
-            var botSize = 148;
-            do {
-                ctx.font = '900 ' + botSize + 'px "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
-                if (ctx.measureText(botText).width <= 440) break;
-                botSize -= 6;
-            } while (botSize > 64);
-            ctx.strokeStyle = frameCss;
-            ctx.lineWidth = Math.max(12, botSize * 0.11);
-            ctx.shadowColor = 'rgba(0,0,0,0.45)';
-            ctx.shadowOffsetY = 8;
-            ctx.shadowBlur = 10;
-            ctx.fillStyle = '#FFFFFF';
-            ctx.strokeText(botText, 256, 254);
-            ctx.fillText(botText, 256, 254);
-            ctx.shadowOffsetY = 0;
-            ctx.shadowBlur = 0;
-        } else {
-            var badgeW = 196, badgeH = 54, bx = 256 - badgeW / 2, by = 48;
-            ctx.fillStyle = 'rgba(10, 20, 36, 0.68)';
-            ctx.strokeStyle = glowCss;
-            ctx.lineWidth = 4;
-            if (ctx.roundRect) {
-                ctx.beginPath(); ctx.roundRect(bx, by, badgeW, badgeH, 27); ctx.fill(); ctx.stroke();
-            } else {
-                ctx.fillRect(bx, by, badgeW, badgeH); ctx.strokeRect(bx, by, badgeW, badgeH);
-            }
-            ctx.font = '800 32px "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
-            ctx.fillStyle = glowCss;
-            ctx.fillText(style.title, 256, by + badgeH / 2 + 1);
-
-            var fontSize = 158;
-            do {
-                ctx.font = '900 ' + fontSize + 'px "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
-                if (ctx.measureText(label).width <= 440) break;
-                fontSize -= 6;
-            } while (fontSize > 64);
-            ctx.strokeStyle = frameCss;
-            ctx.lineWidth = Math.max(12, fontSize * 0.11);
-            ctx.shadowColor = 'rgba(0,0,0,0.45)';
-            ctx.shadowOffsetY = 8;
-            ctx.shadowBlur = 10;
-            ctx.fillStyle = '#FFFFFF';
-            ctx.strokeText(label, 256, 232);
-            ctx.fillText(label, 256, 232);
-            ctx.shadowOffsetY = 0;
-            ctx.shadowBlur = 0;
+            ctx.strokeText(lines[0], 256, 232);
+            ctx.fillText(lines[0], 256, 232);
         }
+
+        // 超大加粗白字数值 (高对比黑绿/黑蓝厚描边 + 立体投影)
+        var fontSize = lines.length > 1 ? 150 : 172;
+        do {
+            ctx.font = '900 ' + fontSize + 'px "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
+            if (ctx.measureText(mainText).width <= 452) break;
+            fontSize -= 6;
+        } while (fontSize > 68);
+        var textY = lines.length > 1 ? 356 : 338;
+        ctx.strokeStyle = frameCss;
+        ctx.lineWidth = Math.max(18, fontSize * 0.14);
+        ctx.shadowColor = 'rgba(0,0,0,0.58)';
+        ctx.shadowOffsetY = 10;
+        ctx.shadowBlur = 12;
+        ctx.strokeText(mainText, 256, textY);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText(mainText, 256, textY);
+        ctx.shadowOffsetY = 0;
+        ctx.shadowBlur = 0;
 
         var texture = new THREE.CanvasTexture(canvas);
         texture.needsUpdate = true;
@@ -297,13 +355,17 @@
         frameParts.push({ geo: applyTransform(roundedRectGeometry(0.24, 0.10, 0.04, 0.26), -postX, 1.78, 0), color: steelDark });
         frameParts.push({ geo: applyTransform(roundedRectGeometry(0.24, 0.10, 0.04, 0.26),  postX, 1.78, 0), color: steelDark });
 
+        // V15: 底座黄黑战术防撞块 + 顶部中央发光状态指示灯
+        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.18, 0.14, 0.34), -postX, 0.18, 0.02), color: 0xF5B82E });
+        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.18, 0.14, 0.34),  postX, 0.18, 0.02), color: 0xF5B82E });
+        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.38, 0.14, 0.16), 0, 1.88, 0.02), color: style.light });
         trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.14, 0.11, 0.14), -postX, 1.88, 0), color: 0xFFB830 });
         trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.14, 0.11, 0.14),  postX, 1.88, 0), color: 0xFFB830 });
         var insetX = width * 0.5 - 0.145;
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.036, 1.44, 0.014, 0.035), -insetX, 0.92, -0.125), color: style.light });
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.036, 1.44, 0.014, 0.035),  insetX, 0.92, -0.125), color: style.light });
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.28, 0.036, 0.014, 0.035), 0, 1.63, -0.125), color: style.light });
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.28, 0.036, 0.014, 0.035), 0, 0.21, -0.125), color: style.light });
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.05, 1.46, 0.014, 0.045), -insetX, 0.92, 0.08), color: style.light });
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.05, 1.46, 0.014, 0.045),  insetX, 0.92, 0.08), color: style.light });
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.28, 0.05, 0.014, 0.045), 0, 1.63, 0.08), color: style.light });
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.28, 0.05, 0.014, 0.045), 0, 0.21, 0.08), color: style.light });
 
         var frameMat = preparePbr(new THREE.MeshStandardMaterial({
             vertexColors: true,
@@ -326,19 +388,35 @@
             color: 0xFFFFFF,
             map: glassTexture,
             transparent: true,
-            opacity: 0.84,
-            roughness: 0.14,
+            opacity: 0.90,
+            roughness: 0.10,
             metalness: 0.02,
-            clearcoat: 0.65,
-            clearcoatRoughness: 0.18,
+            clearcoat: 0.85,
+            clearcoatRoughness: 0.14,
             emissive: new THREE.Color(style.glass),
-            emissiveIntensity: 0.36,
+            emissiveIntensity: 0.72,
             side: THREE.DoubleSide,
             depthWrite: false
         }));
-        var glass = new THREE.Mesh(new THREE.PlaneGeometry(width - 0.28, 1.42), glassMat);
-        glass.position.set(0, 0.92, -0.105);
+        var glass = new THREE.Mesh(new THREE.PlaneGeometry(width - 0.26, 1.44), glassMat);
+        glass.position.set(0, 0.92, 0.02);
         group.add(glass);
+
+        // V15: 路面三连发光引导箭头 (直指增益门, 强化三跑道视觉牵引!)
+        var chevronTex = makeGateChevronTexture(style);
+        var chevronMat = new THREE.MeshBasicMaterial({
+            map: chevronTex,
+            transparent: true,
+            opacity: 0.88,
+            depthWrite: false,
+            toneMapped: false,
+            side: THREE.DoubleSide
+        });
+        var chevronMesh = new THREE.Mesh(new THREE.PlaneGeometry(width * 0.72, 1.45), chevronMat);
+        chevronMesh.rotation.x = -Math.PI * 0.5;
+        chevronMesh.position.set(0, 0.042, 1.15);
+        chevronMesh.renderOrder = 2;
+        group.add(chevronMesh);
 
         var glowPlane = new THREE.PlaneGeometry(Math.min(1.88, width + 0.04), 0.56);
         var ringGeo = new THREE.RingGeometry(width * 0.28, width * 0.44, 28);
@@ -385,22 +463,23 @@
             fog: false
         });
         var label = new THREE.Sprite(labelMat);
-        var labelWidth = width - 0.22;
-        var labelHeight = labelWidth * labelTexture.image.height / labelTexture.image.width;
+        var labelWidth = width - 0.16;
+        var labelHeight = labelWidth * (labelTexture.image.height / labelTexture.image.width) * 0.88;
         label.scale.set(labelWidth, labelHeight, 1);
-        label.position.set(0, 0.96, -0.04);
-        label.renderOrder = 3;
+        label.position.set(0, 0.94, 0.12);
+        label.renderOrder = 4;
         group.add(label);
 
-        group.userData.artSource = 'V42Art.createGateModel/' + style.kind + '/procedural-beveled-PBR';
+        group.userData.artSource = 'V42Art.createGateModel/' + style.kind + '/V15-beveled-glow-chevron';
         group.userData.qualityKind = style.kind;
         group.userData.label = label;
-        group.userData.labelBaseY = 1.03;
+        group.userData.labelBaseY = 0.94;
         group.userData.beamMat = beamMat; // V13: 光束脉动(gates.update)
+        group.userData.chevronMat = chevronMat; // V15: 地面引导箭头脉动
         group.userData.glass = glass;
         group.userData.glow = ground;
         group.userData.ring = ground;
-        group.userData.drawCalls = 5;
+        group.userData.drawCalls = 6;
         group.userData.ownsResources = true;
         return group;
     };

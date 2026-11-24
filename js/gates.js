@@ -137,11 +137,15 @@ class GateSystem {
                         glass.material.opacity = 0.45 + intensity * 0.3;
                     }
                 }
-                // V13: 稀有度光束呼吸脉动(相位取门z; 靠近时增强 — 复用上面的 intensity)
+                // V13: 稀有度光束呼吸脉动 + V15: 地面引导箭头流动脉动
                 const beam = g.model.userData.beamMat;
                 if (beam) {
                     const nearBoost = dist < 6 ? (1 - dist / 6) * 0.22 : 0;
-                    beam.opacity = 0.26 + Math.sin(time * 3 + g.z * 1.7) * 0.08 + nearBoost;
+                    beam.opacity = 0.28 + Math.sin(time * 3 + g.z * 1.7) * 0.08 + nearBoost;
+                }
+                const chevron = g.model.userData.chevronMat;
+                if (chevron) {
+                    chevron.opacity = 0.72 + Math.sin(time * 5.2 + g.x) * 0.22;
                 }
             }
 

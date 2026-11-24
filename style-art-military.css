@@ -397,58 +397,211 @@
     background:linear-gradient(90deg,#3ec962,#ffe066) !important;
 }
 
-/* 战斗 HUD: 全面统一为质感深军绿钢蓝磨砂玻璃 + 亮金/纯白超高可读性(彻底修复暗字与色系割裂) */
-#game-container.art-military #progress-area {
-    background:linear-gradient(160deg,rgba(24,46,35,0.92),rgba(14,29,22,0.92));
-    border:1.5px solid #75a36a;
-    border-radius:13px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.38),inset 0 1px 0 rgba(255,255,255,0.18);
+/* V15 商业级玩具军事战斗 HUD: 单簇精简顶栏(左暂停 | 中关卡+鲜绿进度条 | 右金币+人数), 彻底清除旧蓝紫覆盖 */
+#game-container.art-military #top-bar,
+#game-container.art-military.v42-ui #top-bar {
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:7px;
+    padding:max(8px, env(safe-area-inset-top)) 10px 3px;
 }
-#game-container.art-military #level-name { color:#ffffff; text-shadow:0 1px 2px rgba(0,0,0,0.65); font-weight:900; }
-#game-container.art-military .v42-level-subtitle { color:#b6d9ba; }
-#game-container.art-military #avatar-box {
-    background:linear-gradient(160deg,#355c3c,#1b3322);
-    border:2px solid #ffd24c;
-    box-shadow:0 3px 10px rgba(0,0,0,0.42);
+#game-container.art-military #avatar-box,
+#game-container.art-military.v42-ui #avatar-box {
+    display:none;
 }
-#game-container.art-military #avatar-icon { background-image:url('assets/game/ui/avatar.png'); background-size:contain; }
-#game-container.art-military #progress-bar-container {
-    background:#0e1d15;
-    border:1px solid #598258;
+#game-container.art-military #btn-pause,
+#game-container.art-military.v42-ui #btn-pause {
+    order:1;
+    width:40px;
+    height:40px;
+    min-width:40px;
+    border-radius:11px;
+    background:linear-gradient(180deg,#6E8E4A 0%,#49682E 60%,#354E20 100%);
+    border:2px solid #C8DE9A;
+    box-shadow:0 3px 0 #1E2E12, 0 5px 10px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.45);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
 }
-#game-container.art-military #progress-bar-fill {
-    background:linear-gradient(90deg,#34c759,#a7f268);
+.v15-pause-bars { display:flex; gap:5px; align-items:center; justify-content:center; }
+.v15-pause-bars i {
+    display:block; width:5px; height:16px; border-radius:2px;
+    background:#FFF7D6; box-shadow:0 1px 0 rgba(0,0,0,0.45);
 }
-#game-container.art-military .stat-row,
-#game-container.art-military #stat-row-count,
-#game-container.art-military #stat-row-damage,
-#game-container.art-military #stat-row-firerate {
-    background:linear-gradient(180deg,rgba(24,46,35,0.92),rgba(14,29,22,0.92));
-    border:1.5px solid #6b9666;
-    border-radius:10px;
-    box-shadow:0 3px 8px rgba(0,0,0,0.34),inset 0 1px 0 rgba(255,255,255,0.16);
+#game-container.art-military #progress-area,
+#game-container.art-military.v42-ui #progress-area {
+    order:2;
+    flex:1;
+    min-width:0;
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
 }
-#game-container.art-military .stat-label { color:#c6e2c9; font-weight:700; }
-#game-container.art-military .stat-val,
-#game-container.art-military #stat-count,
-#game-container.art-military #stat-damage,
-#game-container.art-military #stat-firerate { color:#ffe26a; font-weight:900; text-shadow:0 1px 2px rgba(0,0,0,0.6); }
-#game-container.art-military #btn-pause {
-    background:linear-gradient(180deg,#32593e,#1c3624);
-    border:1.5px solid #82b076;
-    box-shadow:0 3px 0 #102016;
+#game-container.art-military #level-name,
+#game-container.art-military.v42-ui #level-name {
+    display:inline-block;
+    padding:3px 16px;
+    border-radius:9px;
+    background:linear-gradient(180deg,#5C6C44 0%,#3B492C 100%);
+    border:2px solid #B5C78E;
+    box-shadow:0 2px 0 #1C2614, 0 4px 8px rgba(0,0,0,0.35);
+    color:#FFF6D1;
+    font-size:14px;
+    font-weight:900;
+    letter-spacing:1px;
+    text-shadow:0 1.5px 0 #1A2412;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:100%;
 }
-.art-control-icon { width:26px; height:26px; object-fit:contain; }
-#game-container.art-military #boss-bar-container {
-    background:linear-gradient(160deg,rgba(62,22,22,0.94),rgba(34,12,14,0.94));
-    border:1.5px solid #eb5b5b;
+#game-container.art-military .v42-level-subtitle { display:none; }
+#game-container.art-military #progress-bar-container,
+#game-container.art-military.v42-ui #progress-bar-container {
+    position:relative;
+    width:92%;
+    height:17px;
+    border-radius:99px;
+    background:linear-gradient(180deg,#1B2B1C,#283E26);
+    border:2px solid #8DB36B;
+    box-shadow:0 2px 6px rgba(0,0,0,0.4), inset 0 2px 4px rgba(0,0,0,0.55);
+    overflow:visible;
 }
-#game-container.art-military #boss-name { color:#ffdede; }
-#game-container.art-military .v42-boss-phase { color:#ffba75; }
+#game-container.art-military #progress-bar-fill,
+#game-container.art-military.v42-ui #progress-bar-fill {
+    height:100%;
+    border-radius:99px;
+    background:linear-gradient(180deg,#8BFF5A 0%,#3CD64C 55%,#22A836 100%);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,0.45);
+}
+#v15-progress-pct {
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+    font-weight:900;
+    color:#FFFFFF;
+    text-shadow:0 1px 2px rgba(0,0,0,0.85);
+    pointer-events:none;
+    z-index:3;
+}
+.v15-boss-skull {
+    position:absolute;
+    right:-10px;
+    top:50%;
+    transform:translateY(-50%);
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:linear-gradient(180deg,#FF5E5E,#C62020);
+    border:2px solid #FFE2A8;
+    box-shadow:0 2px 5px rgba(0,0,0,0.45);
+    color:#FFFFFF;
+    font-size:12px;
+    line-height:18px;
+    text-align:center;
+    z-index:4;
+}
+#game-container.art-military #progress-nodes { display:none; }
+#game-container.art-military #progress-flag .flag-pole { background:#E6F2C2; }
+#game-container.art-military #progress-flag .flag-cloth { background:#5CE848; border-color:#2A7A20; }
+#game-container.art-military #btn-refresh-gates,
+#game-container.art-military.v42-ui #btn-refresh-gates {
+    background:linear-gradient(180deg,#5C803E 0%,#385422 100%) !important;
+    border:2px solid #FFD85E !important;
+    box-shadow:0 3px 0 #1B2C10, 0 5px 12px rgba(0,0,0,0.42) !important;
+    color:#FFF7D1 !important;
+}
+#v15-hud-right {
+    order:3;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    flex-shrink:0;
+}
+.v15-pill {
+    display:flex;
+    align-items:center;
+    gap:5px;
+    min-width:74px;
+    height:23px;
+    padding:0 9px 0 4px;
+    border-radius:99px;
+    border:1.8px solid #A8C77C;
+    background:linear-gradient(180deg,#4A6334 0%,#2E421F 100%);
+    box-shadow:0 2px 0 #18250F, 0 3px 6px rgba(0,0,0,0.35);
+    color:#FFFFFF;
+    font-size:13px;
+    font-weight:900;
+    text-shadow:0 1px 2px rgba(0,0,0,0.7);
+}
+.v15-pill-coin {
+    border-color:#FFD85E;
+    background:linear-gradient(180deg,#6E5A24 0%,#453610 100%);
+    color:#FFF3B8;
+}
+.v15-pill-ico { width:18px; height:18px; object-fit:contain; flex-shrink:0; }
+
+/* 彻底覆盖 style-v120.css 遗留的蓝紫色 #stats-panel, 改为超薄军工微胶囊 */
+#game-container.art-military #stats-panel,
+#game-container.art-military.v42-ui #stats-panel {
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+    gap:5px;
+    padding:2px 12px 0;
+    margin:0;
+    background:transparent;
+    border:none;
+    box-shadow:none;
+}
+#game-container.art-military #stats-panel .stat-row,
+#game-container.art-military.v42-ui #stats-panel .stat-row,
+#game-container.art-military.v42-ui #stats-panel #stat-row-count,
+#game-container.art-military.v42-ui #stats-panel #stat-row-damage,
+#game-container.art-military.v42-ui #stats-panel #stat-row-firerate {
+    flex:0 1 auto;
+    padding:2px 8px;
+    min-height:20px;
+    background:linear-gradient(180deg,rgba(46,72,38,0.88),rgba(28,46,24,0.90)) !important;
+    border:1.5px solid #7CA660 !important;
+    border-radius:99px !important;
+    box-shadow:0 2px 5px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.18) !important;
+    gap:4px;
+}
+#game-container.art-military.v42-ui #stats-panel .stat-icon { width:12px; height:12px; }
+#game-container.art-military.v42-ui #stats-panel .stat-label { color:#D3EBC8 !important; font-size:10px; font-weight:800; }
+#game-container.art-military.v42-ui #stats-panel .stat-val,
+#game-container.art-military.v42-ui #stats-panel #stat-count,
+#game-container.art-military.v42-ui #stats-panel #stat-damage,
+#game-container.art-military.v42-ui #stats-panel #stat-firerate {
+    color:#FFE46B !important;
+    font-size:12px;
+    font-weight:900;
+    text-shadow:0 1px 2px rgba(0,0,0,0.7);
+}
+.art-control-icon { width:24px; height:24px; object-fit:contain; }
+#game-container.art-military #boss-bar-container,
+#game-container.art-military.v42-ui #boss-bar-container {
+    background:linear-gradient(160deg,rgba(68,20,24,0.94),rgba(36,10,14,0.94));
+    border:2px solid #F25C5C;
+    border-radius:12px;
+}
+#game-container.art-military #boss-name { color:#FFE4E4; font-weight:900; }
+#game-container.art-military .v42-boss-phase { color:#FFC67A; }
 #game-container.art-military .v42-wave-banner {
-    background:linear-gradient(90deg,rgba(26,52,36,0.94),rgba(42,74,48,0.94));
-    color:#ffe47a;
-    border:1.5px solid #ffd24c;
+    background:linear-gradient(90deg,rgba(36,64,34,0.94),rgba(54,88,44,0.94));
+    color:#FFE47A;
+    border:1.5px solid #FFD24C;
 }
 
 /* 图鉴与武器展示 */
