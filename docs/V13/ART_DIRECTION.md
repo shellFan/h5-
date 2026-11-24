@@ -1,7 +1,6 @@
-# V13 · 美术方向增量 (ART_DIRECTION — V13 Delta)
+# V13 · 美术方向增量 (ART_DIRECTION — V13 Delta · 历史档案)
 
-> 最高依据仍是 `docs/art/ART_DIRECTION.md`（ Premium Stylized 3D Cartoon + 蓝色科技战场）。
-> 本文只记录 **V13 在其上的增量**，两者冲突时以 docs/art 为准再行修订。
+> **V14.1 更新说明**：最高视觉依据已升级为 `docs/art/ART_DIRECTION.md`（V14.1 **Premium Stylized 3D Toy Military Cartoon** 玩具军事卡通风）。本文保留 V13 的 10 关主题键映射与武器稀有度色阶数据结构说明，外观表现以 V14.1 为准。
 
 ## V13 新增：关卡视觉主题系统
 

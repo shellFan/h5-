@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-24T07:55:00.000Z",
+  "artDirection": "Premium Stylized 3D Toy Military Cartoon (docs/art/ART_DIRECTION.md V14.1)",
+  "generatorStatus": {
+    "nanoBananaApiConfigured": false,
+    "geminiApiKeyConfigured": false,
+    "blenderInstalled": false,
+    "pythonPillowAvailable": false,
+    "note": "All 90 local source images (86 unique) are already processed into assets/game/. Items below are net-new bespoke art or 3D GLB models queued for future external generation/modeling; runtime currently uses verified military GLB variants and procedural PBR textures without fake placeholders."
+  },
+  "queue": [
+    {
+      "asset_id": "ui_game_logo_badge_v141",
+      "category": "ui",
+      "reference_image": "docs/art-assets/screenshots/after/home-390x844.png",
+      "prompt": "Stylized 3D toy military mobile game emblem logo crest without baked text: metallic olive-green shield badge, golden beveled star crest, crossed toy rifles silhouette, sunlit cartoon PBR finish, clean studio lighting",
+      "negative_prompt": "text, letters, garbled Chinese characters, cyberpunk neon, dark messy background, watermark, low poly",
+      "aspect_ratio": "16:9",
+      "output_size": "1024x576",
+      "transparency_required": true,
+      "target_path": "assets/game/ui/logo-crest.png",
+      "status": "pending_external_generator"
+    },
+    {
+      "asset_id": "ui_loading_splash_base_v141",
+      "category": "ui",
+      "reference_image": "assets/game/maps/sunny.jpg",
+      "prompt": "Vertical 9:16 stylized 3D toy military cartoon loading splash art: sunny military base three-lane concrete runway, cute green plastic helmet soldiers advancing toward colorful cartoon monsters and giant mecha boss, bright sky, crisp shadows, no text",
+      "negative_prompt": "text, UI buttons, dark cyberpunk corridor, photorealistic gore, watermark",
+      "aspect_ratio": "9:16",
+      "output_size": "768x1366",
+      "transparency_required": false,
+      "target_path": "assets/game/ui/loading-splash.webp",
+      "status": "pending_external_generator"
+    },
+    {
+      "asset_id": "model_boss_mecha_overlord_v141",
+      "category": "3d_model_boss",
+      "reference_image": "assets/game/catalog/armored_mecha_monster_game_asset_96179c59.webp",
+      "prompt": "Rigged low-poly stylized 3D giant armored mecha boss GLB (<=2500 tris, 2 LODs, embedded 4x4 PBR + ORM atlas, glowing furnace core and visor, separated Head/Body/Arms/Legs parts matching EnemyModelLoader contract)",
+      "negative_prompt": "static 2D image, high-poly >5000 tris, unrigged single mesh, missing ORM",
+      "aspect_ratio": "1:1",
+      "output_size": "glb_under_450kb",
+      "transparency_required": false,
+      "target_path": "assets/game/models/bosses/overlord/overlord.glb",
+      "status": "pending_blender_modeling"
+    },
+    {
+      "asset_id": "model_weapons_military_3d_set_v141",
+      "category": "3d_model_weapon",
+      "reference_image": "assets/game/weapons/rifle.png",
+      "prompt": "Set of 10 chunky stylized 3D toy-military weapon GLBs (rifle, smg, shotgun, sniper, mg, rocket, laser, plasma, gatling, railgun), <=450 tris each, shared brushed gunmetal + olive + gold PBR atlas, aligned to SoldierModelLoader muzzleMatrix",
+      "negative_prompt": "realistic gritty rust, >1000 tris per weapon, unaligned pivot",
+      "aspect_ratio": "1:1",
+      "output_size": "glb_under_80kb_each",
+      "transparency_required": false,
+      "target_path": "assets/game/models/weapons/",
+      "status": "pending_blender_modeling"
+    },
+    {
+      "asset_id": "env_military_base_prop_kit_v141",
+      "category": "environment",
+      "reference_image": "assets/game/maps/sunny.jpg",
+      "prompt": "Stylized 3D toy military base modular prop sheet on neutral background: radar dish tower, fuel tanks, sandbag bunker, concrete blast wall, corrugated barracks, sunlit PBR cartoon shading",
+      "negative_prompt": "cyberpunk neon, dark gloomy lighting, text labels, noisy ground clutter",
+      "aspect_ratio": "16:9",
+      "output_size": "1024x576",
+      "transparency_required": true,
+      "target_path": "assets/game/maps/props-sheet.webp",
+      "status": "pending_external_generator"
+    }
+  ]
+}

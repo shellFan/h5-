@@ -1,7 +1,6 @@
-# V13 · UI 设计系统增量 (UI_DESIGN_SYSTEM — V13 Delta)
+# V13 · UI 设计系统增量 (UI_DESIGN_SYSTEM — V13 Delta · 动效与无障碍基线)
 
-> 基线：`docs/art/UI_DESIGN_SYSTEM.md` + `style-v120.css` 设计令牌。
-> V13 以 **style-v130.css**（末层）追加，不覆盖前层规则。
+> **V14.1 更新说明**：视觉主题令牌已全面升级为 `style-art-military.css` 的深军绿暖金玩具战争体系（详见 `docs/art/ART_DIRECTION.md`）。本文的动效时长令牌（`--v13-dur-*`）、减少动效开关、排行榜空态/错态规范继续生效。
 
 ## 1. 动效令牌（全页面统一节奏，参照 game-feel 技能）
 
