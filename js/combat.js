@@ -47,51 +47,48 @@ class CombatSystem {
         }
     }
 
-    /** V12视觉: 程序化曳光弹贴图 — 白热弹头 + 金色长尾; 实测(flipY=true): 画布顶部=平面+Y=弹道前方 */
+    /** V15-ART-003: 锐利商业级曳光弹贴图 — 炽白高亮细长弹芯 + 金橙渐变尾迹(告别钝黄色水滴感) */
     _makeTracerTexture() {
         var c = document.createElement('canvas');
         c.width = 64; c.height = 256;
         var ctx = c.getContext('2d');
-        // V14: 曳光贴图中性化(白芯白尾) — 色相由实例色按武器类提供, 单drawCall实现8种弹道色
-        var tail = ctx.createLinearGradient(0, 52, 0, 256);
-        tail.addColorStop(0, 'rgba(255,255,255,0.95)');
-        tail.addColorStop(0.35, 'rgba(255,252,244,0.62)');
-        tail.addColorStop(1, 'rgba(255,248,235,0)');
+        ctx.clearRect(0, 0, 64, 256);
+        // 外层纤细金橙光晕尾迹
+        var tail = ctx.createLinearGradient(0, 18, 0, 252);
+        tail.addColorStop(0.0, 'rgba(255,250,210,1.0)');
+        tail.addColorStop(0.18, 'rgba(255,205,70,0.92)');
+        tail.addColorStop(0.55, 'rgba(255,145,25,0.48)');
+        tail.addColorStop(1.0, 'rgba(255,110,10,0)');
         ctx.fillStyle = tail;
         ctx.beginPath();
-        ctx.moveTo(10, 52);
-        ctx.quadraticCurveTo(14, 130, 27, 252);
-        ctx.lineTo(37, 252);
-        ctx.quadraticCurveTo(50, 130, 54, 52);
+        ctx.moveTo(22, 24);
+        ctx.lineTo(30, 252);
+        ctx.lineTo(34, 252);
+        ctx.lineTo(42, 24);
+        ctx.quadraticCurveTo(32, 4, 22, 24);
         ctx.closePath();
         ctx.fill();
-        // 内层亮芯(更窄更亮)
-        var core = ctx.createLinearGradient(0, 52, 0, 220);
-        core.addColorStop(0, 'rgba(255,255,255,0.98)');
-        core.addColorStop(1, 'rgba(255,252,240,0)');
+        // 内层炽白锐利弹芯 (高对比度)
+        var core = ctx.createLinearGradient(0, 14, 0, 175);
+        core.addColorStop(0.0, '#FFFFFF');
+        core.addColorStop(0.35, 'rgba(255,255,245,0.96)');
+        core.addColorStop(1.0, 'rgba(255,240,180,0)');
         ctx.fillStyle = core;
         ctx.beginPath();
-        ctx.moveTo(20, 52);
-        ctx.quadraticCurveTo(24, 130, 30, 218);
-        ctx.lineTo(34, 218);
-        ctx.quadraticCurveTo(40, 130, 44, 52);
+        ctx.moveTo(27, 22);
+        ctx.lineTo(31, 175);
+        ctx.lineTo(33, 175);
+        ctx.lineTo(37, 22);
+        ctx.quadraticCurveTo(32, 8, 27, 22);
         ctx.closePath();
         ctx.fill();
-        // 弹头亮核(径向: 白→金→透明), 画布顶部
-        var head = ctx.createRadialGradient(32, 40, 2, 32, 40, 26);
-        head.addColorStop(0, '#FFFFFF');
-        head.addColorStop(0.25, '#F2F7FF');
-        head.addColorStop(0.55, 'rgba(255,190,50,0.85)');
-        head.addColorStop(1, 'rgba(255,140,20,0)');
-        ctx.fillStyle = head;
-        ctx.beginPath();
-        ctx.ellipse(32, 40, 22, 30, 0, 0, Math.PI * 2);
-        ctx.fill();
-        // 弹头中心炽白小核
-        ctx.fillStyle = '#FFFFFF';
-        ctx.beginPath();
-        ctx.ellipse(32, 38, 6, 10, 0, 0, Math.PI * 2);
-        ctx.fill();
+        // 弹头前端爆发微光
+        var tip = ctx.createRadialGradient(32, 24, 2, 32, 24, 20);
+        tip.addColorStop(0, 'rgba(255,255,255,1)');
+        tip.addColorStop(0.45, 'rgba(255,235,140,0.85)');
+        tip.addColorStop(1, 'rgba(255,160,30,0)');
+        ctx.fillStyle = tip;
+        ctx.beginPath(); ctx.arc(32, 24, 20, 0, Math.PI * 2); ctx.fill();
         this._bulletTex = new THREE.CanvasTexture(c);
         if (this._bulletMat) {
             this._bulletMat.map = this._bulletTex;

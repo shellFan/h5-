@@ -34,27 +34,84 @@ var ArtUI = {
         var hudAvatar = document.querySelector('#avatar-box img');
         if (hudAvatar) hudAvatar.src = 'assets/game/ui/avatar.png';
         if (panel) {
-            // V15-ART-002: 参照 ChatGPT 02 正式首页设计稿重构开放式阳光军营大厅 (无厚重网页大卡片!)
+            // V15-ART-003: 真实美术资产驱动的商业级军事营地首页 (独立营地背景 + 金属徽章Logo + 统一3兵种主角团 + 单行关卡条 + 5格底栏)
             panel.classList.add('v15-home-lobby');
             var title = panel.querySelector('.game-title');
-            if (title && !panel.querySelector('.v15-logo-sub')) {
-                title.insertAdjacentHTML('afterend', '<div class="v15-logo-sub">INFLATING SQUAD</div>');
+            if (title && !panel.querySelector('.v15-logo-img')) {
+                title.innerHTML = '<img class="v15-logo-img" src="assets/game/v15/home_logo.png" alt="膨胀小队" draggable="false">';
             }
             var hero = document.createElement('div');
             hero.className = 'art-home-hero v15-camp-stage';
             hero.innerHTML =
-                '<div class="v15-squad-trio">' +
-                    this.image('characters/energy_portrait.png', '重装机枪兵', 'v15-hero-side v15-hero-left') +
-                    this.image('characters/soldier_portrait.png', '绿色玩具步兵', 'art-hero-soldier v15-hero-center') +
-                    this.image('characters/sniper_portrait.png', '战术火箭兵', 'v15-hero-side v15-hero-right') +
+                '<div class="v15-side-col v15-side-left">' +
+                    '<button type="button" class="v15-side-btn" data-trigger="v60-btn-map">' + this.icon('shield') + '<span>地图</span></button>' +
+                    '<button type="button" class="v15-side-btn" data-trigger="v60-btn-tech">' + this.icon('star') + '<span>科技</span></button>' +
+                    '<button type="button" class="v15-side-btn" data-trigger="v60-btn-daily">' + this.icon('coin') + '<span>每日</span></button>' +
+                    '<button type="button" class="v15-side-btn" data-trigger="v60-btn-challenge">' + this.icon('medal') + '<span>挑战</span></button>' +
+                '</div>' +
+                '<div class="v15-hero-center-wrap">' +
+                    '<div class="v15-hero-shadow"></div>' +
+                    '<img class="v15-squad-hero-img" src="assets/game/v15/home_squad_hero.png" alt="膨胀小队主角团" draggable="false">' +
+                '</div>' +
+                '<div class="v15-side-col v15-side-right">' +
+                    '<button type="button" class="v15-side-btn" data-trigger="v60-btn-ach">' + this.icon('trophy') + '<span>成就</span></button>' +
+                    '<button type="button" class="v15-side-btn" data-trigger="v60-btn-codex">' + this.icon('medal') + '<span>图鉴</span></button>' +
+                    '<button type="button" class="v15-side-btn" data-trigger="v60-btn-set">' + this.icon('settings') + '<span>设置</span></button>' +
                 '</div>';
-            var logoSub = panel.querySelector('.v15-logo-sub') || title;
-            if (logoSub) logoSub.insertAdjacentElement('afterend', hero);
+            if (title) title.insertAdjacentElement('afterend', hero);
+            hero.addEventListener('click', function(ev) {
+                var sb = ev.target.closest('.v15-side-btn');
+                if (!sb) return;
+                var tid = sb.getAttribute('data-trigger');
+                var orig = tid && document.getElementById(tid);
+                if (orig) orig.click();
+            });
+
+            // 精简单一当前关卡面板 (绑定真实 #level-select 关卡按钮, 不在首页堆叠10个数字方格!)
             var start = document.getElementById('btn-start');
+            if (start && !document.getElementById('v15-stage-bar')) {
+                var stageBar = document.createElement('div');
+                stageBar.id = 'v15-stage-bar';
+                stageBar.innerHTML =
+                    '<img class="v15-stage-thumb" src="assets/game/v15/home_military_camp_bg.jpg" alt="关卡预览" draggable="false">' +
+                    '<div class="v15-stage-mid">' +
+                        '<div class="v15-stage-kicker">当前关卡</div>' +
+                        '<div class="v15-stage-ctrl">' +
+                            '<button type="button" class="v15-stage-arrow" id="v15-stage-prev" aria-label="上一关">◀</button>' +
+                            '<span id="v15-stage-label">第 1 关</span>' +
+                            '<button type="button" class="v15-stage-arrow" id="v15-stage-next" aria-label="下一关">▶</button>' +
+                        '</div>' +
+                    '</div>' +
+                    '<button type="button" class="v15-stage-map-btn" id="v15-stage-map-open">' + this.icon('chest') + '<span>选关</span></button>';
+                start.insertAdjacentElement('beforebegin', stageBar);
+
+                var syncStageLabel = function() {
+                    var sel = document.querySelector('#level-select button.selected');
+                    var lbl = document.getElementById('v15-stage-label');
+                    if (lbl && sel) lbl.textContent = '第 ' + sel.textContent.trim() + ' 关';
+                };
+                var stepStage = function(delta) {
+                    var btns = Array.prototype.slice.call(document.querySelectorAll('#level-select button'));
+                    if (!btns.length) return;
+                    var idx = btns.findIndex(function(b) { return b.classList.contains('selected'); });
+                    if (idx < 0) idx = 0;
+                    var next = Math.max(0, Math.min(btns.length - 1, idx + delta));
+                    if (btns[next] && !btns[next].disabled) btns[next].click();
+                    setTimeout(syncStageLabel, 20);
+                };
+                document.getElementById('v15-stage-prev').onclick = function() { stepStage(-1); };
+                document.getElementById('v15-stage-next').onclick = function() { stepStage(1); };
+                document.getElementById('v15-stage-map-open').onclick = function() {
+                    var mb = document.getElementById('v60-btn-map'); if (mb) mb.click();
+                };
+                setTimeout(syncStageLabel, 120);
+            }
+
             if (start) start.innerHTML = '<span class="v15-start-crosshair">◎</span><span>开始战斗</span><span class="art-arrow">»</span>';
             var growth = document.getElementById('v60-home-growth');
             if (growth && title) panel.insertBefore(growth, title);
-            // 底部 5 格商业级军事主导航栏 (绑定真实原业务入口, 不新增虚假功能)
+
+            // 底部 5 格商业级军事主导航栏 (绑定真实原业务入口)
             if (!document.getElementById('v15-bottom-dock')) {
                 var dock = document.createElement('div');
                 dock.id = 'v15-bottom-dock';
