@@ -16,24 +16,24 @@ bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
 random.seed(1504)
 
-# V15 Toy Military PBR Palette (linear RGB, roughness, metallic)
+# V15-ART-005 Matte Toy Military PBR Palette (clear cloth/leather/metal separation, soft matte helmet)
 PALETTE = [
-    ('helmet',   (0.115, 0.235, 0.068), 0.34, 0.14),  # 0: glossy olive toy helmet
-    ('helm_rim', (0.065, 0.140, 0.042), 0.42, 0.18),  # 1: darker helmet rim / olive trim
-    ('cloth',    (0.145, 0.255, 0.088), 0.72, 0.00),  # 2: olive tactical jacket
-    ('trousers', (0.100, 0.175, 0.068), 0.78, 0.00),  # 3: darker olive combat trousers
-    ('skin',     (0.920, 0.560, 0.330), 0.65, 0.00),  # 4: warm cartoon skin
-    ('cheek',    (0.880, 0.340, 0.240), 0.72, 0.00),  # 5: warm rosy cheek
-    ('ivory',    (0.960, 0.955, 0.890), 0.44, 0.00),  # 6: crisp star / chevron / eye white
-    ('ink',      (0.025, 0.032, 0.042), 0.62, 0.00),  # 7: dark pupils / bore / vents
-    ('pack',     (0.350, 0.265, 0.125), 0.76, 0.00),  # 8: warm khaki-tan canvas rucksack
-    ('pack_hi',  (0.460, 0.365, 0.185), 0.70, 0.00),  # 9: padded flap / bedroll tan
-    ('strap',    (0.145, 0.105, 0.055), 0.82, 0.00),  # 10: dark leather straps & harness
-    ('brass',    (0.880, 0.620, 0.160), 0.32, 0.68),  # 11: shiny brass buckles & rivets
-    ('gun',      (0.085, 0.108, 0.128), 0.34, 0.62),  # 12: gunmetal rifle receiver
-    ('steel',    (0.210, 0.255, 0.285), 0.30, 0.72),  # 13: steel barrel / rail / muzzle
-    ('boot',     (0.130, 0.095, 0.052), 0.66, 0.04),  # 14: sculpted brown-olive combat boot
-    ('vest',     (0.215, 0.295, 0.120), 0.64, 0.04),  # 15: lighter olive tactical vest & knee pads
+    ('helmet',   (0.155, 0.285, 0.095), 0.58, 0.05),  # 0: soft matte olive toy helmet (no harsh plastic glare!)
+    ('helm_rim', (0.095, 0.185, 0.058), 0.52, 0.12),  # 1: thicker matte-satin helmet rim
+    ('cloth',    (0.175, 0.290, 0.112), 0.86, 0.00),  # 2: matte woven olive tactical jacket
+    ('trousers', (0.125, 0.210, 0.082), 0.88, 0.00),  # 3: matte combat trousers
+    ('skin',     (0.920, 0.560, 0.330), 0.68, 0.00),  # 4: warm cartoon skin
+    ('cheek',    (0.880, 0.340, 0.240), 0.74, 0.00),  # 5: warm rosy cheek
+    ('ivory',    (0.960, 0.955, 0.890), 0.52, 0.00),  # 6: crisp star / chevron / eye white
+    ('ink',      (0.028, 0.034, 0.044), 0.65, 0.00),  # 7: dark pupils / bore / rubber sole
+    ('pack',     (0.390, 0.305, 0.155), 0.84, 0.00),  # 8: matte woven khaki-tan canvas rucksack
+    ('pack_hi',  (0.510, 0.415, 0.220), 0.80, 0.00),  # 9: lighter canvas flap / pouches
+    ('strap',    (0.185, 0.125, 0.065), 0.68, 0.04),  # 10: satin-matte dark leather straps
+    ('brass',    (0.900, 0.650, 0.180), 0.26, 0.78),  # 11: metallic brass buckles & rivets
+    ('gun',      (0.095, 0.118, 0.140), 0.30, 0.70),  # 12: brushed gunmetal receiver
+    ('steel',    (0.240, 0.285, 0.320), 0.26, 0.80),  # 13: metallic steel barrel & rail
+    ('boot',     (0.165, 0.118, 0.065), 0.64, 0.05),  # 14: leather combat boot
+    ('vest',     (0.240, 0.330, 0.145), 0.78, 0.02),  # 15: lighter olive tactical vest & knee pads
 ]
 
 def image_atlas(name, orm=False):

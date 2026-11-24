@@ -510,6 +510,114 @@ var MilitaryArt = class MilitaryArt {
 
         // 10. V15: 远景阳光军事基地要塞大门 (跟随地平线, 彻底消除道路尽头空旷感!)
         this._buildHorizonFortress();
+        // 11. V15-ART-005: 异步加载 Blender 4.2 雕塑模块化军事基地 GLB 组件包, 就绪后无缝升级替换低模几何体!
+        this._loadBlenderEnvPack();
+    }
+
+    _loadBlenderEnvPack() {
+        if (typeof THREE === 'undefined' || !THREE.GLTFLoader) return;
+        var self = this;
+        var url = 'assets/game/v15/env_military_pack.glb';
+        if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=1505';
+        new THREE.GLTFLoader().load(url, function(gltf) {
+            try {
+                var sharedMat = null;
+                var geos = {};
+                gltf.scene.traverse(function(o) {
+                    if (o.isMesh && o.geometry) {
+                        geos[o.name] = o.geometry;
+                        if (!sharedMat && o.material) sharedMat = o.material;
+                    }
+                });
+                if (!sharedMat || !geos.PineTree) return;
+                // r149 linear-to-sRGB display transform matching Soldier/Enemy PBR pipeline
+                sharedMat.onBeforeCompile = function(shader) {
+                    shader.fragmentShader = shader.fragmentShader.replace(
+                        '#include <encodings_fragment>',
+                        'gl_FragColor = LinearTosRGB( gl_FragColor );'
+                    );
+                };
+                sharedMat.customProgramCacheKey = function() { return 'v15-envpack-pbr'; };
+                sharedMat.needsUpdate = true;
+
+                // 隐藏已被 Blender 雕塑 GLB 替代的旧简单几何体
+                var replacedNames = {
+                    'military-watch-posts': 1, 'military-watch-decks': 1, 'military-watch-roofs': 1, 'military-watch-lamps': 1,
+                    'military-tank-hulls': 1, 'military-tank-tracks': 1, 'military-tank-turrets': 1, 'military-tank-barrels': 1,
+                    'military-tent-bodies': 1, 'military-tent-roofs': 1,
+                    'military-tree-trunks': 1, 'military-tree-crowns-base': 1, 'military-tree-crowns-top': 1,
+                    'military-sandbags': 1
+                };
+                for (var mi = 0; mi < self._meshes.length; mi++) {
+                    if (replacedNames[self._meshes[mi].name]) {
+                        self._meshes[mi].visible = false;
+                        self._meshes[mi].userData.v15Replaced = true;
+                    }
+                }
+
+                // 1) 多层雕塑松树林 (非对称自然分布, 告别球体棒棒糖树!)
+                if (geos.PineTree) {
+                    self._add('glb-pines', geos.PineTree, sharedMat, self._repeat(function(seg) {
+                        var s = seg % 2 ? -1 : 1;
+                        return [
+                            { x: s * 7.8, y: 0, z: 2.2, sx: 1.15, sy: 1.25, sz: 1.15, ry: seg * 0.9 },
+                            { x: s * 11.2, y: 0, z: -7.6, sx: 1.35, sy: 1.45, sz: 1.35, ry: seg * 1.4 },
+                            { x: -s * 8.6, y: 0, z: -9.0, sx: 1.05, sy: 1.15, sz: 1.05, ry: -seg * 0.7 },
+                            { x: -s * 12.8, y: 0, z: 4.5, sx: 1.45, sy: 1.55, sz: 1.45, ry: seg * 1.1 }
+                        ];
+                    }), ['sunny', 'forest', 'city']);
+                }
+                // 2) 木质 X 交叉支撑瞭望哨塔
+                if (geos.Watchtower) {
+                    self._add('glb-watchtowers', geos.Watchtower, sharedMat, self._repeat(function(seg) {
+                        if (seg % 2) return [];
+                        return [
+                            { x: -7.2, y: 0, z: 5.5, sx: 1.08, sy: 1.08, sz: 1.08, ry: 0.25 },
+                            { x:  7.4, y: 0, z: -7.5, sx: 1.08, sy: 1.08, sz: 1.08, ry: -2.85 }
+                        ];
+                    }));
+                }
+                // 3) 雕塑玩具军绿坦克 (带负重轮、斜装甲与炮口制退器!)
+                if (geos.ToyTank) {
+                    self._add('glb-tanks', geos.ToyTank, sharedMat, self._repeat(function(seg) {
+                        var side = seg % 2 ? 1 : -1;
+                        return [{ x: side * 6.8, y: 0, z: -11.0, sx: 0.96, sy: 0.96, sz: 0.96, ry: side * -0.45 }];
+                    }), ['sunny', 'desert', 'city', 'forest']);
+                }
+                // 4) 雕塑橄榄帆布军用帐篷
+                if (geos.MilitaryTent) {
+                    self._add('glb-tents', geos.MilitaryTent, sharedMat, self._repeat(function(seg) {
+                        var side = seg % 2 ? -1 : 1;
+                        return [{ x: side * 9.8, y: 0, z: 3.4, sx: 1.05, sy: 1.05, sz: 1.05, ry: side > 0 ? -1.45 : 1.45 }];
+                    }), ['sunny', 'forest', 'desert']);
+                }
+                // 5) 雕塑沙袋掩体 + 军绿弹药箱
+                if (geos.SandbagBunker) {
+                    self._add('glb-sandbags', geos.SandbagBunker, sharedMat, self._repeat(function(seg) {
+                        var side = seg % 2 ? -1 : 1;
+                        return [{ x: side * 5.6, y: 0, z: -5.8, sx: 1.0, sy: 1.0, sz: 1.0, ry: side * -0.35 }];
+                    }));
+                }
+                // 6) 替换远景基地要塞大门为 Blender 雕塑垛口金星红旗城门!
+                if (geos.BunkerGate && self._horizonFortress) {
+                    var gateMesh = new THREE.Mesh(geos.BunkerGate, sharedMat);
+                    gateMesh.name = 'v15-glb-bunker-gate';
+                    gateMesh.scale.setScalar(1.12);
+                    // 隐藏旧方块门楼, 保留远景山脉背景
+                    for (var ci = 0; ci < self._horizonFortress.children.length; ci++) {
+                        var ch = self._horizonFortress.children[ci];
+                        if (ch.geometry && ch.geometry.type !== 'DodecahedronGeometry') ch.visible = false;
+                    }
+                    self._horizonFortress.add(gateMesh);
+                }
+                // 立即刷新实例矩阵到当前 anchor
+                var curZ = isFinite(self._anchor) ? self._anchor : 0;
+                self._anchor = Infinity;
+                self.update(curZ);
+            } catch (e) {
+                console.warn('[MilitaryArt] V15 env pack load fallback:', e);
+            }
+        });
     }
 
     _buildHorizonFortress() {
@@ -599,6 +707,7 @@ var MilitaryArt = class MilitaryArt {
         this.materials.curbB.color.setHex(palette.curbB);
 
         for (var i = 0; i < this._meshes.length; i++) {
+            if (this._meshes[i].userData.v15Replaced) { this._meshes[i].visible = false; continue; }
             var allowed = this._meshes[i].userData.biomes;
             this._meshes[i].visible = !allowed || allowed.indexOf(biome) >= 0;
         }

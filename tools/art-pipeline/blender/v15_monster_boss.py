@@ -266,13 +266,15 @@ def build_ironfist_boss():
     for s in [-1, 1]:
         b.rbox('BackPack', (s * 0.20, 0.72, -0.26), (0.22, 0.36, 0.20), 'Body', 'steel', 0.04)
         b.ell('BackVent', (s * 0.20, 0.88, -0.26), (0.08, 0.06, 0.08), 'Body', 'core', 10, 6)
-    # Massive layered armored shoulder pauldrons with steel spikes & red warning beacons!
+    # V15-ART-005: True multi-layered beveled mechanical steel pauldrons (replaces round spheres!)
     for s in [-1, 1]:
-        b.ell('PauldronMain', (s * 0.50, 0.88, 0.02), (0.26, 0.21, 0.26), 'Body', 'steel', 16, 10)
-        b.rbox('PauldronTrim', (s * 0.52, 0.81, 0.02), (0.28, 0.07, 0.34), 'Body', 'gold', 0.02)
-        b.cone('PauldronSpike1', (s * 0.62, 1.04, 0.04), 0.055, 0.22, 'Body', 'steel_lt', 8, (0, s * -0.55, 0))
-        b.cone('PauldronSpike2', (s * 0.54, 1.07, -0.10), 0.045, 0.18, 'Body', 'steel_lt', 8, (-0.35, s * -0.35, 0))
-        b.ell('WarnBeacon', (s * 0.38, 1.04, 0.16), (0.055, 0.055, 0.055), 'Body', 'red_lamp', 10, 6)
+        b.rbox('PauldronCore', (s * 0.49, 0.89, 0.02), (0.36, 0.24, 0.38), 'Body', 'steel', 0.055)
+        b.rbox('PauldronCap', (s * 0.51, 0.99, 0.02), (0.32, 0.09, 0.34), 'Body', 'steel_lt', 0.028)
+        b.rbox('PauldronSide', (s * 0.64, 0.84, 0.02), (0.10, 0.24, 0.32), 'Body', 'steel_lt', 0.025)
+        b.rbox('PauldronTrim', (s * 0.52, 0.79, 0.02), (0.38, 0.065, 0.40), 'Body', 'gold', 0.018)
+        b.cone('PauldronSpike1', (s * 0.62, 1.09, 0.06), 0.050, 0.20, 'Body', 'steel_lt', 8, (0, s * -0.45, 0))
+        b.cone('PauldronSpike2', (s * 0.54, 1.11, -0.09), 0.044, 0.17, 'Body', 'steel_lt', 8, (-0.30, s * -0.30, 0))
+        b.ell('WarnBeacon', (s * 0.38, 1.05, 0.18), (0.052, 0.052, 0.052), 'Body', 'red_lamp', 10, 6)
 
     # Fierce independent horned Boss head with armored jaw guard
     b.ell('BossHead', (0, 1.18, 0.08), (0.27, 0.23, 0.25), 'Head', 'skin', 18, 10)
@@ -314,7 +316,82 @@ def build_ironfist_boss():
     ]
     return b.finalize_and_export(origins, out, lod_ratio=0.35)
 
+# ==============================================================================
+# 3. SLEEK FAST SPRINTER MONSTER (fast.glb) & HEAVY ARMORED BRUTE (shield/elite.glb)
+# ==============================================================================
+def build_fast_monster():
+    reset_scene()
+    pal = [
+        ('skin',   (0.58, 0.12, 0.44), 0.52, 0.00),  # 0: agile magenta-crimson runner
+        ('belly',  (0.76, 0.28, 0.58), 0.58, 0.00),  # 1: lighter chest
+        ('fin',    (1.00, 0.52, 0.12), 0.36, 0.00),  # 2: bright orange dorsal speed crest
+        ('eye',    (1.00, 0.90, 0.16), 0.18, 0.00),  # 3: glowing yellow eyes
+        ('ink',    (0.03, 0.02, 0.04), 0.50, 0.00),  # 4: pupils & mouth
+        ('fang',   (0.98, 0.96, 0.88), 0.34, 0.00),  # 5: sharp claws & teeth
+        ('dark',   (0.28, 0.06, 0.22), 0.62, 0.00),  # 6: dark limbs
+    ] + [('pad', (0.4, 0.1, 0.3), 0.6, 0.0)] * 9
+    mat = build_pbr_material('V15_FastMonster', pal)
+    b = Builder(mat, pal)
+    b.surface('FastTorso', [
+        (0.28, 0.14, 0.12, 0.0), (0.46, 0.19, 0.17, 0.06), (0.68, 0.17, 0.15, 0.10), (0.78, 0.12, 0.11, 0.08)
+    ], 'Body', 'skin', 18)
+    # Swept-back orange dorsal fin crest (distinct silhouette!)
+    b.cone('BackFin1', (0, 0.66, -0.10), 0.055, 0.28, 'Body', 'fin', 6, (-0.75, 0, 0))
+    b.cone('BackFin2', (0, 0.50, -0.11), 0.045, 0.22, 'Body', 'fin', 6, (-0.85, 0, 0))
+    b.ell('FastHead', (0, 0.90, 0.12), (0.21, 0.18, 0.24), 'Head', 'skin', 16, 10)
+    b.cone('HeadCrest', (0, 1.07, 0.02), 0.055, 0.26, 'Head', 'fin', 6, (-0.65, 0, 0))
+    for s in [-1, 1]:
+        b.ell('Eye', (s * 0.085, 0.93, 0.31), (0.055, 0.048, 0.030), 'Head', 'eye', 10, 6)
+        b.ell('Pupil', (s * 0.085, 0.93, 0.336), (0.022, 0.028, 0.014), 'Head', 'ink', 8, 5)
+        b.cone('SpeedEar', (s * 0.24, 0.96, 0.02), 0.048, 0.24, 'Head', 'skin', 6, (-0.45, s * 1.15, 0))
+        # Long whippy slashing arms
+        b.ell('Arm', (s * 0.24, 0.56, 0.18), (0.065, 0.068, 0.22), 'Arms', 'skin', 10, 6)
+        b.cone('SlashClaw', (s * 0.25, 0.52, 0.42), 0.038, 0.14, 'Arms', 'fang', 6, (math.pi * 0.5, 0, 0))
+    for s, part in [(-1, 'LegL'), (1, 'LegR')]:
+        x = s * 0.125
+        b.ell('Leg', (x, 0.20, 0.0), (0.072, 0.14, 0.075), part, 'dark', 10, 6)
+        b.ell('Foot', (x, 0.06, 0.08), (0.085, 0.055, 0.14), part, 'dark', 10, 6)
+    origins = {'Body': (0, 0, 0), 'Head': (0, 0.74, 0.06), 'Arms': (0, 0.62, 0.04), 'LegL': (-0.125, 0.30, 0), 'LegR': (0.125, 0.30, 0)}
+    return b.finalize_and_export(origins, [(os.path.join(GAME_MODELS, 'zombies', 'fast'), 'fast')], lod_ratio=0.38)
+
+def build_heavy_monster():
+    reset_scene()
+    pal = [
+        ('skin',   (0.28, 0.10, 0.48), 0.58, 0.00),  # 0: deep armored purple brute
+        ('steel',  (0.22, 0.28, 0.36), 0.34, 0.72),  # 1: heavy gunmetal armor
+        ('gold',   (0.92, 0.68, 0.16), 0.30, 0.72),  # 2: golden elite trim
+        ('eye',    (1.00, 0.78, 0.12), 0.20, 0.00),  # 3: fierce eyes
+        ('ink',    (0.03, 0.03, 0.05), 0.55, 0.00),  # 4: dark mouth
+        ('fang',   (0.96, 0.95, 0.88), 0.36, 0.00),  # 5: tusks & spikes
+    ] + [('pad', (0.25, 0.2, 0.35), 0.5, 0.4)] * 10
+    mat = build_pbr_material('V15_HeavyMonster', pal)
+    b = Builder(mat, pal)
+    b.surface('HeavyTorso', [
+        (0.26, 0.24, 0.21, 0.0), (0.48, 0.36, 0.30, 0.02), (0.72, 0.38, 0.31, 0.02), (0.84, 0.26, 0.22, 0.0)
+    ], 'Body', 'skin', 18)
+    b.rbox('ChestArmor', (0, 0.56, 0.24), (0.54, 0.36, 0.18), 'Body', 'steel', 0.045)
+    b.rbox('ChestTrim', (0, 0.70, 0.26), (0.48, 0.07, 0.14), 'Body', 'gold', 0.02)
+    for s in [-1, 1]:
+        b.rbox('HeavyPauldron', (s * 0.42, 0.74, 0.02), (0.28, 0.20, 0.30), 'Body', 'steel', 0.045)
+        b.cone('ShoulderSpike', (s * 0.48, 0.90, 0.02), 0.045, 0.16, 'Body', 'gold', 6, (0, s * -0.4, 0))
+    b.ell('HeavyHead', (0, 0.98, 0.04), (0.25, 0.21, 0.23), 'Head', 'skin', 16, 10)
+    b.rbox('IronHelm', (0, 1.09, 0.04), (0.34, 0.14, 0.32), 'Head', 'steel', 0.04)
+    for s in [-1, 1]:
+        b.ell('Eye', (s * 0.095, 1.00, 0.24), (0.055, 0.045, 0.028), 'Head', 'eye', 10, 6)
+        b.cone('HelmHorn', (s * 0.18, 1.22, 0.04), 0.055, 0.20, 'Head', 'fang', 8, (0.15, s * 0.5, 0))
+        b.rbox('HeavyArm', (s * 0.46, 0.48, 0.16), (0.22, 0.22, 0.34), 'Arms', 'steel', 0.05)
+    for s, part in [(-1, 'LegL'), (1, 'LegR')]:
+        x = s * 0.19
+        b.rbox('HeavyLeg', (x, 0.16, 0.04), (0.20, 0.24, 0.24), part, 'steel', 0.04)
+    origins = {'Body': (0, 0, 0), 'Head': (0, 0.82, 0), 'Arms': (0, 0.66, 0), 'LegL': (-0.19, 0.30, 0), 'LegR': (0.19, 0.30, 0)}
+    out = [(os.path.join(GAME_MODELS, 'zombies', 'shield'), 'shield'), (os.path.join(GAME_MODELS, 'zombies', 'elite'), 'elite')]
+    return b.finalize_and_export(origins, out, lod_ratio=0.36)
+
 m_hero, m_lod = build_purple_monster()
-print('V15_MONSTER_DONE', 'hero_tris=', m_hero, 'lod_tris=', m_lod)
+print('V15_MONSTER_NORMAL', m_hero, m_lod)
+f_hero, f_lod = build_fast_monster()
+print('V15_MONSTER_FAST', f_hero, f_lod)
+h_hero, h_lod = build_heavy_monster()
+print('V15_MONSTER_HEAVY', h_hero, h_lod)
 b_hero, b_lod = build_ironfist_boss()
-print('V15_BOSS_DONE', 'hero_tris=', b_hero, 'lod_tris=', b_lod)
+print('V15_BOSS_MECHA', b_hero, b_lod)

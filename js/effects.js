@@ -377,50 +377,59 @@ class Effects {
         this.shockwaves.push({ mesh: ring, life: 0.5, maxLife: 0.5 });
     }
 
-    /** 枪口闪光 (星形+加法混合发光) */
+    /** V15-ART-005 商业级枪口火焰 (8角炽白金橙星芒爆发) */
     muzzleFlash(x, y, z, sizeMul) {
-        // 惰性创建星形闪光纹理
         if (!this._muzzleTex) {
             var c = document.createElement('canvas');
-            c.width = 64; c.height = 64;
+            c.width = 128; c.height = 128;
             var ctx = c.getContext('2d');
-            // 四角星形
-            var cx = 32, cy = 32;
-            ctx.fillStyle = '#FFF8DC';
+            var cx = 64, cy = 64;
+            // 外层暖橙火焰光晕
+            var glow = ctx.createRadialGradient(cx, cy, 4, cx, cy, 60);
+            glow.addColorStop(0.0, 'rgba(255,255,230,1)');
+            glow.addColorStop(0.32, 'rgba(255,205,65,0.92)');
+            glow.addColorStop(0.68, 'rgba(255,120,20,0.45)');
+            glow.addColorStop(1.0, 'rgba(255,80,0,0)');
+            ctx.fillStyle = glow;
+            ctx.fillRect(0, 0, 128, 128);
+            // 8 尖角火焰星芒
+            ctx.fillStyle = '#FFF6C8';
             ctx.beginPath();
-            ctx.moveTo(cx, 0);
-            ctx.quadraticCurveTo(cx + 4, cy - 4, 64, cy);
-            ctx.quadraticCurveTo(cx + 4, cy + 4, cx, 64);
-            ctx.quadraticCurveTo(cx - 4, cy + 4, 0, cy);
-            ctx.quadraticCurveTo(cx - 4, cy - 4, cx, 0);
+            for (var r = 0; r < 16; r++) {
+                var a = r * Math.PI / 8;
+                var rad = (r % 2 === 0) ? (r % 4 === 0 ? 60 : 42) : 14;
+                var px = cx + Math.cos(a) * rad, py = cy + Math.sin(a) * rad;
+                if (r === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+            }
             ctx.closePath();
             ctx.fill();
-            // 中心亮核
-            var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 14);
-            grad.addColorStop(0, '#FFFFFF');
-            grad.addColorStop(0.4, '#FFE066');
-            grad.addColorStop(1, 'rgba(255,160,40,0)');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, 64, 64);
+            // 中心炽白亮核
+            var core = ctx.createRadialGradient(cx, cy, 2, cx, cy, 22);
+            core.addColorStop(0, '#FFFFFF');
+            core.addColorStop(0.6, '#FFF3B0');
+            core.addColorStop(1, 'rgba(255,200,60,0)');
+            ctx.fillStyle = core;
+            ctx.beginPath(); ctx.arc(cx, cy, 22, 0, Math.PI * 2); ctx.fill();
             this._muzzleTex = new THREE.CanvasTexture(c);
         }
-        if(this.flashes.length>=24)return;
+        if (this.flashes.length >= 36) return;
         var flash = this._flashPool.pop() || new THREE.Sprite(new THREE.SpriteMaterial({
-            map: this._muzzleArtTex || this._muzzleTex,
+            map: this._muzzleTex,
             transparent: true,
-            opacity: 0.95,
+            opacity: 0.98,
+            blending: THREE.AdditiveBlending,
             depthWrite: false
         }));
-        flash.material.map = this._muzzleArtTex || this._muzzleTex;
+        flash.material.map = this._muzzleTex;
         flash.material.needsUpdate = true;
         flash.position.set(x, y, z);
-        flash.visible=true;flash.material.opacity=.95;
-        flash.material.rotation = Math.random() * Math.PI; // V12视觉: 随机滚转, 齐射时火光不重复
-        var mfScale = randRange(0.42, 0.52) * (sizeMul || 1); // V14: 重型武器火焰放大
+        flash.visible = true; flash.material.opacity = 0.98;
+        flash.material.rotation = Math.random() * Math.PI;
+        var mfScale = randRange(0.56, 0.74) * (sizeMul || 1);
         flash.scale.set(mfScale, mfScale, 1);
-        flash.userData.baseScale = mfScale; // V14.3 节奏: 峰值基准 // V3.7: 枪口火焰更醒目
+        flash.userData.baseScale = mfScale;
         this.scene.add(flash);
-        this.flashes.push({ mesh: flash, life: 0.07, maxLife: 0.07 });
+        this.flashes.push({ mesh: flash, life: 0.11, maxLife: 0.11 });
     }
 
     clear() {

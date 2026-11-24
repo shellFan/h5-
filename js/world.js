@@ -377,15 +377,22 @@ class World {
         if (this._depthSmooth === undefined) this._depthSmooth = depth;
         this._depthSmooth = damp(this._depthSmooth, depth, 2.5, dt);
         var sDepth = this._depthSmooth;
-        // V15-ART-003: 黄金平衡镜距(36人小队中心落于屏幕约70%-75%, 底部不留大片空路, 且绝不遮挡增益门)
-        var offY = 5.75 + this._camScale * 3.15;
-        var offZ = 8.45 + this._camScale * 2.1 + sDepth;
-        var lookAhead = CONFIG.CAMERA_LOOK_AHEAD - this._camScale * 2.0 + sDepth;
+        // V15-ART-005: 基于实际投影包围盒的自适应相机构图 (36人左右绝不裁切, 底部不留大片空路, Boss护盾无突兀缩放)
+        var halfW = (squadCount > 1) ? Math.min(2.6, 0.55 + Math.sqrt(squadCount) * 0.28) : 0.45;
+        var aspect = (cam.aspect && cam.aspect > 0.2) ? cam.aspect : (390 / 844);
+        var halfVRad = (cam.fov * Math.PI / 180) * 0.5;
+        var halfHRad = Math.atan(Math.tan(halfVRad) * aspect);
+        // 保证队伍左右边缘(含14%安全边距)完整落入屏幕内
+        var minDistForWidth = (halfW / 0.78) / Math.max(0.22, Math.tan(halfHRad));
+        var baseOffZ = 8.4 + this._camScale * 1.9 + sDepth * 0.85;
+        var offZ = Math.max(baseOffZ, minDistForWidth * 0.86);
+        var offY = 5.8 + this._camScale * 2.85 + Math.max(0, offZ - baseOffZ) * 0.48;
+        var lookAhead = CONFIG.CAMERA_LOOK_AHEAD - this._camScale * 1.6 + sDepth * 0.72;
 
         const targetX = squadX * CONFIG.CAMERA_FOLLOW_X;
         const targetPos = new THREE.Vector3(
-            targetX + 0.6 * (1 - this._camScale * .65),
-            squadZ * 0 + offY,
+            targetX,
+            offY,
             squadZ + offZ
         );
         cam.position.x = damp(cam.position.x, targetPos.x, 6, dt);

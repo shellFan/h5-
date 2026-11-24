@@ -86,8 +86,9 @@ class Enemy {
             // V16: 身体碎片(旋转四面体, 大体型更多; 池上限48自动限流)
             if (effects.spawnShards) effects.spawnShards(this.x, 0.55, this.z, this.cfg.color, this.isBoss ? 14 : 6, this.isBoss ? 4.6 : 3.4, 0.75);
             effects.burst(this.x, 0.5, this.z, 0xFFFFFF, 4, 2, 0.3);
-            // 金色积分光点
-            effects.burst(this.x, 0.7, this.z, 0xFFD700, 3, 2.2, 0.8);
+            // 金色积分光点 + V15 卡通小爆炸闪光(Boss大爆炸)
+            effects.burst(this.x, 0.7, this.z, 0xFFD700, 4, 2.5, 0.8);
+            if (effects.boom) effects.boom(this.x, 0.65, this.z, this.isBoss ? 2.4 : 0.92);
             // V12视觉: 地面尸液痕迹(大体型更大; decal池内自动限流)
             if (effects.splat) effects.splat(this.x, this.z, this.visScale * (this.isBoss ? 1.6 : 0.9));
         }
