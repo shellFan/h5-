@@ -25,15 +25,170 @@
     height:3px;
 }
 
-/* 首页容器: 半透暗角遮罩透出3D阳光基地 */
+/* V15-ART-002 开放式阳光军事营地首页 (参照 ChatGPT 02 正式首页设计稿, 告别厚重暗绿网页卡片!) */
 #game-container.art-military #start-screen {
-    background:linear-gradient(180deg,rgba(14,32,22,0.42),rgba(10,22,16,0.78));
-    padding:8px 10px;
+    background:linear-gradient(180deg, rgba(16,44,74,0.22) 0%, rgba(16,36,24,0.08) 46%, rgba(12,24,16,0.68) 100%) !important;
+    padding:max(6px, env(safe-area-inset-top)) 8px max(6px, env(safe-area-inset-bottom)) !important;
+    align-items:stretch !important;
 }
-#game-container.art-military #start-screen .title-panel {
-    padding:10px 12px 10px;
+#game-container.art-military #start-screen .title-panel.v15-home-lobby {
+    background:transparent !important;
+    border:none !important;
+    box-shadow:none !important;
+    padding:4px 4px 2px !important;
+    width:100% !important;
+    max-width:430px !important;
+    height:100% !important;
+    display:flex !important;
+    flex-direction:column !important;
+    justify-content:space-between !important;
+}
+#game-container.art-military #start-screen .title-panel.v15-home-lobby::before { display:none !important; }
+#game-container.art-military .v15-home-lobby .game-title {
+    color:#FFE668 !important;
+    -webkit-text-fill-color:#FFE668 !important;
+    font-size:38px !important;
+    line-height:1.05 !important;
+    letter-spacing:3px !important;
+    margin:2px 0 0 !important;
+    text-shadow:0 3px 0 #7C3D04, 0 6px 0 #2A1604, 0 8px 18px rgba(0,0,0,0.65) !important;
+}
+.v15-logo-sub {
+    display:inline-block;
+    margin:2px auto 4px;
+    padding:2px 14px;
+    border-radius:6px;
+    background:linear-gradient(180deg,#4A3218,#26180A);
+    border:1.5px solid #F2BE48;
+    color:#FFF3C4;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:2.4px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.5);
+}
+#game-container.art-military .v15-camp-stage {
+    background:radial-gradient(ellipse at center bottom, rgba(255,230,140,0.22) 0%, rgba(16,32,20,0) 68%) !important;
+    border:none !important;
+    box-shadow:none !important;
+    min-height:165px !important;
+    flex:1 1 auto !important;
+    margin:2px 0 !important;
+    padding:0 !important;
+    display:flex !important;
+    align-items:flex-end !important;
+    justify-content:center !important;
+    overflow:visible !important;
+}
+.v15-squad-trio {
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
     width:100%;
-    max-width:420px;
+    position:relative;
+    padding-bottom:2px;
+}
+.v15-hero-side {
+    width:92px;
+    height:108px;
+    object-fit:contain;
+    filter:drop-shadow(0 8px 10px rgba(0,0,0,0.55));
+    z-index:1;
+}
+.v15-hero-left { transform:translateX(14px) scale(0.95); }
+.v15-hero-right { transform:translateX(-14px) scale(0.95); }
+#game-container.art-military .v15-hero-center {
+    width:136px !important;
+    height:152px !important;
+    z-index:2;
+    filter:drop-shadow(0 10px 14px rgba(0,0,0,0.62)) !important;
+}
+#game-container.art-military .v15-home-lobby .v42-mission-card { display:none !important; }
+#game-container.art-military .v15-home-lobby #btn-start {
+    background:linear-gradient(180deg,#FFF080 0%,#FFB724 48%,#E67700 100%) !important;
+    border:3px solid #FFF7C4 !important;
+    border-radius:99px !important;
+    min-height:54px !important;
+    font-size:23px !important;
+    letter-spacing:3px !important;
+    color:#4A1F00 !important;
+    box-shadow:0 5px 0 #8F4200, 0 12px 24px rgba(0,0,0,0.52), inset 0 3px 0 rgba(255,255,255,0.75) !important;
+    margin:4px 8px 5px !important;
+}
+.v15-start-crosshair {
+    font-size:24px;
+    font-weight:900;
+    color:#7C3300;
+    line-height:1;
+}
+#game-container.art-military .v15-home-lobby #level-select {
+    background:rgba(18,34,24,0.86);
+    border:1.5px solid #7BA364;
+    border-radius:12px;
+    padding:4px 6px;
+    margin:2px 4px 4px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.4);
+}
+#game-container.art-military .v15-home-lobby #v60-home-nav {
+    margin:2px 2px 2px !important;
+    gap:4px !important;
+    grid-template-columns:repeat(6, 1fr) !important;
+}
+#game-container.art-military .v15-home-lobby #v60-btn-train,
+#game-container.art-military .v15-home-lobby #v60-btn-armory,
+#game-container.art-military .v15-home-lobby #v60-btn-rank,
+#game-container.art-military .v15-home-lobby #v60-btn-challenge {
+    display:none !important;
+}
+#game-container.art-military.boss-active #stats-panel {
+    display:none !important;
+}
+#game-container.art-military .v15-home-lobby #v60-home-nav .v60-nav-btn {
+    min-height:38px !important;
+    padding:2px !important;
+    background:linear-gradient(180deg,rgba(44,74,48,0.92),rgba(24,44,28,0.94)) !important;
+    border:1.5px solid #7EA86A !important;
+    border-radius:10px !important;
+    font-size:9px !important;
+}
+#game-container.art-military .v15-home-lobby #v60-class-row {
+    margin:2px 2px 4px !important;
+}
+#game-container.art-military .v15-home-lobby .v60-class-card {
+    min-height:44px !important;
+    padding:2px 2px !important;
+    background:rgba(20,38,26,0.88) !important;
+}
+#v15-bottom-dock {
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    gap:5px;
+    padding:5px 4px 2px;
+    background:linear-gradient(180deg,rgba(26,44,30,0.95),rgba(14,26,18,0.98));
+    border:1.8px solid #6F995C;
+    border-radius:14px;
+    box-shadow:0 -2px 12px rgba(0,0,0,0.45);
+    margin-top:2px;
+}
+.v15-dock-tab {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:1px;
+    padding:4px 2px;
+    border-radius:10px;
+    border:1.5px solid #4E7250;
+    background:linear-gradient(180deg,#305239,#1E3624);
+    color:#EEF7EB;
+    font-size:10px;
+    font-weight:800;
+    cursor:pointer;
+}
+.v15-dock-tab.active {
+    background:linear-gradient(180deg,#FFE26A,#E89B12);
+    border-color:#FFF5B8;
+    color:#3A2002;
+    box-shadow:0 2px 0 #8A4F04;
 }
 
 /* 顶部信息条: 彻底解决头像与最高纪录裁切重叠 */
@@ -74,13 +229,18 @@
     border:1px solid #6a925e;
 }
 #game-container.art-military .v51-coin-pill,
+#game-container.art-military .v51-coin-pill b,
+#game-container.art-military .v51-coin-pill span,
 #game-container.art-military .shop-coins {
-    color:#fff5cc;
+    color:#FFF7CC !important;
     background:linear-gradient(180deg,#8c6414,#5e4009);
     border:1.5px solid #ffd24c;
     box-shadow:inset 0 1px 0 rgba(255,248,200,0.35);
-    font-weight:800;
+    font-weight:900;
+    text-shadow:0 1px 2px rgba(0,0,0,0.65);
 }
+#game-container.art-military .v51-coin-pill b,
+#game-container.art-military .v51-coin-pill span { background:none !important; border:none !important; box-shadow:none !important; }
 #game-container.art-military .v51-shop-btn,
 #game-container.art-military .v51-supply-btn {
     color:#eef9ea;
@@ -592,12 +752,24 @@
 .art-control-icon { width:24px; height:24px; object-fit:contain; }
 #game-container.art-military #boss-bar-container,
 #game-container.art-military.v42-ui #boss-bar-container {
-    background:linear-gradient(160deg,rgba(68,20,24,0.94),rgba(36,10,14,0.94));
-    border:2px solid #F25C5C;
-    border-radius:12px;
+    top:60px !important;
+    width:72% !important;
+    max-width:270px !important;
+    padding:4px 9px !important;
+    gap:7px !important;
+    background:linear-gradient(160deg,rgba(68,20,24,0.92),rgba(34,10,14,0.94)) !important;
+    border:1.8px solid #F25C5C !important;
+    border-radius:99px !important;
+    box-shadow:0 3px 10px rgba(0,0,0,0.45) !important;
 }
-#game-container.art-military #boss-name { color:#FFE4E4; font-weight:900; }
-#game-container.art-military .v42-boss-phase { color:#FFC67A; }
+#game-container.art-military #boss-head,
+#game-container.art-military.v42-ui #boss-head {
+    width:26px !important;
+    height:26px !important;
+}
+#game-container.art-military #boss-name { color:#FFE4E4; font-weight:900; font-size:11px !important; }
+#game-container.art-military #boss-bar-bg { height:8px !important; }
+#game-container.art-military .v42-boss-phase { color:#FFC67A; font-size:10px !important; padding:1px 6px !important; }
 #game-container.art-military .v42-wave-banner {
     background:linear-gradient(90deg,rgba(36,64,34,0.94),rgba(54,88,44,0.94));
     color:#FFE47A;

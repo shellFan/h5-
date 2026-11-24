@@ -34,17 +34,47 @@ var ArtUI = {
         var hudAvatar = document.querySelector('#avatar-box img');
         if (hudAvatar) hudAvatar.src = 'assets/game/ui/avatar.png';
         if (panel) {
-            var hero = document.createElement('div');
-            hero.className = 'art-home-hero';
-            hero.innerHTML = '<div class="art-hero-copy"><span class="art-overline">TOY ARMY · READY</span>' +
-                '<h2>小小军团<br>大大火力</h2><p>集合出发，守住每一条跑道。</p></div>' +
-                this.image('characters/soldier_portrait.png', '绿色玩具步兵', 'art-hero-soldier');
+            // V15-ART-002: 参照 ChatGPT 02 正式首页设计稿重构开放式阳光军营大厅 (无厚重网页大卡片!)
+            panel.classList.add('v15-home-lobby');
             var title = panel.querySelector('.game-title');
-            if (title) title.insertAdjacentElement('afterend', hero);
+            if (title && !panel.querySelector('.v15-logo-sub')) {
+                title.insertAdjacentHTML('afterend', '<div class="v15-logo-sub">INFLATING SQUAD</div>');
+            }
+            var hero = document.createElement('div');
+            hero.className = 'art-home-hero v15-camp-stage';
+            hero.innerHTML =
+                '<div class="v15-squad-trio">' +
+                    this.image('characters/energy_portrait.png', '重装机枪兵', 'v15-hero-side v15-hero-left') +
+                    this.image('characters/soldier_portrait.png', '绿色玩具步兵', 'art-hero-soldier v15-hero-center') +
+                    this.image('characters/sniper_portrait.png', '战术火箭兵', 'v15-hero-side v15-hero-right') +
+                '</div>';
+            var logoSub = panel.querySelector('.v15-logo-sub') || title;
+            if (logoSub) logoSub.insertAdjacentElement('afterend', hero);
             var start = document.getElementById('btn-start');
-            if (start) start.innerHTML = this.image('ui/play.png', '', 'art-button-icon') + '<span>开始行动</span><span class="art-arrow">➜</span>';
+            if (start) start.innerHTML = '<span class="v15-start-crosshair">◎</span><span>开始战斗</span><span class="art-arrow">»</span>';
             var growth = document.getElementById('v60-home-growth');
-            if (growth) panel.insertBefore(growth, hero);
+            if (growth && title) panel.insertBefore(growth, title);
+            // 底部 5 格商业级军事主导航栏 (绑定真实原业务入口, 不新增虚假功能)
+            if (!document.getElementById('v15-bottom-dock')) {
+                var dock = document.createElement('div');
+                dock.id = 'v15-bottom-dock';
+                dock.innerHTML =
+                    '<button type="button" class="v15-dock-tab active" data-dock="home">' + this.icon('shield') + '<span>首页</span></button>' +
+                    '<button type="button" class="v15-dock-tab" data-dock="train">' + this.icon('avatar') + '<span>士兵</span></button>' +
+                    '<button type="button" class="v15-dock-tab" data-dock="armory">' + this.icon('chest') + '<span>武器</span></button>' +
+                    '<button type="button" class="v15-dock-tab" data-dock="shop">' + this.icon('coin') + '<span>商店</span></button>' +
+                    '<button type="button" class="v15-dock-tab" data-dock="rank">' + this.icon('trophy') + '<span>排行榜</span></button>';
+                panel.appendChild(dock);
+                dock.addEventListener('click', function(ev) {
+                    var btn = ev.target.closest('.v15-dock-tab');
+                    if (!btn) return;
+                    var act = btn.getAttribute('data-dock');
+                    if (act === 'train') { var t = document.getElementById('v60-btn-train'); if (t) t.click(); }
+                    else if (act === 'armory') { var a = document.getElementById('v60-btn-armory'); if (a) a.click(); }
+                    else if (act === 'shop') { var s = document.getElementById('btn-open-shop'); if (s) s.click(); }
+                    else if (act === 'rank') { var r = document.getElementById('v60-btn-rank'); if (r) r.click(); }
+                });
+            }
         }
         var navArt = { map: 'shield', train: 'avatar', armory: 'chest', tech: 'star', codex: 'medal',
             challenge: 'shield', rank: 'trophy', ach: 'medal', daily: 'coin', set: 'settings' };
