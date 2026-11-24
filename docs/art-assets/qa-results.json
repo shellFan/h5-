@@ -1,0 +1,269 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-24T02:30:13.128Z",
+  "environment": {
+    "browser": "Microsoft Edge via playwright-core",
+    "headless": true,
+    "baseUrl": "http://127.0.0.1:8250",
+    "realMobileDevice": false,
+    "realWeChatDevice": false
+  },
+  "fixturePolicy": {
+    "natural": "Home start, keyboard lane movement, retry, shop and navigation use real user-facing controls.",
+    "debug": "Gate/Boss/victory/defeat states are deterministic fixtures using production GateSystem, Squad, EnemyManager and Game settlement methods.",
+    "limitation": "Desktop browser mobile-width emulation is not a real phone or WeChat-device certification."
+  },
+  "passed": true,
+  "counts": {
+    "total": 35,
+    "passed": 35,
+    "failed": 0
+  },
+  "results": [
+    {
+      "name": "home installs interactive military UI with loaded raster assets",
+      "ok": true,
+      "detail": "13 runtime UI images decoded",
+      "kind": "natural"
+    },
+    {
+      "name": "real start button enters gameplay",
+      "ok": true,
+      "detail": "1 soldiers",
+      "kind": "natural"
+    },
+    {
+      "name": "real keyboard input reaches all three lane regions",
+      "ok": true,
+      "detail": "targets -2.80, 0.00, 2.80",
+      "kind": "natural"
+    },
+    {
+      "name": "combat scene uses runtime military variants, not immutable source GLBs",
+      "ok": true,
+      "detail": "4 enemy models active",
+      "kind": "natural"
+    },
+    {
+      "name": "people gate triggers through GateSystem.update",
+      "ok": true,
+      "detail": "20 -> 25",
+      "kind": "debug-fixture"
+    },
+    {
+      "name": "firepower gate triggers through GateSystem.update",
+      "ok": true,
+      "detail": "0 -> 1",
+      "kind": "debug-fixture"
+    },
+    {
+      "name": "coin gate triggers and deposits real profile currency",
+      "ok": true,
+      "detail": "1000 -> 1050",
+      "kind": "debug-fixture"
+    },
+    {
+      "name": "soldier growth and weapon upgrade use production economy APIs",
+      "ok": true,
+      "detail": "soldier 1->2; weapon 0->1",
+      "kind": "debug-fixture"
+    },
+    {
+      "name": "Boss fixture uses real EnemyManager and visible Boss HUD",
+      "ok": true,
+      "detail": "overlord",
+      "kind": "debug-fixture"
+    },
+    {
+      "name": "victory settlement awards coins through Game._win",
+      "ok": true,
+      "detail": "coins 99750 -> 100189",
+      "kind": "debug-fixture"
+    },
+    {
+      "name": "defeat settlement and real retry button work",
+      "ok": true,
+      "detail": "retry restored 1 soldiers",
+      "kind": "debug-fixture"
+    },
+    {
+      "name": "shop opens through its real home button",
+      "ok": true,
+      "detail": "5 upgrade rows",
+      "kind": "natural"
+    },
+    {
+      "name": "map page opens through real navigation",
+      "ok": true,
+      "detail": "visible",
+      "kind": "natural"
+    },
+    {
+      "name": "training page opens through real navigation",
+      "ok": true,
+      "detail": "visible",
+      "kind": "natural"
+    },
+    {
+      "name": "armory page opens through real navigation",
+      "ok": true,
+      "detail": "visible",
+      "kind": "natural"
+    },
+    {
+      "name": "technology page opens through real navigation",
+      "ok": true,
+      "detail": "visible",
+      "kind": "natural"
+    },
+    {
+      "name": "codex page opens through real navigation",
+      "ok": true,
+      "detail": "visible",
+      "kind": "natural"
+    },
+    {
+      "name": "challenge page opens through real navigation",
+      "ok": true,
+      "detail": "visible",
+      "kind": "natural"
+    },
+    {
+      "name": "ranking page opens through real navigation",
+      "ok": true,
+      "detail": "visible",
+      "kind": "natural"
+    },
+    {
+      "name": "achievements page opens through real navigation",
+      "ok": true,
+      "detail": "visible",
+      "kind": "natural"
+    },
+    {
+      "name": "daily page opens through real navigation",
+      "ok": true,
+      "detail": "visible",
+      "kind": "natural"
+    },
+    {
+      "name": "settings page opens through real navigation",
+      "ok": true,
+      "detail": "visible",
+      "kind": "natural"
+    },
+    {
+      "name": "ranking contains real recorded settlement entries",
+      "ok": true,
+      "detail": "2 local entries",
+      "kind": "natural"
+    },
+    {
+      "name": "reference catalog images are not requested by gameplay",
+      "ok": true,
+      "detail": "172 reference paths stayed unloaded",
+      "kind": "natural"
+    },
+    {
+      "name": "reference gallery is labelled and excluded from combat scene provenance",
+      "ok": true,
+      "detail": "6 reference cards, zero scene nodes",
+      "kind": "natural"
+    },
+    {
+      "name": "320px home has no horizontal overflow or clipped primary controls",
+      "ok": true,
+      "detail": "320x720",
+      "kind": "mobile-width-emulation"
+    },
+    {
+      "name": "360px home has no horizontal overflow or clipped primary controls",
+      "ok": true,
+      "detail": "360x800",
+      "kind": "mobile-width-emulation"
+    },
+    {
+      "name": "375px home has no horizontal overflow or clipped primary controls",
+      "ok": true,
+      "detail": "375x812",
+      "kind": "mobile-width-emulation"
+    },
+    {
+      "name": "390px home has no horizontal overflow or clipped primary controls",
+      "ok": true,
+      "detail": "390x844",
+      "kind": "mobile-width-emulation"
+    },
+    {
+      "name": "414px home has no horizontal overflow or clipped primary controls",
+      "ok": true,
+      "detail": "414x896",
+      "kind": "mobile-width-emulation"
+    },
+    {
+      "name": "430px home has no horizontal overflow or clipped primary controls",
+      "ok": true,
+      "detail": "430x932",
+      "kind": "mobile-width-emulation"
+    },
+    {
+      "name": "runtime has no page errors, 404s or failed asset requests",
+      "ok": true,
+      "detail": "1163 requests observed",
+      "kind": "acceptance"
+    },
+    {
+      "name": "runtime never requests immutable source art or source GLBs",
+      "ok": true,
+      "detail": "zero forbidden source requests",
+      "kind": "acceptance"
+    },
+    {
+      "name": "H5 build excludes sources and contains runtime military assets",
+      "ok": true,
+      "detail": "415 files",
+      "kind": "acceptance"
+    },
+    {
+      "name": "WeChat build excludes sources and preserves assets/game paths",
+      "ok": true,
+      "detail": "182 files",
+      "kind": "acceptance"
+    }
+  ],
+  "browserDiagnostics": {
+    "pageErrors": [],
+    "consoleErrors": [],
+    "requestFailures": [],
+    "httpErrors": []
+  },
+  "network": {
+    "requestCount": 1163
+  },
+  "screenshots": [
+    "achievements-390x844.png",
+    "armory-390x844.png",
+    "battle-390x844.png",
+    "boss-390x844.png",
+    "challenge-390x844.png",
+    "codex-390x844.png",
+    "daily-390x844.png",
+    "defeat-390x844.png",
+    "doors-people-firepower-coins-390x844.png",
+    "home-390x844.png",
+    "map-390x844.png",
+    "ranking-390x844.png",
+    "reference-gallery-390x844.png",
+    "responsive/home-320x720.png",
+    "responsive/home-360x800.png",
+    "responsive/home-375x812.png",
+    "responsive/home-390x844.png",
+    "responsive/home-414x896.png",
+    "responsive/home-430x932.png",
+    "settings-390x844.png",
+    "shop-390x844.png",
+    "technology-390x844.png",
+    "training-390x844.png",
+    "victory-390x844.png"
+  ]
+}

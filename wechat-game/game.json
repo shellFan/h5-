@@ -9,6 +9,14 @@
     {
       "root": "assets/",
       "name": "assets"
+    },
+    {
+      "root": "art/",
+      "name": "art"
+    },
+    {
+      "root": "art-gallery/",
+      "name": "art_gallery"
     }
   ]
 }

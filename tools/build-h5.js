@@ -4,6 +4,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { includeAsset } = require('./runtime-assets');
 
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist', 'h5');
@@ -16,12 +17,15 @@ const COPY_LIST = [
     'style-v51.css',
     'style-v60.css', // V10 QA修复: V6.0 UI样式此前未入包, 生产构建中九页界面全部无样式
     'style-v120.css', // V12视觉升级层: 设计令牌/HUD精修/结算/排行榜/手机安全区
+    'style-art-military.css',
     'style-v118.css', // Approved navy/gold UI and local weapon illustration atlas.
     'style-v130.css', // V13视觉精修层: 动效统一/军械库剪影/科技树连线/排行榜状态
     'js/vendor/three.min.js',
     'js/vendor/GLTFLoader.js',
     'js/vendor/THREE-LICENSE.txt',
     'assets',
+    'js/art-ui.js',
+    'js/military-art.js',
     'js/config.js',
     'js/economy.js',
     'js/energy-core.js',
@@ -85,6 +89,8 @@ function copyDir(src, dst) {
     fs.mkdirSync(dst, { recursive: true });
     for (const entry of fs.readdirSync(src)) {
         const s = path.join(src, entry);
+        const rel = path.relative(path.join(ROOT, 'assets'), s);
+        if (s.startsWith(path.join(ROOT, 'assets') + path.sep) && !includeAsset(ROOT, rel, 'h5')) continue;
         const d = path.join(dst, entry);
         if (fs.statSync(s).isDirectory()) copyDir(s, d);
         else fs.copyFileSync(s, d);

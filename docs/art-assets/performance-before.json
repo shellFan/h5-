@@ -1,0 +1,1324 @@
+{
+  "schemaVersion": 1,
+  "harnessVersion": 1,
+  "phase": "before",
+  "generatedAt": "2026-11-23T13:42:01.480Z",
+  "git": {
+    "head": "0aa73fe5366f5a760dbd391e6f975bda31c11f85",
+    "branch": "chore/art-assets-integration-plan",
+    "status": "?? js/art-ui.js\n?? style-art-military.css\n?? tests/unit/military-models.js\n?? tools/art-performance.js\n?? tools/build-military-models.py\n?? \"\\343\\200\\212\\350\\206\\250\\350\\203\\200\\345\\260\\217\\351\\230\\237\\343\\200\\213H5\\345\\205\\250\\345\\245\\227\\347\\276\\216\\346\\234\\257\\350\\265\\204\\344\\272\\247\\345\\272\\223.zip\""
+  },
+  "sourceSnapshot": {
+    "index.html": "1daae0623826848e6a3c90c1f33c3c2634ae737d9b687b9772d3adf5b1d51e23",
+    "style.css": "9f7341bbac16f6c8ec951c36b4f172ba17daa4d3da51348a54876bef72afdca4",
+    "style-v42.css": "ac6845d9485206fefcc2d2f98c5ea2752e3e1534e116e5fdc8c8925c37ada4e1",
+    "style-v60.css": "75b13a94fc127bae11306137594b31de334366b7a60bcadc11eb02bf02454a34",
+    "style-v118.css": "cd56664ee00e5acba1b8f95f4ba6289cf874bef32a97a9e689ba4c74e18eba0a",
+    "style-v120.css": "bfea9aad03254a7c4e45f081d64e1c8e8937e57b2dce8bc4ebfcaa52c0358f91",
+    "style-v130.css": "1a8696bac8b8776f0d02d087728f9e9cd799bbf002cc7c5706f91fcb8904f249",
+    "js/game.js": "5e95ae2a82df4dc0e3ec2edc4b00341bf8dfd049794489f6d972b142840918db",
+    "js/world.js": "4f72cee472d3d69266e25d5105505d2da223bd4c88d982a65c9bb2d2e26efa5f",
+    "js/squad.js": "d97d31e6c4b68863b8edb3b07b120725342e8ae2ec0094a6cf3581915828bd38",
+    "js/enemies.js": "6d153b8ecbb21395e95c3e09856c04297669f0d41651bbcec19d6a14de60fc06",
+    "js/gates.js": "a5628fd1a0865ecd629344fdd64ec5985a50b640354291f81f81f1325ec1c62c",
+    "js/ui-v60.js": "0f38758c6db1137bc5f4eaded11f1dc8b64caee9012b57fd8b212e0b21080003"
+  },
+  "environment": {
+    "browser": "msedge",
+    "headless": true,
+    "platform": "win32",
+    "node": "v24.22.3",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "baseUrl": "http://127.0.0.1:8250",
+    "desktopEmulation": true,
+    "realDevice": false
+  },
+  "protocol": {
+    "runs": 3,
+    "warmupMs": 750,
+    "sampleMs": 2000,
+    "coldBoot": "Each run uses a new browser context with an empty context cache.",
+    "warmBoot": "The same page is reloaded in the same context after its cold boot.",
+    "stress": "Actual Game.start, Squad.setCount and EnemyManager.spawnEnemy APIs; fixed 60 enemies; paused simulation with active RAF rendering prevents deaths/spawns from changing actor counts.",
+    "interpretation": "Comparative Windows Edge headless desktop evidence only; not a real mobile or WeChat-device benchmark."
+  },
+  "bootPairs": [
+    {
+      "run": 1,
+      "cold": {
+        "readyMs": 5041,
+        "navigation": {
+          "durationMs": 119.40000009536743,
+          "domContentLoadedMs": 118.2000002861023,
+          "loadEventMs": 119.40000009536743
+        },
+        "resources": {
+          "count": 82,
+          "transferBytes": 4546404,
+          "encodedBodyBytes": 4521804,
+          "decodedBodyBytes": 4521804,
+          "totalDurationMs": 2071.5000014305115,
+          "names": [
+            "http://127.0.0.1:8250/style.css?v=117",
+            "http://127.0.0.1:8250/style-v42.css",
+            "http://127.0.0.1:8250/style-v51.css",
+            "http://127.0.0.1:8250/style-v60.css",
+            "http://127.0.0.1:8250/style-v120.css?v=120",
+            "http://127.0.0.1:8250/style-v118.css?v=118",
+            "http://127.0.0.1:8250/style-v130.css?v=140",
+            "http://127.0.0.1:8250/assets/art-v1/ui/soldier-avatar.svg",
+            "http://127.0.0.1:8250/assets/art-v1/ui/zombie-avatar.svg",
+            "http://127.0.0.1:8250/js/config.js?v=51",
+            "http://127.0.0.1:8250/js/utils.js?v=50",
+            "http://127.0.0.1:8250/js/vendor/three.min.js",
+            "http://127.0.0.1:8250/js/economy.js?v=51",
+            "http://127.0.0.1:8250/js/energy-core.js?v=60",
+            "http://127.0.0.1:8250/js/skills.js?v=80",
+            "http://127.0.0.1:8250/js/affixes.js?v=60",
+            "http://127.0.0.1:8250/js/growth.js?v=80",
+            "http://127.0.0.1:8250/js/classes.js?v=81",
+            "http://127.0.0.1:8250/js/weapons.js?v=80",
+            "http://127.0.0.1:8250/js/tech-tree.js?v=80",
+            "http://127.0.0.1:8250/js/random-events.js?v=117",
+            "http://127.0.0.1:8250/js/leaderboard.js?v=81",
+            "http://127.0.0.1:8250/js/challenge.js?v=60",
+            "http://127.0.0.1:8250/js/progression.js?v=60",
+            "http://127.0.0.1:8250/js/ui-v60.js?v=140",
+            "http://127.0.0.1:8250/js/weapon-showcase.js?v=143",
+            "http://127.0.0.1:8250/js/upgrades.js?v=51",
+            "http://127.0.0.1:8250/js/movement.js",
+            "http://127.0.0.1:8250/js/vendor/GLTFLoader.js",
+            "http://127.0.0.1:8250/js/soldier-loader.js?v=50",
+            "http://127.0.0.1:8250/js/soldier-renderer.js?v=50",
+            "http://127.0.0.1:8250/js/enemy-models.js?v=16122",
+            "http://127.0.0.1:8250/js/boss-v42.js?v=50",
+            "http://127.0.0.1:8250/js/art-v42.js?v=16122",
+            "http://127.0.0.1:8250/js/scenery-v121.js?v=16122",
+            "http://127.0.0.1:8250/js/world.js?v=16122",
+            "http://127.0.0.1:8250/js/squad.js?v=117",
+            "http://127.0.0.1:8250/js/effects.js?v=141",
+            "http://127.0.0.1:8250/js/gates.js?v=117",
+            "http://127.0.0.1:8250/js/combat.js?v=140",
+            "http://127.0.0.1:8250/js/enemies.js?v=16122",
+            "http://127.0.0.1:8250/js/platform/storage-adapter.js",
+            "http://127.0.0.1:8250/js/pacing.js",
+            "http://127.0.0.1:8250/js/platform/lifecycle-adapter.js",
+            "http://127.0.0.1:8250/js/platform/audio-adapter.js",
+            "http://127.0.0.1:8250/js/platform/share-adapter.js",
+            "http://127.0.0.1:8250/js/platform/platform.js",
+            "http://127.0.0.1:8250/js/ads/ad-service.js",
+            "http://127.0.0.1:8250/js/ads/web-mock-ad.js",
+            "http://127.0.0.1:8250/js/ads/douyin-ad.js",
+            "http://127.0.0.1:8250/js/ads/wechat-ad.js",
+            "http://127.0.0.1:8250/js/ads/game-ad-coordinator.js",
+            "http://127.0.0.1:8250/js/game.js?v=140",
+            "http://127.0.0.1:8250/assets/models/soldier/soldier.glb",
+            "http://127.0.0.1:8250/assets/models/soldier/soldier-lod.glb",
+            "http://127.0.0.1:8250/assets/models/zombies/normal/normal.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/fast/fast.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/normal/normal-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/fast/fast-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/art-v121/world-materials.jpg?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/shield/shield.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/shield/shield-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/split/split.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/split/split-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/spitter/spitter-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/spitter/spitter.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/elite/elite.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/elite/elite-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/bomber/bomber.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/bomber/bomber-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bruiser/bruiser.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bruiser/bruiser-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bulwark/bulwark.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bulwark/bulwark-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/spitking/spitking.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/spitking/spitking-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/hivelord/hivelord.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/hivelord/hivelord-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/titan/titan.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/titan/titan-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/overlord/overlord.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/overlord/overlord-lod.glb?v=121"
+          ]
+        },
+        "heapBytes": 24031329,
+        "renderer": {
+          "calls": 93,
+          "triangles": 200914,
+          "points": 0,
+          "lines": 0,
+          "geometries": 85,
+          "textures": 16,
+          "programs": 16
+        },
+        "game": {
+          "state": "idle",
+          "squad": 12
+        },
+        "loaders": {
+          "soldier": "loaded",
+          "enemies": "loaded"
+        }
+      },
+      "warm": {
+        "readyMs": 4796.599999904633,
+        "navigation": {
+          "durationMs": 77.40000009536743,
+          "domContentLoadedMs": 77,
+          "loadEventMs": 77.40000009536743
+        },
+        "resources": {
+          "count": 82,
+          "transferBytes": 4546404,
+          "encodedBodyBytes": 4521804,
+          "decodedBodyBytes": 4521804,
+          "totalDurationMs": 1194.400001525879,
+          "names": [
+            "http://127.0.0.1:8250/style.css?v=117",
+            "http://127.0.0.1:8250/style-v42.css",
+            "http://127.0.0.1:8250/style-v51.css",
+            "http://127.0.0.1:8250/style-v60.css",
+            "http://127.0.0.1:8250/style-v120.css?v=120",
+            "http://127.0.0.1:8250/style-v118.css?v=118",
+            "http://127.0.0.1:8250/style-v130.css?v=140",
+            "http://127.0.0.1:8250/assets/art-v1/ui/soldier-avatar.svg",
+            "http://127.0.0.1:8250/assets/art-v1/ui/zombie-avatar.svg",
+            "http://127.0.0.1:8250/js/utils.js?v=50",
+            "http://127.0.0.1:8250/js/config.js?v=51",
+            "http://127.0.0.1:8250/js/vendor/three.min.js",
+            "http://127.0.0.1:8250/js/economy.js?v=51",
+            "http://127.0.0.1:8250/js/skills.js?v=80",
+            "http://127.0.0.1:8250/js/energy-core.js?v=60",
+            "http://127.0.0.1:8250/js/affixes.js?v=60",
+            "http://127.0.0.1:8250/js/classes.js?v=81",
+            "http://127.0.0.1:8250/js/growth.js?v=80",
+            "http://127.0.0.1:8250/js/weapons.js?v=80",
+            "http://127.0.0.1:8250/js/tech-tree.js?v=80",
+            "http://127.0.0.1:8250/js/leaderboard.js?v=81",
+            "http://127.0.0.1:8250/js/challenge.js?v=60",
+            "http://127.0.0.1:8250/js/progression.js?v=60",
+            "http://127.0.0.1:8250/js/ui-v60.js?v=140",
+            "http://127.0.0.1:8250/js/random-events.js?v=117",
+            "http://127.0.0.1:8250/js/weapon-showcase.js?v=143",
+            "http://127.0.0.1:8250/js/upgrades.js?v=51",
+            "http://127.0.0.1:8250/js/movement.js",
+            "http://127.0.0.1:8250/js/soldier-renderer.js?v=50",
+            "http://127.0.0.1:8250/js/soldier-loader.js?v=50",
+            "http://127.0.0.1:8250/js/vendor/GLTFLoader.js",
+            "http://127.0.0.1:8250/js/boss-v42.js?v=50",
+            "http://127.0.0.1:8250/js/scenery-v121.js?v=16122",
+            "http://127.0.0.1:8250/js/world.js?v=16122",
+            "http://127.0.0.1:8250/js/enemy-models.js?v=16122",
+            "http://127.0.0.1:8250/js/effects.js?v=141",
+            "http://127.0.0.1:8250/js/art-v42.js?v=16122",
+            "http://127.0.0.1:8250/js/squad.js?v=117",
+            "http://127.0.0.1:8250/js/enemies.js?v=16122",
+            "http://127.0.0.1:8250/js/gates.js?v=117",
+            "http://127.0.0.1:8250/js/combat.js?v=140",
+            "http://127.0.0.1:8250/js/platform/lifecycle-adapter.js",
+            "http://127.0.0.1:8250/js/pacing.js",
+            "http://127.0.0.1:8250/js/platform/storage-adapter.js",
+            "http://127.0.0.1:8250/js/platform/platform.js",
+            "http://127.0.0.1:8250/js/platform/share-adapter.js",
+            "http://127.0.0.1:8250/js/ads/web-mock-ad.js",
+            "http://127.0.0.1:8250/js/ads/ad-service.js",
+            "http://127.0.0.1:8250/js/platform/audio-adapter.js",
+            "http://127.0.0.1:8250/js/ads/douyin-ad.js",
+            "http://127.0.0.1:8250/js/ads/wechat-ad.js",
+            "http://127.0.0.1:8250/js/ads/game-ad-coordinator.js",
+            "http://127.0.0.1:8250/js/game.js?v=140",
+            "http://127.0.0.1:8250/assets/models/soldier/soldier.glb",
+            "http://127.0.0.1:8250/assets/models/soldier/soldier-lod.glb",
+            "http://127.0.0.1:8250/assets/models/zombies/normal/normal.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/normal/normal-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/fast/fast.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/fast/fast-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/art-v121/world-materials.jpg?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/shield/shield.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/shield/shield-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/split/split.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/split/split-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/spitter/spitter.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/spitter/spitter-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/elite/elite.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/elite/elite-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/bomber/bomber.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/bomber/bomber-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bruiser/bruiser.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bruiser/bruiser-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bulwark/bulwark.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bulwark/bulwark-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/spitking/spitking.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/spitking/spitking-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/hivelord/hivelord.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/hivelord/hivelord-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/titan/titan.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/titan/titan-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/overlord/overlord.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/overlord/overlord-lod.glb?v=121"
+          ]
+        },
+        "heapBytes": 24592436,
+        "renderer": {
+          "calls": 93,
+          "triangles": 200914,
+          "points": 0,
+          "lines": 0,
+          "geometries": 85,
+          "textures": 15,
+          "programs": 16
+        },
+        "game": {
+          "state": "idle",
+          "squad": 12
+        },
+        "loaders": {
+          "soldier": "loaded",
+          "enemies": "loaded"
+        }
+      },
+      "diagnostics": {
+        "errors": [],
+        "failedRequests": [],
+        "httpErrors": []
+      }
+    },
+    {
+      "run": 2,
+      "cold": {
+        "readyMs": 4757.5,
+        "navigation": {
+          "durationMs": 87.59999990463257,
+          "domContentLoadedMs": 86.40000009536743,
+          "loadEventMs": 87.59999990463257
+        },
+        "resources": {
+          "count": 82,
+          "transferBytes": 4546404,
+          "encodedBodyBytes": 4521804,
+          "decodedBodyBytes": 4521804,
+          "totalDurationMs": 1517.1999988555908,
+          "names": [
+            "http://127.0.0.1:8250/style.css?v=117",
+            "http://127.0.0.1:8250/style-v42.css",
+            "http://127.0.0.1:8250/style-v60.css",
+            "http://127.0.0.1:8250/style-v51.css",
+            "http://127.0.0.1:8250/style-v120.css?v=120",
+            "http://127.0.0.1:8250/style-v118.css?v=118",
+            "http://127.0.0.1:8250/style-v130.css?v=140",
+            "http://127.0.0.1:8250/assets/art-v1/ui/soldier-avatar.svg",
+            "http://127.0.0.1:8250/assets/art-v1/ui/zombie-avatar.svg",
+            "http://127.0.0.1:8250/js/config.js?v=51",
+            "http://127.0.0.1:8250/js/vendor/three.min.js",
+            "http://127.0.0.1:8250/js/economy.js?v=51",
+            "http://127.0.0.1:8250/js/utils.js?v=50",
+            "http://127.0.0.1:8250/js/energy-core.js?v=60",
+            "http://127.0.0.1:8250/js/skills.js?v=80",
+            "http://127.0.0.1:8250/js/growth.js?v=80",
+            "http://127.0.0.1:8250/js/affixes.js?v=60",
+            "http://127.0.0.1:8250/js/classes.js?v=81",
+            "http://127.0.0.1:8250/js/tech-tree.js?v=80",
+            "http://127.0.0.1:8250/js/weapons.js?v=80",
+            "http://127.0.0.1:8250/js/random-events.js?v=117",
+            "http://127.0.0.1:8250/js/leaderboard.js?v=81",
+            "http://127.0.0.1:8250/js/progression.js?v=60",
+            "http://127.0.0.1:8250/js/upgrades.js?v=51",
+            "http://127.0.0.1:8250/js/challenge.js?v=60",
+            "http://127.0.0.1:8250/js/weapon-showcase.js?v=143",
+            "http://127.0.0.1:8250/js/movement.js",
+            "http://127.0.0.1:8250/js/ui-v60.js?v=140",
+            "http://127.0.0.1:8250/js/soldier-renderer.js?v=50",
+            "http://127.0.0.1:8250/js/enemy-models.js?v=16122",
+            "http://127.0.0.1:8250/js/soldier-loader.js?v=50",
+            "http://127.0.0.1:8250/js/boss-v42.js?v=50",
+            "http://127.0.0.1:8250/js/art-v42.js?v=16122",
+            "http://127.0.0.1:8250/js/vendor/GLTFLoader.js",
+            "http://127.0.0.1:8250/js/scenery-v121.js?v=16122",
+            "http://127.0.0.1:8250/js/world.js?v=16122",
+            "http://127.0.0.1:8250/js/effects.js?v=141",
+            "http://127.0.0.1:8250/js/squad.js?v=117",
+            "http://127.0.0.1:8250/js/gates.js?v=117",
+            "http://127.0.0.1:8250/js/combat.js?v=140",
+            "http://127.0.0.1:8250/js/enemies.js?v=16122",
+            "http://127.0.0.1:8250/js/pacing.js",
+            "http://127.0.0.1:8250/js/platform/lifecycle-adapter.js",
+            "http://127.0.0.1:8250/js/platform/storage-adapter.js",
+            "http://127.0.0.1:8250/js/platform/share-adapter.js",
+            "http://127.0.0.1:8250/js/platform/platform.js",
+            "http://127.0.0.1:8250/js/platform/audio-adapter.js",
+            "http://127.0.0.1:8250/js/ads/ad-service.js",
+            "http://127.0.0.1:8250/js/ads/web-mock-ad.js",
+            "http://127.0.0.1:8250/js/ads/douyin-ad.js",
+            "http://127.0.0.1:8250/js/ads/wechat-ad.js",
+            "http://127.0.0.1:8250/js/ads/game-ad-coordinator.js",
+            "http://127.0.0.1:8250/js/game.js?v=140",
+            "http://127.0.0.1:8250/assets/models/soldier/soldier.glb",
+            "http://127.0.0.1:8250/assets/models/soldier/soldier-lod.glb",
+            "http://127.0.0.1:8250/assets/models/zombies/normal/normal.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/normal/normal-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/fast/fast.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/fast/fast-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/art-v121/world-materials.jpg?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/shield/shield.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/shield/shield-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/split/split.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/split/split-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/spitter/spitter.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/spitter/spitter-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/elite/elite.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/elite/elite-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/bomber/bomber.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/bomber/bomber-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bruiser/bruiser.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bruiser/bruiser-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bulwark/bulwark.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bulwark/bulwark-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/spitking/spitking.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/spitking/spitking-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/hivelord/hivelord.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/hivelord/hivelord-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/titan/titan.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/titan/titan-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/overlord/overlord.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/overlord/overlord-lod.glb?v=121"
+          ]
+        },
+        "heapBytes": 25214989,
+        "renderer": {
+          "calls": 93,
+          "triangles": 200914,
+          "points": 0,
+          "lines": 0,
+          "geometries": 85,
+          "textures": 16,
+          "programs": 16
+        },
+        "game": {
+          "state": "idle",
+          "squad": 12
+        },
+        "loaders": {
+          "soldier": "loaded",
+          "enemies": "loaded"
+        }
+      },
+      "warm": {
+        "readyMs": 4720.300000190735,
+        "navigation": {
+          "durationMs": 69.30000019073486,
+          "domContentLoadedMs": 68.40000009536743,
+          "loadEventMs": 69.30000019073486
+        },
+        "resources": {
+          "count": 82,
+          "transferBytes": 4546404,
+          "encodedBodyBytes": 4521804,
+          "decodedBodyBytes": 4521804,
+          "totalDurationMs": 885.2000017166138,
+          "names": [
+            "http://127.0.0.1:8250/style.css?v=117",
+            "http://127.0.0.1:8250/style-v42.css",
+            "http://127.0.0.1:8250/style-v60.css",
+            "http://127.0.0.1:8250/style-v51.css",
+            "http://127.0.0.1:8250/style-v120.css?v=120",
+            "http://127.0.0.1:8250/style-v118.css?v=118",
+            "http://127.0.0.1:8250/style-v130.css?v=140",
+            "http://127.0.0.1:8250/assets/art-v1/ui/soldier-avatar.svg",
+            "http://127.0.0.1:8250/assets/art-v1/ui/zombie-avatar.svg",
+            "http://127.0.0.1:8250/js/config.js?v=51",
+            "http://127.0.0.1:8250/js/utils.js?v=50",
+            "http://127.0.0.1:8250/js/economy.js?v=51",
+            "http://127.0.0.1:8250/js/vendor/three.min.js",
+            "http://127.0.0.1:8250/js/energy-core.js?v=60",
+            "http://127.0.0.1:8250/js/skills.js?v=80",
+            "http://127.0.0.1:8250/js/growth.js?v=80",
+            "http://127.0.0.1:8250/js/classes.js?v=81",
+            "http://127.0.0.1:8250/js/weapons.js?v=80",
+            "http://127.0.0.1:8250/js/affixes.js?v=60",
+            "http://127.0.0.1:8250/js/random-events.js?v=117",
+            "http://127.0.0.1:8250/js/tech-tree.js?v=80",
+            "http://127.0.0.1:8250/js/leaderboard.js?v=81",
+            "http://127.0.0.1:8250/js/challenge.js?v=60",
+            "http://127.0.0.1:8250/js/ui-v60.js?v=140",
+            "http://127.0.0.1:8250/js/progression.js?v=60",
+            "http://127.0.0.1:8250/js/weapon-showcase.js?v=143",
+            "http://127.0.0.1:8250/js/upgrades.js?v=51",
+            "http://127.0.0.1:8250/js/boss-v42.js?v=50",
+            "http://127.0.0.1:8250/js/soldier-loader.js?v=50",
+            "http://127.0.0.1:8250/js/movement.js",
+            "http://127.0.0.1:8250/js/soldier-renderer.js?v=50",
+            "http://127.0.0.1:8250/js/enemy-models.js?v=16122",
+            "http://127.0.0.1:8250/js/vendor/GLTFLoader.js",
+            "http://127.0.0.1:8250/js/scenery-v121.js?v=16122",
+            "http://127.0.0.1:8250/js/world.js?v=16122",
+            "http://127.0.0.1:8250/js/art-v42.js?v=16122",
+            "http://127.0.0.1:8250/js/squad.js?v=117",
+            "http://127.0.0.1:8250/js/effects.js?v=141",
+            "http://127.0.0.1:8250/js/gates.js?v=117",
+            "http://127.0.0.1:8250/js/platform/storage-adapter.js",
+            "http://127.0.0.1:8250/js/enemies.js?v=16122",
+            "http://127.0.0.1:8250/js/pacing.js",
+            "http://127.0.0.1:8250/js/combat.js?v=140",
+            "http://127.0.0.1:8250/js/platform/lifecycle-adapter.js",
+            "http://127.0.0.1:8250/js/platform/share-adapter.js",
+            "http://127.0.0.1:8250/js/platform/platform.js",
+            "http://127.0.0.1:8250/js/platform/audio-adapter.js",
+            "http://127.0.0.1:8250/js/ads/ad-service.js",
+            "http://127.0.0.1:8250/js/ads/wechat-ad.js",
+            "http://127.0.0.1:8250/js/ads/douyin-ad.js",
+            "http://127.0.0.1:8250/js/ads/web-mock-ad.js",
+            "http://127.0.0.1:8250/js/ads/game-ad-coordinator.js",
+            "http://127.0.0.1:8250/js/game.js?v=140",
+            "http://127.0.0.1:8250/assets/models/soldier/soldier.glb",
+            "http://127.0.0.1:8250/assets/models/soldier/soldier-lod.glb",
+            "http://127.0.0.1:8250/assets/models/zombies/normal/normal.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/normal/normal-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/fast/fast.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/fast/fast-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/art-v121/world-materials.jpg?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/shield/shield.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/shield/shield-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/split/split.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/split/split-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/spitter/spitter.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/spitter/spitter-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/elite/elite.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/elite/elite-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/bomber/bomber.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/bomber/bomber-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bruiser/bruiser.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bruiser/bruiser-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bulwark/bulwark.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bulwark/bulwark-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/spitking/spitking.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/spitking/spitking-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/hivelord/hivelord.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/hivelord/hivelord-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/titan/titan.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/titan/titan-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/overlord/overlord.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/overlord/overlord-lod.glb?v=121"
+          ]
+        },
+        "heapBytes": 26044929,
+        "renderer": {
+          "calls": 93,
+          "triangles": 200914,
+          "points": 0,
+          "lines": 0,
+          "geometries": 85,
+          "textures": 15,
+          "programs": 16
+        },
+        "game": {
+          "state": "idle",
+          "squad": 12
+        },
+        "loaders": {
+          "soldier": "loaded",
+          "enemies": "loaded"
+        }
+      },
+      "diagnostics": {
+        "errors": [],
+        "failedRequests": [],
+        "httpErrors": []
+      }
+    },
+    {
+      "run": 3,
+      "cold": {
+        "readyMs": 4741.299999713898,
+        "navigation": {
+          "durationMs": 75.40000009536743,
+          "domContentLoadedMs": 74.19999980926514,
+          "loadEventMs": 75.40000009536743
+        },
+        "resources": {
+          "count": 82,
+          "transferBytes": 4546404,
+          "encodedBodyBytes": 4521804,
+          "decodedBodyBytes": 4521804,
+          "totalDurationMs": 1253.199999332428,
+          "names": [
+            "http://127.0.0.1:8250/style.css?v=117",
+            "http://127.0.0.1:8250/style-v42.css",
+            "http://127.0.0.1:8250/style-v60.css",
+            "http://127.0.0.1:8250/style-v51.css",
+            "http://127.0.0.1:8250/style-v120.css?v=120",
+            "http://127.0.0.1:8250/style-v130.css?v=140",
+            "http://127.0.0.1:8250/style-v118.css?v=118",
+            "http://127.0.0.1:8250/assets/art-v1/ui/zombie-avatar.svg",
+            "http://127.0.0.1:8250/assets/art-v1/ui/soldier-avatar.svg",
+            "http://127.0.0.1:8250/js/energy-core.js?v=60",
+            "http://127.0.0.1:8250/js/utils.js?v=50",
+            "http://127.0.0.1:8250/js/affixes.js?v=60",
+            "http://127.0.0.1:8250/js/economy.js?v=51",
+            "http://127.0.0.1:8250/js/skills.js?v=80",
+            "http://127.0.0.1:8250/js/config.js?v=51",
+            "http://127.0.0.1:8250/js/vendor/three.min.js",
+            "http://127.0.0.1:8250/js/growth.js?v=80",
+            "http://127.0.0.1:8250/js/classes.js?v=81",
+            "http://127.0.0.1:8250/js/weapons.js?v=80",
+            "http://127.0.0.1:8250/js/random-events.js?v=117",
+            "http://127.0.0.1:8250/js/challenge.js?v=60",
+            "http://127.0.0.1:8250/js/tech-tree.js?v=80",
+            "http://127.0.0.1:8250/js/progression.js?v=60",
+            "http://127.0.0.1:8250/js/leaderboard.js?v=81",
+            "http://127.0.0.1:8250/js/weapon-showcase.js?v=143",
+            "http://127.0.0.1:8250/js/ui-v60.js?v=140",
+            "http://127.0.0.1:8250/js/upgrades.js?v=51",
+            "http://127.0.0.1:8250/js/movement.js",
+            "http://127.0.0.1:8250/js/vendor/GLTFLoader.js",
+            "http://127.0.0.1:8250/js/soldier-loader.js?v=50",
+            "http://127.0.0.1:8250/js/soldier-renderer.js?v=50",
+            "http://127.0.0.1:8250/js/boss-v42.js?v=50",
+            "http://127.0.0.1:8250/js/enemy-models.js?v=16122",
+            "http://127.0.0.1:8250/js/world.js?v=16122",
+            "http://127.0.0.1:8250/js/scenery-v121.js?v=16122",
+            "http://127.0.0.1:8250/js/art-v42.js?v=16122",
+            "http://127.0.0.1:8250/js/squad.js?v=117",
+            "http://127.0.0.1:8250/js/gates.js?v=117",
+            "http://127.0.0.1:8250/js/effects.js?v=141",
+            "http://127.0.0.1:8250/js/combat.js?v=140",
+            "http://127.0.0.1:8250/js/enemies.js?v=16122",
+            "http://127.0.0.1:8250/js/platform/storage-adapter.js",
+            "http://127.0.0.1:8250/js/pacing.js",
+            "http://127.0.0.1:8250/js/platform/lifecycle-adapter.js",
+            "http://127.0.0.1:8250/js/platform/audio-adapter.js",
+            "http://127.0.0.1:8250/js/platform/share-adapter.js",
+            "http://127.0.0.1:8250/js/platform/platform.js",
+            "http://127.0.0.1:8250/js/ads/ad-service.js",
+            "http://127.0.0.1:8250/js/ads/web-mock-ad.js",
+            "http://127.0.0.1:8250/js/ads/douyin-ad.js",
+            "http://127.0.0.1:8250/js/ads/wechat-ad.js",
+            "http://127.0.0.1:8250/js/ads/game-ad-coordinator.js",
+            "http://127.0.0.1:8250/js/game.js?v=140",
+            "http://127.0.0.1:8250/assets/models/soldier/soldier.glb",
+            "http://127.0.0.1:8250/assets/models/soldier/soldier-lod.glb",
+            "http://127.0.0.1:8250/assets/models/zombies/normal/normal.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/normal/normal-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/fast/fast.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/fast/fast-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/art-v121/world-materials.jpg?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/shield/shield.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/shield/shield-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/split/split.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/split/split-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/spitter/spitter.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/spitter/spitter-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/elite/elite.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/elite/elite-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/bomber/bomber.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/bomber/bomber-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bruiser/bruiser.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bruiser/bruiser-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bulwark/bulwark.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bulwark/bulwark-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/spitking/spitking.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/spitking/spitking-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/hivelord/hivelord.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/hivelord/hivelord-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/titan/titan.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/titan/titan-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/overlord/overlord.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/overlord/overlord-lod.glb?v=121"
+          ]
+        },
+        "heapBytes": 23987401,
+        "renderer": {
+          "calls": 93,
+          "triangles": 200914,
+          "points": 0,
+          "lines": 0,
+          "geometries": 85,
+          "textures": 16,
+          "programs": 16
+        },
+        "game": {
+          "state": "idle",
+          "squad": 12
+        },
+        "loaders": {
+          "soldier": "loaded",
+          "enemies": "loaded"
+        }
+      },
+      "warm": {
+        "readyMs": 4717.199999809265,
+        "navigation": {
+          "durationMs": 69.09999990463257,
+          "domContentLoadedMs": 68.7000002861023,
+          "loadEventMs": 69.09999990463257
+        },
+        "resources": {
+          "count": 82,
+          "transferBytes": 4546404,
+          "encodedBodyBytes": 4521804,
+          "decodedBodyBytes": 4521804,
+          "totalDurationMs": 854.2999992370605,
+          "names": [
+            "http://127.0.0.1:8250/style.css?v=117",
+            "http://127.0.0.1:8250/style-v42.css",
+            "http://127.0.0.1:8250/style-v51.css",
+            "http://127.0.0.1:8250/style-v60.css",
+            "http://127.0.0.1:8250/style-v120.css?v=120",
+            "http://127.0.0.1:8250/style-v118.css?v=118",
+            "http://127.0.0.1:8250/style-v130.css?v=140",
+            "http://127.0.0.1:8250/assets/art-v1/ui/soldier-avatar.svg",
+            "http://127.0.0.1:8250/assets/art-v1/ui/zombie-avatar.svg",
+            "http://127.0.0.1:8250/js/utils.js?v=50",
+            "http://127.0.0.1:8250/js/config.js?v=51",
+            "http://127.0.0.1:8250/js/vendor/three.min.js",
+            "http://127.0.0.1:8250/js/energy-core.js?v=60",
+            "http://127.0.0.1:8250/js/economy.js?v=51",
+            "http://127.0.0.1:8250/js/skills.js?v=80",
+            "http://127.0.0.1:8250/js/affixes.js?v=60",
+            "http://127.0.0.1:8250/js/classes.js?v=81",
+            "http://127.0.0.1:8250/js/growth.js?v=80",
+            "http://127.0.0.1:8250/js/weapons.js?v=80",
+            "http://127.0.0.1:8250/js/random-events.js?v=117",
+            "http://127.0.0.1:8250/js/leaderboard.js?v=81",
+            "http://127.0.0.1:8250/js/tech-tree.js?v=80",
+            "http://127.0.0.1:8250/js/progression.js?v=60",
+            "http://127.0.0.1:8250/js/challenge.js?v=60",
+            "http://127.0.0.1:8250/js/weapon-showcase.js?v=143",
+            "http://127.0.0.1:8250/js/upgrades.js?v=51",
+            "http://127.0.0.1:8250/js/ui-v60.js?v=140",
+            "http://127.0.0.1:8250/js/movement.js",
+            "http://127.0.0.1:8250/js/vendor/GLTFLoader.js",
+            "http://127.0.0.1:8250/js/soldier-renderer.js?v=50",
+            "http://127.0.0.1:8250/js/soldier-loader.js?v=50",
+            "http://127.0.0.1:8250/js/boss-v42.js?v=50",
+            "http://127.0.0.1:8250/js/enemy-models.js?v=16122",
+            "http://127.0.0.1:8250/js/scenery-v121.js?v=16122",
+            "http://127.0.0.1:8250/js/world.js?v=16122",
+            "http://127.0.0.1:8250/js/effects.js?v=141",
+            "http://127.0.0.1:8250/js/squad.js?v=117",
+            "http://127.0.0.1:8250/js/gates.js?v=117",
+            "http://127.0.0.1:8250/js/art-v42.js?v=16122",
+            "http://127.0.0.1:8250/js/enemies.js?v=16122",
+            "http://127.0.0.1:8250/js/combat.js?v=140",
+            "http://127.0.0.1:8250/js/platform/lifecycle-adapter.js",
+            "http://127.0.0.1:8250/js/pacing.js",
+            "http://127.0.0.1:8250/js/platform/storage-adapter.js",
+            "http://127.0.0.1:8250/js/platform/share-adapter.js",
+            "http://127.0.0.1:8250/js/platform/platform.js",
+            "http://127.0.0.1:8250/js/platform/audio-adapter.js",
+            "http://127.0.0.1:8250/js/ads/ad-service.js",
+            "http://127.0.0.1:8250/js/ads/web-mock-ad.js",
+            "http://127.0.0.1:8250/js/ads/douyin-ad.js",
+            "http://127.0.0.1:8250/js/ads/wechat-ad.js",
+            "http://127.0.0.1:8250/js/ads/game-ad-coordinator.js",
+            "http://127.0.0.1:8250/js/game.js?v=140",
+            "http://127.0.0.1:8250/assets/models/soldier/soldier.glb",
+            "http://127.0.0.1:8250/assets/models/soldier/soldier-lod.glb",
+            "http://127.0.0.1:8250/assets/models/zombies/normal/normal.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/normal/normal-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/fast/fast.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/fast/fast-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/art-v121/world-materials.jpg?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/shield/shield.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/shield/shield-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/split/split.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/split/split-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/spitter/spitter.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/spitter/spitter-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/elite/elite.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/elite/elite-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/bomber/bomber.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/zombies/bomber/bomber-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bruiser/bruiser.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bruiser/bruiser-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bulwark/bulwark.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/bulwark/bulwark-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/spitking/spitking.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/spitking/spitking-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/hivelord/hivelord.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/hivelord/hivelord-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/titan/titan.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/titan/titan-lod.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/overlord/overlord.glb?v=121",
+            "http://127.0.0.1:8250/assets/models/bosses/overlord/overlord-lod.glb?v=121"
+          ]
+        },
+        "heapBytes": 23909348,
+        "renderer": {
+          "calls": 93,
+          "triangles": 200914,
+          "points": 0,
+          "lines": 0,
+          "geometries": 85,
+          "textures": 15,
+          "programs": 16
+        },
+        "game": {
+          "state": "idle",
+          "squad": 12
+        },
+        "loaders": {
+          "soldier": "loaded",
+          "enemies": "loaded"
+        }
+      },
+      "diagnostics": {
+        "errors": [],
+        "failedRequests": [],
+        "httpErrors": []
+      }
+    }
+  ],
+  "stressSamples": [
+    {
+      "run": 1,
+      "load": "12-soldiers-60-enemies",
+      "setup": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 12,
+        "enemies": 60
+      },
+      "sample": {
+        "durationMs": 2016.6,
+        "frameCount": 121,
+        "fps": 60,
+        "medianFrameMs": 16.7,
+        "p95FrameMs": 16.8
+      },
+      "runtime": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 12,
+        "enemies": 60,
+        "heapBytes": 14166137,
+        "renderer": {
+          "calls": 113,
+          "triangles": 202914,
+          "points": 0,
+          "lines": 0,
+          "geometries": 86,
+          "textures": 16,
+          "programs": 18
+        }
+      },
+      "diagnostics": {
+        "errors": [],
+        "failedRequests": [],
+        "httpErrors": []
+      }
+    },
+    {
+      "run": 2,
+      "load": "12-soldiers-60-enemies",
+      "setup": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 12,
+        "enemies": 60
+      },
+      "sample": {
+        "durationMs": 2000,
+        "frameCount": 120,
+        "fps": 60,
+        "medianFrameMs": 16.7,
+        "p95FrameMs": 16.8
+      },
+      "runtime": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 12,
+        "enemies": 60,
+        "heapBytes": 15264625,
+        "renderer": {
+          "calls": 113,
+          "triangles": 202914,
+          "points": 0,
+          "lines": 0,
+          "geometries": 86,
+          "textures": 15,
+          "programs": 18
+        }
+      },
+      "diagnostics": {
+        "errors": [],
+        "failedRequests": [],
+        "httpErrors": []
+      }
+    },
+    {
+      "run": 3,
+      "load": "12-soldiers-60-enemies",
+      "setup": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 12,
+        "enemies": 60
+      },
+      "sample": {
+        "durationMs": 2000,
+        "frameCount": 120,
+        "fps": 60,
+        "medianFrameMs": 16.7,
+        "p95FrameMs": 16.8
+      },
+      "runtime": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 12,
+        "enemies": 60,
+        "heapBytes": 14852413,
+        "renderer": {
+          "calls": 113,
+          "triangles": 202914,
+          "points": 0,
+          "lines": 0,
+          "geometries": 86,
+          "textures": 16,
+          "programs": 18
+        }
+      },
+      "diagnostics": {
+        "errors": [],
+        "failedRequests": [],
+        "httpErrors": []
+      }
+    },
+    {
+      "run": 1,
+      "load": "100-soldiers-60-enemies",
+      "setup": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 100,
+        "enemies": 60
+      },
+      "sample": {
+        "durationMs": 2000.1,
+        "frameCount": 120,
+        "fps": 60,
+        "medianFrameMs": 16.7,
+        "p95FrameMs": 16.8
+      },
+      "runtime": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 100,
+        "enemies": 60,
+        "heapBytes": 14968322,
+        "renderer": {
+          "calls": 113,
+          "triangles": 202914,
+          "points": 0,
+          "lines": 0,
+          "geometries": 86,
+          "textures": 16,
+          "programs": 18
+        }
+      },
+      "diagnostics": {
+        "errors": [],
+        "failedRequests": [],
+        "httpErrors": []
+      }
+    },
+    {
+      "run": 2,
+      "load": "100-soldiers-60-enemies",
+      "setup": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 100,
+        "enemies": 60
+      },
+      "sample": {
+        "durationMs": 2000,
+        "frameCount": 120,
+        "fps": 60,
+        "medianFrameMs": 16.7,
+        "p95FrameMs": 16.8
+      },
+      "runtime": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 100,
+        "enemies": 60,
+        "heapBytes": 14969746,
+        "renderer": {
+          "calls": 113,
+          "triangles": 202914,
+          "points": 0,
+          "lines": 0,
+          "geometries": 86,
+          "textures": 16,
+          "programs": 18
+        }
+      },
+      "diagnostics": {
+        "errors": [],
+        "failedRequests": [],
+        "httpErrors": []
+      }
+    },
+    {
+      "run": 3,
+      "load": "100-soldiers-60-enemies",
+      "setup": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 100,
+        "enemies": 60
+      },
+      "sample": {
+        "durationMs": 2000.1,
+        "frameCount": 120,
+        "fps": 60,
+        "medianFrameMs": 16.7,
+        "p95FrameMs": 16.8
+      },
+      "runtime": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 100,
+        "enemies": 60,
+        "heapBytes": 14958370,
+        "renderer": {
+          "calls": 113,
+          "triangles": 202914,
+          "points": 0,
+          "lines": 0,
+          "geometries": 86,
+          "textures": 16,
+          "programs": 18
+        }
+      },
+      "diagnostics": {
+        "errors": [],
+        "failedRequests": [],
+        "httpErrors": []
+      }
+    },
+    {
+      "run": 1,
+      "load": "300-soldiers-60-enemies",
+      "setup": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 300,
+        "enemies": 60
+      },
+      "sample": {
+        "durationMs": 2000.1,
+        "frameCount": 120,
+        "fps": 60,
+        "medianFrameMs": 16.7,
+        "p95FrameMs": 16.8
+      },
+      "runtime": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 300,
+        "enemies": 60,
+        "heapBytes": 14930618,
+        "renderer": {
+          "calls": 113,
+          "triangles": 202914,
+          "points": 0,
+          "lines": 0,
+          "geometries": 86,
+          "textures": 16,
+          "programs": 18
+        }
+      },
+      "diagnostics": {
+        "errors": [],
+        "failedRequests": [],
+        "httpErrors": []
+      }
+    },
+    {
+      "run": 2,
+      "load": "300-soldiers-60-enemies",
+      "setup": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 300,
+        "enemies": 60
+      },
+      "sample": {
+        "durationMs": 2000.1,
+        "frameCount": 120,
+        "fps": 60,
+        "medianFrameMs": 16.7,
+        "p95FrameMs": 16.8
+      },
+      "runtime": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 300,
+        "enemies": 60,
+        "heapBytes": 18048334,
+        "renderer": {
+          "calls": 113,
+          "triangles": 202914,
+          "points": 0,
+          "lines": 0,
+          "geometries": 86,
+          "textures": 16,
+          "programs": 18
+        }
+      },
+      "diagnostics": {
+        "errors": [],
+        "failedRequests": [],
+        "httpErrors": []
+      }
+    },
+    {
+      "run": 3,
+      "load": "300-soldiers-60-enemies",
+      "setup": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 300,
+        "enemies": 60
+      },
+      "sample": {
+        "durationMs": 2000,
+        "frameCount": 120,
+        "fps": 60,
+        "medianFrameMs": 16.7,
+        "p95FrameMs": 16.8
+      },
+      "runtime": {
+        "state": "playing",
+        "paused": true,
+        "soldiers": 300,
+        "enemies": 60,
+        "heapBytes": 18256630,
+        "renderer": {
+          "calls": 113,
+          "triangles": 202914,
+          "points": 0,
+          "lines": 0,
+          "geometries": 86,
+          "textures": 16,
+          "programs": 18
+        }
+      },
+      "diagnostics": {
+        "errors": [],
+        "failedRequests": [],
+        "httpErrors": []
+      }
+    }
+  ],
+  "summary": {
+    "boot": {
+      "cold": {
+        "readyMs": {
+          "runs": 3,
+          "min": 4741.3,
+          "median": 4757.5,
+          "max": 5041
+        },
+        "transferBytes": {
+          "runs": 3,
+          "min": 4546404,
+          "median": 4546404,
+          "max": 4546404
+        },
+        "encodedBodyBytes": {
+          "runs": 3,
+          "min": 4521804,
+          "median": 4521804,
+          "max": 4521804
+        },
+        "resourceDurationMs": {
+          "runs": 3,
+          "min": 1253.2,
+          "median": 1517.2,
+          "max": 2071.5
+        },
+        "heapBytes": {
+          "runs": 3,
+          "min": 23987401,
+          "median": 24031329,
+          "max": 25214989
+        },
+        "drawCalls": {
+          "runs": 3,
+          "min": 93,
+          "median": 93,
+          "max": 93
+        }
+      },
+      "warm": {
+        "readyMs": {
+          "runs": 3,
+          "min": 4717.2,
+          "median": 4720.3,
+          "max": 4796.6
+        },
+        "transferBytes": {
+          "runs": 3,
+          "min": 4546404,
+          "median": 4546404,
+          "max": 4546404
+        },
+        "encodedBodyBytes": {
+          "runs": 3,
+          "min": 4521804,
+          "median": 4521804,
+          "max": 4521804
+        },
+        "resourceDurationMs": {
+          "runs": 3,
+          "min": 854.3,
+          "median": 885.2,
+          "max": 1194.4
+        },
+        "heapBytes": {
+          "runs": 3,
+          "min": 23909348,
+          "median": 24592436,
+          "max": 26044929
+        },
+        "drawCalls": {
+          "runs": 3,
+          "min": 93,
+          "median": 93,
+          "max": 93
+        }
+      }
+    },
+    "stress": [
+      {
+        "load": "12-soldiers-60-enemies",
+        "runs": 3,
+        "fps": {
+          "runs": 3,
+          "min": 60,
+          "median": 60,
+          "max": 60
+        },
+        "medianFrameMs": {
+          "runs": 3,
+          "min": 16.7,
+          "median": 16.7,
+          "max": 16.7
+        },
+        "p95FrameMs": {
+          "runs": 3,
+          "min": 16.8,
+          "median": 16.8,
+          "max": 16.8
+        },
+        "drawCalls": {
+          "runs": 3,
+          "min": 113,
+          "median": 113,
+          "max": 113
+        },
+        "triangles": {
+          "runs": 3,
+          "min": 202914,
+          "median": 202914,
+          "max": 202914
+        },
+        "heapBytes": {
+          "runs": 3,
+          "min": 14166137,
+          "median": 14852413,
+          "max": 15264625
+        }
+      },
+      {
+        "load": "100-soldiers-60-enemies",
+        "runs": 3,
+        "fps": {
+          "runs": 3,
+          "min": 60,
+          "median": 60,
+          "max": 60
+        },
+        "medianFrameMs": {
+          "runs": 3,
+          "min": 16.7,
+          "median": 16.7,
+          "max": 16.7
+        },
+        "p95FrameMs": {
+          "runs": 3,
+          "min": 16.8,
+          "median": 16.8,
+          "max": 16.8
+        },
+        "drawCalls": {
+          "runs": 3,
+          "min": 113,
+          "median": 113,
+          "max": 113
+        },
+        "triangles": {
+          "runs": 3,
+          "min": 202914,
+          "median": 202914,
+          "max": 202914
+        },
+        "heapBytes": {
+          "runs": 3,
+          "min": 14958370,
+          "median": 14968322,
+          "max": 14969746
+        }
+      },
+      {
+        "load": "300-soldiers-60-enemies",
+        "runs": 3,
+        "fps": {
+          "runs": 3,
+          "min": 60,
+          "median": 60,
+          "max": 60
+        },
+        "medianFrameMs": {
+          "runs": 3,
+          "min": 16.7,
+          "median": 16.7,
+          "max": 16.7
+        },
+        "p95FrameMs": {
+          "runs": 3,
+          "min": 16.8,
+          "median": 16.8,
+          "max": 16.8
+        },
+        "drawCalls": {
+          "runs": 3,
+          "min": 113,
+          "median": 113,
+          "max": 113
+        },
+        "triangles": {
+          "runs": 3,
+          "min": 202914,
+          "median": 202914,
+          "max": 202914
+        },
+        "heapBytes": {
+          "runs": 3,
+          "min": 14930618,
+          "median": 18048334,
+          "max": 18256630
+        }
+      }
+    ]
+  },
+  "diagnostics": [],
+  "passed": true
+}

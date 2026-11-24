@@ -15,12 +15,16 @@
 
 const fs = require('fs');
 const path = require('path');
+const { includeAsset, miniSource, copyGallery } = require('./runtime-assets');
 
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist', 'douyin');
 
 // 与 index.html 加载顺序一致(除 vendor/three 与 vendor/GLTFLoader — 由 bundle 头部接线)
 const GAME_SCRIPTS = [
+    'assets/game/catalog.js',
+    'js/art-ui.js',
+    'js/military-art.js',
     'js/config.js',
     'js/utils.js',
     'js/economy.js',
@@ -92,7 +96,9 @@ const GAME_JSON = {
         downloadFile: 10000
     },
     subpackages: [
-        { root: 'assets/', name: 'assets' }
+        { root: 'assets/', name: 'assets' },
+        { root: 'art/', name: 'art' },
+        { root: 'art-gallery/', name: 'art_gallery' }
     ]
 };
 
@@ -390,9 +396,12 @@ function copyDir(src, dst) {
     fs.mkdirSync(dst, { recursive: true });
     for (const entry of fs.readdirSync(src)) {
         const s = path.join(src, entry);
-        const d = path.join(dst, entry);
+        if (s.startsWith(path.join(ROOT, 'assets') + path.sep) && !includeAsset(ROOT, path.relative(path.join(ROOT, 'assets'), s), 'douyin')) continue;
+        const assetRel = path.relative(path.join(ROOT, 'assets'), s).replaceAll('\\', '/');
+        const d = assetRel.startsWith('game/') && !assetRel.startsWith('game/models/')
+            ? path.join(OUT, 'art', assetRel.slice(5)) : path.join(dst, entry);
         if (fs.statSync(s).isDirectory()) copyDir(s, d);
-        else fs.copyFileSync(s, d);
+        else { fs.mkdirSync(path.dirname(d), { recursive: true }); fs.copyFileSync(s, d); }
     }
 }
 
@@ -409,7 +418,7 @@ this.THREE = THREE;
 `);
 
     for (const rel of GAME_SCRIPTS) {
-        const code = mustRead(rel);
+        const code = miniSource(mustRead(rel));
         parts.push(`/* ===== [[ ${rel} ]] ===== */\n` + code + '\n');
         if (rel === 'js/vendor/GLTFLoader.js') {
             // vendor 包装以 THREE 为参数执行完毕后, 接入小游戏 GLB 读取包装
@@ -448,6 +457,7 @@ function main() {
     console.log('[build:douyin] 复制 three.js 与资源...');
     copyTo('libs/three.min.js');
     copyTo('assets');
+    copyGallery(ROOT, OUT);
 
     console.log('[build:douyin] 生成入口与配置...');
     fs.writeFileSync(path.join(OUT, 'game.js'), ENTRY_JS);

@@ -87,7 +87,19 @@
         },
         /* --- 画布/图片 --- */
         createCanvas: createCanvas,
-        createImage: function () { return new Image(); },
+        createImage: function () {
+            var image = new Image();
+            var srcDescriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+            Object.defineProperty(image, 'src', {
+                configurable: true,
+                get: function () { return srcDescriptor.get.call(image); },
+                set: function (value) {
+                    if (/^(assets|art|ui-art|art-gallery)\//.test(value)) value = '/wechat-game/' + value;
+                    srcDescriptor.set.call(image, value);
+                }
+            });
+            return image;
+        },
         /* --- 文件系统(包内文件) --- */
         getFileSystemManager: function () {
             return {
@@ -194,7 +206,7 @@
             // Browser tests live under /tests; wx CSS assets resolve from the
             // package root. Keep this URL adjustment out of the production code.
             module.exports = module.exports.map(function (css) {
-                return css.replace(/url\((['"]?)(ui-art\/[^'")]+)\1\)/g, function (_, quote, asset) {
+                return css.replace(/url\((['"]?)((?:ui-art|art)\/[^'")]+)\1\)/g, function (_, quote, asset) {
                     return 'url(' + quote + '/wechat-game/' + asset + quote + ')';
                 });
             });

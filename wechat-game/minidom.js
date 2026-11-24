@@ -270,7 +270,13 @@
     function expandCalc(v, ctx) {
         var s = String(v).trim();
         var guard = 0;
-        while (guard++ < 4) {
+        while (guard++ < 6) {
+            var envM = s.match(/env\(safe-area-inset-(top|bottom|left|right)(?:\s*,\s*[^)]+)?\)/);
+            if (envM) {
+                var sa = (ctx.safeArea || {});
+                s = s.replace(envM[0], String(sa[envM[1]] || 0) + 'px');
+                continue;
+            }
             var calcM = s.match(/calc\(([^()]+)\)/);
             if (calcM) {
                 var expr = calcM[1];
@@ -306,12 +312,6 @@
                     }
                 }
                 return s;
-            }
-            var envM = s.match(/env\(safe-area-inset-(top|bottom|left|right)\)/);
-            if (envM) {
-                var sa = (ctx.safeArea || {});
-                s = s.replace(envM[0], String(sa[envM[1]] || 0) + 'px');
-                continue;
             }
             break;
         }
@@ -700,6 +700,7 @@
                         }
                     }
                     if (colorPart) out.push(['background-color', colorPart, imp]);
+                    if (!bgDeclared) out.push(['background-image', 'none', imp]);
                     if (!bgDeclared && !colorPart) out.push(['background-color', l0, imp]);
                     break;
                 }
@@ -1110,38 +1111,116 @@
             node = node.parent;
         }
     };
-    /** 简化选择器匹配: '#id' '.cls' 'tag' 'tag.cls' '.a.b' — 项目 querySelector 使用面审计后裁剪 */
-    VElement.prototype._matchesSimple = function (sel) {
-        sel = String(sel).trim();
-        var parts = sel.split('.'); // 'tag.cls1.cls2' / '.cls' / '#id.cls'
-        var tag = parts[0];
-        var classes = parts.slice(1);
-        if (tag.charAt(0) === '#') {
-            if (this.id !== tag.slice(1)) return false;
-        } else if (tag !== '' && tag !== '*' && this.tag !== tag.toLowerCase()) {
-            return false;
+    /**
+     * DOM query selector subset used by the game runtime. Unlike the CSS
+     * cascade parser this path returns elements, so keep a small local parser
+     * but preserve the same descendant/child combinator semantics.
+     */
+    function parseQueryCompound(text) {
+        var source = String(text || '').trim();
+        if (!source) return null;
+        var attrs = [];
+        source = source.replace(/\[([\w-]+)(?:\s*=\s*(['"]?)([^\]'"\s]+)\2)?\]/g, function (_, name, quote, value) {
+            attrs.push({ name: name, value: value === undefined ? null : value });
+            return '';
+        });
+        var match = source.match(/^([a-zA-Z][\w-]*|\*)?((?:[#.][\w-]+)*)$/);
+        if (!match) return null;
+        var compound = { tag: match[1] && match[1] !== '*' ? match[1].toLowerCase() : null, id: null, classes: [], attrs: attrs };
+        var partRe = /([#.])([\w-]+)/g, part;
+        while ((part = partRe.exec(match[2])) !== null) {
+            if (part[1] === '#') compound.id = part[2];
+            else compound.classes.push(part[2]);
         }
-        for (var i = 0; i < classes.length; i++) {
-            if (!classes[i]) continue;
-            if (this._classList._arr.indexOf(classes[i]) === -1) return false;
+        return compound;
+    }
+
+    function parseQueryGroup(selector) {
+        var normalized = String(selector || '').trim().replace(/\s*>\s*/g, '>');
+        if (!normalized) return null;
+        var tokens = normalized.split(/(>|\s+)/).filter(function (token) { return token && token.trim(); });
+        var parts = [], pending = ' ';
+        for (var i = 0; i < tokens.length; i++) {
+            var token = tokens[i];
+            if (token === '>') { pending = '>'; continue; }
+            var compound = parseQueryCompound(token);
+            if (!compound) return null;
+            parts.push({ compound: compound, comb: parts.length ? pending : null });
+            pending = ' ';
+        }
+        return parts.length ? parts : null;
+    }
+
+    function parseQuerySelector(selector) {
+        var groups = String(selector || '').split(','), parsed = [];
+        for (var i = 0; i < groups.length; i++) {
+            var group = parseQueryGroup(groups[i]);
+            if (group) parsed.push(group);
+        }
+        return parsed;
+    }
+
+    function queryCompoundMatches(compound, element) {
+        if (!compound || !element || element.type !== 'el') return false;
+        if (compound.tag && element.tag !== compound.tag) return false;
+        if (compound.id && element.id !== compound.id) return false;
+        for (var i = 0; i < compound.classes.length; i++) {
+            if (element._classList._arr.indexOf(compound.classes[i]) === -1) return false;
+        }
+        for (var j = 0; j < compound.attrs.length; j++) {
+            var attr = compound.attrs[j];
+            var actual = element.getAttribute(attr.name);
+            if (actual === null) return false;
+            if (attr.value !== null && String(actual) !== attr.value) return false;
         }
         return true;
+    }
+
+    function queryGroupMatches(parts, element) {
+        var index = parts.length - 1;
+        var node = element;
+        if (!queryCompoundMatches(parts[index].compound, node)) return false;
+        while (index > 0) {
+            var relation = parts[index].comb;
+            index--;
+            if (relation === '>') {
+                node = node.parent;
+                if (!queryCompoundMatches(parts[index].compound, node)) return false;
+            } else {
+                node = node.parent;
+                while (node && !queryCompoundMatches(parts[index].compound, node)) node = node.parent;
+                if (!node) return false;
+            }
+        }
+        return true;
+    }
+
+    VElement.prototype._matchesSimple = function (sel) {
+        var groups = parseQuerySelector(sel);
+        for (var i = 0; i < groups.length; i++) {
+            if (queryGroupMatches(groups[i], this)) return true;
+        }
+        return false;
     };
-    VElement.prototype._collectMatches = function (sel, out, includeSelf) {
-        if (includeSelf && this._matchesSimple(sel)) out.push(this);
+    VElement.prototype._collectMatches = function (groups, out, includeSelf) {
+        if (includeSelf) {
+            for (var g = 0; g < groups.length; g++) {
+                if (queryGroupMatches(groups[g], this)) { out.push(this); break; }
+            }
+        }
         for (var i = 0; i < this.childNodes.length; i++) {
             var c = this.childNodes[i];
-            if (c.type === 'el') c._collectMatches(sel, out, true);
+            if (c.type === 'el') c._collectMatches(groups, out, true);
         }
     };
     VElement.prototype.querySelector = function (sel) {
         var out = [];
-        this._collectMatches(sel, out, false);
+        this._collectMatches(parseQuerySelector(sel), out, false);
         return out.length ? out[0] : null;
     };
     VElement.prototype.querySelectorAll = function (sel) {
         var out = [];
-        this._collectMatches(sel, out, false);
+        this._collectMatches(parseQuerySelector(sel), out, false);
         return out;
     };
     VElement.prototype.insertAdjacentElement = function (position, node) {
@@ -1171,13 +1250,19 @@
         }
         return frag;
     };
+    VElement.prototype.replaceWith = function () {
+        var parent = this.parent;
+        if (!parent) return;
+        for (var i = 0; i < arguments.length; i++) {
+            var n = typeof arguments[i] === 'string' ? new TextNode(arguments[i]) : arguments[i];
+            parent.insertBefore(n, this);
+        }
+        parent.removeChild(this);
+    };
     VElement.prototype.closest = function (sel) {
-        // 支持单 compound: '#id' '.cls' 'tag'
         var node = this;
         while (node) {
-            if (sel.charAt(0) === '#') { if (node.id === sel.slice(1)) return node; }
-            else if (sel.charAt(0) === '.') { if (node.classList.indexOf(sel.slice(1)) !== -1) return node; }
-            else if (node.tag === sel.toLowerCase()) return node;
+            if (node._matchesSimple(sel)) return node;
             node = node.parent;
         }
         return null;
@@ -1826,7 +1911,9 @@
                     case 'background': {
                         var layers = CSS.splitTop(val, ',');
                         var l0 = layers[0] || 'transparent';
-                        if (/gradient\(/i.test(l0)) out.push(['background-image', l0]);
+                        var bgDeclared = false;
+                        if (/gradient\(/i.test(l0)) { out.push(['background-image', l0]); bgDeclared = true; }
+                        else if (/url\(/i.test(l0)) { out.push(['background-image', l0]); bgDeclared = true; }
                         // V12修复: 颜色仅从非渐变层提取
                         var colorPart = null;
                         for (var li = 0; li < layers.length; li++) {
@@ -1837,6 +1924,7 @@
                             }
                         }
                         if (colorPart) out.push(['background-color', colorPart]);
+                        if (!bgDeclared) out.push(['background-image', 'none']);
                         break;
                     }
                     case 'overflow': { var ov = CSS.splitTop(val, ' '); out.push(['overflow-x', ov[0]], ['overflow-y', ov[ov.length - 1]]); break; }

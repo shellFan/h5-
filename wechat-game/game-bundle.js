@@ -1,5 +1,5 @@
 // ===== game-bundle.js (V12 微信小游戏构建产物: 单一模块作用域, 源脚本按 index.html 顺序拼接) =====
-// 生成: tools/build-wechat.js @ 2026-11-23T03:00:10.342Z
+// 生成: tools/build-wechat.js @ 2026-11-24T02:27:28.107Z
 // 代码与 H5 完全同源; 平台差异收敛于入口 game.js
 /* ==== index.html 内联脚本(BootProgress/错误横幅, H5 中先于业务脚本执行 — 保序) ==== */
 
@@ -91,6 +91,1183 @@
             });
         }
     
+
+/* ===== [[ assets/game/catalog.js ]] ===== */
+var ArtAssetCatalog = [
+  {
+    "id": "source-01",
+    "category": "effects",
+    "title": "Game combat VFX sprite sheet",
+    "path": "art-gallery/game_combat_vfx_sprite_sheet_d2833228.webp",
+    "fallbackPath": "art-gallery/game_combat_vfx_sprite_sheet_d2833228.jpg",
+    "role": "reference",
+    "source_id": 1
+  },
+  {
+    "id": "source-02",
+    "category": "gameplay",
+    "title": "3D game multiplier gates asset",
+    "path": "art-gallery/3d_game_multiplier_gates_asset_e44638c9.webp",
+    "fallbackPath": "art-gallery/3d_game_multiplier_gates_asset_e44638c9.jpg",
+    "role": "reference",
+    "source_id": 2
+  },
+  {
+    "id": "source-03",
+    "category": "ui",
+    "title": "3D game UI asset sheet",
+    "path": "art-gallery/3d_game_ui_asset_sheet_3b8190b1.webp",
+    "fallbackPath": "art-gallery/3d_game_ui_asset_sheet_3b8190b1.jpg",
+    "role": "reference",
+    "source_id": 3
+  },
+  {
+    "id": "source-04",
+    "category": "ui",
+    "title": "3D game UI asset sheet",
+    "path": "art-gallery/3d_game_ui_asset_sheet_91d99e4c.webp",
+    "fallbackPath": "art-gallery/3d_game_ui_asset_sheet_91d99e4c.jpg",
+    "role": "reference",
+    "source_id": 4
+  },
+  {
+    "id": "source-05",
+    "category": "ui",
+    "title": "Game UI asset sheet green",
+    "path": "art-gallery/game_ui_asset_sheet_green_635c7ff5.webp",
+    "fallbackPath": "art-gallery/game_ui_asset_sheet_green_635c7ff5.jpg",
+    "role": "reference",
+    "source_id": 5
+  },
+  {
+    "id": "source-06",
+    "category": "effects",
+    "title": "Gold coins bursting upward",
+    "path": "art-gallery/gold_coins_bursting_upward_f57548f2.webp",
+    "fallbackPath": "art-gallery/gold_coins_bursting_upward_f57548f2.jpg",
+    "role": "reference",
+    "source_id": 6
+  },
+  {
+    "id": "source-07",
+    "category": "effects",
+    "title": "Gunfire muzzle flashes particle",
+    "path": "art-gallery/gunfire_muzzle_flashes_particle_113fe16c.webp",
+    "fallbackPath": "art-gallery/gunfire_muzzle_flashes_particle_113fe16c.jpg",
+    "role": "reference",
+    "source_id": 7
+  },
+  {
+    "id": "source-08",
+    "category": "effects",
+    "title": "Explosion VFX with debris and",
+    "path": "art-gallery/explosion_vfx_with_debris_and_87e5f30f.webp",
+    "fallbackPath": "art-gallery/explosion_vfx_with_debris_and_87e5f30f.jpg",
+    "role": "reference",
+    "source_id": 8
+  },
+  {
+    "id": "source-09",
+    "category": "effects",
+    "title": "Bullet trails glowing laser streaks",
+    "path": "art-gallery/bullet_trails_glowing_laser_streaks_91395c98.webp",
+    "fallbackPath": "art-gallery/bullet_trails_glowing_laser_streaks_91395c98.jpg",
+    "role": "reference",
+    "source_id": 9
+  },
+  {
+    "id": "source-10",
+    "category": "effects",
+    "title": "Golden rays level up aura",
+    "path": "art-gallery/golden_rays_level_up_aura_20863dc0.webp",
+    "fallbackPath": "art-gallery/golden_rays_level_up_aura_20863dc0.jpg",
+    "role": "reference",
+    "source_id": 10
+  },
+  {
+    "id": "source-11",
+    "category": "effects",
+    "title": "Game particle hit sparks asset",
+    "path": "art-gallery/game_particle_hit_sparks_asset_3cad9b0a.webp",
+    "fallbackPath": "art-gallery/game_particle_hit_sparks_asset_3cad9b0a.jpg",
+    "role": "reference",
+    "source_id": 11
+  },
+  {
+    "id": "source-12",
+    "category": "effects",
+    "title": "Boss death mechanical explosion",
+    "path": "art-gallery/boss_death_mechanical_explosion_854a83bb.webp",
+    "fallbackPath": "art-gallery/boss_death_mechanical_explosion_854a83bb.jpg",
+    "role": "reference",
+    "source_id": 12
+  },
+  {
+    "id": "source-13",
+    "category": "effects",
+    "title": "Boss entrance particle effect asset",
+    "path": "art-gallery/boss_entrance_particle_effect_asset_325f54e3.webp",
+    "fallbackPath": "art-gallery/boss_entrance_particle_effect_asset_325f54e3.jpg",
+    "role": "reference",
+    "source_id": 13
+  },
+  {
+    "id": "source-14",
+    "category": "ui",
+    "title": "Defeat popup UI window",
+    "path": "art-gallery/defeat_popup_ui_window_1077a0c5.webp",
+    "fallbackPath": "art-gallery/defeat_popup_ui_window_1077a0c5.jpg",
+    "role": "reference",
+    "source_id": 14
+  },
+  {
+    "id": "source-15",
+    "category": "ui",
+    "title": "Mobile game leaderboard UI screen",
+    "path": "art-gallery/mobile_game_leaderboard_ui_screen_239141aa.webp",
+    "fallbackPath": "art-gallery/mobile_game_leaderboard_ui_screen_239141aa.jpg",
+    "role": "reference",
+    "source_id": 15
+  },
+  {
+    "id": "source-16",
+    "category": "ui",
+    "title": "Mobile game combat HUD UI",
+    "path": "art-gallery/mobile_game_combat_hud_ui_49d770df.webp",
+    "fallbackPath": "art-gallery/mobile_game_combat_hud_ui_49d770df.jpg",
+    "role": "reference",
+    "source_id": 16
+  },
+  {
+    "id": "source-17",
+    "category": "ui",
+    "title": "Victory popup UI window",
+    "path": "art-gallery/victory_popup_ui_window_df2096f3.webp",
+    "fallbackPath": "art-gallery/victory_popup_ui_window_df2096f3.jpg",
+    "role": "reference",
+    "source_id": 17
+  },
+  {
+    "id": "source-18",
+    "category": "ui",
+    "title": "3D Mobile Game Settings UI",
+    "path": "art-gallery/3d_mobile_game_settings_ui_76f99ce0.webp",
+    "fallbackPath": "art-gallery/3d_mobile_game_settings_ui_76f99ce0.jpg",
+    "role": "reference",
+    "source_id": 18
+  },
+  {
+    "id": "source-19",
+    "category": "ui",
+    "title": "Mobile game main menu layout",
+    "path": "art-gallery/mobile_game_main_menu_layout_24896b5e.webp",
+    "fallbackPath": "art-gallery/mobile_game_main_menu_layout_24896b5e.jpg",
+    "role": "reference",
+    "source_id": 19
+  },
+  {
+    "id": "source-20",
+    "category": "ui",
+    "title": "Game upgrade UI panel",
+    "path": "art-gallery/game_upgrade_ui_panel_3cdb96f6.webp",
+    "fallbackPath": "art-gallery/game_upgrade_ui_panel_3cdb96f6.jpg",
+    "role": "reference",
+    "source_id": 20
+  },
+  {
+    "id": "source-21",
+    "category": "ui",
+    "title": "Shop UI screen grid items",
+    "path": "art-gallery/shop_ui_screen_grid_items_d8d6c9d5.webp",
+    "fallbackPath": "art-gallery/shop_ui_screen_grid_items_d8d6c9d5.jpg",
+    "role": "reference",
+    "source_id": 21
+  },
+  {
+    "id": "source-22",
+    "category": "ui",
+    "title": "3D game reward chest banner",
+    "path": "art-gallery/3d_game_reward_chest_banner_1caa2ddb.webp",
+    "fallbackPath": "art-gallery/3d_game_reward_chest_banner_1caa2ddb.jpg",
+    "role": "reference",
+    "source_id": 22
+  },
+  {
+    "id": "source-23",
+    "category": "ui",
+    "title": "3D game icon asset sheet",
+    "path": "art-gallery/3d_game_icon_asset_sheet_8a64239f.webp",
+    "fallbackPath": "art-gallery/3d_game_icon_asset_sheet_8a64239f.jpg",
+    "role": "reference",
+    "source_id": 23
+  },
+  {
+    "id": "source-24",
+    "category": "ui",
+    "title": "Game leaderboard badges and frames",
+    "path": "art-gallery/game_leaderboard_badges_and_frames_bcd47cc0.webp",
+    "fallbackPath": "art-gallery/game_leaderboard_badges_and_frames_bcd47cc0.jpg",
+    "role": "reference",
+    "source_id": 24
+  },
+  {
+    "id": "source-25",
+    "category": "ui",
+    "title": "3D game icon asset sheet",
+    "path": "art-gallery/3d_game_icon_asset_sheet_82f32e58.webp",
+    "fallbackPath": "art-gallery/3d_game_icon_asset_sheet_82f32e58.jpg",
+    "role": "reference",
+    "source_id": 25
+  },
+  {
+    "id": "source-26",
+    "category": "weapons",
+    "title": "Toy military weapons icon sheet",
+    "path": "art-gallery/toy_military_weapons_icon_sheet_646139ec.webp",
+    "fallbackPath": "art-gallery/toy_military_weapons_icon_sheet_646139ec.jpg",
+    "role": "reference",
+    "source_id": 26
+  },
+  {
+    "id": "source-27",
+    "category": "weapons",
+    "title": "Weapon asset design sheet",
+    "path": "art-gallery/weapon_asset_design_sheet_3827c811.webp",
+    "fallbackPath": "art-gallery/weapon_asset_design_sheet_3827c811.jpg",
+    "role": "reference",
+    "source_id": 27
+  },
+  {
+    "id": "source-28",
+    "category": "weapons",
+    "title": "Sniper rifle progression design",
+    "path": "art-gallery/sniper_rifle_progression_design_46e71ee1.webp",
+    "fallbackPath": "art-gallery/sniper_rifle_progression_design_46e71ee1.jpg",
+    "role": "reference",
+    "source_id": 28
+  },
+  {
+    "id": "source-29",
+    "category": "weapons",
+    "title": "Rocket launcher design asset",
+    "path": "art-gallery/rocket_launcher_design_asset_e2ffd857.webp",
+    "fallbackPath": "art-gallery/rocket_launcher_design_asset_e2ffd857.jpg",
+    "role": "reference",
+    "source_id": 29
+  },
+  {
+    "id": "source-30",
+    "category": "weapons",
+    "title": "Grenade launcher weapon design s",
+    "path": "art-gallery/grenade_launcher_weapon_design_s_3171317b.webp",
+    "fallbackPath": "art-gallery/grenade_launcher_weapon_design_s_3171317b.jpg",
+    "role": "reference",
+    "source_id": 30
+  },
+  {
+    "id": "source-31",
+    "category": "weapons",
+    "title": "Laser rifle design sheet progres",
+    "path": "art-gallery/laser_rifle_design_sheet_progres_f05c1816.webp",
+    "fallbackPath": "art-gallery/laser_rifle_design_sheet_progres_f05c1816.jpg",
+    "role": "reference",
+    "source_id": 31
+  },
+  {
+    "id": "source-32",
+    "category": "weapons",
+    "title": "Gatling gun asset design sheet",
+    "path": "art-gallery/gatling_gun_asset_design_sheet_edb93245.webp",
+    "fallbackPath": "art-gallery/gatling_gun_asset_design_sheet_edb93245.jpg",
+    "role": "reference",
+    "source_id": 32
+  },
+  {
+    "id": "source-33",
+    "category": "weapons",
+    "title": "Assault rifle weapon design sheet",
+    "path": "art-gallery/assault_rifle_weapon_design_sheet_c5c8d455.webp",
+    "fallbackPath": "art-gallery/assault_rifle_weapon_design_sheet_c5c8d455.jpg",
+    "role": "reference",
+    "source_id": 33
+  },
+  {
+    "id": "source-34",
+    "category": "weapons",
+    "title": "Shotgun weapon design progressio",
+    "path": "art-gallery/shotgun_weapon_design_progressio_d83ed789.webp",
+    "fallbackPath": "art-gallery/shotgun_weapon_design_progressio_d83ed789.jpg",
+    "role": "reference",
+    "source_id": 34
+  },
+  {
+    "id": "source-35",
+    "category": "weapons",
+    "title": "Submachine gun progression sheet",
+    "path": "art-gallery/submachine_gun_progression_sheet_4a601561.webp",
+    "fallbackPath": "art-gallery/submachine_gun_progression_sheet_4a601561.jpg",
+    "role": "reference",
+    "source_id": 35
+  },
+  {
+    "id": "source-36",
+    "category": "weapons",
+    "title": "Heavy machine gun design sheet",
+    "path": "art-gallery/heavy_machine_gun_design_sheet_8f21568e.webp",
+    "fallbackPath": "art-gallery/heavy_machine_gun_design_sheet_8f21568e.jpg",
+    "role": "reference",
+    "source_id": 36
+  },
+  {
+    "id": "source-37",
+    "category": "weapons",
+    "title": "Plasma cannon design progression",
+    "path": "art-gallery/plasma_cannon_design_progression_43e66a48.webp",
+    "fallbackPath": "art-gallery/plasma_cannon_design_progression_43e66a48.jpg",
+    "role": "reference",
+    "source_id": 37
+  },
+  {
+    "id": "source-38",
+    "category": "weapons",
+    "title": "Railgun weapon asset design sheet",
+    "path": "art-gallery/railgun_weapon_asset_design_sheet_5eca0af5.webp",
+    "fallbackPath": "art-gallery/railgun_weapon_asset_design_sheet_5eca0af5.jpg",
+    "role": "reference",
+    "source_id": 38
+  },
+  {
+    "id": "source-39",
+    "category": "enemies",
+    "title": "Cartoon monster game sprite sheet",
+    "path": "art-gallery/cartoon_monster_game_sprite_sheet_17f803de.webp",
+    "fallbackPath": "art-gallery/cartoon_monster_game_sprite_sheet_17f803de.jpg",
+    "role": "reference",
+    "source_id": 39
+  },
+  {
+    "id": "source-40",
+    "category": "enemies",
+    "title": "Green toxic blob monster dripping",
+    "path": "art-gallery/green_toxic_blob_monster_dripping_96bc028b.webp",
+    "fallbackPath": "art-gallery/green_toxic_blob_monster_dripping_96bc028b.jpg",
+    "role": "reference",
+    "source_id": 40
+  },
+  {
+    "id": "source-41",
+    "category": "enemies",
+    "title": "Red monster wearing spiked armor",
+    "path": "art-gallery/red_monster_wearing_spiked_armor_687d1791.webp",
+    "fallbackPath": "art-gallery/red_monster_wearing_spiked_armor_687d1791.jpg",
+    "role": "reference",
+    "source_id": 41
+  },
+  {
+    "id": "source-42",
+    "category": "enemies",
+    "title": "Bomb monster with ticking fuse",
+    "path": "art-gallery/bomb_monster_with_ticking_fuse_98b4d3de.webp",
+    "fallbackPath": "art-gallery/bomb_monster_with_ticking_fuse_98b4d3de.jpg",
+    "role": "reference",
+    "source_id": 42
+  },
+  {
+    "id": "source-43",
+    "category": "enemies",
+    "title": "Orange mutant monster asset",
+    "path": "art-gallery/orange_mutant_monster_asset_f981d5e7.webp",
+    "fallbackPath": "art-gallery/orange_mutant_monster_asset_f981d5e7.jpg",
+    "role": "reference",
+    "source_id": 43
+  },
+  {
+    "id": "source-44",
+    "category": "enemies",
+    "title": "Purple cartoon monster game asset",
+    "path": "art-gallery/purple_cartoon_monster_game_asset_3a0bbbda.webp",
+    "fallbackPath": "art-gallery/purple_cartoon_monster_game_asset_3a0bbbda.jpg",
+    "role": "reference",
+    "source_id": 44
+  },
+  {
+    "id": "source-45",
+    "category": "enemies",
+    "title": "Armored mecha monster game asset",
+    "path": "art-gallery/armored_mecha_monster_game_asset_96179c59.webp",
+    "fallbackPath": "art-gallery/armored_mecha_monster_game_asset_96179c59.jpg",
+    "role": "reference",
+    "source_id": 45
+  },
+  {
+    "id": "source-46",
+    "category": "enemies",
+    "title": "Mecha T-Rex character design sheet",
+    "path": "art-gallery/mecha_t_rex_character_design_sheet_39d41347.webp",
+    "fallbackPath": "art-gallery/mecha_t_rex_character_design_sheet_39d41347.jpg",
+    "role": "reference",
+    "source_id": 46
+  },
+  {
+    "id": "source-47",
+    "category": "enemies",
+    "title": "Tank robot character design sheet",
+    "path": "art-gallery/tank_robot_character_design_sheet_dc7c17c0.webp",
+    "fallbackPath": "art-gallery/tank_robot_character_design_sheet_dc7c17c0.jpg",
+    "role": "reference",
+    "source_id": 47
+  },
+  {
+    "id": "source-48",
+    "category": "enemies",
+    "title": "Mutant gorilla character design",
+    "path": "art-gallery/mutant_gorilla_character_design_50a274d3.webp",
+    "fallbackPath": "art-gallery/mutant_gorilla_character_design_50a274d3.jpg",
+    "role": "reference",
+    "source_id": 48
+  },
+  {
+    "id": "source-49",
+    "category": "enemies",
+    "title": "Mecha robot design sheet",
+    "path": "art-gallery/mecha_robot_design_sheet_cce753aa.webp",
+    "fallbackPath": "art-gallery/mecha_robot_design_sheet_cce753aa.jpg",
+    "role": "reference",
+    "source_id": 49
+  },
+  {
+    "id": "source-50",
+    "category": "enemies",
+    "title": "Mecha behemoth character design",
+    "path": "art-gallery/mecha_behemoth_character_design_06bb52c7.webp",
+    "fallbackPath": "art-gallery/mecha_behemoth_character_design_06bb52c7.jpg",
+    "role": "reference",
+    "source_id": 50
+  },
+  {
+    "id": "source-51",
+    "category": "marketing",
+    "title": "Toy soldiers fighting cartoon mo",
+    "path": "art-gallery/toy_soldiers_fighting_cartoon_mo_0fe3b85a.webp",
+    "fallbackPath": "art-gallery/toy_soldiers_fighting_cartoon_mo_0fe3b85a.jpg",
+    "role": "reference",
+    "source_id": 51
+  },
+  {
+    "id": "source-55",
+    "category": "marketing",
+    "title": "Soldiers shooting enemy robot bugs",
+    "path": "art-gallery/soldiers_shooting_enemy_robot_bugs_a51af57e.webp",
+    "fallbackPath": "art-gallery/soldiers_shooting_enemy_robot_bugs_a51af57e.jpg",
+    "role": "reference",
+    "source_id": 55
+  },
+  {
+    "id": "source-56",
+    "category": "marketing",
+    "title": "Soldiers shooting robot bugs",
+    "path": "art-gallery/soldiers_shooting_robot_bugs_0f6ccbd5.webp",
+    "fallbackPath": "art-gallery/soldiers_shooting_robot_bugs_0f6ccbd5.jpg",
+    "role": "reference",
+    "source_id": 56
+  },
+  {
+    "id": "source-57",
+    "category": "marketing",
+    "title": "Toy soldiers charging down road",
+    "path": "art-gallery/toy_soldiers_charging_down_road_86cf4255.webp",
+    "fallbackPath": "art-gallery/toy_soldiers_charging_down_road_86cf4255.jpg",
+    "role": "reference",
+    "source_id": 57
+  },
+  {
+    "id": "source-59",
+    "category": "marketing",
+    "title": "Mech soldiers charging in factory",
+    "path": "art-gallery/mech_soldiers_charging_in_factory_462985a6.webp",
+    "fallbackPath": "art-gallery/mech_soldiers_charging_in_factory_462985a6.jpg",
+    "role": "reference",
+    "source_id": 59
+  },
+  {
+    "id": "source-60",
+    "category": "marketing",
+    "title": "Sci-fi mech squad fighting boss",
+    "path": "art-gallery/sci_fi_mech_squad_fighting_boss_01f87b64.webp",
+    "fallbackPath": "art-gallery/sci_fi_mech_squad_fighting_boss_01f87b64.jpg",
+    "role": "reference",
+    "source_id": 60
+  },
+  {
+    "id": "source-61",
+    "category": "marketing",
+    "title": "Squad fighting zombies in city",
+    "path": "art-gallery/squad_fighting_zombies_in_city_84b59619.webp",
+    "fallbackPath": "art-gallery/squad_fighting_zombies_in_city_84b59619.jpg",
+    "role": "reference",
+    "source_id": 61
+  },
+  {
+    "id": "source-62",
+    "category": "marketing",
+    "title": "Soldiers fighting zombies in bunker",
+    "path": "art-gallery/soldiers_fighting_zombies_in_bunker_13c70f3a.webp",
+    "fallbackPath": "art-gallery/soldiers_fighting_zombies_in_bunker_13c70f3a.jpg",
+    "role": "reference",
+    "source_id": 62
+  },
+  {
+    "id": "source-63",
+    "category": "marketing",
+    "title": "Green toy soldier holding rifle",
+    "path": "art-gallery/green_toy_soldier_holding_rifle_3b540778.webp",
+    "fallbackPath": "art-gallery/green_toy_soldier_holding_rifle_3b540778.jpg",
+    "role": "reference",
+    "source_id": 63
+  },
+  {
+    "id": "source-64",
+    "category": "marketing",
+    "title": "Toy soldiers firing weapons",
+    "path": "art-gallery/toy_soldiers_firing_weapons_2b4449f3.webp",
+    "fallbackPath": "art-gallery/toy_soldiers_firing_weapons_2b4449f3.jpg",
+    "role": "reference",
+    "source_id": 64
+  },
+  {
+    "id": "source-65",
+    "category": "environment",
+    "title": "3D game modular environment props",
+    "path": "art-gallery/3d_game_modular_environment_props_5fd99a9c.webp",
+    "fallbackPath": "art-gallery/3d_game_modular_environment_props_5fd99a9c.jpg",
+    "role": "reference",
+    "source_id": 65
+  },
+  {
+    "id": "source-66",
+    "category": "environment",
+    "title": "3D military battleground map sho",
+    "path": "art-gallery/3d_military_battleground_map_sho_67f2fe30.webp",
+    "fallbackPath": "art-gallery/3d_military_battleground_map_sho_67f2fe30.jpg",
+    "role": "reference",
+    "source_id": 66
+  },
+  {
+    "id": "source-67",
+    "category": "environment",
+    "title": "Golden energy platform in space",
+    "path": "art-gallery/golden_energy_platform_in_space_8c8c2c64.webp",
+    "fallbackPath": "art-gallery/golden_energy_platform_in_space_8c8c2c64.jpg",
+    "role": "reference",
+    "source_id": 67
+  },
+  {
+    "id": "source-68",
+    "category": "environment",
+    "title": "Sunny military base game map",
+    "path": "art-gallery/sunny_military_base_game_map_98a69a46.webp",
+    "fallbackPath": "art-gallery/sunny_military_base_game_map_98a69a46.jpg",
+    "role": "reference",
+    "source_id": 68
+  },
+  {
+    "id": "source-69",
+    "category": "environment",
+    "title": "Ruined urban avenue background",
+    "path": "art-gallery/ruined_urban_avenue_background_9d5622e0.webp",
+    "fallbackPath": "art-gallery/ruined_urban_avenue_background_9d5622e0.jpg",
+    "role": "reference",
+    "source_id": 69
+  },
+  {
+    "id": "source-70",
+    "category": "environment",
+    "title": "Forest military camp game map",
+    "path": "art-gallery/forest_military_camp_game_map_02f67f12.webp",
+    "fallbackPath": "art-gallery/forest_military_camp_game_map_02f67f12.jpg",
+    "role": "reference",
+    "source_id": 70
+  },
+  {
+    "id": "source-71",
+    "category": "environment",
+    "title": "Snow military base game map",
+    "path": "art-gallery/snow_military_base_game_map_b51bd919.webp",
+    "fallbackPath": "art-gallery/snow_military_base_game_map_b51bd919.jpg",
+    "role": "reference",
+    "source_id": 71
+  },
+  {
+    "id": "source-72",
+    "category": "environment",
+    "title": "Desert training base map background",
+    "path": "art-gallery/desert_training_base_map_background_2deaba68.webp",
+    "fallbackPath": "art-gallery/desert_training_base_map_background_2deaba68.jpg",
+    "role": "reference",
+    "source_id": 72
+  },
+  {
+    "id": "source-73",
+    "category": "environment",
+    "title": "Volcano research base game map",
+    "path": "art-gallery/volcano_research_base_game_map_18bd70de.webp",
+    "fallbackPath": "art-gallery/volcano_research_base_game_map_18bd70de.jpg",
+    "role": "reference",
+    "source_id": 73
+  },
+  {
+    "id": "source-74",
+    "category": "environment",
+    "title": "Industrial factory game map back",
+    "path": "art-gallery/industrial_factory_game_map_back_c37df917.webp",
+    "fallbackPath": "art-gallery/industrial_factory_game_map_back_c37df917.jpg",
+    "role": "reference",
+    "source_id": 74
+  },
+  {
+    "id": "source-75",
+    "category": "environment",
+    "title": "Green grass lawn tile",
+    "path": "art-gallery/green_grass_lawn_tile_d39dd91f.webp",
+    "fallbackPath": "art-gallery/green_grass_lawn_tile_d39dd91f.jpg",
+    "role": "reference",
+    "source_id": 75
+  },
+  {
+    "id": "source-76",
+    "category": "environment",
+    "title": "Military roadblock barrier game",
+    "path": "art-gallery/military_roadblock_barrier_game_73cae8a9.webp",
+    "fallbackPath": "art-gallery/military_roadblock_barrier_game_73cae8a9.jpg",
+    "role": "reference",
+    "source_id": 76
+  },
+  {
+    "id": "source-77",
+    "category": "environment",
+    "title": "Wooden watchtower with searchlight",
+    "path": "art-gallery/wooden_watchtower_with_searchlight_6fcba15b.webp",
+    "fallbackPath": "art-gallery/wooden_watchtower_with_searchlight_6fcba15b.jpg",
+    "role": "reference",
+    "source_id": 77
+  },
+  {
+    "id": "source-78",
+    "category": "environment",
+    "title": "Sandbag barricade 3D asset",
+    "path": "art-gallery/sandbag_barricade_3d_asset_184c3724.webp",
+    "fallbackPath": "art-gallery/sandbag_barricade_3d_asset_184c3724.jpg",
+    "role": "reference",
+    "source_id": 78
+  },
+  {
+    "id": "source-79",
+    "category": "environment",
+    "title": "Wooden ammo boxes stack",
+    "path": "art-gallery/wooden_ammo_boxes_stack_469d2943.webp",
+    "fallbackPath": "art-gallery/wooden_ammo_boxes_stack_469d2943.jpg",
+    "role": "reference",
+    "source_id": 79
+  },
+  {
+    "id": "source-80",
+    "category": "environment",
+    "title": "Barbed wire fence barricade",
+    "path": "art-gallery/barbed_wire_fence_barricade_7a4d64e6.webp",
+    "fallbackPath": "art-gallery/barbed_wire_fence_barricade_7a4d64e6.jpg",
+    "role": "reference",
+    "source_id": 80
+  },
+  {
+    "id": "source-81",
+    "category": "environment",
+    "title": "Destroyed military tank wreckage",
+    "path": "art-gallery/destroyed_military_tank_wreckage_09c66cf2.webp",
+    "fallbackPath": "art-gallery/destroyed_military_tank_wreckage_09c66cf2.jpg",
+    "role": "reference",
+    "source_id": 81
+  },
+  {
+    "id": "source-82",
+    "category": "environment",
+    "title": "Concrete military road segment 3",
+    "path": "art-gallery/concrete_military_road_segment_3_15913314.webp",
+    "fallbackPath": "art-gallery/concrete_military_road_segment_3_15913314.jpg",
+    "role": "reference",
+    "source_id": 82
+  },
+  {
+    "id": "source-83",
+    "category": "characters",
+    "title": "Green toy soldier character design",
+    "path": "art-gallery/green_toy_soldier_character_design_7e430005.webp",
+    "fallbackPath": "art-gallery/green_toy_soldier_character_design_7e430005.jpg",
+    "role": "reference",
+    "source_id": 83
+  },
+  {
+    "id": "source-84",
+    "category": "characters",
+    "title": "Toy medic soldier holding injector",
+    "path": "art-gallery/toy_medic_soldier_holding_injector_6b0cdce4.webp",
+    "fallbackPath": "art-gallery/toy_medic_soldier_holding_injector_6b0cdce4.jpg",
+    "role": "reference",
+    "source_id": 84
+  },
+  {
+    "id": "source-85",
+    "category": "characters",
+    "title": "Toy rocket launcher soldier",
+    "path": "art-gallery/toy_rocket_launcher_soldier_e04ac1e3.webp",
+    "fallbackPath": "art-gallery/toy_rocket_launcher_soldier_e04ac1e3.jpg",
+    "role": "reference",
+    "source_id": 85
+  },
+  {
+    "id": "source-86",
+    "category": "characters",
+    "title": "Toy soldier holding shotgun",
+    "path": "art-gallery/toy_soldier_holding_shotgun_6ef8722e.webp",
+    "fallbackPath": "art-gallery/toy_soldier_holding_shotgun_6ef8722e.jpg",
+    "role": "reference",
+    "source_id": 86
+  },
+  {
+    "id": "source-87",
+    "category": "characters",
+    "title": "Toy soldier holding rifle",
+    "path": "art-gallery/toy_soldier_holding_rifle_69b4b58a.webp",
+    "fallbackPath": "art-gallery/toy_soldier_holding_rifle_69b4b58a.jpg",
+    "role": "reference",
+    "source_id": 87
+  },
+  {
+    "id": "source-88",
+    "category": "characters",
+    "title": "Toy soldier holding energy pistols",
+    "path": "art-gallery/toy_soldier_holding_energy_pistols_040697ec.webp",
+    "fallbackPath": "art-gallery/toy_soldier_holding_energy_pistols_040697ec.jpg",
+    "role": "reference",
+    "source_id": 88
+  },
+  {
+    "id": "source-89",
+    "category": "characters",
+    "title": "Toy soldier holding twin SMGs",
+    "path": "art-gallery/toy_soldier_holding_twin_smgs_56b84425.webp",
+    "fallbackPath": "art-gallery/toy_soldier_holding_twin_smgs_56b84425.jpg",
+    "role": "reference",
+    "source_id": 89
+  },
+  {
+    "id": "source-90",
+    "category": "characters",
+    "title": "Green toy sniper soldier asset",
+    "path": "art-gallery/green_toy_sniper_soldier_asset_80c8366d.webp",
+    "fallbackPath": "art-gallery/green_toy_sniper_soldier_asset_80c8366d.jpg",
+    "role": "reference",
+    "source_id": 90
+  }
+];
+
+
+/* ===== [[ js/art-ui.js ]] ===== */
+// Toy military presentation. All balances, unlocks and rewards stay in existing systems.
+var ArtUI = {
+    version: 'military_v5',
+    _game: null,
+    image: function(path, label, css) {
+        return '<img class="' + (css || 'art-icon') + '" src="art/' + path + '" alt="' + label + '" draggable="false">';
+    },
+    icon: function(name) {
+        var order = ['avatar','coin','diamond','settings','play','pause','trophy','chest','star','shield','medal'];
+        var index = order.indexOf(name);
+        return '<span class="art-nav-sprite" style="background-position:' + (-(index % 4) * 27) + 'px ' + (-Math.floor(index / 4) * 27) + 'px" aria-hidden="true"></span>';
+    },
+    install: function(game) {
+        if (this._game) return;
+        this._game = game;
+        var self = this;
+        var root = document.getElementById('game-container');
+        root.classList.add('art-military');
+        if (window.__minidom || typeof wx !== 'undefined') {
+            root.classList.add('art-mini');
+            var fit = function() {
+                var w = window.innerWidth || 390, h = window.innerHeight || 844;
+                root.style.width = w + 'px'; root.style.height = h + 'px';
+                var screen = document.getElementById('start-screen');
+                if (screen) screen.style.height = h + 'px';
+                var p = screen && screen.querySelector('.title-panel');
+                if (p) { p.style.width = (Math.min(w, 444) - 24) + 'px'; p.style.maxHeight = (h - 24) + 'px'; }
+            };
+            fit(); window.addEventListener('resize', fit);
+        }
+        var panel = document.querySelector('#start-screen .title-panel');
+        var avatar = document.querySelector('.logo-badge img');
+        if (avatar) { avatar.src = 'art/ui/avatar.png'; avatar.alt = '绿色头盔指挥官'; }
+        var hudAvatar = document.querySelector('#avatar-box img');
+        if (hudAvatar) hudAvatar.src = 'art/ui/avatar.png';
+        if (panel) {
+            var hero = document.createElement('div');
+            hero.className = 'art-home-hero';
+            hero.innerHTML = '<div class="art-hero-copy"><span class="art-overline">TOY ARMY · READY</span>' +
+                '<h2>小小军团<br>大大火力</h2><p>集合出发，守住每一条跑道。</p></div>' +
+                this.image('characters/soldier_portrait.png', '绿色玩具步兵', 'art-hero-soldier');
+            var title = panel.querySelector('.game-title');
+            if (title) title.insertAdjacentElement('afterend', hero);
+            var start = document.getElementById('btn-start');
+            if (start) start.innerHTML = this.image('ui/play.png', '', 'art-button-icon') + '<span>开始行动</span><span class="art-arrow">➜</span>';
+            var growth = document.getElementById('v60-home-growth');
+            if (growth) panel.insertBefore(growth, hero);
+        }
+        var navArt = { map: 'shield', train: 'avatar', armory: 'chest', tech: 'star', codex: 'medal',
+            challenge: 'shield', rank: 'trophy', ach: 'medal', daily: 'coin', set: 'settings' };
+        var navNames = { map: '地图', train: '训练', armory: '军械库', tech: '科技', codex: '图鉴',
+            challenge: '挑战', rank: '排行', ach: '成就', daily: '每日', set: '设置' };
+        for (var key in navArt) {
+            var btn = document.getElementById('v60-btn-' + key);
+            if (btn) btn.innerHTML = this.icon(navArt[key]) + '<span>' + navNames[key] + '</span>';
+        }
+        // Decoration is independent of text and of the real input handlers.
+        [['win-screen', 'trophy'], ['lose-screen', 'shield'], ['pause-screen', 'pause'], ['shop-screen', 'chest']].forEach(function(pair) {
+            var p = document.querySelector('#' + pair[0] + ' .title-panel');
+            if (p) p.insertAdjacentHTML('afterbegin', self.image('ui/' + pair[1] + '.png', '', 'art-panel-emblem'));
+        });
+        var pause = document.getElementById('btn-pause');
+        if (pause) { pause.innerHTML = this.image('ui/pause.png', '', 'art-control-icon'); pause.setAttribute('aria-label', '暂停游戏'); }
+        this._wrap('renderArmory', function() { self.decorateWeapons(); });
+        this._wrap('renderMap', function() { self.decorateMap(); });
+        this._wrap('renderClassSelector', function() { self.decorateClasses(); });
+        this._wrap('renderCodex', function() { self.decorateCodex(); });
+        this._wrap('renderRank', function() { self.decorateRank(); });
+        this._wrap('hidePages', function() {
+            var gallery = document.getElementById('art-gallery-page');
+            if (gallery) gallery.classList.add('hidden');
+        });
+        this.decorateClasses();
+    },
+    _wrap: function(name, after) {
+        var original = V60UI[name];
+        V60UI[name] = function() { var result = original.apply(this, arguments); after(); return result; };
+    },
+    decorateWeapons: function() {
+        var map = { rifle: 'rifle', shotgun: 'shotgun', sniper: 'sniper', mg: 'mg',
+            rocket: 'rocket', flamethrower: 'plasma', freeze: 'laser', tesla: 'railgun' };
+        var nodes = document.querySelectorAll('.v118-weapon-art');
+        for (var i = 0; i < nodes.length; i++) {
+            var id = nodes[i].getAttribute('data-weapon');
+            if (!map[id]) continue;
+            nodes[i].classList.add('art-weapon-image');
+            nodes[i].style.backgroundImage = 'url("art/weapons/' + map[id] + '.png")';
+            nodes[i].style.backgroundPosition = 'center';
+            nodes[i].style.backgroundSize = 'contain';
+        }
+        // The remaining designs are cosmetic previews, not additional weapon mechanics.
+        var hero = document.getElementById('v118-armory-hero');
+        if (hero) hero.setAttribute('data-art-source', 'processed_weapon_crops');
+    },
+    decorateClasses: function() {
+        var icons = document.querySelectorAll('.v60-class-icon');
+        var names = ['rifle', 'energy', 'sniper', 'medic'];
+        for (var i = 0; i < icons.length; i++) icons[i].innerHTML = this.image('characters/' + names[i % names.length] + '_portrait.png', '', 'art-class-portrait');
+    },
+    decorateMap: function() {
+        var nodes = document.querySelectorAll('.v60-map-node');
+        var maps = ['sunny', 'desert', 'city', 'forest', 'snow'];
+        for (var i = 0; i < nodes.length; i++) {
+            var icon = nodes[i].querySelector('.v60-node-icon');
+            if (icon) icon.innerHTML = this.image('maps/' + maps[i % 5] + (typeof wx !== 'undefined' || typeof tt !== 'undefined' ? '.jpg' : '.webp'), '', 'art-map-preview');
+        }
+    },
+    decorateRank: function() {
+        var nodes = document.querySelectorAll('.v60-rank-pos');
+        for (var i = 0; i < Math.min(3, nodes.length); i++) {
+            nodes[i].innerHTML = this.image('ui/medal.png', '', 'art-rank-medal') + '<span>' + (i + 1) + '</span>';
+        }
+    },
+    decorateCodex: function() {
+        var page = document.querySelector('#v60-codex-page .title-panel');
+        if (!page || document.getElementById('art-gallery-open')) return;
+        var weapons = [['rifle','突击步枪'], ['smg','冲锋枪'], ['shotgun','霰弹枪'], ['sniper','狙击枪'],
+            ['mg','重机枪'], ['rocket','火箭筒'], ['laser','激光枪'], ['plasma','等离子炮'], ['gatling','加特林'], ['railgun','电磁炮']];
+        var collection = document.createElement('div');
+        collection.className = 'art-weapon-collection';
+        var html = '<h2 class="v60-page-title">武器外观档案</h2><p class="art-gallery-note">装备外观展示；军械库中查看可用武器与升级效果。</p><div class="art-weapon-grid">';
+        for (var i = 0; i < weapons.length; i++) html += '<div class="art-weapon-tile">' +
+            this.image('weapons/' + weapons[i][0] + '.png', weapons[i][1], 'art-collection-weapon') + '<span>' + weapons[i][1] + '</span></div>';
+        html += '</div>'; collection.innerHTML = html;
+        page.insertBefore(collection, document.getElementById('v60-codex-back'));
+        var button = document.createElement('button');
+        button.id = 'art-gallery-open'; button.className = 'btn-secondary'; button.textContent = '美术图鉴 · 设计参考';
+        button.onclick = function() { ArtUI.openGallery(0); };
+        var back = document.getElementById('v60-codex-back');
+        page.insertBefore(button, back);
+    },
+    openGallery: function(pageIndex) {
+        if (typeof wx !== 'undefined' && wx.loadSubpackage && !this._galleryReady) {
+            if (this._galleryLoading) return;
+            this._galleryLoading = true;
+            var self = this;
+            wx.loadSubpackage({ name: 'art_gallery', success: function() {
+                self._galleryLoading = false; self._galleryReady = true; self.openGallery(pageIndex);
+            }, fail: function() { self._galleryLoading = false; } });
+            return;
+        }
+        var list = typeof ArtAssetCatalog !== 'undefined'
+            ? (Array.isArray(ArtAssetCatalog) ? ArtAssetCatalog : (ArtAssetCatalog.entries || ArtAssetCatalog.assets || [])) : [];
+        if (!Array.isArray(list)) return;
+        V60UI.hidePages();
+        var page = document.getElementById('art-gallery-page');
+        if (!page) {
+            page = document.createElement('div'); page.id = 'art-gallery-page'; page.className = 'v60-page';
+            document.getElementById('game-container').appendChild(page);
+        }
+        var perPage = 6, pages = Math.max(1, Math.ceil(list.length / perPage));
+        pageIndex = Math.max(0, Math.min(pages - 1, pageIndex));
+        var html = '<div class="title-panel v60-panel"><h2 class="v60-page-title">美术图鉴</h2>' +
+            '<p class="art-gallery-note">世界、角色与装备的设计参考。战斗中使用可活动的三维角色。</p><div class="art-gallery-grid">';
+        for (var i = pageIndex * perPage; i < Math.min(list.length, (pageIndex + 1) * perPage); i++) {
+            var a = list[i];
+            var src = (typeof wx !== 'undefined' || typeof tt !== 'undefined') && a.fallbackPath ? a.fallbackPath : a.path;
+            if (!src) continue;
+            html += '<div class="art-gallery-card"><img src="' + src + '" alt="设计参考 ' + (i + 1) + '"><span>设计参考 ' + (i + 1) + '</span></div>';
+        }
+        html += '</div><div class="art-gallery-pager"><button id="art-gallery-prev" class="btn-secondary">上一页</button><span>' + (pageIndex + 1) + ' / ' + pages +
+            '</span><button id="art-gallery-next" class="btn-secondary">下一页</button></div><button id="art-gallery-back" class="btn-primary">返回图鉴</button></div>';
+        page.innerHTML = html; page.classList.remove('hidden');
+        document.getElementById('art-gallery-prev').onclick = function() { ArtUI.openGallery(pageIndex - 1); };
+        document.getElementById('art-gallery-next').onclick = function() { ArtUI.openGallery(pageIndex + 1); };
+        document.getElementById('art-gallery-back').onclick = function() { page.classList.add('hidden'); V60UI.showPage('v60-codex-page'); V60UI.renderCodex(ArtUI._game); };
+    }
+};
+
+
+/* ===== [[ js/military-art.js ]] ===== */
+// Runtime military-base presentation. The module is intentionally self-contained
+// and only allocates during World construction/theme changes, never per frame.
+var MilitaryArt = class MilitaryArt {
+    constructor(world) {
+        this.world = world;
+        this.scene = world.scene;
+        this.root = new THREE.Group();
+        this.root.name = 'military-art-runtime';
+        this.root.userData.artSource = 'programmatic layered military biomes; no concept screenshot';
+        this.scene.add(this.root);
+        this._meshes = [];
+        this._anchor = Infinity;
+        this._scratch = new THREE.Object3D();
+        this._segmentLength = 24;
+        this._segmentCount = 7;
+        this._build();
+        this.setTheme(world._themeApplied || 'dawn');
+        this.update(0);
+    }
+
+    _material(key, color, options) {
+        var material = new THREE.MeshStandardMaterial(Object.assign({
+            color: color, roughness: .88, metalness: 0, flatShading: true
+        }, options || {}));
+        material.name = 'military-' + key;
+        return material;
+    }
+
+    _add(name, geometry, material, records, biomes) {
+        var mesh = new THREE.InstancedMesh(geometry, material, records.length);
+        mesh.name = 'military-' + name;
+        mesh.frustumCulled = false;
+        mesh.castShadow = !!(this.world.quality >= 1 && material.metalness < .75);
+        mesh.receiveShadow = name === 'road' || name === 'shoulders';
+        mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        mesh.userData.artSource = 'MilitaryArt reusable instanced geometry';
+        mesh.userData.records = records;
+        mesh.userData.biomes = biomes || null;
+        this.root.add(mesh);
+        this._meshes.push(mesh);
+        return mesh;
+    }
+
+    _repeat(factory) {
+        var records = [];
+        for (var segment = 0; segment < this._segmentCount; segment++) {
+            var local = factory(segment);
+            for (var i = 0; i < local.length; i++) {
+                local[i].segment = segment;
+                records.push(local[i]);
+            }
+        }
+        return records;
+    }
+
+    _build() {
+        var box = new THREE.BoxGeometry(1, 1, 1);
+        var plane = new THREE.PlaneGeometry(1, 1);
+        plane.rotateX(-Math.PI / 2);
+        var cylinder = new THREE.CylinderGeometry(.5, .5, 1, 8);
+        var cone = new THREE.ConeGeometry(.5, 1, 8);
+
+        this.materials = {
+            road: this._material('road', 0x9a9b91),
+            shoulder: this._material('shoulder', 0x6f765f),
+            stripe: new THREE.MeshBasicMaterial({color: 0xf0e8c9}),
+            ground: this._material('ground', 0x63864a),
+            concrete: this._material('concrete', 0xa9a791),
+            structure: this._material('structure', 0x53664c),
+            roof: this._material('roof', 0x334839, {metalness: .18, roughness: .7}),
+            wood: this._material('wood', 0x795a37),
+            sandbag: this._material('sandbag', 0xa79462),
+            accent: this._material('accent', 0xd59d3d, {metalness: .12, roughness: .62}),
+            dark: this._material('dark', 0x2d3632, {metalness: .35, roughness: .58}),
+            foliage: this._material('foliage', 0x315f35),
+            snow: this._material('snow', 0xe5eff1, {roughness: .96}),
+            rock: this._material('rock', 0x9b7148),
+            city: this._material('city', 0x66727a, {metalness: .15, roughness: .72})
+        };
+
+        this._add('road', plane, this.materials.road, this._repeat(function() {
+            return [{x: 0, y: .024, z: 0, sx: 7.9, sy: 1, sz: 23.8, rx: 0}];
+        }));
+        this._add('shoulders', box, this.materials.shoulder, this._repeat(function() {
+            return [{x: -5.25, y: -.04, z: 0, sx: 2.5, sy: .08, sz: 23.8},
+                {x: 5.25, y: -.04, z: 0, sx: 2.5, sy: .08, sz: 23.8}];
+        }));
+        this._add('lane-marks', box, this.materials.stripe, this._repeat(function(segment) {
+            var rows = [];
+            for (var z = -9; z <= 9; z += 6) {
+                rows.push({x: -1.31, y: .045, z: z, sx: .075, sy: .022, sz: 2.3});
+                rows.push({x: 1.31, y: .045, z: z, sx: .075, sy: .022, sz: 2.3});
+            }
+            return rows;
+        }));
+        this._add('road-joints', box, this.materials.dark, this._repeat(function() {
+            return [{x: 0, y: .037, z: -11.8, sx: 7.7, sy: .012, sz: .045}];
+        }));
+
+        this._add('hangars', box, this.materials.structure, this._repeat(function(segment) {
+            var side = segment % 2 ? 1 : -1;
+            return [{x: side * 9.4, y: 1.45, z: -4, sx: 5.8, sy: 2.9, sz: 6.5}];
+        }));
+        this._add('hangar-roofs', box, this.materials.roof, this._repeat(function(segment) {
+            var side = segment % 2 ? 1 : -1;
+            return [{x: side * 9.4, y: 3.02, z: -4, sx: 6.15, sy: .28, sz: 6.9, rz: side * .025}];
+        }));
+        this._add('watch-posts', cylinder, this.materials.wood, this._repeat(function(segment) {
+            if (segment % 2) return [];
+            return [{x: -6.7, y: 1.25, z: 6, sx: .28, sy: 2.5, sz: .28},
+                {x: 6.7, y: 1.25, z: -7, sx: .28, sy: 2.5, sz: .28}];
+        }));
+        this._add('watch-decks', box, this.materials.concrete, this._repeat(function(segment) {
+            if (segment % 2) return [];
+            return [{x: -6.7, y: 2.6, z: 6, sx: 1.75, sy: .18, sz: 1.75},
+                {x: 6.7, y: 2.6, z: -7, sx: 1.75, sy: .18, sz: 1.75}];
+        }));
+        this._add('watch-roofs', cone, this.materials.roof, this._repeat(function(segment) {
+            if (segment % 2) return [];
+            return [{x: -6.7, y: 3.35, z: 6, sx: 1.5, sy: .75, sz: 1.5},
+                {x: 6.7, y: 3.35, z: -7, sx: 1.5, sy: .75, sz: 1.5}];
+        }));
+
+        this._add('crates', box, this.materials.wood, this._repeat(function(segment) {
+            var side = segment % 2 ? 1 : -1;
+            return [{x: side * 5.15, y: .42, z: 3, sx: .82, sy: .82, sz: .82, ry: segment * .51},
+                {x: side * 5.7, y: .31, z: 4.1, sx: .62, sy: .62, sz: .62, ry: -segment * .37}];
+        }));
+        this._add('sandbags', box, this.materials.sandbag, this._repeat(function(segment) {
+            var side = segment % 2 ? -1 : 1;
+            var rows = [];
+            for (var i = 0; i < 4; i++) rows.push({x: side * (4.9 + i * .42), y: .18, z: -7,
+                sx: .48, sy: .28, sz: .32, ry: side * .16});
+            return rows;
+        }));
+        this._add('barriers', box, this.materials.accent, this._repeat(function(segment) {
+            if (segment % 3) return [];
+            return [{x: -5.0, y: .42, z: 9, sx: 1.15, sy: .18, sz: .18, rz: -.22},
+                {x: 5.0, y: .42, z: 9, sx: 1.15, sy: .18, sz: .18, rz: .22}];
+        }));
+
+        this._add('sunny-flags', box, this.materials.accent, this._repeat(function(segment) {
+            return segment % 2 ? [] : [{x: -7.2, y: 3.9, z: 2, sx: .9, sy: .5, sz: .04},
+                {x: 7.2, y: 3.9, z: -2, sx: .9, sy: .5, sz: .04}];
+        }), ['sunny']);
+        this._add('desert-rocks', new THREE.DodecahedronGeometry(.5, 0), this.materials.rock,
+            this._repeat(function(segment) {
+                return [{x: -7.4 - segment % 2, y: .35, z: 1, sx: 1.3, sy: .65, sz: 1},
+                    {x: 7.8, y: .28, z: -8, sx: .9, sy: .55, sz: 1.3}];
+            }), ['desert']);
+        this._add('city-skyline', box, this.materials.city, this._repeat(function(segment) {
+            var height = 5 + segment % 3 * 2;
+            return [{x: -15, y: height / 2, z: -6, sx: 4.5, sy: height, sz: 5},
+                {x: 15, y: (height + 2) / 2, z: 4, sx: 4.5, sy: height + 2, sz: 5}];
+        }), ['city']);
+        this._add('forest-trunks', cylinder, this.materials.wood, this._repeat(function(segment) {
+            return [{x: -8.4, y: 1.8, z: -7, sx: .5, sy: 3.6, sz: .5},
+                {x: 8.8, y: 1.6, z: 5, sx: .45, sy: 3.2, sz: .45}];
+        }), ['forest']);
+        this._add('forest-crowns', cone, this.materials.foliage, this._repeat(function(segment) {
+            return [{x: -8.4, y: 4.3, z: -7, sx: 2.7, sy: 3.2, sz: 2.7},
+                {x: 8.8, y: 3.9, z: 5, sx: 2.4, sy: 2.9, sz: 2.4}];
+        }), ['forest']);
+        this._add('snow-pines', cone, this.materials.snow, this._repeat(function(segment) {
+            return [{x: -8.8, y: 2.4, z: -6, sx: 2.2, sy: 4.8, sz: 2.2},
+                {x: 8.4, y: 2.0, z: 5, sx: 1.8, sy: 4.0, sz: 1.8}];
+        }), ['snow']);
+    }
+
+    setTheme(themeName) {
+        var themeToBiome = {
+            dawn: 'sunny', noon: 'desert', overcast: 'city', sunset: 'forest', dusk: 'snow',
+            default: 'sunny', apocalypse: 'desert', cave: 'forest', mechanical: 'city', fortress: 'snow'
+        };
+        var biome = themeToBiome[themeName] || 'sunny';
+        var palettes = {
+            sunny:  {road:0xa8a89d, shoulder:0x668c4d, structure:0x647a57, roof:0x344a3b, accent:0xe2b446, ground:0x668c4d},
+            desert: {road:0xb0a78f, shoulder:0xa98958, structure:0x9b8057, roof:0x5d5546, accent:0xe08c35, ground:0xa98958},
+            city:   {road:0x8c969a, shoulder:0x68736f, structure:0x6c7878, roof:0x39484c, accent:0xe8b34d, ground:0x68736f},
+            forest: {road:0x92978a, shoulder:0x476b42, structure:0x536847, roof:0x2f4536, accent:0xd49b3f, ground:0x476b42},
+            snow:   {road:0xb8c1c1, shoulder:0xd7e4e4, structure:0x64777a, roof:0x3f555a, accent:0xe8a94a, ground:0xd7e4e4}
+        };
+        var palette = palettes[biome];
+        this.materials.road.color.setHex(palette.road);
+        this.materials.shoulder.color.setHex(palette.shoulder);
+        this.materials.structure.color.setHex(palette.structure);
+        this.materials.roof.color.setHex(palette.roof);
+        this.materials.accent.color.setHex(palette.accent);
+        for (var i = 0; i < this._meshes.length; i++) {
+            var allowed = this._meshes[i].userData.biomes;
+            this._meshes[i].visible = !allowed || allowed.indexOf(biome) >= 0;
+        }
+        // The military presentation replaces both legacy roadside systems while
+        // retaining their objects for rollback and avoiding disposal churn.
+        if (this.world._v42Environment && this.world._v42Environment.root) this.world._v42Environment.root.visible = false;
+        if (this.world.roadGroup) this.world.roadGroup.visible = false;
+        if (this.world._v121Scenery) {
+            for (var key in this.world._v121Scenery.groups) this.world._v121Scenery.groups[key].visible = false;
+            if (this.world._v121Scenery.active) this.world._v121Scenery.active.visible = false;
+        }
+        this.biome = biome;
+        this.themeName = themeName;
+    }
+
+    update(squadZ) {
+        var anchor = Math.floor((squadZ || 0) / this._segmentLength) * this._segmentLength;
+        if (anchor === this._anchor) return;
+        this._anchor = anchor;
+        var scratch = this._scratch;
+        for (var m = 0; m < this._meshes.length; m++) {
+            var mesh = this._meshes[m];
+            var records = mesh.userData.records;
+            for (var i = 0; i < records.length; i++) {
+                var item = records[i];
+                scratch.position.set(item.x, item.y, anchor + 24 - item.segment * this._segmentLength + item.z);
+                scratch.rotation.set(item.rx || 0, item.ry || 0, item.rz || 0);
+                scratch.scale.set(item.sx || 1, item.sy || 1, item.sz || 1);
+                scratch.updateMatrix();
+                mesh.setMatrixAt(i, scratch.matrix);
+            }
+            mesh.instanceMatrix.needsUpdate = true;
+        }
+    }
+};
+
 
 /* ===== [[ js/config.js ]] ===== */
 // ===== 膨胀小队 - 全局配置 =====
@@ -3629,6 +4806,7 @@ var WeaponShowcase = {
         // minidom 树会污染其样式引擎(bg-image 全部不再加载)。H5 端 SVG 图集保持回退。
         if (typeof wx !== 'undefined') return false;
         if (typeof window !== 'undefined' && window.__minidom) return false;
+        if (typeof ArtUI !== 'undefined') return false;
         try {
             var probe = document.createElement('canvas');
             return !!(probe.getContext && probe.getContext('webgl'));
@@ -9596,8 +10774,8 @@ var SoldierModelLoader = class SoldierModelLoader {
         }
 
         SoldierModelLoader._promise = Promise.allSettled([
-            one('assets/models/soldier/soldier.glb', 'hero soldier'),
-            one('assets/models/soldier/soldier-lod.glb', 'LOD soldier')
+            one('assets/game/models/soldier/soldier.glb', 'hero soldier'),
+            one('assets/game/models/soldier/soldier-lod.glb', 'LOD soldier')
         ]).then(function(results) {
             // Wait for both requests before cleanup: a slow sibling must not
             // allocate textures after an early failed request has been disposed.
@@ -9641,8 +10819,8 @@ var SoldierModelLoader = class SoldierModelLoader {
                 muzzleMatrix: muzzleMatrix.clone(),
                 muzzlePosition: new THREE.Vector3().setFromMatrixPosition(muzzleMatrix),
                 urls: {
-                    hero: 'assets/models/soldier/soldier.glb',
-                    lod: 'assets/models/soldier/soldier-lod.glb'
+                    hero: 'assets/game/models/soldier/soldier.glb',
+                    lod: 'assets/game/models/soldier/soldier-lod.glb'
                 }
             };
             SoldierModelLoader._data = data;
@@ -10215,7 +11393,7 @@ var EnemyModelLoader = class EnemyModelLoader {
         }
         return Promise.allSettled(keys.flatMap(key => ['hero','lod'].map(lod=>new Promise((resolve,reject)=>{
             var category=['normal','fast','shield','split','spitter','elite','bomber'].includes(key)?'zombies':'bosses';
-            var url='assets/models/'+category+'/'+key+'/'+key+(lod==='lod'?'-lod':'')+'.glb';
+            var url='assets/game/models/'+category+'/'+key+'/'+key+(lod==='lod'?'-lod':'')+'.glb';
             if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=121';
             loader.load(url,g=>{
                 try {
@@ -11544,7 +12722,7 @@ var V42BossController = {
         addInstancedCategory(env, 'mech-debris', box, makeCityMaterial(0x3E4248, { roughness: 0.7, metalness: 0.4 }), mechDebris, { themes: ['mechanical'] });
 
         // —— 最终防线(fortress): 防御墙/瞭望塔/废弃坦克/沙袋 ——
-        var fortWalls = [], fortTowers = [], fortHulls = [], fortTurrets = [], fortSandbags = [], fortArches = [];
+        var fortWalls = [], fortTowers = [], fortHulls = [], fortTurrets = [], fortSandbags = [];
         for (var fi = 0; fi < 9; fi++) {
             var fSide = fi % 2 ? 1 : -1, fz = 4 - fi * 18 + random() * 5;
             fortWalls.push(rec(fSide * 5.15, 0.85, fz, 1.2, 1.7, 6.5 + random() * 2));
@@ -11739,7 +12917,7 @@ var V42BossController = {
             controls.appendChild(makeElement('span', 'v42-control-pill', '↔ 拖动变道'));
             controls.appendChild(makeElement('span', 'v42-control-pill', '◆ 选择状态门'));
             var hint = startPanel.querySelector('.hint-text');
-            if (hint) hint.replaceWith(controls); else startPanel.appendChild(controls);
+            if (hint && hint.parentNode) { hint.parentNode.insertBefore(controls, hint); hint.parentNode.removeChild(hint); } else startPanel.appendChild(controls);
         }
 
         var levelName = document.getElementById('level-name');
@@ -11821,6 +12999,14 @@ class World {
         V42Art.buildEnvironment(this);
         this._buildSky();
         if (typeof SceneryV121 !== 'undefined') this._v121Scenery = new SceneryV121(this);
+        if (typeof MilitaryArt !== 'undefined') {
+            this._militaryArt = new MilitaryArt(this);
+            if (this.roadGroup) {
+                this.roadGroup.traverse(function(o) {
+                    if (o.userData && o.userData.legacyRoad) o.visible = false;
+                });
+            }
+        }
 
         this.resize();
         window.addEventListener('resize', () => this.resize());
@@ -11988,6 +13174,7 @@ class World {
             const road = new THREE.Mesh(new THREE.PlaneGeometry(6.8, SEG_LEN), roadMat);
             road.rotation.x = -Math.PI / 2;
             road.receiveShadow = true;
+            road.userData.legacyRoad = true;
             seg.add(road);
 
             // Keep low sidewalks; remove decorative guardrails and caps.
@@ -12002,6 +13189,7 @@ class World {
                 new THREE.MeshLambertMaterial({ vertexColors: true }));
             structMesh.castShadow = true;
             structMesh.receiveShadow = true;
+            structMesh.userData.legacyRoad = true;
             seg.add(structMesh);
 
             var pavement = [];
@@ -12015,7 +13203,9 @@ class World {
                     pavement.push(colorize(curb, tile % 2 ? 0xE7E4CF : 0x4C6266));
                 }
             }
-            seg.add(new THREE.Mesh(mergeGeometries(pavement), new THREE.MeshLambertMaterial({ vertexColors: true })));
+            var pavementMesh = new THREE.Mesh(mergeGeometries(pavement), new THREE.MeshLambertMaterial({ vertexColors: true }));
+            pavementMesh.userData.legacyRoad = true;
+            seg.add(pavementMesh);
 
             // 草地(两侧合并) — V12视觉: 修剪条纹明暗交替 + 偶发浅色草斑, 打破大片单色
             var grassBase = new THREE.Color(C.grass);
@@ -12042,7 +13232,7 @@ class World {
             seg.add(groundMesh);
 
             seg.position.z = -i * SEG_LEN + SEG_LEN;
-            this.scene.add(seg);
+            roadGroup.add(seg);
             this.roadSegments.push({ group: seg, length: SEG_LEN });
         }
 
@@ -12054,8 +13244,10 @@ class World {
             sg.translate(-2.8 + si * 1.4, 0.012, 0.5);
             stripeGeos.push(colorize(sg, 0xFFFFFF));
         }
-        this.scene.add(new THREE.Mesh(mergeGeometries(stripeGeos),
-            new THREE.MeshBasicMaterial({ vertexColors: true })));
+        var startStripe = new THREE.Mesh(mergeGeometries(stripeGeos), new THREE.MeshBasicMaterial({ vertexColors: true }));
+        startStripe.userData.legacyRoad = true;
+        roadGroup.add(startStripe);
+        this.scene.add(roadGroup);
     }
 
 
@@ -12071,6 +13263,7 @@ class World {
     updateRoadScroll(squadZ) {
         if(this._v42Environment && this._v42Environment.root.visible)this._v42Environment.update(squadZ);
         if(this._v121Scenery)this._v121Scenery.update(squadZ);
+        if(this._militaryArt)this._militaryArt.update(squadZ);
         const SEG_LEN = 12;
         // 路段: 覆盖 [squadZ+18, squadZ-114], 共12段
         const base = Math.ceil((squadZ + SEG_LEN * 1.5) / SEG_LEN) * SEG_LEN;
@@ -12199,6 +13392,7 @@ class World {
         }
         this._themeApplied = themeName;
         if(this._v121Scenery)this._v121Scenery.setTheme(themeName);
+        if(this._militaryArt)this._militaryArt.setTheme(themeName);
     }
 
     /** V13: 按主题重绘天穹渐变(与 _buildSky 同规格: 4 停靠点 + 顶部太阳光晕) */
@@ -12631,6 +13825,51 @@ class Effects {
             bctx.fillRect(0, 0, 128, 128);
             this._boomTex = new THREE.CanvasTexture(bc);
         }
+        // Runtime PNGs are optional overlays on the existing procedural fallbacks.
+        // One static loader/cache is shared across Effects instances; failed loads
+        // leave the canvas textures and trigger logic untouched.
+        var self = this;
+        var texturePaths = {
+            muzzle: 'art/effects/muzzle.png', hit: 'art/effects/hit.png',
+            explosion: 'art/effects/explosion.png', boss_explosion: 'art/effects/boss_explosion.png',
+            coins: 'art/effects/coins.png', upgrade: 'art/effects/upgrade.png',
+            boss_entry: 'art/effects/boss_entry.png', trail: 'art/effects/trail.png'
+        };
+        Effects._combatTextures = Effects._combatTextures || {};
+        Effects._textureLoader = Effects._textureLoader || new THREE.TextureLoader();
+        this._combatTextures = Effects._combatTextures;
+        Object.keys(texturePaths).forEach(function(key) {
+            var cached = Effects._combatTextures[key];
+            if (cached) {
+                if (cached.ready) self._applyCombatTexture(key, cached.texture);
+                else cached.waiters.push(function(tex) { self._applyCombatTexture(key, tex); });
+                return;
+            }
+            var entry = Effects._combatTextures[key] = {ready:false, failed:false, texture:null, waiters:[]};
+            entry.waiters.push(function(tex) { self._applyCombatTexture(key, tex); });
+            entry.texture = Effects._textureLoader.load(texturePaths[key], function(tex) {
+                tex.encoding = THREE.sRGBEncoding;
+                entry.ready = true;
+                for (var i = 0; i < entry.waiters.length; i++) entry.waiters[i](tex);
+                entry.waiters.length = 0;
+            }, undefined, function() {
+                entry.failed = true;
+                entry.waiters.length = 0;
+            });
+        });
+    }
+
+    _applyCombatTexture(key, texture) {
+        if (key === 'hit' && this.impactMesh) {
+            this.impactMesh.material.map = texture;
+            this.impactMesh.material.needsUpdate = true;
+        }
+        if (key === 'muzzle') this._muzzleArtTex = texture;
+    }
+
+    _readyCombatTexture(key) {
+        var entry = this._combatTextures && this._combatTextures[key];
+        return entry && entry.ready ? entry.texture : null;
     }
 
     /** V12视觉: 地面尸液痕迹 (dieT期间淡出, 大体型更大) */
@@ -12643,9 +13882,12 @@ class Effects {
     }
 
     /** V12视觉: 爆炸白闪 (0.14s 亮核弹出) */
-    flash(x, y, z, color, size) {
+    flash(x, y, z, color, size, textureKey) {
         if (this.booms.length >= 8) return;
         var s = this._boomPool.pop() || new THREE.Sprite(new THREE.SpriteMaterial({ map: this._boomTex, transparent: true, depthWrite: false }));
+        var artTexture = textureKey && this._readyCombatTexture(textureKey);
+        s.material.map = artTexture || this._boomTex;
+        s.material.needsUpdate = true;
         s.position.set(x, y, z);
         s.visible = true;
         s.material.opacity = 1;
@@ -12696,7 +13938,7 @@ class Effects {
             { flash: 3.4, ring: 2, sparks: 34, speed: 7.0, smoke: 12 }
         ][Math.max(0, Math.min(3, (tier | 0) - 1))];
         if (!cfg) return;
-        this.flash(x, y, z, 0xFFC26B, cfg.flash);
+        this.flash(x, y, z, 0xFFC26B, cfg.flash, tier >= 4 ? 'boss_explosion' : 'explosion');
         for (var r = 0; r < cfg.ring; r++) this.shockwave(x, Math.max(0.06, y - r * 0.12), z, r ? 0xFFB055 : 0xFFE1A0);
         // 火花: 橙芯+白热双层
         this.burst(x, y, z, 0xFFA03C, Math.ceil(cfg.sparks * 0.7), cfg.speed, 0.5);
@@ -12867,11 +14109,13 @@ class Effects {
         }
         if(this.flashes.length>=24)return;
         var flash = this._flashPool.pop() || new THREE.Sprite(new THREE.SpriteMaterial({
-            map: this._muzzleTex,
+            map: this._muzzleArtTex || this._muzzleTex,
             transparent: true,
             opacity: 0.95,
             depthWrite: false
         }));
+        flash.material.map = this._muzzleArtTex || this._muzzleTex;
+        flash.material.needsUpdate = true;
         flash.position.set(x, y, z);
         flash.visible=true;flash.material.opacity=.95;
         flash.material.rotation = Math.random() * Math.PI; // V12视觉: 随机滚转, 齐射时火光不重复
@@ -13600,6 +14844,7 @@ class GateSystem {
                 if (!gd.style) gd.style = (gd.op === 'mul' || gd.op === 'nuke') ? 'mul' : (gd.op === 'addpct' ? 'buff' : (gd.op === 'risk' ? 'risk' : (gd.op === 'buff' ? 'buff' : 'add')));
                 gd.tier = gd.tier || (gd.op === 'mul' ? 'rare' : 'common');
                 const model = V42Art.createGateModel(gd, gateWidth);
+                this._applyMilitaryPalette(model, gd);
                 model.userData.artSource = 'js/models.js:createGateModel(' + gd.op + '/' + (gd.label || '') + ') 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)';
                 model.position.set(CONFIG.LANE_X[gd.lane], 0, seg.z);
                 this.scene.add(model);
@@ -13615,6 +14860,30 @@ class GateSystem {
                 });
             }
         }
+    }
+
+    _applyMilitaryPalette(model, data) {
+        var category = typeof _gateCategory === 'function' ? _gateCategory(data.op, data.value) : 'special';
+        var color = category === 'count' ? 0x39b96b : (category === 'coin' ? 0xf1b83b : 0x3f91e8);
+        var dark = category === 'count' ? 0x174f31 : (category === 'coin' ? 0x6e4b11 : 0x183e6d);
+        var light = new THREE.Color(color).lerp(new THREE.Color(0xffffff), .28);
+        function paint(mesh, hex) {
+            if (!mesh || !mesh.geometry || !mesh.geometry.attributes || !mesh.geometry.attributes.color) return;
+            var attribute = mesh.geometry.attributes.color;
+            var c = hex && hex.isColor ? hex : new THREE.Color(hex);
+            for (var i = 0; i < attribute.count; i++) attribute.setXYZ(i, c.r, c.g, c.b);
+            attribute.needsUpdate = true;
+        }
+        paint(model.children[0], dark);
+        paint(model.children[1], light);
+        paint(model.children[3], color);
+        paint(model.children[4], light);
+        var glass = model.userData.glass;
+        if (glass && glass.material) {
+            glass.material.color.setHex(color);
+            if (glass.material.emissive) glass.material.emissive.setHex(color).multiplyScalar(.28);
+        }
+        model.userData.militaryGateColor = color;
     }
 
     clear() {
@@ -13804,6 +15073,7 @@ class GateSystem {
                     members[ci].data.style = 'epic';
                     this.scene.remove(members[ci].model);
                     members[ci].model = V42Art.createGateModel(members[ci].data, CONFIG.LANE_WIDTH * 0.9);
+                    this._applyMilitaryPalette(members[ci].model, members[ci].data);
                     this.scene.add(members[ci].model);
                     members[ci].triggered = false;
                     members[ci].passed = false;
@@ -13819,6 +15089,7 @@ class GateSystem {
                 members[m].data.label = def.icon + ' ' + def.name + '[' + Skills.qualityName(id) + ']' + (lv > 0 ? ' Lv' + (lv + 1) : '');
                 this.scene.remove(members[m].model);
                 members[m].model = V42Art.createGateModel(members[m].data, CONFIG.LANE_WIDTH * 0.9);
+                this._applyMilitaryPalette(members[m].model, members[m].data);
                 this.scene.add(members[m].model);
                 members[m].triggered = false;
                 members[m].passed = false;
@@ -13832,6 +15103,7 @@ class GateSystem {
                 members[r].data.style = 'epic';
                 this.scene.remove(members[r].model);
                 members[r].model = V42Art.createGateModel(members[r].data, CONFIG.LANE_WIDTH * 0.9);
+                this._applyMilitaryPalette(members[r].model, members[r].data);
                 this.scene.add(members[r].model);
                 members[r].triggered = false;
                 members[r].passed = false;
@@ -13861,6 +15133,7 @@ class GateSystem {
                 if (obj.material) obj.material.dispose();
             });
             var model = V42Art.createGateModel(nd, gateWidth);
+            this._applyMilitaryPalette(model, nd);
             model.position.set(CONFIG.LANE_X[nd.lane], 0, g.z);
             this.scene.add(model);
             g.data = nd;
@@ -16791,6 +18064,7 @@ class Game {
         V42Art.installUI(this);
         this._bindHomeButtons(); // V10 QA: 动态首页按钮绑定(依赖 installUI 创建的 DOM)
         if (typeof V60UI !== 'undefined') V60UI.install(this);
+        if (typeof ArtUI !== 'undefined') ArtUI.install(this);
 
         this._loop = this._loop.bind(this);
         requestAnimationFrame(this._loop);

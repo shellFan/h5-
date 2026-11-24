@@ -17,6 +17,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { includeAsset, miniSource, copyGallery } = require('./runtime-assets');
 const crypto = require('crypto');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -24,6 +25,9 @@ const OUT = path.join(ROOT, 'wechat-game');
 
 // 游戏脚本清单 — 与 index.html 加载顺序一致(含 js/game.js, 修复抖音构建 P0 缺陷教训)
 const GAME_SCRIPTS = [
+    'assets/game/catalog.js',
+    'js/art-ui.js',
+    'js/military-art.js',
     'js/config.js',
     'js/utils.js',
     'js/economy.js',
@@ -90,7 +94,7 @@ const ASSET_RULES = [
     { match: /\.svg$/, priority: 'P3', role: '矢量图标' }
 ];
 
-const CSS_FILES = ['style.css', 'style-v42.css', 'style-v51.css', 'style-v60.css', 'style-v120.css', 'style-v118.css', 'style-v130.css'];
+const CSS_FILES = ['style.css', 'style-v42.css', 'style-v51.css', 'style-v60.css', 'style-v120.css', 'style-v118.css', 'style-v130.css', 'style-art-military.css'];
 
 function mustRead(rel) {
     const p = path.join(ROOT, rel);
@@ -142,7 +146,7 @@ function buildBundle(gameVersion, inlineEarly, inlineThreeCheck) {
         '/* ==== THREE 加载检测(H5 中位于 three.min.js 之后 — THREE 已由入口接线) ==== */\n' +
         inlineThreeCheck + '\n');
     for (const rel of GAME_SCRIPTS) {
-        const code = mustRead(rel);
+        const code = miniSource(mustRead(rel));
         parts.push('/* ===== [[ ' + rel + ' ]] ===== */\n' + code + '\n');
         if (rel === 'js/vendor/GLTFLoader.js') {
             // 入口定义的包内文件读取适配 — 必须在 game.js 自启动前生效
@@ -163,6 +167,7 @@ function copyAssets() {
         const entries = fs.readdirSync(abs, { withFileTypes: true });
         for (const e of entries) {
             const relPath = rel ? rel + '/' + e.name : e.name;
+            if (!includeAsset(ROOT, relPath, 'wechat')) continue;
             if (e.isDirectory()) {
                 // 排除目录: textures/(GLB 内嵌, 源文件不进包)
                 if (e.name === 'textures') continue;
@@ -172,14 +177,17 @@ function copyAssets() {
                 const isGlb = lower.endsWith('.glb');
                 const isSvg = lower.endsWith('.svg');
                 const isWorldAtlas = relPath === 'art-v121/world-materials.jpg';
-                if (!isGlb && !isSvg && !isWorldAtlas) continue; // UI atlas is placed in the main package below.
-                const rule = ASSET_RULES.find(r => r.match.test('assets/' + relPath)) || { priority: 'P3', role: 'other' };
-                const dst = path.join(outRoot, relPath);
+                if (!isGlb && !isSvg && !isWorldAtlas && !(relPath.startsWith('game/') && /\.(png|jpg)$/.test(lower))) continue; // UI atlas is placed in the main package below.
+                const rule = ASSET_RULES.find(r => r.match.test('assets/' + relPath.replace(/^game\/models\//, 'models/'))) || { priority: 'P3', role: 'other' };
+                const isArt = relPath.startsWith('game/') && !relPath.startsWith('game/models/');
+                const emittedPath = isArt ? 'art/' + relPath.slice(5) : 'assets/' + relPath;
+                const dst = path.join(OUT, emittedPath);
                 fs.mkdirSync(path.dirname(dst), { recursive: true });
                 fs.copyFileSync(path.join(abs, e.name), dst);
                 const stat = fs.statSync(dst);
                 manifest.push({
-                    path: 'assets/' + relPath,
+                    path: emittedPath,
+                    package: isArt ? 'art' : 'assets',
                     size: stat.size,
                     priority: rule.priority,
                     role: rule.role,
@@ -230,7 +238,9 @@ function main() {
 
     console.log('[build:wechat] 生成 UI DOM/CSS 模块...');
     fs.writeFileSync(path.join(OUT, 'ui-dom.js'), '// V12 构建产物: index.html <body> 转换的 UI DOM 树\nmodule.exports = ' + JSON.stringify(bodySpec) + ';\n');
-    const cssTexts = CSS_FILES.map(f => mustRead(f).replace(/assets\/ui-v118\//g, 'ui-art/'));
+    const cssTexts = CSS_FILES.map(f => miniSource(mustRead(f))
+        .replace(/assets\/ui-v118\//g, 'ui-art/')
+        .replace(/assets\/game\/(?!models\/)/g, 'art/'));
     fs.writeFileSync(path.join(OUT, 'ui-css.js'), '// V12 构建产物: 项目全部样式表原文(运行时级联)\nmodule.exports = ' + JSON.stringify(cssTexts) + ';\n');
 
     console.log('[build:wechat] 生成入口 game.js...');
@@ -258,7 +268,7 @@ function main() {
         deviceOrientation: 'portrait',
         showStatusBar: false,
         networkTimeout: { request: 10000, downloadFile: 10000 },
-        subpackages: [{ root: 'assets/', name: 'assets' }]
+        subpackages: [{ root: 'assets/', name: 'assets' }, { root: 'art/', name: 'art' }, { root: 'art-gallery/', name: 'art_gallery' }]
     }, null, 2));
 
     fs.writeFileSync(path.join(OUT, 'project.config.json'), JSON.stringify({
@@ -283,6 +293,7 @@ function main() {
 
     console.log('[build:wechat] 复制资源分包...');
     const manifest = copyAssets();
+    const gallerySize = copyGallery(ROOT, OUT);
 
     // ---- 产物自检 ----
     console.log('[build:wechat] 产物自检...');
@@ -309,13 +320,17 @@ function main() {
     let mainSize = 0;
     for (const f of mainFiles) mainSize += fs.statSync(path.join(OUT, f)).size;
     mainSize += manifest.filter(f => f.package === 'main').reduce((s, f) => s + f.size, 0);
-    const assetsSize = manifest.filter(f => f.package !== 'main').reduce((s, f) => s + f.size, 0);
-    const totalSize = mainSize + assetsSize;
-    const MAIN_LIMIT = 4 * 1024 * 1024, SUB_LIMIT = 4 * 1024 * 1024, TOTAL_LIMIT = 30 * 1024 * 1024;
+    const assetsSize = manifest.filter(f => f.package !== 'main' && f.package !== 'art').reduce((s, f) => s + f.size, 0);
+    const artSize = manifest.filter(f => f.package === 'art').reduce((s, f) => s + f.size, 0);
+    const totalSize = mainSize + assetsSize + artSize + gallerySize;
+    const MAIN_LIMIT = 4 * 1024 * 1024, SUB_LIMIT = 4 * 1024 * 1024, TOTAL_LIMIT = 20 * 1024 * 1024;
     console.log('[build:wechat] 包体: 主包 ' + fmtSize(mainSize) + ' / 分包(assets) ' + fmtSize(assetsSize) + ' / 整包 ' + fmtSize(totalSize));
     if (mainSize > MAIN_LIMIT) throw new Error('[build:wechat] 主包超限: ' + fmtSize(mainSize) + ' > 4MB');
+    if (artSize > SUB_LIMIT) throw new Error('[build:wechat] art package exceeds unpacked 4MiB');
+    console.log('[build:wechat] 美术分包: ' + fmtSize(artSize) + ' / 图鉴分包: ' + fmtSize(gallerySize));
+    if (gallerySize > SUB_LIMIT) throw new Error('[build:wechat] gallery package exceeds unpacked 4MiB');
     if (assetsSize > SUB_LIMIT) throw new Error('[build:wechat] assets 分包超限: ' + fmtSize(assetsSize) + ' > 4MB — 需拆分资源');
-    if (totalSize > TOTAL_LIMIT) throw new Error('[build:wechat] 整包超限: ' + fmtSize(totalSize) + ' > 30MB');
+    if (totalSize > TOTAL_LIMIT) throw new Error('[build:wechat] 整包超限: ' + fmtSize(totalSize) + ' > 20MB');
 
     console.log('[build:wechat] 完成 → wechat-game/ (主包 ' + fmtSize(mainSize) + ' / 整包 ' + fmtSize(totalSize) + ')');
     console.log('  导入: 微信开发者工具 → 导入 wechat-game 目录(测试可用测试号 AppID)');

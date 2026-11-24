@@ -145,7 +145,13 @@
     function expandCalc(v, ctx) {
         var s = String(v).trim();
         var guard = 0;
-        while (guard++ < 4) {
+        while (guard++ < 6) {
+            var envM = s.match(/env\(safe-area-inset-(top|bottom|left|right)(?:\s*,\s*[^)]+)?\)/);
+            if (envM) {
+                var sa = (ctx.safeArea || {});
+                s = s.replace(envM[0], String(sa[envM[1]] || 0) + 'px');
+                continue;
+            }
             var calcM = s.match(/calc\(([^()]+)\)/);
             if (calcM) {
                 var expr = calcM[1];
@@ -181,12 +187,6 @@
                     }
                 }
                 return s;
-            }
-            var envM = s.match(/env\(safe-area-inset-(top|bottom|left|right)\)/);
-            if (envM) {
-                var sa = (ctx.safeArea || {});
-                s = s.replace(envM[0], String(sa[envM[1]] || 0) + 'px');
-                continue;
             }
             break;
         }
@@ -575,6 +575,7 @@
                         }
                     }
                     if (colorPart) out.push(['background-color', colorPart, imp]);
+                    if (!bgDeclared) out.push(['background-image', 'none', imp]);
                     if (!bgDeclared && !colorPart) out.push(['background-color', l0, imp]);
                     break;
                 }

@@ -105,6 +105,44 @@ async function main() {
         const uiStats = await page.evaluate('window.__minidom.getStats()');
         check('UI DOM 节点构建', uiStats.nodes > 100, `nodes=${uiStats.nodes}, rules=${uiStats.rules}, keyframes=${uiStats.keyframes}`);
 
+        // Art integration: exercise minidom descendant selectors and the
+        // explicit mini-program layout fallback against the actual built UI.
+        await page.waitForTimeout(500);
+        const militaryHome = await page.evaluate(() => {
+            const doc = window.__minidom.document;
+            const root = doc.getElementById('game-container');
+            const panel = doc.querySelector('#start-screen .title-panel');
+            const hero = doc.querySelector('#start-screen .art-home-hero');
+            const navIds = ['map', 'train', 'armory', 'tech', 'codex', 'challenge', 'rank', 'ach', 'daily', 'set'];
+            const nav = navIds.map(id => {
+                const node = doc.getElementById('v60-btn-' + id);
+                return {
+                    id,
+                    text: node ? node.textContent.trim() : '',
+                    box: node && node._box ? { x: node._box.x, y: node._box.y, w: node._box.w, h: node._box.h } : null
+                };
+            });
+            return {
+                rootClass: root ? root.className : '',
+                panelBox: panel && panel._box ? { x: panel._box.x, y: panel._box.y, w: panel._box.w, h: panel._box.h } : null,
+                heroExists: Boolean(hero),
+                heroText: hero ? hero.textContent : '',
+                nav
+            };
+        });
+        check('军事首页英雄区通过 minidom 后代选择器安装',
+            militaryHome.heroExists && /art-military/.test(militaryHome.rootClass) && /小小军团/.test(militaryHome.heroText),
+            JSON.stringify({ rootClass: militaryHome.rootClass, hero: militaryHome.heroExists, text: militaryHome.heroText }));
+        const expectedNavLabels = ['地图', '训练', '军械库', '科技', '图鉴', '挑战', '排行', '成就', '每日', '设置'];
+        check('军事首页十个导航保留真实文本标签',
+            militaryHome.nav.every((item, index) => item.text.indexOf(expectedNavLabels[index]) !== -1),
+            militaryHome.nav.map(item => item.id + '=' + item.text).join(', '));
+        const boxesInsideViewport = militaryHome.panelBox &&
+            militaryHome.panelBox.x >= -1 && militaryHome.panelBox.x + militaryHome.panelBox.w <= 391 &&
+            militaryHome.nav.every(item => item.box && item.box.x >= -1 && item.box.x + item.box.w <= 391 && item.box.w > 0 && item.box.h > 0);
+        check('微信首页面板与导航布局不越过 390px 视口', boxesInsideViewport,
+            JSON.stringify({ panel: militaryHome.panelBox, nav: militaryHome.nav.map(item => item.box) }));
+
         // 3. 首页可见(开始按钮存在且有布局)
         const startBox = await elCenter(page, 'btn-start');
         check('首页开始按钮布局', !!startBox, startBox ? JSON.stringify(startBox) : '未找到');

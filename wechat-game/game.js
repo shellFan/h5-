@@ -4,6 +4,9 @@
 // 设计: 游戏核心代码(game-bundle.js)与 H5 完全同一份, 平台差异全部收敛在本入口
 // ==================================================================
 'use strict';
+
+// Critical art shares the model subpackage; preload before minidom requests images.
+function __bootMilitaryGame() {
 /* eslint-disable */
 
 /** 跨环境全局写入: 微信 GameGlobal 可直写; 浏览器模拟器只读属性用 defineProperty */
@@ -58,7 +61,25 @@ function __gdef(obj, name, value) {
         safeArea: safe,
         mainCanvas: mainCanvas,
         createCanvas: function () { return wx.createCanvas(); },
-        createImage: function () { return wx.createImage(); },
+        createImage: function () {
+            var img = wx.createImage();
+            var proto = Object.getPrototypeOf(img);
+            var desc = Object.getOwnPropertyDescriptor(img, 'src') || (proto && Object.getOwnPropertyDescriptor(proto, 'src'));
+            if (desc && desc.set && desc.configurable) {
+                Object.defineProperty(img, 'src', {
+                    configurable: true,
+                    get: function () { return desc.get ? desc.get.call(img) : ''; },
+                    set: function (v) {
+                        var raw = String(v || '');
+                        if (raw.indexOf('/wechat-game/') === 0) { desc.set.call(img, raw); return; }
+                        var s = raw.replace(/^\/+/, '');
+                        if (/^assets\/game\/(?!models\/)/.test(s)) s = 'art/' + s.slice('assets/game/'.length);
+                        desc.set.call(img, s);
+                    }
+                });
+            }
+            return img;
+        },
         loadText: function (path) {
             return new Promise(function (resolve, reject) {
                 var fsm = wx.getFileSystemManager();
@@ -510,3 +531,16 @@ require('./game-bundle.js');
         });
     }
 })();
+
+}
+var __militaryBooted = false;
+function __launchMilitaryGame() {
+    if (__militaryBooted) return;
+    __militaryBooted = true; __bootMilitaryGame();
+}
+if (wx.loadSubpackage) {
+    var __artPackagesRemaining = 2;
+    function __artPackageLoaded() { if (--__artPackagesRemaining === 0) __launchMilitaryGame(); }
+    wx.loadSubpackage({ name: 'assets', success: __artPackageLoaded, fail: __artPackageLoaded });
+    wx.loadSubpackage({ name: 'art', success: __artPackageLoaded, fail: __artPackageLoaded });
+} else __launchMilitaryGame();
