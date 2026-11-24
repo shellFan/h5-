@@ -66,6 +66,7 @@ var ArtUI = {
         this._wrap('renderClassSelector', function() { self.decorateClasses(); });
         this._wrap('renderCodex', function() { self.decorateCodex(); });
         this._wrap('renderRank', function() { self.decorateRank(); });
+        this._wrap('renderTraining', function() { self.decorateTraining(); });
         this._wrap('hidePages', function() {
             var gallery = document.getElementById('art-gallery-page');
             if (gallery) gallery.classList.add('hidden');
@@ -110,6 +111,19 @@ var ArtUI = {
         for (var i = 0; i < Math.min(3, nodes.length); i++) {
             nodes[i].innerHTML = this.image('ui/medal.png', '', 'art-rank-medal') + '<span>' + (i + 1) + '</span>';
         }
+    },
+    decorateTraining: function() {
+        var panel = document.querySelector('#v60-train-page .title-panel');
+        if (!panel || document.getElementById('art-train-showcase')) return;
+        var box = document.createElement('div');
+        box.id = 'art-train-showcase';
+        box.className = 'art-train-showcase';
+        box.innerHTML = this.image('characters/soldier_portrait.png', '绿色玩具士兵', 'art-train-soldier') +
+            '<div class="art-train-copy"><span class="art-overline">SQUAD TRAINING</span>' +
+            '<strong>绿色战术步兵团</strong><p>强化全队火力、生命与减伤属性</p></div>';
+        var header = panel.querySelector('.v60-train-head') || panel.querySelector('.v60-page-title');
+        if (header) header.insertAdjacentElement('afterend', box);
+        else panel.insertBefore(box, panel.firstChild);
     },
     decorateCodex: function() {
         var page = document.querySelector('#v60-codex-page .title-panel');

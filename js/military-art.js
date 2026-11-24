@@ -284,6 +284,32 @@ var MilitaryArt = class MilitaryArt {
                 { x: 6.0, y: 3.15, z: -7.5, sx: .28, sy: .28, sz: .28 }];
         }));
 
+        // 5.5 军事基地要塞细节: 雷达通信塔 + 双联军用储油罐 + 混凝土防爆墙
+        this._add('radar-posts', cylinder, this.materials.dark, this._repeat(function(segment) {
+            if (segment % 2 === 0) return [];
+            return [{ x: -11.4, y: 2.1, z: 5.5, sx: .28, sy: 4.2, sz: .28 },
+                { x: 11.4, y: 2.1, z: -5.5, sx: .28, sy: 4.2, sz: .28 }];
+        }));
+        this._add('radar-dishes', cone, this.materials.concrete, this._repeat(function(segment) {
+            if (segment % 2 === 0) return [];
+            return [{ x: -11.1, y: 4.35, z: 5.5, sx: 1.5, sy: .55, sz: 1.5, rx: .5, rz: -.45 },
+                { x: 11.1, y: 4.35, z: -5.5, sx: 1.5, sy: .55, sz: 1.5, rx: -.5, rz: .45 }];
+        }));
+        this._add('fuel-tanks', cylinder, this.materials.roof, this._repeat(function(segment) {
+            var side = segment % 2 ? 1 : -1;
+            return [
+                { x: side * 10.6, y: .72, z: 2.2, sx: 1.2, sy: 2.6, sz: 1.2, rx: Math.PI / 2 },
+                { x: side * 12.1, y: .72, z: 2.2, sx: 1.2, sy: 2.6, sz: 1.2, rx: Math.PI / 2 }
+            ];
+        }));
+        this._add('blast-walls', box, this.materials.concrete, this._repeat(function(segment) {
+            var side = segment % 2 ? -1 : 1;
+            return [
+                { x: side * 6.2, y: .55, z: -2.5, sx: .38, sy: 1.1, sz: 2.8 },
+                { x: side * 6.2, y: .55, z: 0.7, sx: .38, sy: 1.1, sz: 2.8 }
+            ];
+        }));
+
         // 6. 卡通多层树木(让道路两侧生机勃勃, 不再荒凉)
         this._add('tree-trunks', cylinder, this.materials.trunk, this._repeat(function(segment) {
             var side = segment % 2 ? -1 : 1;

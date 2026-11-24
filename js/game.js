@@ -1626,7 +1626,7 @@ class Game {
     if (!loading) {
         loading = document.createElement('div');
         loading.id = 'boot-loading';
-        loading.textContent = '正在整备蓝色小队…';
+        loading.textContent = '正在整备绿色小队…';
         document.body.appendChild(loading);
     }
     var starting = false;
@@ -1636,7 +1636,7 @@ class Game {
         loading.classList.remove('boot-hidden');
         var actions = document.getElementById('boot-actions');
         if (actions) actions.innerHTML = '';
-        window.__BootProgress && window.__BootProgress.stage('整备蓝色小队…', 2);
+        window.__BootProgress && window.__BootProgress.stage('整备绿色小队…', 2);
         var error = document.getElementById('error-display');
         if (error) error.remove();
         // V11.6: 关键资源优先启动 — 只等士兵+普通/快速僵尸(6 GLB), 其余20个模型战斗中后台补齐

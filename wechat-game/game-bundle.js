@@ -1,5 +1,5 @@
 // ===== game-bundle.js (V12 微信小游戏构建产物: 单一模块作用域, 源脚本按 index.html 顺序拼接) =====
-// 生成: tools/build-wechat.js @ 2026-11-24T07:22:14.513Z
+// 生成: tools/build-wechat.js @ 2026-11-24T07:56:19.325Z
 // 代码与 H5 完全同源; 平台差异收敛于入口 game.js
 /* ==== index.html 内联脚本(BootProgress/错误横幅, H5 中先于业务脚本执行 — 保序) ==== */
 
@@ -940,6 +940,7 @@ var ArtUI = {
         this._wrap('renderClassSelector', function() { self.decorateClasses(); });
         this._wrap('renderCodex', function() { self.decorateCodex(); });
         this._wrap('renderRank', function() { self.decorateRank(); });
+        this._wrap('renderTraining', function() { self.decorateTraining(); });
         this._wrap('hidePages', function() {
             var gallery = document.getElementById('art-gallery-page');
             if (gallery) gallery.classList.add('hidden');
@@ -984,6 +985,19 @@ var ArtUI = {
         for (var i = 0; i < Math.min(3, nodes.length); i++) {
             nodes[i].innerHTML = this.image('ui/medal.png', '', 'art-rank-medal') + '<span>' + (i + 1) + '</span>';
         }
+    },
+    decorateTraining: function() {
+        var panel = document.querySelector('#v60-train-page .title-panel');
+        if (!panel || document.getElementById('art-train-showcase')) return;
+        var box = document.createElement('div');
+        box.id = 'art-train-showcase';
+        box.className = 'art-train-showcase';
+        box.innerHTML = this.image('characters/soldier_portrait.png', '绿色玩具士兵', 'art-train-soldier') +
+            '<div class="art-train-copy"><span class="art-overline">SQUAD TRAINING</span>' +
+            '<strong>绿色战术步兵团</strong><p>强化全队火力、生命与减伤属性</p></div>';
+        var header = panel.querySelector('.v60-train-head') || panel.querySelector('.v60-page-title');
+        if (header) header.insertAdjacentElement('afterend', box);
+        else panel.insertBefore(box, panel.firstChild);
     },
     decorateCodex: function() {
         var page = document.querySelector('#v60-codex-page .title-panel');
@@ -1327,6 +1341,32 @@ var MilitaryArt = class MilitaryArt {
             if (segment % 2) return [];
             return [{ x: -6.0, y: 3.15, z: 6.5, sx: .28, sy: .28, sz: .28 },
                 { x: 6.0, y: 3.15, z: -7.5, sx: .28, sy: .28, sz: .28 }];
+        }));
+
+        // 5.5 军事基地要塞细节: 雷达通信塔 + 双联军用储油罐 + 混凝土防爆墙
+        this._add('radar-posts', cylinder, this.materials.dark, this._repeat(function(segment) {
+            if (segment % 2 === 0) return [];
+            return [{ x: -11.4, y: 2.1, z: 5.5, sx: .28, sy: 4.2, sz: .28 },
+                { x: 11.4, y: 2.1, z: -5.5, sx: .28, sy: 4.2, sz: .28 }];
+        }));
+        this._add('radar-dishes', cone, this.materials.concrete, this._repeat(function(segment) {
+            if (segment % 2 === 0) return [];
+            return [{ x: -11.1, y: 4.35, z: 5.5, sx: 1.5, sy: .55, sz: 1.5, rx: .5, rz: -.45 },
+                { x: 11.1, y: 4.35, z: -5.5, sx: 1.5, sy: .55, sz: 1.5, rx: -.5, rz: .45 }];
+        }));
+        this._add('fuel-tanks', cylinder, this.materials.roof, this._repeat(function(segment) {
+            var side = segment % 2 ? 1 : -1;
+            return [
+                { x: side * 10.6, y: .72, z: 2.2, sx: 1.2, sy: 2.6, sz: 1.2, rx: Math.PI / 2 },
+                { x: side * 12.1, y: .72, z: 2.2, sx: 1.2, sy: 2.6, sz: 1.2, rx: Math.PI / 2 }
+            ];
+        }));
+        this._add('blast-walls', box, this.materials.concrete, this._repeat(function(segment) {
+            var side = segment % 2 ? -1 : 1;
+            return [
+                { x: side * 6.2, y: .55, z: -2.5, sx: .38, sy: 1.1, sz: 2.8 },
+                { x: side * 6.2, y: .55, z: 0.7, sx: .38, sy: 1.1, sz: 2.8 }
+            ];
         }));
 
         // 6. 卡通多层树木(让道路两侧生机勃勃, 不再荒凉)
@@ -19763,7 +19803,7 @@ class Game {
     if (!loading) {
         loading = document.createElement('div');
         loading.id = 'boot-loading';
-        loading.textContent = '正在整备蓝色小队…';
+        loading.textContent = '正在整备绿色小队…';
         document.body.appendChild(loading);
     }
     var starting = false;
@@ -19773,7 +19813,7 @@ class Game {
         loading.classList.remove('boot-hidden');
         var actions = document.getElementById('boot-actions');
         if (actions) actions.innerHTML = '';
-        window.__BootProgress && window.__BootProgress.stage('整备蓝色小队…', 2);
+        window.__BootProgress && window.__BootProgress.stage('整备绿色小队…', 2);
         var error = document.getElementById('error-display');
         if (error) error.remove();
         // V11.6: 关键资源优先启动 — 只等士兵+普通/快速僵尸(6 GLB), 其余20个模型战斗中后台补齐

@@ -336,10 +336,66 @@
 .art-rank-medal { width:34px; height:34px; object-fit:contain; }
 .art-rank-medal + span { position:absolute; left:0; right:0; top:7px; color:#3d2804; font-size:12px; font-weight:900; }
 .art-panel-emblem { display:block; width:52px; height:52px; margin:0 auto 8px; object-fit:contain; }
-#game-container.art-military .win-stat,
+/* 商店行 / 胜利与失败结算卡片 / 训练页角色展示 / 启动加载条 统一深军绿高对比质感 */
+#game-container.art-military .v60-panel,
+#game-container.art-military .v60-page .title-panel {
+    background:linear-gradient(165deg,#213a2a 0%,#15291d 100%);
+    border:2px solid #6b9158;
+    box-shadow:0 6px 0 #0d1a12,0 18px 36px rgba(5,14,9,0.78);
+}
+#game-container.art-military .shop-row,
+#game-container.art-military .v51-shop-row {
+    background:linear-gradient(180deg,#254331,#1a3123);
+    border:1.5px solid #59805b;
+    border-radius:12px;
+    color:#f0f7ec;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.12);
+}
+#game-container.art-military .shop-row .shop-name,
+#game-container.art-military .shop-row strong { color:#ffffff; }
+#game-container.art-military .shop-row .shop-desc,
+#game-container.art-military .shop-row small { color:#b6d0b8; }
+#game-container.art-military .shop-row .shop-stat,
+#game-container.art-military .shop-row .shop-lv { color:#ffe066; font-weight:800; }
+#game-container.art-military .win-stat {
+    background:linear-gradient(180deg,#254331,#192f21);
+    border:1.5px solid #5b825d;
+    border-radius:12px;
+    color:#e8f4e5;
+}
+#game-container.art-military #win-coins,
+#game-container.art-military #lose-coins {
+    background:rgba(18,36,25,0.92);
+    border:1.5px solid #698f5c;
+    border-radius:12px;
+    color:#eef7eb;
+}
 #game-container.art-military .wc-row { color:#e8f4e5; border-color:#446649; }
-#game-container.art-military .ws-label { color:#b2ccb4; }
-#game-container.art-military .ws-val { color:#ffe066; }
+#game-container.art-military .ws-label { color:#b8d4ba; }
+#game-container.art-military .ws-val { color:#ffe26a; text-shadow:0 1px 2px rgba(0,0,0,0.45); }
+
+.art-train-showcase {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 12px;
+    margin:6px 0 8px;
+    border:1.5px solid #7aa664;
+    border-radius:13px;
+    background:linear-gradient(120deg,rgba(26,52,36,0.94),rgba(54,88,52,0.72));
+}
+.art-train-soldier { width:62px; height:72px; object-fit:contain; flex-shrink:0; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.45)); }
+.art-train-copy { flex:1; text-align:left; min-width:0; }
+.art-train-copy strong { display:block; color:#ffe580; font-size:15px; margin:3px 0 2px; }
+.art-train-copy p { margin:0; color:#cfe5d0; font-size:11px; }
+
+#boot-loading {
+    background:linear-gradient(165deg,#1d3526,#102016) !important;
+    color:#f2f6ec !important;
+}
+#boot-loading .boot-bar-fill {
+    background:linear-gradient(90deg,#3ec962,#ffe066) !important;
+}
 
 /* 战斗 HUD: 全面统一为质感深军绿钢蓝磨砂玻璃 + 亮金/纯白超高可读性(彻底修复暗字与色系割裂) */
 #game-container.art-military #progress-area {
