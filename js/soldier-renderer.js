@@ -204,8 +204,7 @@ var SoldierRenderer = class SoldierRenderer {
         var clsPres = SoldierRenderer.CLASS_PRESENTATION[clsId] || SoldierRenderer.CLASS_PRESENTATION.rifleman;
         this._v16Color.setRGB(clsPres.tint[0], clsPres.tint[1], clsPres.tint[2]);
         for (var k in this._v16AccBanks) this._v16AccBanks[k].count = 0;
-        var accName = clsPres.attach || 'tacticalpack';
-        var accBank = this._classAccBank(accName);
+        var accBank = clsPres.attach ? this._classAccBank(clsPres.attach) : null;
         for (var index = 0; index < squad.count; index++) {
             this._composeRoot(index, squad, moving, lean, tilt, this._root);
             if (!this._lastRoots[index]) this._lastRoots[index] = new THREE.Matrix4();

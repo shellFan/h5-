@@ -220,8 +220,16 @@
 #game-container.art-military .v15-home-lobby #level-select,
 #game-container.art-military .v15-home-lobby #v60-home-nav,
 #game-container.art-military .v15-home-lobby #v60-class-row,
-#game-container.art-military .v15-home-lobby .hint-text {
+#game-container.art-military .v15-home-lobby .hint-text,
+#game-container.art-military .v15-home-lobby .v42-hint-row,
+#game-container.art-military .v15-home-lobby .v42-hint-pill {
     display:none !important;
+}
+.v15-dock-gun-ico {
+    width:27px;
+    height:27px;
+    object-fit:contain;
+    display:block;
 }
 #game-container.art-military .v15-home-lobby #btn-start {
     width:78% !important;

@@ -113,15 +113,13 @@ EnemyModelLoader.status='idle';EnemyModelLoader.loadMs=0;
 // V14.2: Boss 造型辨识表 — 每型专属染色/体态/入场特效色(表现层; GLB 资产不动)。
 // 解决 hivelord/titan 等实机同形同色不可辨识的问题(逐型实机截图审计)。
 EnemyModelLoader.BOSS_PRESENTATION={
-    bruiser:  { tint:[1.06,0.88,1.24], fx:0xFF8A4A, bodyScale:[1.18,1.10,1.18], headScale:[0.96,0.96,0.96], attach:'ironfist' },
-    bulwark:  { tint:[0.88,1.02,1.22], fx:0x57CFFF, bodyScale:[1.24,1.08,1.24], headScale:[0.92,0.92,0.92], attach:'ironfist' },
+    bruiser:  { tint:[1.0,1.0,1.0],    fx:0xFF8A4A },
+    bulwark:  { tint:[0.96,1.0,1.08],  fx:0x57CFFF },
     hivelord: { tint:[1.18,1.28,0.72], fx:0xA8E84A,
                 bodyScale:[1.30,1.02,1.30], headScale:[0.94,0.92,0.94], attach:'sacs' },
-    overlord: { tint:[1.10,0.78,1.36], fx:0xB26AE8,
-                bodyScale:[1.22,1.12,1.22], headScale:[0.96,0.96,0.96], attach:'ironfist' },
-    spitking: { tint:[1.22,1.32,0.68], fx:0xC8E84A, bodyScale:[1.18,1.06,1.18], attach:'sacs' },
-    titan:    { tint:[0.86,0.92,0.98], fx:0x9AA8B4,
-                bodyScale:[1.26,1.14,1.26], headScale:[0.86,0.84,0.86], attach:'ironfist' }
+    overlord: { tint:[1.0,1.0,1.0],    fx:0xB26AE8 },
+    spitking: { tint:[1.22,1.32,0.68], fx:0xC8E84A },
+    titan:    { tint:[0.94,0.98,1.04], fx:0x9AA8B4 }
 };
 // V14: 感染者外观变体 — 确定性实例染色族(乘法系数, 以e.phase为种子, 同一怪每帧一致)。
 // 只做轻微色偏保持贴图质感与全局风格统一; 精英/自爆/冰冻等状态染色在其后覆盖。
@@ -149,9 +147,9 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
         this._v14=new THREE.Vector3();
         // V14: 头部/肩部附件库(军盔/便帽/肩甲) — 每附件每(style,lod)一个InstancedMesh, 用到才可见
         this.accBanks={};
-        this.shieldMesh=new THREE.InstancedMesh(new THREE.SphereGeometry(1,20,12),new THREE.MeshBasicMaterial({color:0x57cfff,transparent:true,opacity:.14,depthWrite:false}),8);
-        this.shieldMesh.count=0;this.shieldMesh.frustumCulled=false;this.shieldMesh.userData.artSource='V42 boss shield energy shell';scene.add(this.shieldMesh);
-        this._shieldLocal=new THREE.Matrix4().makeScale(.65,.85,.60);this._shieldLocal.setPosition(0,.65,0);
+        this.shieldMesh=new THREE.InstancedMesh(new THREE.SphereGeometry(1,22,14),new THREE.MeshBasicMaterial({color:0x4CE2FF,transparent:true,opacity:.26,depthWrite:false,side:THREE.DoubleSide}),8);
+        this.shieldMesh.count=0;this.shieldMesh.frustumCulled=false;this.shieldMesh.renderOrder=4;this.shieldMesh.userData.artSource='V15 boss translucent energy shield dome';scene.add(this.shieldMesh);
+        this._shieldLocal=new THREE.Matrix4().makeScale(.92,1.08,.92);this._shieldLocal.setPosition(0,.78,0);
 
         // V15-ART-002: 怪物与Boss柔和接地阴影 (单 InstancedMesh, 彻底消除漂浮感)
         var shCv = document.createElement('canvas'); shCv.width = shCv.height = 64;
@@ -321,35 +319,15 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
                 bank.meshes[part].setMatrixAt(slot,this._matrix);
                 bank.meshes[part].setColorAt(slot,this._color);
             }
-            // V15-ART-002: 怪物尖角/重甲附件 + Boss 独立重装机械拳套/肩甲/胸核/皇冠角
-            if(e.isBoss && !e.dying) {
-                var bAttach = (bp && bp.attach) || 'ironfist';
-                // 1) Boss 躯干重甲 + 宽大肩甲 + 发光红橙能量核心
-                var bb = this._accBank(style, lod, bAttach);
+            // V15-ART-004: 全新 Blender 独立重装 Boss 与普通怪兽 GLB 已内置雕塑尖角/机械拳套/肩甲/胸核, 仅保留特殊 Boss 背囊与精英重甲附件
+            if(e.isBoss && !e.dying && bp && bp.attach) {
+                var bb = this._accBank(style, lod, bp.attach);
                 if (bb.count < 16) {
                     var bSlot = bb.count++;
-                    var bs2 = bp && bp.bodyScale;
+                    var bs2 = bp.bodyScale;
                     this._pose.makeScale((bs2 ? bs2[0] : 1) * (1 + charge * .035), (bs2 ? bs2[1] : 1) * (1 + charge * .05), (bs2 ? bs2[2] : 1) * (1 + charge * .035));
                     this._matrix.copy(this._root).multiply(bank.source.restMatrices.Body).multiply(this._pose);
                     bb.mesh.setMatrixAt(bSlot, this._matrix);
-                }
-                // 2) Boss 巨型机械拳套 (随手臂挥动!)
-                var gb = this._accBank(style, lod, 'bossGauntlets');
-                if (gb.count < 16) {
-                    var gSlot = gb.count++;
-                    this._e.set(-.12 - Math.sin(phase) * .05 - attack * .65 - charge * .4, 0, Math.sin(phase) * .04);
-                    this._pose.makeRotationFromEuler(this._e);
-                    this._matrix.copy(this._root).multiply(bank.source.restMatrices.Arms).multiply(this._pose);
-                    gb.mesh.setMatrixAt(gSlot, this._matrix);
-                }
-                // 3) Boss 头部巨角皇冠 (随头部摆动!)
-                var hb = this._accBank(style, lod, 'bossHorns');
-                if (hb.count < 16) {
-                    var hSlot = hb.count++;
-                    this._e.set(charge * .12, Math.sin(phase * .5) * .09, Math.sin(phase) * .025);
-                    this._pose.makeRotationFromEuler(this._e);
-                    this._matrix.copy(this._root).multiply(bank.source.restMatrices.Head).multiply(this._pose);
-                    hb.mesh.setMatrixAt(hSlot, this._matrix);
                 }
             } else if(!e.isBoss && !e.dying) {
                 var accName=this._pickAccessory(style,e);
@@ -410,11 +388,11 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
             this.shadowMesh.instanceMatrix.needsUpdate = true;
         }
     }
-    /** V15: 怪物差异化轮廓分配 — 普通=怪兽双角, 快速=尖刺背鳍, 重装/精英=尖刺肩甲 */
+    /** V15-ART-004: normal.glb 已内置雕塑双角与尖耳, 仅对 fast/heavy/elite 保留差异化附件 */
     _pickAccessory(style,e) {
         if(e.type==='elite'||style==='shield'||style==='split')return 'pauldron';
         if(style==='fast')return 'fastSpikes';
-        return 'monsterHorns';
+        return null;
     }
     /** V15-ART-002: Boss 独立重装机械套装 (宽大肩甲+胸甲+发光核心+巨型机械拳套+皇冠角) */
     static _bossAccGeometry(name) {

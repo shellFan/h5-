@@ -118,7 +118,7 @@ var ArtUI = {
                 dock.innerHTML =
                     '<button type="button" class="v15-dock-tab active" data-dock="home">' + this.icon('shield') + '<span>首页</span></button>' +
                     '<button type="button" class="v15-dock-tab" data-dock="train">' + this.icon('avatar') + '<span>士兵</span></button>' +
-                    '<button type="button" class="v15-dock-tab" data-dock="armory">' + this.icon('chest') + '<span>武器</span></button>' +
+                    '<button type="button" class="v15-dock-tab" data-dock="armory">' + this.image('weapons/rifle.png', '武器', 'v15-dock-gun-ico') + '<span>武器</span></button>' +
                     '<button type="button" class="v15-dock-tab" data-dock="shop">' + this.icon('coin') + '<span>商店</span></button>' +
                     '<button type="button" class="v15-dock-tab" data-dock="rank">' + this.icon('trophy') + '<span>排行榜</span></button>';
                 panel.appendChild(dock);
