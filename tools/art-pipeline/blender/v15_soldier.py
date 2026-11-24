@@ -168,20 +168,20 @@ surface('Torso', [
 ], 'Body', 'cloth', 22)
 # Layered tactical vest shell + utility belt
 surface('TacticalVest', [
-    (0.44, 0.24, 0.17, 0.0),
-    (0.58, 0.275, 0.19, 0.0),
-    (0.69, 0.255, 0.175, 0.0)
+    (0.44, 0.255, 0.18, 0.0),
+    (0.58, 0.295, 0.20, 0.0),
+    (0.69, 0.275, 0.185, 0.0)
 ], 'Body', 'vest', 20)
-surface('Belt', [(0.35, 0.22, 0.155, 0.0), (0.415, 0.242, 0.168, 0.0)], 'Body', 'strap', 20)
-rbox('BeltBuckle', (0, 0.382, -0.172), (0.095, 0.062, 0.03), 'Body', 'brass', 0.012)
+surface('Belt', [(0.35, 0.23, 0.16, 0.0), (0.415, 0.252, 0.175, 0.0)], 'Body', 'strap', 20)
+rbox('BeltBuckle', (0, 0.382, -0.176), (0.095, 0.062, 0.03), 'Body', 'brass', 0.012)
 # Back & side belt ammo pouches (prominent from rear battle camera!)
-for x in [-0.15, 0.15]:
-    rbox('RearBeltPouch', (x, 0.385, 0.165), (0.11, 0.09, 0.065), 'Body', 'pack', 0.024)
-    ell('PouchSnap', (x, 0.405, 0.198), (0.014, 0.014, 0.010), 'Body', 'brass', 8, 5)
-# Rounded domed tactical shoulder pauldrons
+for x in [-0.16, 0.16]:
+    rbox('RearBeltPouch', (x, 0.385, 0.172), (0.115, 0.095, 0.068), 'Body', 'pack', 0.024)
+    ell('PouchSnap', (x, 0.405, 0.206), (0.014, 0.014, 0.010), 'Body', 'brass', 8, 5)
+# Rounded domed tactical shoulder pauldrons (V15-ART-007: slightly broader heroic silhouette)
 for s in [-1, 1]:
-    ell('ShoulderArmor', (s * 0.265, 0.69, 0.01), (0.115, 0.088, 0.115), 'Body', 'vest', 14, 8)
-    rbox('ShoulderStrap', (s * 0.18, 0.72, 0.02), (0.055, 0.032, 0.24), 'Body', 'strap', 0.012)
+    ell('ShoulderArmor', (s * 0.292, 0.695, 0.01), (0.128, 0.098, 0.125), 'Body', 'vest', 14, 8)
+    rbox('ShoulderStrap', (s * 0.19, 0.725, 0.02), (0.058, 0.034, 0.25), 'Body', 'strap', 0.012)
 # Sculpted rounded khaki-tan military rucksack (visible from behind!)
 surface('RucksackBody', [
     (0.43, 0.17, 0.085, 0.23),
@@ -224,33 +224,33 @@ for x in [-0.086, 0.086]:
     tube('Brow', [(x - 0.045, 1.068, -0.192), (x, 1.078, -0.208), (x + 0.042, 1.066, -0.195)], 0.012, 'Head', 'strap')
     ell('Cheek', (x * 1.62, 0.935, -0.168), (0.038, 0.022, 0.012), 'Head', 'cheek', 10, 6)
 ell('Nose', (0, 0.955, -0.216), (0.034, 0.034, 0.036), 'Head', 'skin', 12, 7)
-# Glossy rounded military helmet dome + rolled brim
+# V15-ART-007: Refined helmet proportion (reduced visual bulk so armored torso, rucksack & rifle stand out)
 h_prof = []
 for i in range(11):
     a = (i / 10.0) * math.pi / 2.0
-    h_prof.append((1.10 + 0.33 * math.sin(a), max(0.008, 0.278 * math.cos(a)), max(0.008, 0.248 * math.cos(a)), 0.018))
+    h_prof.append((1.09 + 0.275 * math.sin(a), max(0.008, 0.236 * math.cos(a)), max(0.008, 0.214 * math.cos(a)), 0.014))
 surface('HelmetDome', h_prof, 'Head', 'helmet', 26)
 surface('HelmetBrim', [
-    (1.075, 0.268, 0.256, 0.002),
-    (1.094, 0.298, 0.285, -0.006),
-    (1.124, 0.296, 0.284, -0.006),
-    (1.140, 0.268, 0.248, 0.010)
+    (1.068, 0.228, 0.220, 0.002),
+    (1.086, 0.252, 0.244, -0.004),
+    (1.112, 0.250, 0.242, -0.004),
+    (1.126, 0.228, 0.214, 0.008)
 ], 'Head', 'helm_rim', 26)
 # Helmet chin strap & brass rivets
-for x in [-0.245, 0.245]:
-    rbox('ChinStrap', (x, 0.985, 0.025), (0.024, 0.185, 0.032), 'Head', 'strap', 0.008)
-    ell('HelmRivet', (x * 1.11, 1.13, 0.025), (0.016, 0.018, 0.018), 'Head', 'brass', 8, 6)
+for x in [-0.216, 0.216]:
+    rbox('ChinStrap', (x, 0.985, 0.020), (0.022, 0.180, 0.028), 'Head', 'strap', 0.008)
+    ell('HelmRivet', (x * 1.11, 1.12, 0.020), (0.015, 0.016, 0.016), 'Head', 'brass', 8, 6)
 # Raised white star on front + crisp double white chevrons on back of helmet!
-fverts = [xyz((0, 1.26, -0.242))]
+fverts = [xyz((0, 1.22, -0.208))]
 for j in range(10):
     a = math.pi / 2 + j * math.pi / 5
-    r = 0.082 if j % 2 == 0 else 0.036
-    fverts.append(xyz((math.cos(a) * r, 1.26 + math.sin(a) * r, -0.250)))
+    r = 0.070 if j % 2 == 0 else 0.032
+    fverts.append(xyz((math.cos(a) * r, 1.22 + math.sin(a) * r, -0.215)))
 ffaces = [(0, (j + 1) % 10 + 1, j + 1) for j in range(10)]
 fm = bpy.data.meshes.new('FrontStar'); fm.from_pydata(fverts, [], ffaces); fm.update()
 fo = bpy.data.objects.new('FrontStar', fm); bpy.context.collection.objects.link(fo); finish(fo, 'Head', 'ivory', False)
-tube('RearChevron1', [(-0.070, 1.24, 0.248), (0, 1.208, 0.264), (0.070, 1.24, 0.248)], 0.011, 'Head', 'ivory')
-tube('RearChevron2', [(-0.052, 1.192, 0.258), (0, 1.168, 0.268), (0.052, 1.192, 0.258)], 0.009, 'Head', 'ivory')
+tube('RearChevron1', [(-0.060, 1.21, 0.212), (0, 1.182, 0.228), (0.060, 1.21, 0.212)], 0.010, 'Head', 'ivory')
+tube('RearChevron2', [(-0.044, 1.168, 0.222), (0, 1.146, 0.232), (0.044, 1.168, 0.222)], 0.008, 'Head', 'ivory')
 
 # === 3. ARMS & CHUNKY STYLIZED ASSAULT RIFLE ===
 for x in [-0.275, 0.275]:

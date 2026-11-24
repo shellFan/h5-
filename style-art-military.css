@@ -951,3 +951,306 @@
 #game-container.art-military.v42-ui #v60-train-page [class*="rank"] {
     color: #f4ce66;
 }
+
+/* =========================================================================
+ * V15-ART-007: 商业级全屏独立业务页面架构 (军械库 / 升级商店 / 训练中心 / 排行榜)
+ * 彻底告别首页上方浮动绿弹窗, 采用 100% 全屏 3D 灯光场景背景 + 顶栏 + 展示台 + 紧凑操作区
+ * ========================================================================= */
+#game-container.art-military.v42-ui #v60-armory-page,
+#game-container.art-military.v42-ui #v60-train-page,
+#game-container.art-military.v42-ui #v60-rank-page,
+#game-container.art-military.v42-ui #shop-screen {
+    padding: 0 !important;
+    background: #102016 !important;
+    backdrop-filter: none !important;
+}
+#game-container.art-military.v42-ui #v60-armory-page .v60-panel,
+#game-container.art-military.v42-ui #v60-train-page .v60-panel,
+#game-container.art-military.v42-ui #v60-rank-page .v60-panel,
+#game-container.art-military.v42-ui #shop-screen .title-panel {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: max(12px, env(safe-area-inset-top)) 14px max(12px, env(safe-area-inset-bottom)) !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+#game-container.art-military.v42-ui #v60-armory-page .v60-panel {
+    background:
+        linear-gradient(180deg, rgba(12, 26, 17, 0.72) 0%, rgba(16, 32, 20, 0.22) 34%, rgba(12, 24, 16, 0.84) 56%, rgba(10, 20, 14, 0.97) 100%),
+        url('assets/game/v15/bg_armory.jpg') center top / cover no-repeat !important;
+}
+#game-container.art-military.v42-ui #shop-screen .title-panel {
+    background:
+        linear-gradient(180deg, rgba(14, 28, 18, 0.78) 0%, rgba(16, 32, 20, 0.45) 30%, rgba(12, 24, 16, 0.90) 65%, rgba(10, 20, 14, 0.98) 100%),
+        url('assets/game/v15/bg_shop.jpg') center top / cover no-repeat !important;
+}
+#game-container.art-military.v42-ui #v60-train-page .v60-panel,
+#game-container.art-military.v42-ui #v60-rank-page .v60-panel {
+    background:
+        linear-gradient(180deg, rgba(12, 26, 17, 0.78) 0%, rgba(16, 32, 20, 0.36) 36%, rgba(12, 24, 16, 0.90) 68%, rgba(10, 20, 14, 0.98) 100%),
+        url('assets/game/v15/bg_train.jpg') center top / cover no-repeat !important;
+}
+
+/* --- 独立全屏军械库 (Armory) --- */
+#game-container.art-military.v42-ui #v60-armory-page .v42-panel-kicker,
+#game-container.art-military.v42-ui #v60-armory-page .v60-page-title,
+#game-container.art-military.v42-ui #v60-armory-page .v60-close-btn,
+#game-container.art-military.v42-ui #v60-armory-back {
+    display: none !important;
+}
+#game-container.art-military.v42-ui #v118-armory-hero {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 0 8px !important;
+    margin: 0 !important;
+    flex: 0 0 auto !important;
+}
+#game-container.art-military.v42-ui #v118-armory-hero::after {
+    display: none !important;
+}
+.v15-armory-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 2px 0 6px;
+}
+.v15-page-back {
+    appearance: none;
+    border: 1.5px solid #6b9158;
+    background: linear-gradient(180deg, rgba(44, 74, 48, 0.92), rgba(24, 44, 28, 0.95));
+    color: #f3f7ec;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 6px 12px;
+    border-radius: 10px;
+    box-shadow: 0 2px 0 rgba(8, 18, 11, 0.7);
+    cursor: pointer;
+}
+.v15-page-title-wrap {
+    text-align: center;
+    line-height: 1.15;
+}
+.v15-page-kicker {
+    display: block;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 2.5px;
+    color: #a9caa8;
+}
+.v15-page-title-wrap strong {
+    font-size: 19px;
+    font-weight: 900;
+    color: #ffe382;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.65);
+}
+.v15-page-coin {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(64, 48, 16, 0.92), rgba(38, 28, 10, 0.96));
+    border: 1.5px solid #e4b43e;
+    color: #ffe891;
+    font-size: 13px;
+    font-weight: 900;
+}
+.v15-page-coin img { width: 18px; height: 18px; object-fit: contain; }
+.v15-armory-stage {
+    position: relative;
+    height: 188px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#game-container.art-military.v42-ui #v118-armory-hero .v118-weapon-art {
+    width: 196px !important;
+    height: 176px !important;
+    filter: drop-shadow(0 14px 14px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 18px rgba(244, 206, 102, 0.24)) !important;
+}
+.v15-armory-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 3px;
+}
+#game-container.art-military.v42-ui .v118-armory-hero-name {
+    font-size: 20px !important;
+    color: #fff2c2 !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.75);
+}
+.v15-armory-next {
+    margin-top: 3px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #8ee89a;
+}
+.v15-armory-next.is-max { color: #ffd970; }
+#game-container.art-military.v42-ui .v60-armory-list {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    padding: 6px 2px 10px !important;
+    overflow-y: auto !important;
+}
+#game-container.art-military.v42-ui .v60-armory-row {
+    padding: 8px 8px 9px !important;
+    border-radius: 12px !important;
+    border: 1.5px solid rgba(114, 152, 98, 0.55) !important;
+    background: linear-gradient(160deg, rgba(30, 54, 36, 0.90), rgba(18, 34, 22, 0.94)) !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+#game-container.art-military.v42-ui .v60-armory-row .v118-weapon-art {
+    width: 88px !important;
+    height: 68px !important;
+    margin: 0 auto 4px !important;
+}
+#game-container.art-military.v42-ui .v60-armory-row.equipped {
+    border: 2px solid #f5cb54 !important;
+    background: linear-gradient(160deg, rgba(46, 76, 48, 0.95), rgba(24, 46, 28, 0.96)) !important;
+    box-shadow: 0 0 14px rgba(245, 203, 84, 0.25) !important;
+}
+#game-container.art-military.v42-ui .v60-armory-actions {
+    margin-top: 6px;
+}
+#game-container.art-military.v42-ui .v60-armory-btn {
+    min-height: 34px !important;
+    padding: 5px 8px !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    border-radius: 9px !important;
+}
+#game-container.art-military.v42-ui .v60-armory-btn.upgrade:disabled {
+    background: linear-gradient(180deg, rgba(58, 52, 34, 0.85), rgba(38, 34, 22, 0.92)) !important;
+    border: 1.5px solid rgba(186, 152, 74, 0.45) !important;
+    color: #c8b684 !important;
+}
+
+/* --- 独立全屏升级商店 (Logistics Supply Depot) --- */
+#game-container.art-military.v42-ui #shop-screen #shop-list {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 9px !important;
+    padding: 4px 0 8px !important;
+}
+#game-container.art-military.v42-ui #shop-screen .shop-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 10px 11px !important;
+    border-radius: 14px !important;
+    border: 1.5px solid rgba(118, 154, 98, 0.58) !important;
+    background: linear-gradient(160deg, rgba(32, 56, 38, 0.90), rgba(19, 36, 24, 0.94)) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
+}
+#game-container.art-military.v42-ui #shop-screen .shop-icon {
+    width: 52px !important;
+    height: 52px !important;
+    flex: 0 0 52px !important;
+    border-radius: 12px !important;
+    background: radial-gradient(circle at 50% 38%, rgba(244, 206, 102, 0.24), rgba(16, 32, 20, 0.88)) !important;
+    border: 1.5px solid rgba(214, 178, 86, 0.48) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.v15-shop-icon-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.5));
+}
+.v15-shop-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+.v15-shop-lv {
+    font-size: 11px;
+    font-weight: 900;
+    color: #ffe388;
+    background: rgba(102, 78, 22, 0.55);
+    border: 1px solid rgba(235, 192, 78, 0.55);
+    border-radius: 6px;
+    padding: 1px 6px;
+}
+.v15-shop-bar {
+    height: 5px;
+    margin: 4px 0 3px;
+    border-radius: 999px;
+    background: rgba(12, 24, 16, 0.85);
+    border: 1px solid rgba(110, 146, 94, 0.35);
+    overflow: hidden;
+}
+.v15-shop-bar i {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #4cd964, #f5c946);
+    border-radius: 999px;
+}
+#game-container.art-military.v42-ui #shop-screen .shop-effect {
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+    color: #8ee89a !important;
+}
+#game-container.art-military.v42-ui #shop-screen .shop-buy {
+    min-width: 82px !important;
+    min-height: 46px !important;
+    padding: 6px 8px !important;
+    border-radius: 12px !important;
+    display: inline-flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 1px !important;
+    font-weight: 900 !important;
+    font-size: 13px !important;
+    background: linear-gradient(180deg, #ffdf73, #e69d24) !important;
+    border: 1.5px solid #fff0b3 !important;
+    color: #362104 !important;
+    box-shadow: 0 3px 0 #8a570c !important;
+}
+#game-container.art-military.v42-ui #shop-screen .shop-buy:disabled {
+    background: linear-gradient(180deg, #3c4230, #252b1f) !important;
+    border: 1.5px solid rgba(196, 162, 78, 0.48) !important;
+    color: #d6c289 !important;
+    box-shadow: 0 2px 0 rgba(10, 16, 10, 0.7) !important;
+    opacity: 1 !important;
+}
+#game-container.art-military.v42-ui #shop-screen .shop-buy small {
+    font-size: 9px;
+    font-weight: 700;
+    color: #b5a67c;
+    line-height: 1;
+}
+.v15-btn-coin {
+    width: 15px;
+    height: 15px;
+    object-fit: contain;
+    vertical-align: middle;
+}
+#game-container.art-military.v42-ui #shop-screen .shop-buy > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}

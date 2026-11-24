@@ -689,29 +689,33 @@ var MilitaryArt = class MilitaryArt {
         var goldMat = this.materials.accent;
         var hillMat = this.materials.hill;
 
-        // V15-ART-006: 三层大气透视远景山脉 (近景青绿丘陵 -> 中景岩石山脊 -> 远景淡蓝灰雪峰)
-        var nearMtnMat = this._material('mtn-near', 0x5B8654, { roughness: .96 });
-        var midMtnMat  = this._material('mtn-mid',  0x6C8D7E, { roughness: .96 });
-        var farMtnMat  = this._material('mtn-far',  0x8BAEC2, { roughness: .98 });
-        var mtns = [
-            // 近景丘陵
-            [-28, 4.8, -10, 20, 9.5, 13, nearMtnMat], [29, 5.2, -10, 21, 10.2, 13, nearMtnMat],
-            // 中景岩石山脉
-            [-18, 7.2, -20, 22, 14.5, 15, midMtnMat], [19, 7.8, -20, 23, 15.2, 15, midMtnMat],
-            // 远景蓝灰高耸山脊
-            [-34, 10.5, -30, 26, 20.0, 16, farMtnMat], [34, 11.2, -30, 26, 21.0, 16, farMtnMat],
-            [0, 9.2, -32, 32, 17.5, 16, farMtnMat]
-        ];
-        var mtnGeo = new THREE.ConeGeometry(1, 1.4, 7);
-        for (var mi = 0; mi < mtns.length; mi++) {
-            var m = mtns[mi];
-            var mm = new THREE.Mesh(mtnGeo, m[6]);
-            mm.position.set(m[0], m[1], m[2]);
-            mm.scale.set(m[3], m[4], m[5]);
-            mm.rotation.y = mi * 0.85;
-            mm.userData.v15Mountain = true;
-            g.add(mm);
-        }
+        // V15-ART-007: 三层柔和手绘感远景山脊 (平滑谐波山体曲线, 彻底告别尖三角锥低模感!)
+        var makeRidgeMesh = function(width, maxH, depth, seed, colorHex, zPos) {
+            var segs = 36;
+            var shape = new THREE.Shape();
+            shape.moveTo(-width * 0.5, -2);
+            for (var i = 0; i <= segs; i++) {
+                var t = i / segs;
+                var x = (t - 0.5) * width;
+                var env = Math.sin(t * Math.PI);
+                var h = (0.38 + 0.34 * Math.sin(t * Math.PI * 3.0 + seed)
+                    + 0.18 * Math.sin(t * Math.PI * 6.5 + seed * 1.7)
+                    + 0.10 * Math.cos(t * Math.PI * 11.0 + seed * 0.6)) * maxH * (0.45 + 0.55 * env);
+                shape.lineTo(x, Math.max(1.2, h));
+            }
+            shape.lineTo(width * 0.5, -2);
+            shape.closePath();
+            var geo = new THREE.ExtrudeGeometry(shape, { depth: depth, bevelEnabled: false, curveSegments: 8 });
+            geo.translate(0, 0, -depth * 0.5);
+            var mat = new THREE.MeshStandardMaterial({ color: colorHex, roughness: 0.96, metalness: 0.0, flatShading: false });
+            var mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(0, -0.5, zPos);
+            mesh.userData.v15Mountain = true;
+            return mesh;
+        };
+        g.add(makeRidgeMesh(110, 12.5, 4.0, 0.7, 0x567E4D, -12));  // 近景苍翠丘陵
+        g.add(makeRidgeMesh(130, 18.5, 5.0, 2.1, 0x6A8E7D, -22));  // 中景林岩山脉
+        g.add(makeRidgeMesh(155, 25.0, 6.0, 3.8, 0x8BAEC2, -33));  // 远景大气淡蓝山脊
 
         // 要塞主城墙(左右两翼 + 跨路门楼)
         var leftWall = new THREE.Mesh(new THREE.BoxGeometry(16, 6.2, 3.2), wallMat);

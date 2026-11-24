@@ -584,16 +584,28 @@ var V60UI = {
         var currentIndex = weaponOrder.indexOf(current);
         var currentDef = WEAPON_DEFS[current];
         if (currentDef && currentIndex >= 0) {
+            var nextStats = (wLv < 5 && currentDef.effect) ? currentDef.effect(wLv + 1) : null;
+            var nextLine = nextStats
+                ? '<div class="v15-armory-next">下一级 Lv.' + (wLv + 1) + '：' + statTextOf(nextStats) + '</div>'
+                : '<div class="v15-armory-next is-max">已达最高强化等级</div>';
             hero.innerHTML =
+                '<div class="v15-armory-topbar">' +
+                '<button type="button" class="v15-page-back" onclick="V60UI.hidePages()">‹ 返回</button>' +
+                '<div class="v15-page-title-wrap"><span class="v15-page-kicker">ARSENAL</span><strong>武器军械库</strong></div>' +
+                '<div class="v15-page-coin"><img src="assets/game/ui/coin.png" alt=""><span>' + (game.profile.coins || 0) + '</span></div>' +
+                '</div>' +
+                '<div class="v15-armory-stage">' +
                 '<div class="v14-weapon-3d" id="v14-weapon-3d"></div>' +
                 '<div class="v118-weapon-art" role="img" aria-label="' + currentDef.name + '" data-weapon="' + current + '"' +
                 ' data-atlas-cols="4" data-atlas-rows="2" data-atlas-col="' + (currentIndex % 4) + '" data-atlas-row="' + Math.floor(currentIndex / 4) + '"' +
                 ' style="--weapon-col:' + (currentIndex % 4) + ';--weapon-row:' + Math.floor(currentIndex / 4) + '"></div>' +
-                '<div class="v118-armory-hero-info"><div class="v118-armory-current">当前装备</div>' +
-                '<div class="v118-armory-hero-name">' + currentDef.icon + ' ' + currentDef.name + '</div>' +
-                '<div class="v118-armory-hero-level">强化等级 Lv.' + wLv + '</div>' +
-                '<div class="v118-armory-hero-stats">' + statTextOf(wStats) + '</div></div>';
-            // V14: 3D 武器展示台(H5; 微信/minidom 自动回退 SVG 图集)
+                '</div>' +
+                '<div class="v118-armory-hero-info">' +
+                '<div class="v15-armory-name-row"><span class="v118-armory-hero-name">' + currentDef.name + '</span>' +
+                '<span class="v118-armory-hero-level">Lv.' + wLv + ' / 5</span></div>' +
+                '<div class="v118-armory-hero-stats">' + statTextOf(wStats) + '</div>' +
+                nextLine + '</div>';
+            // V14: 3D 武器展示台(H5; 微信/minidom 自动回退 PNG)
             var v14host = hero.querySelector('#v14-weapon-3d');
             if (v14host && typeof WeaponShowcase !== 'undefined' && WeaponShowcase.mount(v14host, current)) {
                 hero.classList.add('v14-3d-ready');

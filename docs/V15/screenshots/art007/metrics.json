@@ -1,0 +1,69 @@
+{
+  "mode": "art007",
+  "capturedAt": "2026-11-24T14:56:23.811Z",
+  "loadMs": 1612,
+  "consoleErrorCount": 0,
+  "consoleErrors": [],
+  "perf": {
+    "1": {
+      "avgFps": 5.1,
+      "minFps": 1.8,
+      "p95FrameMs": 571.4,
+      "drawCalls": 113,
+      "triangles": 107898,
+      "textures": 54,
+      "geometries": 111,
+      "jsHeapMB": 17.9
+    },
+    "10": {
+      "avgFps": 5.3,
+      "minFps": 4.6,
+      "p95FrameMs": 216.7,
+      "drawCalls": 108,
+      "triangles": 189732,
+      "textures": 54,
+      "geometries": 111,
+      "jsHeapMB": 18.2
+    },
+    "30": {
+      "avgFps": 3.5,
+      "minFps": 3,
+      "p95FrameMs": 333.2,
+      "drawCalls": 113,
+      "triangles": 379936,
+      "textures": 54,
+      "geometries": 111,
+      "jsHeapMB": 17.4
+    },
+    "50": {
+      "avgFps": 2.7,
+      "minFps": 2.1,
+      "p95FrameMs": 466.7,
+      "drawCalls": 116,
+      "triangles": 572042,
+      "textures": 54,
+      "geometries": 111,
+      "jsHeapMB": 17.8
+    },
+    "100": {
+      "avgFps": 1.3,
+      "minFps": 0.6,
+      "p95FrameMs": 1716.5,
+      "drawCalls": 115,
+      "triangles": 1049874,
+      "textures": 55,
+      "geometries": 111,
+      "jsHeapMB": 17.5
+    },
+    "200": {
+      "avgFps": 2,
+      "minFps": 1.5,
+      "p95FrameMs": 650,
+      "drawCalls": 133,
+      "triangles": 624130,
+      "textures": 58,
+      "geometries": 116,
+      "jsHeapMB": 18
+    }
+  }
+}

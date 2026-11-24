@@ -597,15 +597,28 @@ class Game {
         var btnClose = document.getElementById('btn-close-shop');
         if (btnClose) btnClose.addEventListener('click', function() { self._sfx('click'); self._closeShop(); });
         this._shopRows = {};
+        var shopIconMap = {
+            recruit: 'assets/game/characters/soldier_portrait.png',
+            logistics: 'assets/game/ui/chest.png',
+            gun: 'assets/game/weapons/rifle.png',
+            rapid: 'assets/game/ui/star.png',
+            pierce: 'assets/game/ui/shield.png'
+        };
         if (listEl) {
             Object.keys(UPGRADE_DEFS).forEach(function(id) {
                 var def = UPGRADE_DEFS[id];
                 var row = document.createElement('div');
                 row.className = 'shop-row';
+                var iconSrc = shopIconMap[id];
+                var iconHtml = iconSrc
+                    ? '<img class="v15-shop-icon-img" src="' + iconSrc + '" alt="' + def.name + '">'
+                    : def.icon;
                 row.innerHTML =
-                    '<div class="shop-icon">' + def.icon + '</div>' +
-                    '<div class="shop-info"><div class="shop-name">' + def.name + '</div>' +
+                    '<div class="shop-icon">' + iconHtml + '</div>' +
+                    '<div class="shop-info">' +
+                    '<div class="v15-shop-head"><span class="shop-name">' + def.name + '</span><span class="v15-shop-lv" id="shop-lv-' + id + '">Lv.0</span></div>' +
                     '<div class="shop-desc">' + def.desc + '</div>' +
+                    '<div class="v15-shop-bar"><i id="shop-bar-' + id + '"></i></div>' +
                     '<div class="shop-effect" id="shop-effect-' + id + '"></div></div>' +
                     '<button class="shop-buy" id="shop-buy-' + id + '"></button>';
                 listEl.appendChild(row);
@@ -635,20 +648,28 @@ class Game {
         var self = this;
         Object.keys(UPGRADE_DEFS).forEach(function(id) {
             var lv = UpgradeShop.levelOf(self.profile, id);
+            var maxLv = UpgradeShop.maxLevel(id);
             var price = UpgradeShop.priceOf(id, lv);
             var row = self._shopRows[id];
             if (!row) return;
-            row.querySelector('.shop-effect').textContent = UPGRADE_DEFS[id].effect(lv) +
-                (price !== null ? '' : ' · 已满级');
+            var lvEl = row.querySelector('#shop-lv-' + id);
+            if (lvEl) lvEl.textContent = 'Lv.' + lv + '/' + maxLv;
+            var barEl = row.querySelector('#shop-bar-' + id);
+            if (barEl) barEl.style.width = Math.round((lv / Math.max(1, maxLv)) * 100) + '%';
+            var curText = UPGRADE_DEFS[id].effect(lv);
+            var nextText = (price !== null) ? ' → ' + UPGRADE_DEFS[id].effect(lv + 1) : ' · 已满级';
+            row.querySelector('.shop-effect').textContent = curText + nextText;
             var btn = row.querySelector('.shop-buy');
             if (price === null) {
                 btn.textContent = 'MAX';
                 btn.disabled = true;
                 btn.classList.add('maxed');
             } else {
-                btn.innerHTML = '🪙 ' + price;
-                btn.disabled = self.profile.coins < price;
-                btn.classList.toggle('affordable', self.profile.coins >= price);
+                var canBuy = self.profile.coins >= price;
+                btn.innerHTML = '<img class="v15-btn-coin" src="assets/game/ui/coin.png" alt=""><span>' + price + '</span>' +
+                    (canBuy ? '' : '<small>金币不足</small>');
+                btn.disabled = !canBuy;
+                btn.classList.toggle('affordable', canBuy);
             }
         });
         if (this.ui.shopCoins) this.ui.shopCoins.textContent = this.profile.coins;
