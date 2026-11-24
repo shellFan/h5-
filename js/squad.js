@@ -82,10 +82,10 @@ class Squad {
         const n = this.count;
         let preferredCols, sx, sz, scale;
         if (n <= 1)        { preferredCols = 1;  sx = 0.72; sz = 0.72; scale = 1; }
-        else if (n <= 12)  { preferredCols = Math.ceil(Math.sqrt(n)); sx = 0.70; sz = 0.72; scale = 1; }
-        else if (n <= 100) { preferredCols = 6;  sx = 0.70; sz = 0.74; scale = 0.86; }
-        else if (n <= 300) { preferredCols = 11; sx = 0.37; sz = 0.50; scale = 0.55; }
-        else               { preferredCols = 13; sx = 0.328; sz = 0.46; scale = 0.50; }
+        else if (n <= 12)  { preferredCols = Math.ceil(Math.sqrt(n)); sx = 0.72; sz = 0.76; scale = 0.94; }
+        else if (n <= 100) { preferredCols = 7;  sx = 0.66; sz = 0.72; scale = 0.76; }
+        else if (n <= 300) { preferredCols = 11; sx = 0.37; sz = 0.50; scale = 0.54; }
+        else               { preferredCols = 13; sx = 0.328; sz = 0.46; scale = 0.48; }
 
         const rows = n > 0 ? Math.ceil(n / preferredCols) : 0;
         const shortRow = rows ? Math.floor(n / rows) : 0;
@@ -109,10 +109,10 @@ class Squad {
             const rowCount = rowLengths[row];
             for (let col = 0; col < rowCount; col++) {
                 const s = this.soldiers[soldierIndex++];
-                const staggerAmount = sx * (n <= 100 ? 0.10 : 0.16);
+                const staggerAmount = sx * (n <= 100 ? 0.25 : 0.18);
                 const stagger = row % 2 ? staggerAmount : -staggerAmount;
-                s.fx = (col - (rowCount - 1) / 2) * sx + (n > 1 ? stagger : 0) + s.jx * 0.45;
-                s.fz = row * sz + s.jz * 0.5 + Math.abs(col - (rowCount - 1) / 2) * 0.055;
+                s.fx = (col - (rowCount - 1) / 2) * sx + (n > 1 ? stagger : 0) + s.jx * 0.85;
+                s.fz = row * sz + s.jz * 0.85 + Math.abs(col - (rowCount - 1) / 2) * 0.065;
                 maxZ=Math.max(maxZ,s.fz);
                 maxAbsX = Math.max(maxAbsX, Math.abs(s.fx));
             }

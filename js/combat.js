@@ -169,6 +169,21 @@ class CombatSystem {
                         this._fire({ x: positions[k].x + 0.38, y: positions[k].y, z: positions[k].z }, dmgFinal, target, isCrit);
                     }
                 }
+                // V15-ART-002: 全队视觉弹幕与交错枪口火焰(纯视觉装饰弹道, damage=0 不影响任何数值平衡!)
+                if (count >= 4 && this.pool.length > 16) {
+                    var decoCount = Math.min(8, Math.floor(Math.sqrt(count) * 1.15));
+                    var decoPos = squad.getShootPositions(decoCount);
+                    var aliveList = enemyManager.enemies;
+                    for (var dk = 0; dk < decoPos.length && this.pool.length > 10; dk++) {
+                        // 分散瞄准不同怪兽, 展现真实扇面火力覆盖而非全挤在中央一条线
+                        var decoTarget = null;
+                        if (aliveList && aliveList.length > 0) {
+                            var cand = aliveList[(dk * 3 + Math.floor(Math.random() * aliveList.length)) % aliveList.length];
+                            if (cand && cand.alive && squad.z - cand.z > 0 && squad.z - cand.z < CONFIG.BULLET_RANGE) decoTarget = cand;
+                        }
+                        this._fire(decoPos[dk], 0, decoTarget, false, true);
+                    }
+                }
             }
         }
 
@@ -207,6 +222,14 @@ class CombatSystem {
                     // V3.1: 命中窗加宽(0.7→0.9), Boss等大体型敌人按体型放大判定
                     var winX = e.isBoss ? 1.4 : 0.9;
                     if (Math.abs(b.mesh.position.x - e.x) < winX) {
+                        // V15-ART-002: 装饰视觉弹道仅触发轻火花并回收, 绝对不结算伤害
+                        if (b.decorative) {
+                            if (this.effects && Math.random() < 0.45) {
+                                this.effects.burst(b.mesh.position.x, 0.72, e.z, 0xFFE26A, 2, 1.8, 0.16);
+                            }
+                            hit = true;
+                            break;
+                        }
                         // V3.3: 冰冻弹 — 命中减速
                         if (squad.freezeStacks > 0 && !e.isBoss) {
                             e.frozenT = 0.9 + 0.45 * squad.freezeStacks;
@@ -387,31 +410,28 @@ class CombatSystem {
         var wid = (this._squad && this._squad._gameRef && this._squad._gameRef._weaponStats) ? this._squad._gameRef._weaponStats.weaponId : null;
         return CombatSystem.TRACER_COLORS[wid] || CombatSystem.TRACER_COLORS.rifle;
     }
-    _fire(pos, damage, target, isCrit) {
+    _fire(pos, damage, target, isCrit, decorative) {
         var mesh = this.pool.pop();
         if (!mesh) return;
         mesh.visible = true;
-        // GLB Muzzle is authoritative. Target convergence supplies trajectory
-        // variation after launch; random origin offsets detached shots from guns.
         mesh.position.set(pos.x, pos.y, pos.z);
-        // Sprite scale: V12视觉 贴地曳光(长度沿弹道; 暴击弹更长更亮)
-        if (isCrit) mesh.scale.set(0.34, 2.8, 1);
+        if (decorative) mesh.scale.set(0.20, 1.75, 1);
+        else if (isCrit) mesh.scale.set(0.34, 2.8, 1);
         else mesh.scale.set(0.26, 2.1, 1);
         this.bullets.push({
-            mesh: mesh, damage: damage, life: 1.2,
+            mesh: mesh, damage: decorative ? 0 : damage, life: decorative ? 0.85 : 1.2,
+            decorative: !!decorative,
             target: target || null,
             color: this._tracerColor(),
             crit: !!isCrit,
-            // V11.2: 穿透流派 +1
-            pierceLeft: 1 + (this._squad ? this._squad.pierce + (this._squad._evPierce || 0) + (this._squad._comboPierceFlow ? 1 : 0) : 0),
+            pierceLeft: decorative ? 1 : (1 + (this._squad ? this._squad.pierce + (this._squad._evPierce || 0) + (this._squad._comboPierceFlow ? 1 : 0) : 0)),
             hitSet: null
         });
 
-        // 枪口闪光
-        // V14: 重型武器枪口火焰放大(表现层分级)
+        // 枪口闪光 (V15: 增强全队齐射枪口火焰表现力)
         var wid = (this._squad && this._squad._gameRef && this._squad._gameRef._weaponStats) ? this._squad._gameRef._weaponStats.weaponId : 'rifle';
-        this.effects.muzzleFlash(pos.x, pos.y, pos.z, CombatSystem.HEAVY_MUZZLE[wid] ? 1.38 : 1);
-        // V12: 移除逐发同步 — _updateInner 在 combat.update 后统一调用 _syncInstances, 帧内一次即可(高频开火时省冗余矩阵上传)
+        var muzzleScale = decorative ? 0.88 : (CombatSystem.HEAVY_MUZZLE[wid] ? 1.45 : 1.15);
+        this.effects.muzzleFlash(pos.x, pos.y, pos.z, muzzleScale);
     }
 
     clear() {

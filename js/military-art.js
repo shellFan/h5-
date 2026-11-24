@@ -83,25 +83,30 @@ var MilitaryArt = class MilitaryArt {
         var cv = document.createElement('canvas');
         cv.width = 512; cv.height = 512;
         var ctx = cv.getContext('2d');
-        // 卡通修剪草坪/基地地面条纹(白色基准, 颜色由 material.color 按五大主题动态着色)
-        ctx.fillStyle = '#E8EFE2';
+        // V15-ART-002: 彻底取消规则棋盘条纹! 改为自然阳光草地+泥土斑驳+草簇肌理
+        ctx.fillStyle = '#DAE8CE';
         ctx.fillRect(0, 0, 512, 512);
-        for (var y = 0; y < 512; y += 64) {
-            ctx.fillStyle = ((y / 64) % 2 === 0) ? '#F3F8EE' : '#DDE8D4';
-            ctx.fillRect(0, y, 512, 64);
+        // 大尺度柔和阳光草地与林荫色块 (确定性伪随机, 无缝自然)
+        for (var i = 0; i < 65; i++) {
+            var px = (i * 173 + 37) % 512;
+            var py = (i * 109 + 61) % 512;
+            var rx = 28 + (i % 5) * 16;
+            var ry = 22 + ((i + 2) % 4) * 14;
+            var tone = i % 3;
+            ctx.fillStyle = tone === 0 ? 'rgba(255,250,210,0.16)' : (tone === 1 ? 'rgba(42,74,36,0.10)' : 'rgba(166,144,96,0.12)');
+            ctx.beginPath(); ctx.ellipse(px, py, rx, ry, (i % 6) * 0.5, 0, Math.PI * 2); ctx.fill();
         }
-        // 柔和地面色块与草斑
-        for (var i = 0; i < 40; i++) {
-            var px = (i * 131 + 23) % 512;
-            var py = (i * 89 + 41) % 512;
-            var r = 14 + (i % 4) * 8;
-            ctx.fillStyle = (i % 2 === 0) ? 'rgba(255,255,255,0.16)' : 'rgba(30,50,25,0.06)';
-            ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2); ctx.fill();
+        // 细腻小草簇与沙土颗粒
+        for (var g = 0; g < 320; g++) {
+            var gx = (g * 97 + 19) % 512;
+            var gy = (g * 191 + 43) % 512;
+            ctx.fillStyle = (g % 3 === 0) ? 'rgba(38,68,32,0.18)' : 'rgba(255,255,230,0.14)';
+            ctx.fillRect(gx, gy, 3 + (g % 3), 2 + (g % 4));
         }
         var tex = new THREE.CanvasTexture(cv);
         tex.wrapS = THREE.RepeatWrapping;
         tex.wrapT = THREE.RepeatWrapping;
-        tex.repeat.set(6, 2);
+        tex.repeat.set(5, 2);
         return tex;
     }
 
@@ -259,7 +264,7 @@ var MilitaryArt = class MilitaryArt {
             dark: this._material('dark', 0x354046, { metalness: .35, roughness: .55 }),
             foliage: this._material('foliage', 0x459445, { roughness: .82 }),
             foliageLight: this._material('foliage-light', 0x67b854, { roughness: .82 }),
-            hill: this._material('hill', 0x679B58, { roughness: .94 }),
+            hill: this._material('hill', 0x628E76, { roughness: .96 }),
             snow: this._material('snow', 0xeaf4f8, { roughness: .94 }),
             rock: this._material('rock', 0xb48454, { roughness: .9 }),
             city: this._material('city', 0x7c8a94, { map: bldgTex, metalness: .12, roughness: .72 }),
@@ -268,6 +273,8 @@ var MilitaryArt = class MilitaryArt {
             tentCanvas: this._material('tent-canvas', 0x5D7B47, { roughness: .88 }),
             bannerRed: this._material('banner-red', 0xFFFFFF, { map: this._makeBannerTexture(), roughness: .68 }),
             fortressStone: this._material('fortress-stone', 0x7B8C80, { roughness: .84 }),
+            drumRed: this._material('drum-red', 0xB83D32, { metalness: .32, roughness: .48 }),
+            bush: this._material('bush', 0x4A8C42, { roughness: .88 }),
             lamp: new THREE.MeshBasicMaterial({ color: 0xFFF3B0 })
         };
 
@@ -454,6 +461,23 @@ var MilitaryArt = class MilitaryArt {
             return [{ x: -5.1, y: .44, z: 9.2, sx: 1.25, sy: .22, sz: .22, rz: -.16 },
                 { x: 5.1, y: .44, z: 9.2, sx: 1.25, sy: .22, sz: .22, rz: .16 }];
         }));
+        // V15-ART-002: 路侧红色军用油桶与自然灌木丛 (非对称分布, 打破镜像感)
+        this._add('oil-drums', cylinder, this.materials.drumRed, this._repeat(function(segment) {
+            var side = segment % 2 ? -1 : 1;
+            return [
+                { x: side * 5.4, y: .48, z: -4.2, sx: .58, sy: .96, sz: .58 },
+                { x: side * 6.05, y: .48, z: -4.5, sx: .58, sy: .96, sz: .58 },
+                { x: -side * 5.7, y: .48, z: 7.4, sx: .58, sy: .96, sz: .58 }
+            ];
+        }));
+        this._add('bushes', sphere, this.materials.bush, this._repeat(function(segment) {
+            var side = segment % 2 ? 1 : -1;
+            return [
+                { x: side * 5.3, y: .45, z: -8.6, sx: 1.35, sy: .95, sz: 1.25 },
+                { x: side * 6.2, y: .38, z: -9.3, sx: 1.05, sy: .78, sz: 1.05 },
+                { x: -side * 5.5, y: .42, z: 4.8, sx: 1.25, sy: .88, sz: 1.15 }
+            ];
+        }), ['sunny', 'forest', 'city']);
 
         // 8. 远景连绵山丘剪影(构筑地平线层次, 彻底摆脱单调平坦感)
         this._add('far-hills', hill, this.materials.hill, this._repeat(function(segment) {

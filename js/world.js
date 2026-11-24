@@ -20,7 +20,9 @@ class World {
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxRatio));
         this.renderer.shadowMap.enabled = this.quality >= 1;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        // V3.6修复: 移除sRGBEncoding(会把所有颜色洗白成粉彩,导致路面过曝/僵尸肤色失真)
+        // V15-ART-002: 柔和电影感高光映射(保留饱和度同时避免高光过曝)
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 1.06;
 
         // 相机 (V2.2: FOV 55° 竖屏构图)
         this.camera = new THREE.PerspectiveCamera(CONFIG.CAMERA_FOV || 55, 1, 0.1, 120);
@@ -376,10 +378,10 @@ class World {
         if (this._depthSmooth === undefined) this._depthSmooth = depth;
         this._depthSmooth = damp(this._depthSmooth, depth, 2.5, dt);
         var sDepth = this._depthSmooth;
-        // V4.3: 俯角下调(~36°, 背面人群更立体; 基线降低+距离拉开)
-        var offY = 5.6 + this._camScale * 3.1;
-        var offZ = 8.4 + this._camScale * 2.0 + sDepth;
-        var lookAhead = CONFIG.CAMERA_LOOK_AHEAD - this._camScale * 2.0 + sDepth;
+        // V15-ART-002: 36人及大军团自动微拉远镜距与俯角, 保证小队不遮挡主战区与三跑道增益门
+        var offY = 6.1 + this._camScale * 3.3;
+        var offZ = 8.8 + this._camScale * 2.4 + sDepth;
+        var lookAhead = CONFIG.CAMERA_LOOK_AHEAD - this._camScale * 2.2 + sDepth;
 
         const targetX = squadX * CONFIG.CAMERA_FOLLOW_X;
         const targetPos = new THREE.Vector3(
