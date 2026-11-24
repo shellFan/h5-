@@ -184,7 +184,8 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
         var key = style + ':' + lod + ':' + name;
         if (this.accBanks[key]) return this.accBanks[key];
         var acc = EnemyArmyRenderer._accGeometry(geoKey || name);
-        var mat = new THREE.MeshLambertMaterial(acc.matParams);
+        var lambertParams = { color: acc.matParams && acc.matParams.color !== undefined ? acc.matParams.color : 0xFFFFFF, vertexColors: !!(acc.matParams && acc.matParams.vertexColors) };
+        var mat = new THREE.MeshLambertMaterial(lambertParams);
         mat.color.setHex(0xFFFFFF);
         var mesh = new THREE.InstancedMesh(acc.geo, mat, EnemyArmyRenderer.ACC_MAX || 448);
         mesh.name = 'Enemy_' + style + '_' + lod + '_acc_' + name;

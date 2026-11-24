@@ -56,7 +56,7 @@ class Enemy {
         this.hitFlash = 0.13;
         this._deathSide = clamp((this.x - (fromX === undefined ? this.x : fromX)) * 2, -1.4, 1.4);
         // 击退(非Boss)
-        if (!this.isBoss) this.knockback = Math.min(this.knockback + 1.5, 3);
+        if (!this.isBoss) this.knockback = Math.min(this.knockback + (isCrit ? 2.35 : 1.5), isCrit ? 3.8 : 3.0);
         // 命中火花
         if (effects) {
             effects.burst(this.x, 0.65, this.z, isCrit ? 0xFF8844 : 0xFFE066, isCrit ? 6 : 3, 2.5, .25);
@@ -214,9 +214,10 @@ class Enemy {
             this.hitFlash -= dt;
             const k = Math.max(0, this.hitFlash / 0.13);
             if (this.model.userData.merged) {
-                // 缩放冲击: 短暂膨胀回弹
-                var punch = 1 + k * 0.18;
-                this.model.scale.setScalar(this.visScale * punch);
+                // Game Feel: 挤压拉伸(横向鼓胀 + 纵向压缩)强化受击打击感
+                var sx = this.visScale * (1 + k * 0.22);
+                var sy = this.visScale * (1 - k * 0.15);
+                this.model.scale.set(sx, sy, sx);
             } else {
                 const f = k * 0.35;
                 for (let i = 0; i < this.flashMats.length; i++) {

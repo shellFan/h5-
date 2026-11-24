@@ -27,17 +27,21 @@ class World {
         this.scene.userData.camera=this.camera;
 
         this._setupLights();
-        this._buildRoad();
-        V42Art.buildEnvironment(this);
-        this._buildSky();
-        if (typeof SceneryV121 !== 'undefined') this._v121Scenery = new SceneryV121(this);
         if (typeof MilitaryArt !== 'undefined') {
+            this.roadGroup = new THREE.Group();
+            this.roadGroup.visible = false;
+            this.roadSegments = [];
+            this.decoItems = [];
+            this.buildings = [];
+            this.clouds = [];
+            this._buildSky();
+            if (typeof SceneryV121 !== 'undefined') this._v121Scenery = new SceneryV121(this);
             this._militaryArt = new MilitaryArt(this);
-            if (this.roadGroup) {
-                this.roadGroup.traverse(function(o) {
-                    if (o.userData && o.userData.legacyRoad) o.visible = false;
-                });
-            }
+        } else {
+            this._buildRoad();
+            V42Art.buildEnvironment(this);
+            this._buildSky();
+            if (typeof SceneryV121 !== 'undefined') this._v121Scenery = new SceneryV121(this);
         }
 
         this.resize();
@@ -359,12 +363,13 @@ class World {
         cam.position.x = damp(cam.position.x, targetPos.x, 6, dt);
         cam.position.y = damp(cam.position.y, targetPos.y, 5, dt);
         cam.position.z = damp(cam.position.z, targetPos.z, 8, dt);
-        // V4.0: 屏幕震动(受击/翻倍/Boss入场), 指数衰减
+        // Game Feel: Trauma^2 平滑多频正弦震屏(真实dt衰减, 不随机乱抖, 轻击微震重击有力)
         if (this._shakeT > 0.001) {
-            this._shakeT = Math.max(0, this._shakeT - dt * (this._shakeDecay || 2.2));
-            var sAmp = this._shakeAmp * this._shakeT;
-            cam.position.x += (Math.random() - 0.5) * sAmp;
-            cam.position.y += (Math.random() - 0.5) * sAmp * 0.5;
+            this._shakeT = Math.max(0, this._shakeT - dt * (this._shakeDecay || 2.4));
+            this._shakePhase = (this._shakePhase || 0) + dt * 34.0;
+            var sAmp = this._shakeAmp * (this._shakeT * this._shakeT);
+            cam.position.x += Math.sin(this._shakePhase * 1.7) * sAmp;
+            cam.position.y += Math.sin(this._shakePhase * 2.3) * sAmp * 0.55;
         }
         cam.lookAt(targetX * 0.5, 0, squadZ + lookAhead);
         // V12视觉: 天空穹顶跟随相机(XZ), 保持地平线稳定

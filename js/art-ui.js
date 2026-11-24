@@ -72,6 +72,23 @@ var ArtUI = {
             if (gallery) gallery.classList.add('hidden');
         });
         this.decorateClasses();
+        this.refreshBadges(game);
+    },
+    refreshBadges: function(game) {
+        if (!game || !game.profile) return;
+        var coins = game.profile.coins || 0;
+        var canTrain = typeof SoldierGrowth !== 'undefined' && SoldierGrowth.level(game.profile) < 50 && coins >= SoldierGrowth.upgradeCost(game.profile);
+        var trainBtn = document.getElementById('v60-btn-train');
+        if (trainBtn) trainBtn.classList.toggle('art-has-badge', !!canTrain);
+        var canShop = false;
+        if (game.shop && typeof UPGRADE_DEFS !== 'undefined') {
+            for (var k in UPGRADE_DEFS) {
+                var c = game.shop.nextCost ? game.shop.nextCost(game.profile, k) : null;
+                if (c !== null && c !== undefined && coins >= c) { canShop = true; break; }
+            }
+        }
+        var shopBtn = document.getElementById('btn-open-shop');
+        if (shopBtn) shopBtn.classList.toggle('art-has-badge', !!canShop);
     },
     _wrap: function(name, after) {
         var original = V60UI[name];

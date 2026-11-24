@@ -463,6 +463,39 @@ var V60UI = {
             bagEl.innerHTML = '';
             if (!bag.length) {
                 bagEl.innerHTML = '<div class="v60-rank-empty">暂无掉落装备 · 通关战斗获取</div>';
+            } else if (typeof EquipmentLoot !== 'undefined' && EquipmentLoot.equipFromBag) {
+                var autoBtn = document.createElement('button');
+                autoBtn.id = 'v60-auto-equip-btn';
+                autoBtn.className = 'btn-secondary v60-auto-equip-btn';
+                autoBtn.textContent = '⚡ 一键穿戴最强装备';
+                autoBtn.onclick = function() {
+                    var eqNow = game.profile.data.equipment || {};
+                    var curBag = (game.profile.data.bag || []).slice();
+                    var bestBySlot = {};
+                    for (var k = 0; k < curBag.length; k++) {
+                        var cand = curBag[k];
+                        if (!cand || !cand.slot) continue;
+                        var score = (cand.quality || 0) * 100 + (cand.level || 1);
+                        if (!bestBySlot[cand.slot] || score > bestBySlot[cand.slot].score) {
+                            bestBySlot[cand.slot] = { uid: cand.uid, score: score };
+                        }
+                    }
+                    var changed = 0;
+                    for (var sKey in bestBySlot) {
+                        var cur = eqNow[sKey];
+                        var curScore = cur ? ((cur.quality || 0) * 100 + (cur.level || 1)) : -1;
+                        if (bestBySlot[sKey].score > curScore) {
+                            var res = EquipmentLoot.equipFromBag(game.profile, bestBySlot[sKey].uid);
+                            if (res && res.ok) changed++;
+                        }
+                    }
+                    if (changed > 0) {
+                        game._sfx('gate');
+                        game._refreshCoinDisplays();
+                        self.renderTraining(game);
+                    }
+                };
+                bagEl.appendChild(autoBtn);
             }
             for (var bi = 0; bi < bag.length; bi++) {
                 (function(item) {

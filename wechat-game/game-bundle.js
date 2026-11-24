@@ -1,5 +1,5 @@
 // ===== game-bundle.js (V12 微信小游戏构建产物: 单一模块作用域, 源脚本按 index.html 顺序拼接) =====
-// 生成: tools/build-wechat.js @ 2026-11-24T07:56:19.325Z
+// 生成: tools/build-wechat.js @ 2026-11-24T08:11:02.223Z
 // 代码与 H5 完全同源; 平台差异收敛于入口 game.js
 /* ==== index.html 内联脚本(BootProgress/错误横幅, H5 中先于业务脚本执行 — 保序) ==== */
 
@@ -946,6 +946,23 @@ var ArtUI = {
             if (gallery) gallery.classList.add('hidden');
         });
         this.decorateClasses();
+        this.refreshBadges(game);
+    },
+    refreshBadges: function(game) {
+        if (!game || !game.profile) return;
+        var coins = game.profile.coins || 0;
+        var canTrain = typeof SoldierGrowth !== 'undefined' && SoldierGrowth.level(game.profile) < 50 && coins >= SoldierGrowth.upgradeCost(game.profile);
+        var trainBtn = document.getElementById('v60-btn-train');
+        if (trainBtn) trainBtn.classList.toggle('art-has-badge', !!canTrain);
+        var canShop = false;
+        if (game.shop && typeof UPGRADE_DEFS !== 'undefined') {
+            for (var k in UPGRADE_DEFS) {
+                var c = game.shop.nextCost ? game.shop.nextCost(game.profile, k) : null;
+                if (c !== null && c !== undefined && coins >= c) { canShop = true; break; }
+            }
+        }
+        var shopBtn = document.getElementById('btn-open-shop');
+        if (shopBtn) shopBtn.classList.toggle('art-has-badge', !!canShop);
     },
     _wrap: function(name, after) {
         var original = V60UI[name];
@@ -4636,6 +4653,39 @@ var V60UI = {
             bagEl.innerHTML = '';
             if (!bag.length) {
                 bagEl.innerHTML = '<div class="v60-rank-empty">暂无掉落装备 · 通关战斗获取</div>';
+            } else if (typeof EquipmentLoot !== 'undefined' && EquipmentLoot.equipFromBag) {
+                var autoBtn = document.createElement('button');
+                autoBtn.id = 'v60-auto-equip-btn';
+                autoBtn.className = 'btn-secondary v60-auto-equip-btn';
+                autoBtn.textContent = '⚡ 一键穿戴最强装备';
+                autoBtn.onclick = function() {
+                    var eqNow = game.profile.data.equipment || {};
+                    var curBag = (game.profile.data.bag || []).slice();
+                    var bestBySlot = {};
+                    for (var k = 0; k < curBag.length; k++) {
+                        var cand = curBag[k];
+                        if (!cand || !cand.slot) continue;
+                        var score = (cand.quality || 0) * 100 + (cand.level || 1);
+                        if (!bestBySlot[cand.slot] || score > bestBySlot[cand.slot].score) {
+                            bestBySlot[cand.slot] = { uid: cand.uid, score: score };
+                        }
+                    }
+                    var changed = 0;
+                    for (var sKey in bestBySlot) {
+                        var cur = eqNow[sKey];
+                        var curScore = cur ? ((cur.quality || 0) * 100 + (cur.level || 1)) : -1;
+                        if (bestBySlot[sKey].score > curScore) {
+                            var res = EquipmentLoot.equipFromBag(game.profile, bestBySlot[sKey].uid);
+                            if (res && res.ok) changed++;
+                        }
+                    }
+                    if (changed > 0) {
+                        game._sfx('gate');
+                        game._refreshCoinDisplays();
+                        self.renderTraining(game);
+                    }
+                };
+                bagEl.appendChild(autoBtn);
             }
             for (var bi = 0; bi < bag.length; bi++) {
                 (function(item) {
@@ -11762,7 +11812,8 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
         var key = style + ':' + lod + ':' + name;
         if (this.accBanks[key]) return this.accBanks[key];
         var acc = EnemyArmyRenderer._accGeometry(geoKey || name);
-        var mat = new THREE.MeshLambertMaterial(acc.matParams);
+        var lambertParams = { color: acc.matParams && acc.matParams.color !== undefined ? acc.matParams.color : 0xFFFFFF, vertexColors: !!(acc.matParams && acc.matParams.vertexColors) };
+        var mat = new THREE.MeshLambertMaterial(lambertParams);
         mat.color.setHex(0xFFFFFF);
         var mesh = new THREE.InstancedMesh(acc.geo, mat, EnemyArmyRenderer.ACC_MAX || 448);
         mesh.name = 'Enemy_' + style + '_' + lod + '_acc_' + name;
@@ -13246,17 +13297,21 @@ class World {
         this.scene.userData.camera=this.camera;
 
         this._setupLights();
-        this._buildRoad();
-        V42Art.buildEnvironment(this);
-        this._buildSky();
-        if (typeof SceneryV121 !== 'undefined') this._v121Scenery = new SceneryV121(this);
         if (typeof MilitaryArt !== 'undefined') {
+            this.roadGroup = new THREE.Group();
+            this.roadGroup.visible = false;
+            this.roadSegments = [];
+            this.decoItems = [];
+            this.buildings = [];
+            this.clouds = [];
+            this._buildSky();
+            if (typeof SceneryV121 !== 'undefined') this._v121Scenery = new SceneryV121(this);
             this._militaryArt = new MilitaryArt(this);
-            if (this.roadGroup) {
-                this.roadGroup.traverse(function(o) {
-                    if (o.userData && o.userData.legacyRoad) o.visible = false;
-                });
-            }
+        } else {
+            this._buildRoad();
+            V42Art.buildEnvironment(this);
+            this._buildSky();
+            if (typeof SceneryV121 !== 'undefined') this._v121Scenery = new SceneryV121(this);
         }
 
         this.resize();
@@ -13578,12 +13633,13 @@ class World {
         cam.position.x = damp(cam.position.x, targetPos.x, 6, dt);
         cam.position.y = damp(cam.position.y, targetPos.y, 5, dt);
         cam.position.z = damp(cam.position.z, targetPos.z, 8, dt);
-        // V4.0: 屏幕震动(受击/翻倍/Boss入场), 指数衰减
+        // Game Feel: Trauma^2 平滑多频正弦震屏(真实dt衰减, 不随机乱抖, 轻击微震重击有力)
         if (this._shakeT > 0.001) {
-            this._shakeT = Math.max(0, this._shakeT - dt * (this._shakeDecay || 2.2));
-            var sAmp = this._shakeAmp * this._shakeT;
-            cam.position.x += (Math.random() - 0.5) * sAmp;
-            cam.position.y += (Math.random() - 0.5) * sAmp * 0.5;
+            this._shakeT = Math.max(0, this._shakeT - dt * (this._shakeDecay || 2.4));
+            this._shakePhase = (this._shakePhase || 0) + dt * 34.0;
+            var sAmp = this._shakeAmp * (this._shakeT * this._shakeT);
+            cam.position.x += Math.sin(this._shakePhase * 1.7) * sAmp;
+            cam.position.y += Math.sin(this._shakePhase * 2.3) * sAmp * 0.55;
         }
         cam.lookAt(targetX * 0.5, 0, squadZ + lookAhead);
         // V12视觉: 天空穹顶跟随相机(XZ), 保持地平线稳定
@@ -15585,7 +15641,7 @@ class Enemy {
         this.hitFlash = 0.13;
         this._deathSide = clamp((this.x - (fromX === undefined ? this.x : fromX)) * 2, -1.4, 1.4);
         // 击退(非Boss)
-        if (!this.isBoss) this.knockback = Math.min(this.knockback + 1.5, 3);
+        if (!this.isBoss) this.knockback = Math.min(this.knockback + (isCrit ? 2.35 : 1.5), isCrit ? 3.8 : 3.0);
         // 命中火花
         if (effects) {
             effects.burst(this.x, 0.65, this.z, isCrit ? 0xFF8844 : 0xFFE066, isCrit ? 6 : 3, 2.5, .25);
@@ -15743,9 +15799,10 @@ class Enemy {
             this.hitFlash -= dt;
             const k = Math.max(0, this.hitFlash / 0.13);
             if (this.model.userData.merged) {
-                // 缩放冲击: 短暂膨胀回弹
-                var punch = 1 + k * 0.18;
-                this.model.scale.setScalar(this.visScale * punch);
+                // Game Feel: 挤压拉伸(横向鼓胀 + 纵向压缩)强化受击打击感
+                var sx = this.visScale * (1 + k * 0.22);
+                var sy = this.visScale * (1 - k * 0.15);
+                this.model.scale.set(sx, sy, sx);
             } else {
                 const f = k * 0.35;
                 for (let i = 0; i < this.flashMats.length; i++) {
@@ -18333,7 +18390,7 @@ class Game {
             if (self.state !== 'playing' || self.paused) return;
             dragAnchorPx = x;
             dragAnchorWX = self.squad.targetX;
-            dragging = true;
+            dragging = true; self._isDragging = true;
         }
         function onMove(x) {
             if (!dragging || self.state !== 'playing' || self.paused) return;
@@ -18341,7 +18398,7 @@ class Game {
                 dragAnchorWX, x - dragAnchorPx, canvasWidth(),
                 MovementMath.centerBounds(self.squad.getHalfWidth()));
         }
-        function onUp() { dragging = false; }
+        function onUp() { dragging = false; self._isDragging = false; }
 
         // 触摸
         this.canvas.addEventListener('touchstart', function(e) {
@@ -18554,6 +18611,16 @@ class Game {
     _slowmo() {
         this._timeScale = 0.35;
         this._slowmoT = 0.35;
+    }
+
+    /** Game Feel: 轻量化命中顿帧(真实dt倒计时, 重叠调用取更强/更长, 绝不卡死输入) */
+    triggerHitStop(duration, scale) {
+        if (this.world && this.world._shakeDisabled) return;
+        var dur = Math.min(0.08, Math.max(0.015, duration || 0.032));
+        var sc = Math.max(0.08, Math.min(0.6, scale || 0.18));
+        if (this._slowmoT > dur && this._timeScale <= sc) return;
+        this._timeScale = sc;
+        this._slowmoT = dur;
     }
 
     _showBossWarning(show) {
@@ -19406,6 +19473,8 @@ class Game {
                         this._comboMilestone = milestones[mi];
                         this.effects.floatText(this.squad.x, 2.2, this.squad.z - 1, milestones[mi] + '连杀!', '#FFC247', true);
                         this.effects.shockwave(this.squad.x, 0.05, this.squad.z, 0xFFC247);
+                        this.world.shake(0.22, 0.28);
+                        if (milestones[mi] >= 30) this.triggerHitStop(0.035, 0.22);
                     }
                 }
             }

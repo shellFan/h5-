@@ -156,7 +156,7 @@ class Game {
             if (self.state !== 'playing' || self.paused) return;
             dragAnchorPx = x;
             dragAnchorWX = self.squad.targetX;
-            dragging = true;
+            dragging = true; self._isDragging = true;
         }
         function onMove(x) {
             if (!dragging || self.state !== 'playing' || self.paused) return;
@@ -164,7 +164,7 @@ class Game {
                 dragAnchorWX, x - dragAnchorPx, canvasWidth(),
                 MovementMath.centerBounds(self.squad.getHalfWidth()));
         }
-        function onUp() { dragging = false; }
+        function onUp() { dragging = false; self._isDragging = false; }
 
         // 触摸
         this.canvas.addEventListener('touchstart', function(e) {
@@ -377,6 +377,16 @@ class Game {
     _slowmo() {
         this._timeScale = 0.35;
         this._slowmoT = 0.35;
+    }
+
+    /** Game Feel: 轻量化命中顿帧(真实dt倒计时, 重叠调用取更强/更长, 绝不卡死输入) */
+    triggerHitStop(duration, scale) {
+        if (this.world && this.world._shakeDisabled) return;
+        var dur = Math.min(0.08, Math.max(0.015, duration || 0.032));
+        var sc = Math.max(0.08, Math.min(0.6, scale || 0.18));
+        if (this._slowmoT > dur && this._timeScale <= sc) return;
+        this._timeScale = sc;
+        this._slowmoT = dur;
     }
 
     _showBossWarning(show) {
@@ -1229,6 +1239,8 @@ class Game {
                         this._comboMilestone = milestones[mi];
                         this.effects.floatText(this.squad.x, 2.2, this.squad.z - 1, milestones[mi] + '连杀!', '#FFC247', true);
                         this.effects.shockwave(this.squad.x, 0.05, this.squad.z, 0xFFC247);
+                        this.world.shake(0.22, 0.28);
+                        if (milestones[mi] >= 30) this.triggerHitStop(0.035, 0.22);
                     }
                 }
             }

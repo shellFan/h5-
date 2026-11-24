@@ -463,6 +463,9 @@
 .art-weapon-tile { padding:6px; background:rgba(24,46,34,0.92); border:1px solid #537858; border-radius:9px; text-align:center; }
 .art-collection-weapon { width:100%; height:70px; object-fit:contain; }
 .art-weapon-tile span { display:block; color:#eef7eb; font-size:12px; }
+.v60-auto-equip-btn { width:100%; margin:0 0 6px; min-height:36px !important; font-size:12px; font-weight:800; color:#ffe680 !important; border-color:#d4a63a !important; }
+.art-has-badge { position:relative; }
+.art-has-badge::after { content:''; position:absolute; top:3px; right:3px; width:8px; height:8px; border-radius:50%; background:#ffd24c; box-shadow:0 0 6px #ffd24c; }
 #game-container.art-military button:focus-visible { outline:3px solid #ffd24c; outline-offset:2px; }
 
 @media(max-width:360px) {
