@@ -120,6 +120,7 @@ class Game {
         V42Art.installUI(this);
         this._bindHomeButtons(); // V10 QA: 动态首页按钮绑定(依赖 installUI 创建的 DOM)
         if (typeof V60UI !== 'undefined') V60UI.install(this);
+        if (typeof ArtUI !== 'undefined') ArtUI.install(this);
 
         this._loop = this._loop.bind(this);
         requestAnimationFrame(this._loop);

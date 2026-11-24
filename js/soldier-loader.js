@@ -36,8 +36,8 @@ var SoldierModelLoader = class SoldierModelLoader {
         }
 
         SoldierModelLoader._promise = Promise.allSettled([
-            one('assets/models/soldier/soldier.glb', 'hero soldier'),
-            one('assets/models/soldier/soldier-lod.glb', 'LOD soldier')
+            one('assets/game/models/soldier/soldier.glb', 'hero soldier'),
+            one('assets/game/models/soldier/soldier-lod.glb', 'LOD soldier')
         ]).then(function(results) {
             // Wait for both requests before cleanup: a slow sibling must not
             // allocate textures after an early failed request has been disposed.
@@ -81,8 +81,8 @@ var SoldierModelLoader = class SoldierModelLoader {
                 muzzleMatrix: muzzleMatrix.clone(),
                 muzzlePosition: new THREE.Vector3().setFromMatrixPosition(muzzleMatrix),
                 urls: {
-                    hero: 'assets/models/soldier/soldier.glb',
-                    lod: 'assets/models/soldier/soldier-lod.glb'
+                    hero: 'assets/game/models/soldier/soldier.glb',
+                    lod: 'assets/game/models/soldier/soldier-lod.glb'
                 }
             };
             SoldierModelLoader._data = data;

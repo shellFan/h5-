@@ -52,7 +52,7 @@ var EnemyModelLoader = class EnemyModelLoader {
         }
         return Promise.allSettled(keys.flatMap(key => ['hero','lod'].map(lod=>new Promise((resolve,reject)=>{
             var category=['normal','fast','shield','split','spitter','elite','bomber'].includes(key)?'zombies':'bosses';
-            var url='assets/models/'+category+'/'+key+'/'+key+(lod==='lod'?'-lod':'')+'.glb';
+            var url='assets/game/models/'+category+'/'+key+'/'+key+(lod==='lod'?'-lod':'')+'.glb';
             if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=121';
             loader.load(url,g=>{
                 try {

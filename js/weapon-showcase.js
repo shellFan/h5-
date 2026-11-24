@@ -14,6 +14,7 @@ var WeaponShowcase = {
         // minidom 树会污染其样式引擎(bg-image 全部不再加载)。H5 端 SVG 图集保持回退。
         if (typeof wx !== 'undefined') return false;
         if (typeof window !== 'undefined' && window.__minidom) return false;
+        if (typeof ArtUI !== 'undefined') return false;
         try {
             var probe = document.createElement('canvas');
             return !!(probe.getContext && probe.getContext('webgl'));

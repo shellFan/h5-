@@ -122,6 +122,51 @@ class Effects {
             bctx.fillRect(0, 0, 128, 128);
             this._boomTex = new THREE.CanvasTexture(bc);
         }
+        // Runtime PNGs are optional overlays on the existing procedural fallbacks.
+        // One static loader/cache is shared across Effects instances; failed loads
+        // leave the canvas textures and trigger logic untouched.
+        var self = this;
+        var texturePaths = {
+            muzzle: 'assets/game/effects/muzzle.png', hit: 'assets/game/effects/hit.png',
+            explosion: 'assets/game/effects/explosion.png', boss_explosion: 'assets/game/effects/boss_explosion.png',
+            coins: 'assets/game/effects/coins.png', upgrade: 'assets/game/effects/upgrade.png',
+            boss_entry: 'assets/game/effects/boss_entry.png', trail: 'assets/game/effects/trail.png'
+        };
+        Effects._combatTextures = Effects._combatTextures || {};
+        Effects._textureLoader = Effects._textureLoader || new THREE.TextureLoader();
+        this._combatTextures = Effects._combatTextures;
+        Object.keys(texturePaths).forEach(function(key) {
+            var cached = Effects._combatTextures[key];
+            if (cached) {
+                if (cached.ready) self._applyCombatTexture(key, cached.texture);
+                else cached.waiters.push(function(tex) { self._applyCombatTexture(key, tex); });
+                return;
+            }
+            var entry = Effects._combatTextures[key] = {ready:false, failed:false, texture:null, waiters:[]};
+            entry.waiters.push(function(tex) { self._applyCombatTexture(key, tex); });
+            entry.texture = Effects._textureLoader.load(texturePaths[key], function(tex) {
+                tex.encoding = THREE.sRGBEncoding;
+                entry.ready = true;
+                for (var i = 0; i < entry.waiters.length; i++) entry.waiters[i](tex);
+                entry.waiters.length = 0;
+            }, undefined, function() {
+                entry.failed = true;
+                entry.waiters.length = 0;
+            });
+        });
+    }
+
+    _applyCombatTexture(key, texture) {
+        if (key === 'hit' && this.impactMesh) {
+            this.impactMesh.material.map = texture;
+            this.impactMesh.material.needsUpdate = true;
+        }
+        if (key === 'muzzle') this._muzzleArtTex = texture;
+    }
+
+    _readyCombatTexture(key) {
+        var entry = this._combatTextures && this._combatTextures[key];
+        return entry && entry.ready ? entry.texture : null;
     }
 
     /** V12视觉: 地面尸液痕迹 (dieT期间淡出, 大体型更大) */
@@ -134,9 +179,12 @@ class Effects {
     }
 
     /** V12视觉: 爆炸白闪 (0.14s 亮核弹出) */
-    flash(x, y, z, color, size) {
+    flash(x, y, z, color, size, textureKey) {
         if (this.booms.length >= 8) return;
         var s = this._boomPool.pop() || new THREE.Sprite(new THREE.SpriteMaterial({ map: this._boomTex, transparent: true, depthWrite: false }));
+        var artTexture = textureKey && this._readyCombatTexture(textureKey);
+        s.material.map = artTexture || this._boomTex;
+        s.material.needsUpdate = true;
         s.position.set(x, y, z);
         s.visible = true;
         s.material.opacity = 1;
@@ -187,7 +235,7 @@ class Effects {
             { flash: 3.4, ring: 2, sparks: 34, speed: 7.0, smoke: 12 }
         ][Math.max(0, Math.min(3, (tier | 0) - 1))];
         if (!cfg) return;
-        this.flash(x, y, z, 0xFFC26B, cfg.flash);
+        this.flash(x, y, z, 0xFFC26B, cfg.flash, tier >= 4 ? 'boss_explosion' : 'explosion');
         for (var r = 0; r < cfg.ring; r++) this.shockwave(x, Math.max(0.06, y - r * 0.12), z, r ? 0xFFB055 : 0xFFE1A0);
         // 火花: 橙芯+白热双层
         this.burst(x, y, z, 0xFFA03C, Math.ceil(cfg.sparks * 0.7), cfg.speed, 0.5);
@@ -358,11 +406,13 @@ class Effects {
         }
         if(this.flashes.length>=24)return;
         var flash = this._flashPool.pop() || new THREE.Sprite(new THREE.SpriteMaterial({
-            map: this._muzzleTex,
+            map: this._muzzleArtTex || this._muzzleTex,
             transparent: true,
             opacity: 0.95,
             depthWrite: false
         }));
+        flash.material.map = this._muzzleArtTex || this._muzzleTex;
+        flash.material.needsUpdate = true;
         flash.position.set(x, y, z);
         flash.visible=true;flash.material.opacity=.95;
         flash.material.rotation = Math.random() * Math.PI; // V12视觉: 随机滚转, 齐射时火光不重复

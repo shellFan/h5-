@@ -1124,7 +1124,7 @@
             controls.appendChild(makeElement('span', 'v42-control-pill', '↔ 拖动变道'));
             controls.appendChild(makeElement('span', 'v42-control-pill', '◆ 选择状态门'));
             var hint = startPanel.querySelector('.hint-text');
-            if (hint) hint.replaceWith(controls); else startPanel.appendChild(controls);
+            if (hint && hint.parentNode) { hint.parentNode.insertBefore(controls, hint); hint.parentNode.removeChild(hint); } else startPanel.appendChild(controls);
         }
 
         var levelName = document.getElementById('level-name');

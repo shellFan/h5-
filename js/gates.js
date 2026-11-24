@@ -20,6 +20,7 @@ class GateSystem {
                 if (!gd.style) gd.style = (gd.op === 'mul' || gd.op === 'nuke') ? 'mul' : (gd.op === 'addpct' ? 'buff' : (gd.op === 'risk' ? 'risk' : (gd.op === 'buff' ? 'buff' : 'add')));
                 gd.tier = gd.tier || (gd.op === 'mul' ? 'rare' : 'common');
                 const model = V42Art.createGateModel(gd, gateWidth);
+                this._applyMilitaryPalette(model, gd);
                 model.userData.artSource = 'js/models.js:createGateModel(' + gd.op + '/' + (gd.label || '') + ') 玻璃纹理:createGateGlassTexture(参考assets/art-v1/ui/gate-panel.svg)';
                 model.position.set(CONFIG.LANE_X[gd.lane], 0, seg.z);
                 this.scene.add(model);
@@ -35,6 +36,30 @@ class GateSystem {
                 });
             }
         }
+    }
+
+    _applyMilitaryPalette(model, data) {
+        var category = typeof _gateCategory === 'function' ? _gateCategory(data.op, data.value) : 'special';
+        var color = category === 'count' ? 0x39b96b : (category === 'coin' ? 0xf1b83b : 0x3f91e8);
+        var dark = category === 'count' ? 0x174f31 : (category === 'coin' ? 0x6e4b11 : 0x183e6d);
+        var light = new THREE.Color(color).lerp(new THREE.Color(0xffffff), .28);
+        function paint(mesh, hex) {
+            if (!mesh || !mesh.geometry || !mesh.geometry.attributes || !mesh.geometry.attributes.color) return;
+            var attribute = mesh.geometry.attributes.color;
+            var c = hex && hex.isColor ? hex : new THREE.Color(hex);
+            for (var i = 0; i < attribute.count; i++) attribute.setXYZ(i, c.r, c.g, c.b);
+            attribute.needsUpdate = true;
+        }
+        paint(model.children[0], dark);
+        paint(model.children[1], light);
+        paint(model.children[3], color);
+        paint(model.children[4], light);
+        var glass = model.userData.glass;
+        if (glass && glass.material) {
+            glass.material.color.setHex(color);
+            if (glass.material.emissive) glass.material.emissive.setHex(color).multiplyScalar(.28);
+        }
+        model.userData.militaryGateColor = color;
     }
 
     clear() {
@@ -224,6 +249,7 @@ class GateSystem {
                     members[ci].data.style = 'epic';
                     this.scene.remove(members[ci].model);
                     members[ci].model = V42Art.createGateModel(members[ci].data, CONFIG.LANE_WIDTH * 0.9);
+                    this._applyMilitaryPalette(members[ci].model, members[ci].data);
                     this.scene.add(members[ci].model);
                     members[ci].triggered = false;
                     members[ci].passed = false;
@@ -239,6 +265,7 @@ class GateSystem {
                 members[m].data.label = def.icon + ' ' + def.name + '[' + Skills.qualityName(id) + ']' + (lv > 0 ? ' Lv' + (lv + 1) : '');
                 this.scene.remove(members[m].model);
                 members[m].model = V42Art.createGateModel(members[m].data, CONFIG.LANE_WIDTH * 0.9);
+                this._applyMilitaryPalette(members[m].model, members[m].data);
                 this.scene.add(members[m].model);
                 members[m].triggered = false;
                 members[m].passed = false;
@@ -252,6 +279,7 @@ class GateSystem {
                 members[r].data.style = 'epic';
                 this.scene.remove(members[r].model);
                 members[r].model = V42Art.createGateModel(members[r].data, CONFIG.LANE_WIDTH * 0.9);
+                this._applyMilitaryPalette(members[r].model, members[r].data);
                 this.scene.add(members[r].model);
                 members[r].triggered = false;
                 members[r].passed = false;
@@ -281,6 +309,7 @@ class GateSystem {
                 if (obj.material) obj.material.dispose();
             });
             var model = V42Art.createGateModel(nd, gateWidth);
+            this._applyMilitaryPalette(model, nd);
             model.position.set(CONFIG.LANE_X[nd.lane], 0, g.z);
             this.scene.add(model);
             g.data = nd;

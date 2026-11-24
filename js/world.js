@@ -31,6 +31,14 @@ class World {
         V42Art.buildEnvironment(this);
         this._buildSky();
         if (typeof SceneryV121 !== 'undefined') this._v121Scenery = new SceneryV121(this);
+        if (typeof MilitaryArt !== 'undefined') {
+            this._militaryArt = new MilitaryArt(this);
+            if (this.roadGroup) {
+                this.roadGroup.traverse(function(o) {
+                    if (o.userData && o.userData.legacyRoad) o.visible = false;
+                });
+            }
+        }
 
         this.resize();
         window.addEventListener('resize', () => this.resize());
@@ -198,6 +206,7 @@ class World {
             const road = new THREE.Mesh(new THREE.PlaneGeometry(6.8, SEG_LEN), roadMat);
             road.rotation.x = -Math.PI / 2;
             road.receiveShadow = true;
+            road.userData.legacyRoad = true;
             seg.add(road);
 
             // Keep low sidewalks; remove decorative guardrails and caps.
@@ -212,6 +221,7 @@ class World {
                 new THREE.MeshLambertMaterial({ vertexColors: true }));
             structMesh.castShadow = true;
             structMesh.receiveShadow = true;
+            structMesh.userData.legacyRoad = true;
             seg.add(structMesh);
 
             var pavement = [];
@@ -225,7 +235,9 @@ class World {
                     pavement.push(colorize(curb, tile % 2 ? 0xE7E4CF : 0x4C6266));
                 }
             }
-            seg.add(new THREE.Mesh(mergeGeometries(pavement), new THREE.MeshLambertMaterial({ vertexColors: true })));
+            var pavementMesh = new THREE.Mesh(mergeGeometries(pavement), new THREE.MeshLambertMaterial({ vertexColors: true }));
+            pavementMesh.userData.legacyRoad = true;
+            seg.add(pavementMesh);
 
             // 草地(两侧合并) — V12视觉: 修剪条纹明暗交替 + 偶发浅色草斑, 打破大片单色
             var grassBase = new THREE.Color(C.grass);
@@ -252,7 +264,7 @@ class World {
             seg.add(groundMesh);
 
             seg.position.z = -i * SEG_LEN + SEG_LEN;
-            this.scene.add(seg);
+            roadGroup.add(seg);
             this.roadSegments.push({ group: seg, length: SEG_LEN });
         }
 
@@ -264,8 +276,10 @@ class World {
             sg.translate(-2.8 + si * 1.4, 0.012, 0.5);
             stripeGeos.push(colorize(sg, 0xFFFFFF));
         }
-        this.scene.add(new THREE.Mesh(mergeGeometries(stripeGeos),
-            new THREE.MeshBasicMaterial({ vertexColors: true })));
+        var startStripe = new THREE.Mesh(mergeGeometries(stripeGeos), new THREE.MeshBasicMaterial({ vertexColors: true }));
+        startStripe.userData.legacyRoad = true;
+        roadGroup.add(startStripe);
+        this.scene.add(roadGroup);
     }
 
 
@@ -281,6 +295,7 @@ class World {
     updateRoadScroll(squadZ) {
         if(this._v42Environment && this._v42Environment.root.visible)this._v42Environment.update(squadZ);
         if(this._v121Scenery)this._v121Scenery.update(squadZ);
+        if(this._militaryArt)this._militaryArt.update(squadZ);
         const SEG_LEN = 12;
         // 路段: 覆盖 [squadZ+18, squadZ-114], 共12段
         const base = Math.ceil((squadZ + SEG_LEN * 1.5) / SEG_LEN) * SEG_LEN;
@@ -409,6 +424,7 @@ class World {
         }
         this._themeApplied = themeName;
         if(this._v121Scenery)this._v121Scenery.setTheme(themeName);
+        if(this._militaryArt)this._militaryArt.setTheme(themeName);
     }
 
     /** V13: 按主题重绘天穹渐变(与 _buildSky 同规格: 4 停靠点 + 顶部太阳光晕) */
