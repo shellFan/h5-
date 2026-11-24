@@ -1,0 +1,766 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "source_id": 1,
+      "sha256": "fcebfa127d7b75dcb3dbda50a2b27ad8aaf4baf64814abe778113b9602b212f7",
+      "disposition": "reference_only",
+      "reason": "VFX reference retained unless a listed black-matte crop was derived.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 2,
+      "sha256": "6f4e8bc9e6b2a3c76577a7d7c6f0f2d8e96bd9a3e06f0ceed9acbf33b4a3592f",
+      "disposition": "reference_only",
+      "reason": "Gameplay design sheet retained as reference only.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 3,
+      "sha256": "2d7bd076b8c6521e58cf9ec86e73a499d346a3fd62470235555f34825475820c",
+      "disposition": "reference_only",
+      "reason": "UI sheet or screen mockup retained for visual reference; dynamic labels stay code-native.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 4,
+      "sha256": "a3a16dd03ff99a2359f7afabf84d8eb44c802914a0e3389d58a96ef309bba32d",
+      "disposition": "reference_only",
+      "reason": "UI sheet or screen mockup retained for visual reference; dynamic labels stay code-native.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 5,
+      "sha256": "5d039973ee8ed2d5ff1759cdbe85192ee56e1c98ee45446a3bc241b09bccd98a",
+      "disposition": "reference_only",
+      "reason": "UI sheet or screen mockup retained for visual reference; dynamic labels stay code-native.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 6,
+      "sha256": "6a3341c5a70b50b6d7341ce921f193b00855894c8e14eb11409fe0d55ef8429c",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/effects/coins.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 7,
+      "sha256": "0b34267bac5df44e3e7a371cd4b0957646238e3d00a3ab10cf8070e26bfb7be2",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/effects/muzzle.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 8,
+      "sha256": "d4ac78683b64ba4c8f1b56a1d7cf50d6210596de90e30a6815c3899adc454708",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/effects/explosion.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 9,
+      "sha256": "fa2bb59fc5f19615ff0a23a3ef8fc76259afc0e65c325a55b96dc14b1d67c77d",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/effects/trail.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 10,
+      "sha256": "e85316dbcb312ee1bd7e6eac3f2d1137fddd94af858510239499cac5531a9f45",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/effects/upgrade.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 11,
+      "sha256": "ddde691556e9cf8499b16f2c24d5dafaa72340adb085b4b664ad0ff759cb3db1",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/effects/hit.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 12,
+      "sha256": "947dc43e44044da4d9c41de6c61f863801e78a9fc12dc7f0668d8b5eec799e67",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/effects/boss_explosion.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 13,
+      "sha256": "2ed40e9ce88c032595f5a2991f15747356c1deb0290ba5babed2c818b8d8a807",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/effects/boss_entry.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 14,
+      "sha256": "2bc5e17487b4c96b9acb704248f06a843a784b2ea53183c017b36b90e6a9140d",
+      "disposition": "reference_only",
+      "reason": "UI sheet or screen mockup retained for visual reference; dynamic labels stay code-native.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 15,
+      "sha256": "b0634ab05bbc3be947f4b7075cec9648a8661eb01ba889ec9288fc400b96d10f",
+      "disposition": "reference_only",
+      "reason": "UI sheet or screen mockup retained for visual reference; dynamic labels stay code-native.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 16,
+      "sha256": "19ee51b19629ec8862339f86b8258a674a418a5c205cfd91784e0858af0dab9a",
+      "disposition": "reference_only",
+      "reason": "UI sheet or screen mockup retained for visual reference; dynamic labels stay code-native.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 17,
+      "sha256": "f816df6d191d9c5c4c46d1baa04296a91e700f4b8a1c54e988f9e0ec3111a844",
+      "disposition": "reference_only",
+      "reason": "UI sheet or screen mockup retained for visual reference; dynamic labels stay code-native.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 18,
+      "sha256": "bbe693d8e186aad1bc6d374dca3904114d7796bb13303f6299e9ecf7640f2ae7",
+      "disposition": "reference_only",
+      "reason": "UI sheet or screen mockup retained for visual reference; dynamic labels stay code-native.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 19,
+      "sha256": "03475e9d310e200be182a485956629574f3785b2cd3bb84617017698aa69491a",
+      "disposition": "reference_only",
+      "reason": "UI sheet or screen mockup retained for visual reference; dynamic labels stay code-native.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 20,
+      "sha256": "1de7d35939b1b8e939da94a6f94cffbd7a838588ca4c5befa1c670f00c5baed0",
+      "disposition": "reference_only",
+      "reason": "UI sheet or screen mockup retained for visual reference; dynamic labels stay code-native.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 21,
+      "sha256": "633dc1aca83c8386b11082a83f9c78380bd047d11f28c6ae447492c0113b8247",
+      "disposition": "reference_only",
+      "reason": "UI sheet or screen mockup retained for visual reference; dynamic labels stay code-native.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 22,
+      "sha256": "4b46d473c72120d864077657c4a0d4203d690c3918736dde33bd70107dfcc564",
+      "disposition": "reference_only",
+      "reason": "UI sheet or screen mockup retained for visual reference; dynamic labels stay code-native.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 23,
+      "sha256": "fc1e5a09bff0b967e5fe64e7af131d69f19e89a1a3a1acf73e3471d4fc7cee08",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/ui/avatar.png",
+        "assets/game/ui/coin.png",
+        "assets/game/ui/diamond.png",
+        "assets/game/ui/settings.png",
+        "assets/game/ui/play.png",
+        "assets/game/ui/pause.png",
+        "assets/game/ui/trophy.png",
+        "assets/game/ui/chest.png",
+        "assets/game/ui/star.png",
+        "assets/game/ui/shield.png",
+        "assets/game/ui/medal.png",
+        "assets/game/ui/ui-atlas.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 24,
+      "sha256": "7ed3e9afdbefecfa33dc09796f66c9a0c7ae4fdaa5e0424b10ade677e48fe58c",
+      "disposition": "reference_only",
+      "reason": "UI sheet or screen mockup retained for visual reference; dynamic labels stay code-native.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 25,
+      "sha256": "59ed2c60ccbd7a56acc11be44b53d47f3a080f446f99300c687251438c2305af",
+      "disposition": "reference_only",
+      "reason": "UI sheet or screen mockup retained for visual reference; dynamic labels stay code-native.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 26,
+      "sha256": "02f082b7cffb4035533f0eeb810b46e6f1f7861a893540540d7c1c7539723ee7",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/weapons/rifle.png",
+        "assets/game/weapons/smg.png",
+        "assets/game/weapons/shotgun.png",
+        "assets/game/weapons/sniper.png",
+        "assets/game/weapons/mg.png",
+        "assets/game/weapons/rocket.png",
+        "assets/game/weapons/laser.png",
+        "assets/game/weapons/plasma.png",
+        "assets/game/weapons/gatling.png",
+        "assets/game/weapons/railgun.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 27,
+      "sha256": "dea4c5d099111a08b45637a34561808c32850e02121dc3a7cecfe336f92b6495",
+      "disposition": "reference_only",
+      "reason": "Weapon design sheet retained as reference unless a listed crop was derived.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 28,
+      "sha256": "441d650befdc8f4a285675394481eb56f3db2cc648a1cc331ca79be2284ddd5e",
+      "disposition": "reference_only",
+      "reason": "Weapon design sheet retained as reference unless a listed crop was derived.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 29,
+      "sha256": "8b8a5980965c166491cedc45c3ac39c7caf45a8d8367f2634158cdca266a66f4",
+      "disposition": "reference_only",
+      "reason": "Weapon design sheet retained as reference unless a listed crop was derived.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 30,
+      "sha256": "e7b4932a4141230fe32d12609bb7e7c8cd3b14145119bffdbeb8792111122a5d",
+      "disposition": "reference_only",
+      "reason": "Weapon design sheet retained as reference unless a listed crop was derived.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 31,
+      "sha256": "7f69b2801f135451557936055dd90d09119f71a2951cbc3c5cf5588826872ca6",
+      "disposition": "reference_only",
+      "reason": "Weapon design sheet retained as reference unless a listed crop was derived.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 32,
+      "sha256": "94081d260f22e2f1ef65c93b88f08e82358e8fa1544306337453ae3e3a016e40",
+      "disposition": "reference_only",
+      "reason": "Weapon design sheet retained as reference unless a listed crop was derived.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 33,
+      "sha256": "f62d5d4713abd63f27223817d185ae7ad6d3123562ab109b1c3f254fc0f435df",
+      "disposition": "reference_only",
+      "reason": "Weapon design sheet retained as reference unless a listed crop was derived.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 34,
+      "sha256": "a6e5d1d8b3c16841992edde78eb6a41b8511d59a0a2571a3d70abee918cd98f9",
+      "disposition": "reference_only",
+      "reason": "Weapon design sheet retained as reference unless a listed crop was derived.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 35,
+      "sha256": "0c4067083bb89ed11b0cf1e5d098059902b69622a9bc0f444b136680d140012d",
+      "disposition": "reference_only",
+      "reason": "Weapon design sheet retained as reference unless a listed crop was derived.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 36,
+      "sha256": "d7e8e51bb78c6986dba1e927927c8e69ad273d64d3b036d33c4ca2f9cf8dd342",
+      "disposition": "reference_only",
+      "reason": "Weapon design sheet retained as reference unless a listed crop was derived.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 37,
+      "sha256": "1f2ca3d879583515daeb002ae0b2397618ebe860fc1d53b99d3a1fde85deb054",
+      "disposition": "reference_only",
+      "reason": "Weapon design sheet retained as reference unless a listed crop was derived.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 38,
+      "sha256": "816e708350f583ac3918a56e5c9d52f1f1104e4551fe037200bd1127262ad7a6",
+      "disposition": "reference_only",
+      "reason": "Weapon design sheet retained as reference unless a listed crop was derived.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 39,
+      "sha256": "5505ab850af58e756a8a8400365f0a335e1f7c576ed244c473c46db879da54db",
+      "disposition": "reference_only",
+      "reason": "Design/reference art has no approved runtime animation or collision contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 40,
+      "sha256": "7a5a5dd9317f2319228a5244ff888d66e9c496a013bb24f61f92829d711352ba",
+      "disposition": "reference_only",
+      "reason": "Design/reference art has no approved runtime animation or collision contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 41,
+      "sha256": "5aa9f75dfc46eea654619ccbc010e4dac456c8d47863ccbb7bd2a3ade3bf229b",
+      "disposition": "reference_only",
+      "reason": "Design/reference art has no approved runtime animation or collision contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 42,
+      "sha256": "f347ff4300a17ef567d42e6e52b5081fe1c3379bededcde8b08fdaaac93ffa4e",
+      "disposition": "reference_only",
+      "reason": "Design/reference art has no approved runtime animation or collision contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 43,
+      "sha256": "98d888991a817cd4a099c89ae18fac5285adef0195ad95ed428be0848dde24aa",
+      "disposition": "reference_only",
+      "reason": "Design/reference art has no approved runtime animation or collision contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 44,
+      "sha256": "b38283d8ccd23a835911894f679e7f3e5b950fab201db880444e019a95ca6e1b",
+      "disposition": "reference_only",
+      "reason": "Design/reference art has no approved runtime animation or collision contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 45,
+      "sha256": "0b9c52a9eb0f0d1f24b73ab5b82300bab19cbc3bcf7519d4264d13768d7307c6",
+      "disposition": "reference_only",
+      "reason": "Design/reference art has no approved runtime animation or collision contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 46,
+      "sha256": "836bc6c153f14502f8960131ad056edbc35a5b855f8535f0011916c3c0c1d690",
+      "disposition": "reference_only",
+      "reason": "Design/reference art has no approved runtime animation or collision contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 47,
+      "sha256": "abeb84b25944da12650bc2e6f44eda42e9aa4ace5f968c6949a25b963740b967",
+      "disposition": "reference_only",
+      "reason": "Design/reference art has no approved runtime animation or collision contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 48,
+      "sha256": "50e90d5acf941ce84aad4384acc54e6cefb5afd7c5a6404d21753cb23f848dd5",
+      "disposition": "reference_only",
+      "reason": "Design/reference art has no approved runtime animation or collision contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 49,
+      "sha256": "58aaef90e18f9453da1d64033d95c37786217d7b2e6d2be0bf238bc97f35faa8",
+      "disposition": "reference_only",
+      "reason": "Design/reference art has no approved runtime animation or collision contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 50,
+      "sha256": "2e705407ff08850f4a5c224a70d67135d022cf9ea7e3e5dee05e52962d64ca3b",
+      "disposition": "reference_only",
+      "reason": "Design/reference art has no approved runtime animation or collision contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 51,
+      "sha256": "fa7be38da0eacd5266ba0b9421670cdca3a677ceef052f99ea0aa14ad67fe9a6",
+      "disposition": "reference_only",
+      "reason": "Composed promotional scene is unsuitable as a standalone runtime sprite.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 55,
+      "sha256": "fcf57c699dd2a6a0f0651e752720c778afa58d2ba290a4bc1dd4f7b929186c14",
+      "disposition": "reference_only",
+      "reason": "Composed promotional scene is unsuitable as a standalone runtime sprite.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 56,
+      "sha256": "e30a206d21e62d704fcb547bc9b813de79500c31ea1f21672d986642bfdec272",
+      "disposition": "reference_only",
+      "reason": "Composed promotional scene is unsuitable as a standalone runtime sprite.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 57,
+      "sha256": "315fa25c20e8eca944d24b7551e3147000a99209b3ca422c4ffee98d9ff6eed9",
+      "disposition": "reference_only",
+      "reason": "Composed promotional scene is unsuitable as a standalone runtime sprite.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 59,
+      "sha256": "617aef439b6015b31a5a96b4e0a019825a86618895e46cbf045d71d97a5c0822",
+      "disposition": "reference_only",
+      "reason": "Composed promotional scene is unsuitable as a standalone runtime sprite.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 60,
+      "sha256": "c719bf44515f98a10be2cbcee6769680620938fcdcf5f5401c3496d82561b7b3",
+      "disposition": "reference_only",
+      "reason": "Composed promotional scene is unsuitable as a standalone runtime sprite.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 61,
+      "sha256": "cedbf94a06dc40d17c9e1931c413517eb1d6bfa8f7650270ca6431ab7b264c41",
+      "disposition": "reference_only",
+      "reason": "Composed promotional scene is unsuitable as a standalone runtime sprite.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 62,
+      "sha256": "d364715fe82e221fa2001349ef83d60481f9c3393ea4464dac75435c3e6dcede",
+      "disposition": "reference_only",
+      "reason": "Composed promotional scene is unsuitable as a standalone runtime sprite.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 63,
+      "sha256": "f8bccfd33b95b24cb7a6d53c5b456b893d35e018f0db0c51fce117286606ea0a",
+      "disposition": "reference_only",
+      "reason": "Composed promotional scene is unsuitable as a standalone runtime sprite.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 64,
+      "sha256": "030405046a0abc5fd253fa18e07e5fc33f9401da19e120b93fa52c50b1993d00",
+      "disposition": "reference_only",
+      "reason": "Composed promotional scene is unsuitable as a standalone runtime sprite.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 65,
+      "sha256": "fe8b08d5080e92a41eac46b526b4163a63274b2a6bfed7c1f0a0ba9b41061f0d",
+      "disposition": "reference_only",
+      "reason": "Environment/reference art lacks a general runtime crop contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 66,
+      "sha256": "adc0caf523467e3973d61d5bc64f717e1ed87cbdd4a195d35e9084f34f03cefd",
+      "disposition": "reference_only",
+      "reason": "Environment/reference art lacks a general runtime crop contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 67,
+      "sha256": "132d266d2551f28017968876ccf11a6dbd45baa95829be7aa9d1d6061bd3e05c",
+      "disposition": "reference_only",
+      "reason": "Environment/reference art lacks a general runtime crop contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 68,
+      "sha256": "fb393aaac96e0977800658d00222133fcba9040b3f239b71c2edbd166dc6d0d3",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/maps/sunny.webp",
+        "assets/game/maps/sunny.jpg"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 69,
+      "sha256": "043c66bd429c72dc8b4727329c33ebf163d2fe62a7a67e66767c8ccc24ff4a24",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/maps/city.webp",
+        "assets/game/maps/city.jpg"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 70,
+      "sha256": "d632d613c90bc4b0aad49073c4786ed1bccba747dc44e021fb00c100b7ec985b",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/maps/forest.webp",
+        "assets/game/maps/forest.jpg"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 71,
+      "sha256": "a25ae45dbf7ce58fbc741a9597a695e1696a82c2eb4216bc8459a29b82458857",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/maps/snow.webp",
+        "assets/game/maps/snow.jpg"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 72,
+      "sha256": "01be21d7677136338b409f84b5e27db86ca2b7953e0c0a210cbaa4ff85028f7d",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/maps/desert.webp",
+        "assets/game/maps/desert.jpg"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 73,
+      "sha256": "d2744085c864d06253be6c63e6079cff3ee0472424e4165e61d3c9c082b9a109",
+      "disposition": "reference_only",
+      "reason": "Environment/reference art lacks a general runtime crop contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 74,
+      "sha256": "ef9a54e7f42451b71d5727ba2a86155015d32ca9a91ea8fffc8d9d8c6082a46c",
+      "disposition": "reference_only",
+      "reason": "Environment/reference art lacks a general runtime crop contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 75,
+      "sha256": "fd9559fb4f0ccb7fed5fcacb493fcdd3b9644654cc7aff6b2cb27ef150421a13",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/terrain/grass.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 76,
+      "sha256": "1396d8ed71ce86f1630aa319503d64cdb0f36ca734ccd92a5279826367f15ea2",
+      "disposition": "reference_only",
+      "reason": "Environment/reference art lacks a general runtime crop contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 77,
+      "sha256": "4da13906efa24c7341e4c0e57be93d6cf381bb4421fed9605c25fe4f5693391b",
+      "disposition": "reference_only",
+      "reason": "Environment/reference art lacks a general runtime crop contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 78,
+      "sha256": "99ebfc60e9507ad02d721ae1a7d64ea8c882fbcbaa3ea8ee5c2eeabbd443f578",
+      "disposition": "reference_only",
+      "reason": "Environment/reference art lacks a general runtime crop contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 79,
+      "sha256": "108964b7c80129bfdde808b9dc1388d80ed507118e375ecafa0774c5f7fbcbca",
+      "disposition": "reference_only",
+      "reason": "Environment/reference art lacks a general runtime crop contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 80,
+      "sha256": "27d587253c3cbcb2a8b4328013d701128931da554fe75ec9545e91ca6dbf6976",
+      "disposition": "reference_only",
+      "reason": "Environment/reference art lacks a general runtime crop contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 81,
+      "sha256": "d5eca6e038d5b7e2a016df84ed9845d94c79ff43e5e050fee80525d2d26a03c7",
+      "disposition": "reference_only",
+      "reason": "Environment/reference art lacks a general runtime crop contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 82,
+      "sha256": "3e93efe9907a937313af5b68c29ea90cf4832f76cee158753c9145f0b1c0a917",
+      "disposition": "reference_only",
+      "reason": "Environment/reference art lacks a general runtime crop contract.",
+      "outputs": [],
+      "integration_status": "reference_only"
+    },
+    {
+      "source_id": 83,
+      "sha256": "42d274b9db45f5af4550aa221b18f5964c7827408a693cacd5abc5fe180e17b1",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/characters/soldier_portrait.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 84,
+      "sha256": "9a6bef28fd2a51f9a9cdfbae41b0a723e68639e82b3eeeec7fdc9523e3b0d867",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/characters/medic_portrait.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 85,
+      "sha256": "4a00aabcaa3b67aa8fd3ec168ed833fdd3fb39ac1c9ac4f51988a523fd2530f6",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/characters/rocket_portrait.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 86,
+      "sha256": "d7bae2dfbd91f06fd6cef95deb199e1d99500330bd1baff47bd0710c1fa11b23",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/characters/shotgun_portrait.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 87,
+      "sha256": "58f5a4422528f1b243c0dd67eca73f36e67beecd144ea0ca71e69377da32d6b5",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/characters/rifle_portrait.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 88,
+      "sha256": "cf05f6bc4a4b15ab1162881a7d247b75b3d57ad59df9fc8412e2d0dc4422a5d6",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/characters/energy_portrait.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 89,
+      "sha256": "105543ec20713a807d6360917fe2fa6a7ab192510dc16d7fbbd7753c8dd07658",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/characters/smg_portrait.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "source_id": 90,
+      "sha256": "478566880ac8337fa9c1c22ded6fdef990905978af2c0109e93c10f0b8347d8b",
+      "disposition": "runtime_candidate_and_reference",
+      "reason": "One or more deterministic derivatives exist; consumer wiring is tracked separately.",
+      "outputs": [
+        "assets/game/characters/sniper_portrait.png"
+      ],
+      "integration_status": "runtime_candidate_not_wired"
+    }
+  ]
+}

@@ -16,3 +16,9 @@ Reproduce the audit with:
 python tools/import-art-assets.py --audit-only
 node tests/unit/art-source-audit.js
 ```
+
+After the audit commit is captured, create deterministic review/runtime derivatives with:
+
+```powershell
+python tools/import-art-assets.py --process
+```

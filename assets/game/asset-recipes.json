@@ -1,0 +1,1132 @@
+{
+  "schema_version": 1,
+  "recipes": [
+    {
+      "output": "assets/game/ui/avatar.png",
+      "source_id": 23,
+      "source_sha256": "fc1e5a09bff0b967e5fe64e7af131d69f19e89a1a3a1acf73e3471d4fc7cee08",
+      "source_rect": [
+        45,
+        135,
+        191,
+        296
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_matte",
+        "fit_128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 4,
+      "intended_consumer": "UI icon: avatar",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/ui/coin.png",
+      "source_id": 23,
+      "source_sha256": "fc1e5a09bff0b967e5fe64e7af131d69f19e89a1a3a1acf73e3471d4fc7cee08",
+      "source_rect": [
+        238,
+        360,
+        394,
+        513
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_matte",
+        "fit_128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 4,
+      "intended_consumer": "UI icon: coin",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/ui/diamond.png",
+      "source_id": 23,
+      "source_sha256": "fc1e5a09bff0b967e5fe64e7af131d69f19e89a1a3a1acf73e3471d4fc7cee08",
+      "source_rect": [
+        439,
+        363,
+        589,
+        514
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_matte",
+        "fit_128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 4,
+      "intended_consumer": "UI icon: diamond",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/ui/settings.png",
+      "source_id": 23,
+      "source_sha256": "fc1e5a09bff0b967e5fe64e7af131d69f19e89a1a3a1acf73e3471d4fc7cee08",
+      "source_rect": [
+        835,
+        588,
+        981,
+        757
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_matte",
+        "fit_128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 4,
+      "intended_consumer": "UI icon: settings",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/ui/play.png",
+      "source_id": 23,
+      "source_sha256": "fc1e5a09bff0b967e5fe64e7af131d69f19e89a1a3a1acf73e3471d4fc7cee08",
+      "source_rect": [
+        241,
+        828,
+        390,
+        978
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_matte",
+        "fit_128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 4,
+      "intended_consumer": "UI icon: play",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/ui/pause.png",
+      "source_id": 23,
+      "source_sha256": "fc1e5a09bff0b967e5fe64e7af131d69f19e89a1a3a1acf73e3471d4fc7cee08",
+      "source_rect": [
+        47,
+        830,
+        189,
+        978
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_matte",
+        "fit_128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 4,
+      "intended_consumer": "UI icon: pause",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/ui/trophy.png",
+      "source_id": 23,
+      "source_sha256": "fc1e5a09bff0b967e5fe64e7af131d69f19e89a1a3a1acf73e3471d4fc7cee08",
+      "source_rect": [
+        451,
+        818,
+        573,
+        988
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_matte",
+        "fit_128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 4,
+      "intended_consumer": "UI icon: trophy",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/ui/chest.png",
+      "source_id": 23,
+      "source_sha256": "fc1e5a09bff0b967e5fe64e7af131d69f19e89a1a3a1acf73e3471d4fc7cee08",
+      "source_rect": [
+        635,
+        358,
+        789,
+        502
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_matte",
+        "fit_128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 4,
+      "intended_consumer": "UI icon: chest",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/ui/star.png",
+      "source_id": 23,
+      "source_sha256": "fc1e5a09bff0b967e5fe64e7af131d69f19e89a1a3a1acf73e3471d4fc7cee08",
+      "source_rect": [
+        240,
+        600,
+        392,
+        750
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_matte",
+        "fit_128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 4,
+      "intended_consumer": "UI icon: star",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/ui/shield.png",
+      "source_id": 23,
+      "source_sha256": "fc1e5a09bff0b967e5fe64e7af131d69f19e89a1a3a1acf73e3471d4fc7cee08",
+      "source_rect": [
+        45,
+        588,
+        190,
+        754
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_matte",
+        "fit_128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 4,
+      "intended_consumer": "UI icon: shield",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/ui/medal.png",
+      "source_id": 23,
+      "source_sha256": "fc1e5a09bff0b967e5fe64e7af131d69f19e89a1a3a1acf73e3471d4fc7cee08",
+      "source_rect": [
+        657,
+        814,
+        769,
+        991
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_matte",
+        "fit_128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 4,
+      "intended_consumer": "UI icon: medal",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/ui/ui-atlas.png",
+      "source_id": 23,
+      "source_sha256": "fc1e5a09bff0b967e5fe64e7af131d69f19e89a1a3a1acf73e3471d4fc7cee08",
+      "source_rect": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "processing": [
+        "pack_existing_ui_icons",
+        "lanczos_64_cells",
+        "png_rgba"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 0,
+      "intended_consumer": "CSS/canvas UI sprite atlas",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/characters/soldier_portrait.png",
+      "source_id": 83,
+      "source_sha256": "42d274b9db45f5af4550aa221b18f5964c7827408a693cacd5abc5fe180e17b1",
+      "source_rect": [
+        45,
+        240,
+        360,
+        770
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_white_matte",
+        "fit_256"
+      ],
+      "pivot": [
+        0.5,
+        0.95
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Character portrait: soldier",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/characters/medic_portrait.png",
+      "source_id": 84,
+      "source_sha256": "9a6bef28fd2a51f9a9cdfbae41b0a723e68639e82b3eeeec7fdc9523e3b0d867",
+      "source_rect": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_white_matte",
+        "fit_256"
+      ],
+      "pivot": [
+        0.5,
+        0.95
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Character portrait: medic",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/characters/rocket_portrait.png",
+      "source_id": 85,
+      "source_sha256": "4a00aabcaa3b67aa8fd3ec168ed833fdd3fb39ac1c9ac4f51988a523fd2530f6",
+      "source_rect": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_white_matte",
+        "fit_256"
+      ],
+      "pivot": [
+        0.5,
+        0.95
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Character portrait: rocket",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/characters/shotgun_portrait.png",
+      "source_id": 86,
+      "source_sha256": "d7bae2dfbd91f06fd6cef95deb199e1d99500330bd1baff47bd0710c1fa11b23",
+      "source_rect": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_white_matte",
+        "fit_256"
+      ],
+      "pivot": [
+        0.5,
+        0.95
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Character portrait: shotgun",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/characters/rifle_portrait.png",
+      "source_id": 87,
+      "source_sha256": "58f5a4422528f1b243c0dd67eca73f36e67beecd144ea0ca71e69377da32d6b5",
+      "source_rect": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_white_matte",
+        "fit_256"
+      ],
+      "pivot": [
+        0.5,
+        0.95
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Character portrait: rifle",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/characters/energy_portrait.png",
+      "source_id": 88,
+      "source_sha256": "cf05f6bc4a4b15ab1162881a7d247b75b3d57ad59df9fc8412e2d0dc4422a5d6",
+      "source_rect": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_white_matte",
+        "fit_256"
+      ],
+      "pivot": [
+        0.5,
+        0.95
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Character portrait: energy",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/characters/smg_portrait.png",
+      "source_id": 89,
+      "source_sha256": "105543ec20713a807d6360917fe2fa6a7ab192510dc16d7fbbd7753c8dd07658",
+      "source_rect": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_white_matte",
+        "fit_256"
+      ],
+      "pivot": [
+        0.5,
+        0.95
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Character portrait: smg",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/characters/sniper_portrait.png",
+      "source_id": 90,
+      "source_sha256": "478566880ac8337fa9c1c22ded6fdef990905978af2c0109e93c10f0b8347d8b",
+      "source_rect": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "processing": [
+        "manual_crop",
+        "border_connected_white_matte",
+        "fit_256"
+      ],
+      "pivot": [
+        0.5,
+        0.95
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Character portrait: sniper",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/weapons/rifle.png",
+      "source_id": 26,
+      "source_sha256": "02f082b7cffb4035533f0eeb810b46e6f1f7861a893540540d7c1c7539723ee7",
+      "source_rect": [
+        18,
+        49,
+        245,
+        222
+      ],
+      "processing": [
+        "manual_non_grid_crop",
+        "border_connected_white_matte",
+        "fit_256x128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Weapon presentation icon: rifle",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/weapons/smg.png",
+      "source_id": 26,
+      "source_sha256": "02f082b7cffb4035533f0eeb810b46e6f1f7861a893540540d7c1c7539723ee7",
+      "source_rect": [
+        274,
+        58,
+        494,
+        224
+      ],
+      "processing": [
+        "manual_non_grid_crop",
+        "border_connected_white_matte",
+        "fit_256x128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Weapon presentation icon: smg",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/weapons/shotgun.png",
+      "source_id": 26,
+      "source_sha256": "02f082b7cffb4035533f0eeb810b46e6f1f7861a893540540d7c1c7539723ee7",
+      "source_rect": [
+        525,
+        52,
+        748,
+        215
+      ],
+      "processing": [
+        "manual_non_grid_crop",
+        "border_connected_white_matte",
+        "fit_256x128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Weapon presentation icon: shotgun",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/weapons/sniper.png",
+      "source_id": 26,
+      "source_sha256": "02f082b7cffb4035533f0eeb810b46e6f1f7861a893540540d7c1c7539723ee7",
+      "source_rect": [
+        778,
+        52,
+        1010,
+        224
+      ],
+      "processing": [
+        "manual_non_grid_crop",
+        "border_connected_white_matte",
+        "fit_256x128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Weapon presentation icon: sniper",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/weapons/mg.png",
+      "source_id": 26,
+      "source_sha256": "02f082b7cffb4035533f0eeb810b46e6f1f7861a893540540d7c1c7539723ee7",
+      "source_rect": [
+        13,
+        296,
+        247,
+        463
+      ],
+      "processing": [
+        "manual_non_grid_crop",
+        "border_connected_white_matte",
+        "fit_256x128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Weapon presentation icon: mg",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/weapons/rocket.png",
+      "source_id": 26,
+      "source_sha256": "02f082b7cffb4035533f0eeb810b46e6f1f7861a893540540d7c1c7539723ee7",
+      "source_rect": [
+        276,
+        296,
+        497,
+        476
+      ],
+      "processing": [
+        "manual_non_grid_crop",
+        "border_connected_white_matte",
+        "fit_256x128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Weapon presentation icon: rocket",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/weapons/laser.png",
+      "source_id": 26,
+      "source_sha256": "02f082b7cffb4035533f0eeb810b46e6f1f7861a893540540d7c1c7539723ee7",
+      "source_rect": [
+        781,
+        307,
+        1009,
+        466
+      ],
+      "processing": [
+        "manual_non_grid_crop",
+        "border_connected_white_matte",
+        "fit_256x128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Weapon presentation icon: laser",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/weapons/plasma.png",
+      "source_id": 26,
+      "source_sha256": "02f082b7cffb4035533f0eeb810b46e6f1f7861a893540540d7c1c7539723ee7",
+      "source_rect": [
+        20,
+        554,
+        242,
+        744
+      ],
+      "processing": [
+        "manual_non_grid_crop",
+        "border_connected_white_matte",
+        "fit_256x128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Weapon presentation icon: plasma",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/weapons/gatling.png",
+      "source_id": 26,
+      "source_sha256": "02f082b7cffb4035533f0eeb810b46e6f1f7861a893540540d7c1c7539723ee7",
+      "source_rect": [
+        527,
+        551,
+        752,
+        747
+      ],
+      "processing": [
+        "manual_non_grid_crop",
+        "border_connected_white_matte",
+        "fit_256x128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Weapon presentation icon: gatling",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/weapons/railgun.png",
+      "source_id": 26,
+      "source_sha256": "02f082b7cffb4035533f0eeb810b46e6f1f7861a893540540d7c1c7539723ee7",
+      "source_rect": [
+        272,
+        555,
+        500,
+        742
+      ],
+      "processing": [
+        "manual_non_grid_crop",
+        "border_connected_white_matte",
+        "fit_256x128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 5,
+      "intended_consumer": "Weapon presentation icon: railgun",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/maps/sunny.webp",
+      "source_id": 68,
+      "source_sha256": "fb393aaac96e0977800658d00222133fcba9040b3f239b71c2edbd166dc6d0d3",
+      "source_rect": [
+        0,
+        0,
+        768,
+        1376
+      ],
+      "processing": [
+        "exif_transpose",
+        "resize_max_320",
+        "webp_q78"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 0,
+      "intended_consumer": "Map preview: sunny",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/maps/sunny.jpg",
+      "source_id": 68,
+      "source_sha256": "fb393aaac96e0977800658d00222133fcba9040b3f239b71c2edbd166dc6d0d3",
+      "source_rect": [
+        0,
+        0,
+        768,
+        1376
+      ],
+      "processing": [
+        "exif_transpose",
+        "resize_max_320",
+        "jpeg_q78"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 0,
+      "intended_consumer": "Map preview fallback: sunny",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/maps/desert.webp",
+      "source_id": 72,
+      "source_sha256": "01be21d7677136338b409f84b5e27db86ca2b7953e0c0a210cbaa4ff85028f7d",
+      "source_rect": [
+        0,
+        0,
+        768,
+        1376
+      ],
+      "processing": [
+        "exif_transpose",
+        "resize_max_320",
+        "webp_q78"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 0,
+      "intended_consumer": "Map preview: desert",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/maps/desert.jpg",
+      "source_id": 72,
+      "source_sha256": "01be21d7677136338b409f84b5e27db86ca2b7953e0c0a210cbaa4ff85028f7d",
+      "source_rect": [
+        0,
+        0,
+        768,
+        1376
+      ],
+      "processing": [
+        "exif_transpose",
+        "resize_max_320",
+        "jpeg_q78"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 0,
+      "intended_consumer": "Map preview fallback: desert",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/maps/city.webp",
+      "source_id": 69,
+      "source_sha256": "043c66bd429c72dc8b4727329c33ebf163d2fe62a7a67e66767c8ccc24ff4a24",
+      "source_rect": [
+        0,
+        0,
+        768,
+        1376
+      ],
+      "processing": [
+        "exif_transpose",
+        "resize_max_320",
+        "webp_q78"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 0,
+      "intended_consumer": "Map preview: city",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/maps/city.jpg",
+      "source_id": 69,
+      "source_sha256": "043c66bd429c72dc8b4727329c33ebf163d2fe62a7a67e66767c8ccc24ff4a24",
+      "source_rect": [
+        0,
+        0,
+        768,
+        1376
+      ],
+      "processing": [
+        "exif_transpose",
+        "resize_max_320",
+        "jpeg_q78"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 0,
+      "intended_consumer": "Map preview fallback: city",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/maps/forest.webp",
+      "source_id": 70,
+      "source_sha256": "d632d613c90bc4b0aad49073c4786ed1bccba747dc44e021fb00c100b7ec985b",
+      "source_rect": [
+        0,
+        0,
+        768,
+        1376
+      ],
+      "processing": [
+        "exif_transpose",
+        "resize_max_320",
+        "webp_q78"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 0,
+      "intended_consumer": "Map preview: forest",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/maps/forest.jpg",
+      "source_id": 70,
+      "source_sha256": "d632d613c90bc4b0aad49073c4786ed1bccba747dc44e021fb00c100b7ec985b",
+      "source_rect": [
+        0,
+        0,
+        768,
+        1376
+      ],
+      "processing": [
+        "exif_transpose",
+        "resize_max_320",
+        "jpeg_q78"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 0,
+      "intended_consumer": "Map preview fallback: forest",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/maps/snow.webp",
+      "source_id": 71,
+      "source_sha256": "a25ae45dbf7ce58fbc741a9597a695e1696a82c2eb4216bc8459a29b82458857",
+      "source_rect": [
+        0,
+        0,
+        768,
+        1376
+      ],
+      "processing": [
+        "exif_transpose",
+        "resize_max_320",
+        "webp_q78"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 0,
+      "intended_consumer": "Map preview: snow",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/maps/snow.jpg",
+      "source_id": 71,
+      "source_sha256": "a25ae45dbf7ce58fbc741a9597a695e1696a82c2eb4216bc8459a29b82458857",
+      "source_rect": [
+        0,
+        0,
+        768,
+        1376
+      ],
+      "processing": [
+        "exif_transpose",
+        "resize_max_320",
+        "jpeg_q78"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 0,
+      "intended_consumer": "Map preview fallback: snow",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/effects/muzzle.png",
+      "source_id": 7,
+      "source_sha256": "0b34267bac5df44e3e7a371cd4b0957646238e3d00a3ab10cf8070e26bfb7be2",
+      "source_rect": [
+        25,
+        35,
+        285,
+        225
+      ],
+      "processing": [
+        "manual_crop",
+        "black_matte_to_straight_alpha",
+        "fit_256x128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 4,
+      "intended_consumer": "Canvas VFX candidate: muzzle",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/effects/hit.png",
+      "source_id": 11,
+      "source_sha256": "ddde691556e9cf8499b16f2c24d5dafaa72340adb085b4b664ad0ff759cb3db1",
+      "source_rect": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "processing": [
+        "manual_crop",
+        "black_matte_to_straight_alpha",
+        "fit_256x256"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 2,
+      "intended_consumer": "Canvas VFX candidate: hit",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/effects/explosion.png",
+      "source_id": 8,
+      "source_sha256": "d4ac78683b64ba4c8f1b56a1d7cf50d6210596de90e30a6815c3899adc454708",
+      "source_rect": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "processing": [
+        "manual_crop",
+        "black_matte_to_straight_alpha",
+        "fit_256x256"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 2,
+      "intended_consumer": "Canvas VFX candidate: explosion",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/effects/boss_explosion.png",
+      "source_id": 12,
+      "source_sha256": "947dc43e44044da4d9c41de6c61f863801e78a9fc12dc7f0668d8b5eec799e67",
+      "source_rect": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "processing": [
+        "manual_crop",
+        "black_matte_to_straight_alpha",
+        "fit_256x256"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 2,
+      "intended_consumer": "Canvas VFX candidate: boss_explosion",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/effects/coins.png",
+      "source_id": 6,
+      "source_sha256": "6a3341c5a70b50b6d7341ce921f193b00855894c8e14eb11409fe0d55ef8429c",
+      "source_rect": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "processing": [
+        "manual_crop",
+        "black_matte_to_straight_alpha",
+        "fit_256x256"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 2,
+      "intended_consumer": "Canvas VFX candidate: coins",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/effects/upgrade.png",
+      "source_id": 10,
+      "source_sha256": "e85316dbcb312ee1bd7e6eac3f2d1137fddd94af858510239499cac5531a9f45",
+      "source_rect": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "processing": [
+        "manual_crop",
+        "black_matte_to_straight_alpha",
+        "fit_256x256"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 2,
+      "intended_consumer": "Canvas VFX candidate: upgrade",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/effects/boss_entry.png",
+      "source_id": 13,
+      "source_sha256": "2ed40e9ce88c032595f5a2991f15747356c1deb0290ba5babed2c818b8d8a807",
+      "source_rect": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "processing": [
+        "manual_crop",
+        "black_matte_to_straight_alpha",
+        "fit_256x256"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 2,
+      "intended_consumer": "Canvas VFX candidate: boss_entry",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/effects/trail.png",
+      "source_id": 9,
+      "source_sha256": "fa2bb59fc5f19615ff0a23a3ef8fc76259afc0e65c325a55b96dc14b1d67c77d",
+      "source_rect": [
+        45,
+        35,
+        950,
+        115
+      ],
+      "processing": [
+        "manual_crop",
+        "black_matte_to_straight_alpha",
+        "fit_256x64"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 2,
+      "intended_consumer": "Canvas VFX candidate: trail",
+      "integration_status": "runtime_candidate_not_wired"
+    },
+    {
+      "output": "assets/game/terrain/grass.png",
+      "source_id": 75,
+      "source_sha256": "fd9559fb4f0ccb7fed5fcacb493fcdd3b9644654cc7aff6b2cb27ef150421a13",
+      "source_rect": [
+        448,
+        420,
+        512,
+        484
+      ],
+      "processing": [
+        "manual_top_face_sample",
+        "mirror_symmetrized_seam",
+        "png_128"
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "padding_px": 0,
+      "intended_consumer": "Repeatable grass texture",
+      "integration_status": "runtime_candidate_not_wired"
+    }
+  ]
+}

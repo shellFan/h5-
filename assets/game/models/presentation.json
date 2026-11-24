@@ -1,0 +1,415 @@
+{
+  "version": 1,
+  "policy": "basecolor-atlas-only",
+  "keys": [
+    "soldier",
+    "normal",
+    "fast",
+    "shield",
+    "split",
+    "spitter",
+    "elite",
+    "bomber",
+    "bruiser",
+    "bulwark",
+    "spitking",
+    "hivelord",
+    "titan",
+    "overlord"
+  ],
+  "models": [
+    {
+      "key": "soldier",
+      "remappedCells": [
+        0,
+        1,
+        2,
+        3,
+        8,
+        9,
+        10,
+        15
+      ],
+      "files": [
+        {
+          "source": "assets/models/soldier/soldier.glb",
+          "target": "assets/game/models/soldier/soldier.glb",
+          "sourceSha256": "e924d3fb363c60c4cb62a7ac30dda09e914947a44caeab281c585601c2fabd01",
+          "variantSha256": "ee38e4b6989b5204354733b3cef37339874a877d9874b2990704c13d9676dd48",
+          "sourceBytes": 348068,
+          "variantBytes": 329971
+        },
+        {
+          "source": "assets/models/soldier/soldier-lod.glb",
+          "target": "assets/game/models/soldier/soldier-lod.glb",
+          "sourceSha256": "f0e88ad7d19a43464016a923c7c3f0d1bec54770eacb0b3e45c188a13d77e781",
+          "variantSha256": "376fcddc4002bd1aa8d7dd63369a61255bb804915784ab6dfc70108c8ae99663",
+          "sourceBytes": 149120,
+          "variantBytes": 131019
+        }
+      ]
+    },
+    {
+      "key": "normal",
+      "remappedCells": [
+        0,
+        1,
+        2
+      ],
+      "files": [
+        {
+          "source": "assets/models/zombies/normal/normal.glb",
+          "target": "assets/game/models/zombies/normal/normal.glb",
+          "sourceSha256": "959d7834e30dc064215c24d0c44a56b75cab88fc8a50142e53275008dac7a483",
+          "variantSha256": "7861fad0ce904510ee964cf2b2052252274cf3098aeabd88c8ea06ee29771cea",
+          "sourceBytes": 123796,
+          "variantBytes": 122554
+        },
+        {
+          "source": "assets/models/zombies/normal/normal-lod.glb",
+          "target": "assets/game/models/zombies/normal/normal-lod.glb",
+          "sourceSha256": "63f6edb74d710e154aeada802fdb7b27d4071cde57db31b846063c7f514fb6b7",
+          "variantSha256": "4671fef1e65f12f09b27b4fd71a1d0abf258a26a44a1359d197884cd85fa0dd3",
+          "sourceBytes": 43080,
+          "variantBytes": 41838
+        }
+      ]
+    },
+    {
+      "key": "fast",
+      "remappedCells": [
+        0,
+        1,
+        2
+      ],
+      "files": [
+        {
+          "source": "assets/models/zombies/fast/fast.glb",
+          "target": "assets/game/models/zombies/fast/fast.glb",
+          "sourceSha256": "fd51de5374c68df7104448fb9a44098b165ed81c70255e8f02e7efd506db6639",
+          "variantSha256": "e507f6209e29d7e5f4f508d6b2e8eab705ed4e9f055507d0a00edb3bd5f4f706",
+          "sourceBytes": 125316,
+          "variantBytes": 124007
+        },
+        {
+          "source": "assets/models/zombies/fast/fast-lod.glb",
+          "target": "assets/game/models/zombies/fast/fast-lod.glb",
+          "sourceSha256": "40cf0fdcfba0d1beddb271914f4f475c4de61c5f1aef3bc8f6c5891b61c7813c",
+          "variantSha256": "c328802ce06665ee8b58e9581f819d1dc682a761d049488c1882b0e4a9559053",
+          "sourceBytes": 45488,
+          "variantBytes": 44179
+        }
+      ]
+    },
+    {
+      "key": "shield",
+      "remappedCells": [
+        0,
+        1,
+        2,
+        4
+      ],
+      "files": [
+        {
+          "source": "assets/models/zombies/shield/shield.glb",
+          "target": "assets/game/models/zombies/shield/shield.glb",
+          "sourceSha256": "9316e4865ad6152f192c8759ca1b1bf20d2e9c88b575e5704738cfef57069330",
+          "variantSha256": "2ea9677497b762745fcd986be50af052f72bd7462bc36ddab4e3da6019c65569",
+          "sourceBytes": 141024,
+          "variantBytes": 139731
+        },
+        {
+          "source": "assets/models/zombies/shield/shield-lod.glb",
+          "target": "assets/game/models/zombies/shield/shield-lod.glb",
+          "sourceSha256": "0b4ba0d91f4bd40715b57568b5a4fd9ae90d0e7c2f2b6bb1de8ab5d8e45367a5",
+          "variantSha256": "2178f44076236328acbfe449dfd8dde5e9f245e6c58a94ef0d48cad6e9919dbe",
+          "sourceBytes": 48816,
+          "variantBytes": 47523
+        }
+      ]
+    },
+    {
+      "key": "split",
+      "remappedCells": [
+        0,
+        1,
+        2,
+        12
+      ],
+      "files": [
+        {
+          "source": "assets/models/zombies/split/split.glb",
+          "target": "assets/game/models/zombies/split/split.glb",
+          "sourceSha256": "90b923917cfe49fa457f05e2594c641bf67ed4c5d773d5136bfc7739874244a6",
+          "variantSha256": "8c794f8d51b1db9a888088eb2884944cd29a42dc07d032fb18a49fa22f93a606",
+          "sourceBytes": 138644,
+          "variantBytes": 137349
+        },
+        {
+          "source": "assets/models/zombies/split/split-lod.glb",
+          "target": "assets/game/models/zombies/split/split-lod.glb",
+          "sourceSha256": "da615ca3a4ddaf1d9dc55dc35bd032c78777fcfe0440a6f40b0bb10fa99029ca",
+          "variantSha256": "e52bb7ebbd81523681b2d43e21cba85af8767235f207e06e3034c94cfb70201a",
+          "sourceBytes": 47688,
+          "variantBytes": 46393
+        }
+      ]
+    },
+    {
+      "key": "spitter",
+      "remappedCells": [
+        0,
+        1,
+        2,
+        11
+      ],
+      "files": [
+        {
+          "source": "assets/models/zombies/spitter/spitter.glb",
+          "target": "assets/game/models/zombies/spitter/spitter.glb",
+          "sourceSha256": "8c1637c4acddfc07ecfa7df786e2c9d80731a5a1f03f7f5d112267908e4a77fd",
+          "variantSha256": "c25662a3cc25f03fbc54a69cb1466a3fc524f52d68916f62a7a23a2c44f038fa",
+          "sourceBytes": 130468,
+          "variantBytes": 129169
+        },
+        {
+          "source": "assets/models/zombies/spitter/spitter-lod.glb",
+          "target": "assets/game/models/zombies/spitter/spitter-lod.glb",
+          "sourceSha256": "37876922119cb120da129d6571b5cd559d78e39eb66b13edb78a734202fb2f5f",
+          "variantSha256": "a3a5000f069042bbf2441f7ce412651c58e7200bf7a5dbaca7537f45d88d2c49",
+          "sourceBytes": 44788,
+          "variantBytes": 43489
+        }
+      ]
+    },
+    {
+      "key": "elite",
+      "remappedCells": [
+        0,
+        1,
+        2,
+        4
+      ],
+      "files": [
+        {
+          "source": "assets/models/zombies/elite/elite.glb",
+          "target": "assets/game/models/zombies/elite/elite.glb",
+          "sourceSha256": "160f41dc6fc642b78e10766d6056d30c325bd2a2936a07a3b45a99c5f30baec2",
+          "variantSha256": "2ced27388360e49de4258a6884a9bd0c636d6a60bef6c0ec2eba179a72ffb97f",
+          "sourceBytes": 143616,
+          "variantBytes": 142325
+        },
+        {
+          "source": "assets/models/zombies/elite/elite-lod.glb",
+          "target": "assets/game/models/zombies/elite/elite-lod.glb",
+          "sourceSha256": "56e55aa31cfaf1f787fe144be11b27fbb4dffe56623f62a9cb60cfcbc0d5e98e",
+          "variantSha256": "b98989054e051094da4f02cf445157a3e5efef81dccfca561f4c151116dd3b75",
+          "sourceBytes": 49300,
+          "variantBytes": 48009
+        }
+      ]
+    },
+    {
+      "key": "bomber",
+      "remappedCells": [
+        0,
+        1,
+        2,
+        11
+      ],
+      "files": [
+        {
+          "source": "assets/models/zombies/bomber/bomber.glb",
+          "target": "assets/game/models/zombies/bomber/bomber.glb",
+          "sourceSha256": "f00e38858b4cf4901926c99ece671f8a1d0bcf4b957e5af33846d430745049f7",
+          "variantSha256": "a68c213b09ceb29a9988468e865e85e9503b2cdeff414b4bcab147cfe12af156",
+          "sourceBytes": 150408,
+          "variantBytes": 149114
+        },
+        {
+          "source": "assets/models/zombies/bomber/bomber-lod.glb",
+          "target": "assets/game/models/zombies/bomber/bomber-lod.glb",
+          "sourceSha256": "57e29594d9ba943c391316e5cd5a78fb0d40fa5197a1593af6264e99b0b4746d",
+          "variantSha256": "e0a21f416907622302f343ebdcdf33788bee08c9f7f028d8432b3ca0af9509b2",
+          "sourceBytes": 51228,
+          "variantBytes": 49934
+        }
+      ]
+    },
+    {
+      "key": "bruiser",
+      "remappedCells": [
+        0,
+        1,
+        2,
+        4,
+        5
+      ],
+      "files": [
+        {
+          "source": "assets/models/bosses/bruiser/bruiser.glb",
+          "target": "assets/game/models/bosses/bruiser/bruiser.glb",
+          "sourceSha256": "250e68cb3363e56cd4b8943d800369c44e1485adbac612697e86adad7c016d17",
+          "variantSha256": "a18e6cea6138c2d8a1baf602ba03e05b6add3f4b7505521a600d7ee7601fbb27",
+          "sourceBytes": 144396,
+          "variantBytes": 143082
+        },
+        {
+          "source": "assets/models/bosses/bruiser/bruiser-lod.glb",
+          "target": "assets/game/models/bosses/bruiser/bruiser-lod.glb",
+          "sourceSha256": "be75f64597ce2501737e5bec31fe12f7e6b2fcafdb65f6061ba6e656aeb0b857",
+          "variantSha256": "042d2fc2c0f2c9b400951eea790b12da2ac9142fb3487cb31bf3f539711afac8",
+          "sourceBytes": 46364,
+          "variantBytes": 45050
+        }
+      ]
+    },
+    {
+      "key": "bulwark",
+      "remappedCells": [
+        0,
+        1,
+        2,
+        4,
+        5
+      ],
+      "files": [
+        {
+          "source": "assets/models/bosses/bulwark/bulwark.glb",
+          "target": "assets/game/models/bosses/bulwark/bulwark.glb",
+          "sourceSha256": "d6c796276e9c283b557e7c4d14788a0f6795a8f3710536b5f4556ac9c651cadd",
+          "variantSha256": "fc352928657153ebb8b81230592e0c1b381a80e6f5a39fdcdcb8dbbea6b0927d",
+          "sourceBytes": 151336,
+          "variantBytes": 150043
+        },
+        {
+          "source": "assets/models/bosses/bulwark/bulwark-lod.glb",
+          "target": "assets/game/models/bosses/bulwark/bulwark-lod.glb",
+          "sourceSha256": "8328af3b16ad9efc349b5e528f275e1ca5e0113065ae10e5960dd2cf4dcd3b04",
+          "variantSha256": "06103c22ad42d3006d3cf244c08e547a85306172465ceabdc002bfe89db53a6e",
+          "sourceBytes": 48644,
+          "variantBytes": 47351
+        }
+      ]
+    },
+    {
+      "key": "spitking",
+      "remappedCells": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        11
+      ],
+      "files": [
+        {
+          "source": "assets/models/bosses/spitking/spitking.glb",
+          "target": "assets/game/models/bosses/spitking/spitking.glb",
+          "sourceSha256": "2cf1b4adc2b07e91ab483089bfc2f0f2dda39917920944a2141c3cb87aee2bdb",
+          "variantSha256": "a56b9c3c5b9614c281c10b11a1ca7f5749b4f78472378db5d6a69c0768760cb5",
+          "sourceBytes": 142760,
+          "variantBytes": 141481
+        },
+        {
+          "source": "assets/models/bosses/spitking/spitking-lod.glb",
+          "target": "assets/game/models/bosses/spitking/spitking-lod.glb",
+          "sourceSha256": "ada83d0cf20aad854c2a2f446d2a5d3ff24d38b755b42c5213063d599b714b4a",
+          "variantSha256": "5d4757d8c2dc1bc9414b2ea2a6d30495c6ce1b94f78a49df2d97a46b48ecce18",
+          "sourceBytes": 45960,
+          "variantBytes": 44681
+        }
+      ]
+    },
+    {
+      "key": "hivelord",
+      "remappedCells": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        11
+      ],
+      "files": [
+        {
+          "source": "assets/models/bosses/hivelord/hivelord.glb",
+          "target": "assets/game/models/bosses/hivelord/hivelord.glb",
+          "sourceSha256": "fe30fb6dd378ba9c44e94d6279c78f506b1db638f8c2489908c68018827224a8",
+          "variantSha256": "82754caed960152d7d498555d18d0ec5445b0d46599a5485da22a67f14b9a213",
+          "sourceBytes": 140292,
+          "variantBytes": 138987
+        },
+        {
+          "source": "assets/models/bosses/hivelord/hivelord-lod.glb",
+          "target": "assets/game/models/bosses/hivelord/hivelord-lod.glb",
+          "sourceSha256": "1ee26bbcf95670d5fa6e0ca2ff0dfcc01eed283dfbee743edca8ee84250e9891",
+          "variantSha256": "f77500edc806659ae9fe7a2798a84cfa5f62b68def5879f040187144f5444055",
+          "sourceBytes": 46196,
+          "variantBytes": 44891
+        }
+      ]
+    },
+    {
+      "key": "titan",
+      "remappedCells": [
+        0,
+        1,
+        2,
+        4,
+        5
+      ],
+      "files": [
+        {
+          "source": "assets/models/bosses/titan/titan.glb",
+          "target": "assets/game/models/bosses/titan/titan.glb",
+          "sourceSha256": "910f33c2bb7d1f8b9e6ffbb72d575c385c80b49c2372f82f8eec4e817e9c67b6",
+          "variantSha256": "c699334fa5e1702eee610093f6fe0afde79579c18744e7577f3b5de6edad2176",
+          "sourceBytes": 148232,
+          "variantBytes": 146923
+        },
+        {
+          "source": "assets/models/bosses/titan/titan-lod.glb",
+          "target": "assets/game/models/bosses/titan/titan-lod.glb",
+          "sourceSha256": "0439f5700de151351566f60244966c5e7a0bee709f8d8d2b1f2596d8c3c25be0",
+          "variantSha256": "b08a296e8a19dbb236ebf9dade060b95415e782d9914e787701d330850ad29fd",
+          "sourceBytes": 48624,
+          "variantBytes": 47311
+        }
+      ]
+    },
+    {
+      "key": "overlord",
+      "remappedCells": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        11
+      ],
+      "files": [
+        {
+          "source": "assets/models/bosses/overlord/overlord.glb",
+          "target": "assets/game/models/bosses/overlord/overlord.glb",
+          "sourceSha256": "a043fe44147ff53faf96a46e78774fc183027d2bf42b698ec301ae7fa50e474d",
+          "variantSha256": "d5655d9b93ef5940fc0cf3c205a7b61f0dc0b039beb9de07cf5460ac87490054",
+          "sourceBytes": 147272,
+          "variantBytes": 145976
+        },
+        {
+          "source": "assets/models/bosses/overlord/overlord-lod.glb",
+          "target": "assets/game/models/bosses/overlord/overlord-lod.glb",
+          "sourceSha256": "bace755706a3fdeb8c19f724833117398c9c3a9694d268dd0f1b5a2524103fc7",
+          "variantSha256": "2893cf541e2569c7cfde10462b780920937e993dc5c65093996a10fd5e3c38da",
+          "sourceBytes": 49124,
+          "variantBytes": 47828
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "sourceBytes": 2940048,
+    "variantBytes": 2870208
+  }
+}

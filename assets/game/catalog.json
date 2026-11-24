@@ -1,0 +1,776 @@
+[
+  {
+    "id": "source-01",
+    "category": "effects",
+    "title": "Game combat VFX sprite sheet",
+    "path": "assets/game/catalog/game_combat_vfx_sprite_sheet_d2833228.webp",
+    "fallbackPath": "assets/game/catalog/game_combat_vfx_sprite_sheet_d2833228.jpg",
+    "role": "reference",
+    "source_id": 1
+  },
+  {
+    "id": "source-02",
+    "category": "gameplay",
+    "title": "3D game multiplier gates asset",
+    "path": "assets/game/catalog/3d_game_multiplier_gates_asset_e44638c9.webp",
+    "fallbackPath": "assets/game/catalog/3d_game_multiplier_gates_asset_e44638c9.jpg",
+    "role": "reference",
+    "source_id": 2
+  },
+  {
+    "id": "source-03",
+    "category": "ui",
+    "title": "3D game UI asset sheet",
+    "path": "assets/game/catalog/3d_game_ui_asset_sheet_3b8190b1.webp",
+    "fallbackPath": "assets/game/catalog/3d_game_ui_asset_sheet_3b8190b1.jpg",
+    "role": "reference",
+    "source_id": 3
+  },
+  {
+    "id": "source-04",
+    "category": "ui",
+    "title": "3D game UI asset sheet",
+    "path": "assets/game/catalog/3d_game_ui_asset_sheet_91d99e4c.webp",
+    "fallbackPath": "assets/game/catalog/3d_game_ui_asset_sheet_91d99e4c.jpg",
+    "role": "reference",
+    "source_id": 4
+  },
+  {
+    "id": "source-05",
+    "category": "ui",
+    "title": "Game UI asset sheet green",
+    "path": "assets/game/catalog/game_ui_asset_sheet_green_635c7ff5.webp",
+    "fallbackPath": "assets/game/catalog/game_ui_asset_sheet_green_635c7ff5.jpg",
+    "role": "reference",
+    "source_id": 5
+  },
+  {
+    "id": "source-06",
+    "category": "effects",
+    "title": "Gold coins bursting upward",
+    "path": "assets/game/catalog/gold_coins_bursting_upward_f57548f2.webp",
+    "fallbackPath": "assets/game/catalog/gold_coins_bursting_upward_f57548f2.jpg",
+    "role": "reference",
+    "source_id": 6
+  },
+  {
+    "id": "source-07",
+    "category": "effects",
+    "title": "Gunfire muzzle flashes particle",
+    "path": "assets/game/catalog/gunfire_muzzle_flashes_particle_113fe16c.webp",
+    "fallbackPath": "assets/game/catalog/gunfire_muzzle_flashes_particle_113fe16c.jpg",
+    "role": "reference",
+    "source_id": 7
+  },
+  {
+    "id": "source-08",
+    "category": "effects",
+    "title": "Explosion VFX with debris and",
+    "path": "assets/game/catalog/explosion_vfx_with_debris_and_87e5f30f.webp",
+    "fallbackPath": "assets/game/catalog/explosion_vfx_with_debris_and_87e5f30f.jpg",
+    "role": "reference",
+    "source_id": 8
+  },
+  {
+    "id": "source-09",
+    "category": "effects",
+    "title": "Bullet trails glowing laser streaks",
+    "path": "assets/game/catalog/bullet_trails_glowing_laser_streaks_91395c98.webp",
+    "fallbackPath": "assets/game/catalog/bullet_trails_glowing_laser_streaks_91395c98.jpg",
+    "role": "reference",
+    "source_id": 9
+  },
+  {
+    "id": "source-10",
+    "category": "effects",
+    "title": "Golden rays level up aura",
+    "path": "assets/game/catalog/golden_rays_level_up_aura_20863dc0.webp",
+    "fallbackPath": "assets/game/catalog/golden_rays_level_up_aura_20863dc0.jpg",
+    "role": "reference",
+    "source_id": 10
+  },
+  {
+    "id": "source-11",
+    "category": "effects",
+    "title": "Game particle hit sparks asset",
+    "path": "assets/game/catalog/game_particle_hit_sparks_asset_3cad9b0a.webp",
+    "fallbackPath": "assets/game/catalog/game_particle_hit_sparks_asset_3cad9b0a.jpg",
+    "role": "reference",
+    "source_id": 11
+  },
+  {
+    "id": "source-12",
+    "category": "effects",
+    "title": "Boss death mechanical explosion",
+    "path": "assets/game/catalog/boss_death_mechanical_explosion_854a83bb.webp",
+    "fallbackPath": "assets/game/catalog/boss_death_mechanical_explosion_854a83bb.jpg",
+    "role": "reference",
+    "source_id": 12
+  },
+  {
+    "id": "source-13",
+    "category": "effects",
+    "title": "Boss entrance particle effect asset",
+    "path": "assets/game/catalog/boss_entrance_particle_effect_asset_325f54e3.webp",
+    "fallbackPath": "assets/game/catalog/boss_entrance_particle_effect_asset_325f54e3.jpg",
+    "role": "reference",
+    "source_id": 13
+  },
+  {
+    "id": "source-14",
+    "category": "ui",
+    "title": "Defeat popup UI window",
+    "path": "assets/game/catalog/defeat_popup_ui_window_1077a0c5.webp",
+    "fallbackPath": "assets/game/catalog/defeat_popup_ui_window_1077a0c5.jpg",
+    "role": "reference",
+    "source_id": 14
+  },
+  {
+    "id": "source-15",
+    "category": "ui",
+    "title": "Mobile game leaderboard UI screen",
+    "path": "assets/game/catalog/mobile_game_leaderboard_ui_screen_239141aa.webp",
+    "fallbackPath": "assets/game/catalog/mobile_game_leaderboard_ui_screen_239141aa.jpg",
+    "role": "reference",
+    "source_id": 15
+  },
+  {
+    "id": "source-16",
+    "category": "ui",
+    "title": "Mobile game combat HUD UI",
+    "path": "assets/game/catalog/mobile_game_combat_hud_ui_49d770df.webp",
+    "fallbackPath": "assets/game/catalog/mobile_game_combat_hud_ui_49d770df.jpg",
+    "role": "reference",
+    "source_id": 16
+  },
+  {
+    "id": "source-17",
+    "category": "ui",
+    "title": "Victory popup UI window",
+    "path": "assets/game/catalog/victory_popup_ui_window_df2096f3.webp",
+    "fallbackPath": "assets/game/catalog/victory_popup_ui_window_df2096f3.jpg",
+    "role": "reference",
+    "source_id": 17
+  },
+  {
+    "id": "source-18",
+    "category": "ui",
+    "title": "3D Mobile Game Settings UI",
+    "path": "assets/game/catalog/3d_mobile_game_settings_ui_76f99ce0.webp",
+    "fallbackPath": "assets/game/catalog/3d_mobile_game_settings_ui_76f99ce0.jpg",
+    "role": "reference",
+    "source_id": 18
+  },
+  {
+    "id": "source-19",
+    "category": "ui",
+    "title": "Mobile game main menu layout",
+    "path": "assets/game/catalog/mobile_game_main_menu_layout_24896b5e.webp",
+    "fallbackPath": "assets/game/catalog/mobile_game_main_menu_layout_24896b5e.jpg",
+    "role": "reference",
+    "source_id": 19
+  },
+  {
+    "id": "source-20",
+    "category": "ui",
+    "title": "Game upgrade UI panel",
+    "path": "assets/game/catalog/game_upgrade_ui_panel_3cdb96f6.webp",
+    "fallbackPath": "assets/game/catalog/game_upgrade_ui_panel_3cdb96f6.jpg",
+    "role": "reference",
+    "source_id": 20
+  },
+  {
+    "id": "source-21",
+    "category": "ui",
+    "title": "Shop UI screen grid items",
+    "path": "assets/game/catalog/shop_ui_screen_grid_items_d8d6c9d5.webp",
+    "fallbackPath": "assets/game/catalog/shop_ui_screen_grid_items_d8d6c9d5.jpg",
+    "role": "reference",
+    "source_id": 21
+  },
+  {
+    "id": "source-22",
+    "category": "ui",
+    "title": "3D game reward chest banner",
+    "path": "assets/game/catalog/3d_game_reward_chest_banner_1caa2ddb.webp",
+    "fallbackPath": "assets/game/catalog/3d_game_reward_chest_banner_1caa2ddb.jpg",
+    "role": "reference",
+    "source_id": 22
+  },
+  {
+    "id": "source-23",
+    "category": "ui",
+    "title": "3D game icon asset sheet",
+    "path": "assets/game/catalog/3d_game_icon_asset_sheet_8a64239f.webp",
+    "fallbackPath": "assets/game/catalog/3d_game_icon_asset_sheet_8a64239f.jpg",
+    "role": "reference",
+    "source_id": 23
+  },
+  {
+    "id": "source-24",
+    "category": "ui",
+    "title": "Game leaderboard badges and frames",
+    "path": "assets/game/catalog/game_leaderboard_badges_and_frames_bcd47cc0.webp",
+    "fallbackPath": "assets/game/catalog/game_leaderboard_badges_and_frames_bcd47cc0.jpg",
+    "role": "reference",
+    "source_id": 24
+  },
+  {
+    "id": "source-25",
+    "category": "ui",
+    "title": "3D game icon asset sheet",
+    "path": "assets/game/catalog/3d_game_icon_asset_sheet_82f32e58.webp",
+    "fallbackPath": "assets/game/catalog/3d_game_icon_asset_sheet_82f32e58.jpg",
+    "role": "reference",
+    "source_id": 25
+  },
+  {
+    "id": "source-26",
+    "category": "weapons",
+    "title": "Toy military weapons icon sheet",
+    "path": "assets/game/catalog/toy_military_weapons_icon_sheet_646139ec.webp",
+    "fallbackPath": "assets/game/catalog/toy_military_weapons_icon_sheet_646139ec.jpg",
+    "role": "reference",
+    "source_id": 26
+  },
+  {
+    "id": "source-27",
+    "category": "weapons",
+    "title": "Weapon asset design sheet",
+    "path": "assets/game/catalog/weapon_asset_design_sheet_3827c811.webp",
+    "fallbackPath": "assets/game/catalog/weapon_asset_design_sheet_3827c811.jpg",
+    "role": "reference",
+    "source_id": 27
+  },
+  {
+    "id": "source-28",
+    "category": "weapons",
+    "title": "Sniper rifle progression design",
+    "path": "assets/game/catalog/sniper_rifle_progression_design_46e71ee1.webp",
+    "fallbackPath": "assets/game/catalog/sniper_rifle_progression_design_46e71ee1.jpg",
+    "role": "reference",
+    "source_id": 28
+  },
+  {
+    "id": "source-29",
+    "category": "weapons",
+    "title": "Rocket launcher design asset",
+    "path": "assets/game/catalog/rocket_launcher_design_asset_e2ffd857.webp",
+    "fallbackPath": "assets/game/catalog/rocket_launcher_design_asset_e2ffd857.jpg",
+    "role": "reference",
+    "source_id": 29
+  },
+  {
+    "id": "source-30",
+    "category": "weapons",
+    "title": "Grenade launcher weapon design s",
+    "path": "assets/game/catalog/grenade_launcher_weapon_design_s_3171317b.webp",
+    "fallbackPath": "assets/game/catalog/grenade_launcher_weapon_design_s_3171317b.jpg",
+    "role": "reference",
+    "source_id": 30
+  },
+  {
+    "id": "source-31",
+    "category": "weapons",
+    "title": "Laser rifle design sheet progres",
+    "path": "assets/game/catalog/laser_rifle_design_sheet_progres_f05c1816.webp",
+    "fallbackPath": "assets/game/catalog/laser_rifle_design_sheet_progres_f05c1816.jpg",
+    "role": "reference",
+    "source_id": 31
+  },
+  {
+    "id": "source-32",
+    "category": "weapons",
+    "title": "Gatling gun asset design sheet",
+    "path": "assets/game/catalog/gatling_gun_asset_design_sheet_edb93245.webp",
+    "fallbackPath": "assets/game/catalog/gatling_gun_asset_design_sheet_edb93245.jpg",
+    "role": "reference",
+    "source_id": 32
+  },
+  {
+    "id": "source-33",
+    "category": "weapons",
+    "title": "Assault rifle weapon design sheet",
+    "path": "assets/game/catalog/assault_rifle_weapon_design_sheet_c5c8d455.webp",
+    "fallbackPath": "assets/game/catalog/assault_rifle_weapon_design_sheet_c5c8d455.jpg",
+    "role": "reference",
+    "source_id": 33
+  },
+  {
+    "id": "source-34",
+    "category": "weapons",
+    "title": "Shotgun weapon design progressio",
+    "path": "assets/game/catalog/shotgun_weapon_design_progressio_d83ed789.webp",
+    "fallbackPath": "assets/game/catalog/shotgun_weapon_design_progressio_d83ed789.jpg",
+    "role": "reference",
+    "source_id": 34
+  },
+  {
+    "id": "source-35",
+    "category": "weapons",
+    "title": "Submachine gun progression sheet",
+    "path": "assets/game/catalog/submachine_gun_progression_sheet_4a601561.webp",
+    "fallbackPath": "assets/game/catalog/submachine_gun_progression_sheet_4a601561.jpg",
+    "role": "reference",
+    "source_id": 35
+  },
+  {
+    "id": "source-36",
+    "category": "weapons",
+    "title": "Heavy machine gun design sheet",
+    "path": "assets/game/catalog/heavy_machine_gun_design_sheet_8f21568e.webp",
+    "fallbackPath": "assets/game/catalog/heavy_machine_gun_design_sheet_8f21568e.jpg",
+    "role": "reference",
+    "source_id": 36
+  },
+  {
+    "id": "source-37",
+    "category": "weapons",
+    "title": "Plasma cannon design progression",
+    "path": "assets/game/catalog/plasma_cannon_design_progression_43e66a48.webp",
+    "fallbackPath": "assets/game/catalog/plasma_cannon_design_progression_43e66a48.jpg",
+    "role": "reference",
+    "source_id": 37
+  },
+  {
+    "id": "source-38",
+    "category": "weapons",
+    "title": "Railgun weapon asset design sheet",
+    "path": "assets/game/catalog/railgun_weapon_asset_design_sheet_5eca0af5.webp",
+    "fallbackPath": "assets/game/catalog/railgun_weapon_asset_design_sheet_5eca0af5.jpg",
+    "role": "reference",
+    "source_id": 38
+  },
+  {
+    "id": "source-39",
+    "category": "enemies",
+    "title": "Cartoon monster game sprite sheet",
+    "path": "assets/game/catalog/cartoon_monster_game_sprite_sheet_17f803de.webp",
+    "fallbackPath": "assets/game/catalog/cartoon_monster_game_sprite_sheet_17f803de.jpg",
+    "role": "reference",
+    "source_id": 39
+  },
+  {
+    "id": "source-40",
+    "category": "enemies",
+    "title": "Green toxic blob monster dripping",
+    "path": "assets/game/catalog/green_toxic_blob_monster_dripping_96bc028b.webp",
+    "fallbackPath": "assets/game/catalog/green_toxic_blob_monster_dripping_96bc028b.jpg",
+    "role": "reference",
+    "source_id": 40
+  },
+  {
+    "id": "source-41",
+    "category": "enemies",
+    "title": "Red monster wearing spiked armor",
+    "path": "assets/game/catalog/red_monster_wearing_spiked_armor_687d1791.webp",
+    "fallbackPath": "assets/game/catalog/red_monster_wearing_spiked_armor_687d1791.jpg",
+    "role": "reference",
+    "source_id": 41
+  },
+  {
+    "id": "source-42",
+    "category": "enemies",
+    "title": "Bomb monster with ticking fuse",
+    "path": "assets/game/catalog/bomb_monster_with_ticking_fuse_98b4d3de.webp",
+    "fallbackPath": "assets/game/catalog/bomb_monster_with_ticking_fuse_98b4d3de.jpg",
+    "role": "reference",
+    "source_id": 42
+  },
+  {
+    "id": "source-43",
+    "category": "enemies",
+    "title": "Orange mutant monster asset",
+    "path": "assets/game/catalog/orange_mutant_monster_asset_f981d5e7.webp",
+    "fallbackPath": "assets/game/catalog/orange_mutant_monster_asset_f981d5e7.jpg",
+    "role": "reference",
+    "source_id": 43
+  },
+  {
+    "id": "source-44",
+    "category": "enemies",
+    "title": "Purple cartoon monster game asset",
+    "path": "assets/game/catalog/purple_cartoon_monster_game_asset_3a0bbbda.webp",
+    "fallbackPath": "assets/game/catalog/purple_cartoon_monster_game_asset_3a0bbbda.jpg",
+    "role": "reference",
+    "source_id": 44
+  },
+  {
+    "id": "source-45",
+    "category": "enemies",
+    "title": "Armored mecha monster game asset",
+    "path": "assets/game/catalog/armored_mecha_monster_game_asset_96179c59.webp",
+    "fallbackPath": "assets/game/catalog/armored_mecha_monster_game_asset_96179c59.jpg",
+    "role": "reference",
+    "source_id": 45
+  },
+  {
+    "id": "source-46",
+    "category": "enemies",
+    "title": "Mecha T-Rex character design sheet",
+    "path": "assets/game/catalog/mecha_t_rex_character_design_sheet_39d41347.webp",
+    "fallbackPath": "assets/game/catalog/mecha_t_rex_character_design_sheet_39d41347.jpg",
+    "role": "reference",
+    "source_id": 46
+  },
+  {
+    "id": "source-47",
+    "category": "enemies",
+    "title": "Tank robot character design sheet",
+    "path": "assets/game/catalog/tank_robot_character_design_sheet_dc7c17c0.webp",
+    "fallbackPath": "assets/game/catalog/tank_robot_character_design_sheet_dc7c17c0.jpg",
+    "role": "reference",
+    "source_id": 47
+  },
+  {
+    "id": "source-48",
+    "category": "enemies",
+    "title": "Mutant gorilla character design",
+    "path": "assets/game/catalog/mutant_gorilla_character_design_50a274d3.webp",
+    "fallbackPath": "assets/game/catalog/mutant_gorilla_character_design_50a274d3.jpg",
+    "role": "reference",
+    "source_id": 48
+  },
+  {
+    "id": "source-49",
+    "category": "enemies",
+    "title": "Mecha robot design sheet",
+    "path": "assets/game/catalog/mecha_robot_design_sheet_cce753aa.webp",
+    "fallbackPath": "assets/game/catalog/mecha_robot_design_sheet_cce753aa.jpg",
+    "role": "reference",
+    "source_id": 49
+  },
+  {
+    "id": "source-50",
+    "category": "enemies",
+    "title": "Mecha behemoth character design",
+    "path": "assets/game/catalog/mecha_behemoth_character_design_06bb52c7.webp",
+    "fallbackPath": "assets/game/catalog/mecha_behemoth_character_design_06bb52c7.jpg",
+    "role": "reference",
+    "source_id": 50
+  },
+  {
+    "id": "source-51",
+    "category": "marketing",
+    "title": "Toy soldiers fighting cartoon mo",
+    "path": "assets/game/catalog/toy_soldiers_fighting_cartoon_mo_0fe3b85a.webp",
+    "fallbackPath": "assets/game/catalog/toy_soldiers_fighting_cartoon_mo_0fe3b85a.jpg",
+    "role": "reference",
+    "source_id": 51
+  },
+  {
+    "id": "source-55",
+    "category": "marketing",
+    "title": "Soldiers shooting enemy robot bugs",
+    "path": "assets/game/catalog/soldiers_shooting_enemy_robot_bugs_a51af57e.webp",
+    "fallbackPath": "assets/game/catalog/soldiers_shooting_enemy_robot_bugs_a51af57e.jpg",
+    "role": "reference",
+    "source_id": 55
+  },
+  {
+    "id": "source-56",
+    "category": "marketing",
+    "title": "Soldiers shooting robot bugs",
+    "path": "assets/game/catalog/soldiers_shooting_robot_bugs_0f6ccbd5.webp",
+    "fallbackPath": "assets/game/catalog/soldiers_shooting_robot_bugs_0f6ccbd5.jpg",
+    "role": "reference",
+    "source_id": 56
+  },
+  {
+    "id": "source-57",
+    "category": "marketing",
+    "title": "Toy soldiers charging down road",
+    "path": "assets/game/catalog/toy_soldiers_charging_down_road_86cf4255.webp",
+    "fallbackPath": "assets/game/catalog/toy_soldiers_charging_down_road_86cf4255.jpg",
+    "role": "reference",
+    "source_id": 57
+  },
+  {
+    "id": "source-59",
+    "category": "marketing",
+    "title": "Mech soldiers charging in factory",
+    "path": "assets/game/catalog/mech_soldiers_charging_in_factory_462985a6.webp",
+    "fallbackPath": "assets/game/catalog/mech_soldiers_charging_in_factory_462985a6.jpg",
+    "role": "reference",
+    "source_id": 59
+  },
+  {
+    "id": "source-60",
+    "category": "marketing",
+    "title": "Sci-fi mech squad fighting boss",
+    "path": "assets/game/catalog/sci_fi_mech_squad_fighting_boss_01f87b64.webp",
+    "fallbackPath": "assets/game/catalog/sci_fi_mech_squad_fighting_boss_01f87b64.jpg",
+    "role": "reference",
+    "source_id": 60
+  },
+  {
+    "id": "source-61",
+    "category": "marketing",
+    "title": "Squad fighting zombies in city",
+    "path": "assets/game/catalog/squad_fighting_zombies_in_city_84b59619.webp",
+    "fallbackPath": "assets/game/catalog/squad_fighting_zombies_in_city_84b59619.jpg",
+    "role": "reference",
+    "source_id": 61
+  },
+  {
+    "id": "source-62",
+    "category": "marketing",
+    "title": "Soldiers fighting zombies in bunker",
+    "path": "assets/game/catalog/soldiers_fighting_zombies_in_bunker_13c70f3a.webp",
+    "fallbackPath": "assets/game/catalog/soldiers_fighting_zombies_in_bunker_13c70f3a.jpg",
+    "role": "reference",
+    "source_id": 62
+  },
+  {
+    "id": "source-63",
+    "category": "marketing",
+    "title": "Green toy soldier holding rifle",
+    "path": "assets/game/catalog/green_toy_soldier_holding_rifle_3b540778.webp",
+    "fallbackPath": "assets/game/catalog/green_toy_soldier_holding_rifle_3b540778.jpg",
+    "role": "reference",
+    "source_id": 63
+  },
+  {
+    "id": "source-64",
+    "category": "marketing",
+    "title": "Toy soldiers firing weapons",
+    "path": "assets/game/catalog/toy_soldiers_firing_weapons_2b4449f3.webp",
+    "fallbackPath": "assets/game/catalog/toy_soldiers_firing_weapons_2b4449f3.jpg",
+    "role": "reference",
+    "source_id": 64
+  },
+  {
+    "id": "source-65",
+    "category": "environment",
+    "title": "3D game modular environment props",
+    "path": "assets/game/catalog/3d_game_modular_environment_props_5fd99a9c.webp",
+    "fallbackPath": "assets/game/catalog/3d_game_modular_environment_props_5fd99a9c.jpg",
+    "role": "reference",
+    "source_id": 65
+  },
+  {
+    "id": "source-66",
+    "category": "environment",
+    "title": "3D military battleground map sho",
+    "path": "assets/game/catalog/3d_military_battleground_map_sho_67f2fe30.webp",
+    "fallbackPath": "assets/game/catalog/3d_military_battleground_map_sho_67f2fe30.jpg",
+    "role": "reference",
+    "source_id": 66
+  },
+  {
+    "id": "source-67",
+    "category": "environment",
+    "title": "Golden energy platform in space",
+    "path": "assets/game/catalog/golden_energy_platform_in_space_8c8c2c64.webp",
+    "fallbackPath": "assets/game/catalog/golden_energy_platform_in_space_8c8c2c64.jpg",
+    "role": "reference",
+    "source_id": 67
+  },
+  {
+    "id": "source-68",
+    "category": "environment",
+    "title": "Sunny military base game map",
+    "path": "assets/game/catalog/sunny_military_base_game_map_98a69a46.webp",
+    "fallbackPath": "assets/game/catalog/sunny_military_base_game_map_98a69a46.jpg",
+    "role": "reference",
+    "source_id": 68
+  },
+  {
+    "id": "source-69",
+    "category": "environment",
+    "title": "Ruined urban avenue background",
+    "path": "assets/game/catalog/ruined_urban_avenue_background_9d5622e0.webp",
+    "fallbackPath": "assets/game/catalog/ruined_urban_avenue_background_9d5622e0.jpg",
+    "role": "reference",
+    "source_id": 69
+  },
+  {
+    "id": "source-70",
+    "category": "environment",
+    "title": "Forest military camp game map",
+    "path": "assets/game/catalog/forest_military_camp_game_map_02f67f12.webp",
+    "fallbackPath": "assets/game/catalog/forest_military_camp_game_map_02f67f12.jpg",
+    "role": "reference",
+    "source_id": 70
+  },
+  {
+    "id": "source-71",
+    "category": "environment",
+    "title": "Snow military base game map",
+    "path": "assets/game/catalog/snow_military_base_game_map_b51bd919.webp",
+    "fallbackPath": "assets/game/catalog/snow_military_base_game_map_b51bd919.jpg",
+    "role": "reference",
+    "source_id": 71
+  },
+  {
+    "id": "source-72",
+    "category": "environment",
+    "title": "Desert training base map background",
+    "path": "assets/game/catalog/desert_training_base_map_background_2deaba68.webp",
+    "fallbackPath": "assets/game/catalog/desert_training_base_map_background_2deaba68.jpg",
+    "role": "reference",
+    "source_id": 72
+  },
+  {
+    "id": "source-73",
+    "category": "environment",
+    "title": "Volcano research base game map",
+    "path": "assets/game/catalog/volcano_research_base_game_map_18bd70de.webp",
+    "fallbackPath": "assets/game/catalog/volcano_research_base_game_map_18bd70de.jpg",
+    "role": "reference",
+    "source_id": 73
+  },
+  {
+    "id": "source-74",
+    "category": "environment",
+    "title": "Industrial factory game map back",
+    "path": "assets/game/catalog/industrial_factory_game_map_back_c37df917.webp",
+    "fallbackPath": "assets/game/catalog/industrial_factory_game_map_back_c37df917.jpg",
+    "role": "reference",
+    "source_id": 74
+  },
+  {
+    "id": "source-75",
+    "category": "environment",
+    "title": "Green grass lawn tile",
+    "path": "assets/game/catalog/green_grass_lawn_tile_d39dd91f.webp",
+    "fallbackPath": "assets/game/catalog/green_grass_lawn_tile_d39dd91f.jpg",
+    "role": "reference",
+    "source_id": 75
+  },
+  {
+    "id": "source-76",
+    "category": "environment",
+    "title": "Military roadblock barrier game",
+    "path": "assets/game/catalog/military_roadblock_barrier_game_73cae8a9.webp",
+    "fallbackPath": "assets/game/catalog/military_roadblock_barrier_game_73cae8a9.jpg",
+    "role": "reference",
+    "source_id": 76
+  },
+  {
+    "id": "source-77",
+    "category": "environment",
+    "title": "Wooden watchtower with searchlight",
+    "path": "assets/game/catalog/wooden_watchtower_with_searchlight_6fcba15b.webp",
+    "fallbackPath": "assets/game/catalog/wooden_watchtower_with_searchlight_6fcba15b.jpg",
+    "role": "reference",
+    "source_id": 77
+  },
+  {
+    "id": "source-78",
+    "category": "environment",
+    "title": "Sandbag barricade 3D asset",
+    "path": "assets/game/catalog/sandbag_barricade_3d_asset_184c3724.webp",
+    "fallbackPath": "assets/game/catalog/sandbag_barricade_3d_asset_184c3724.jpg",
+    "role": "reference",
+    "source_id": 78
+  },
+  {
+    "id": "source-79",
+    "category": "environment",
+    "title": "Wooden ammo boxes stack",
+    "path": "assets/game/catalog/wooden_ammo_boxes_stack_469d2943.webp",
+    "fallbackPath": "assets/game/catalog/wooden_ammo_boxes_stack_469d2943.jpg",
+    "role": "reference",
+    "source_id": 79
+  },
+  {
+    "id": "source-80",
+    "category": "environment",
+    "title": "Barbed wire fence barricade",
+    "path": "assets/game/catalog/barbed_wire_fence_barricade_7a4d64e6.webp",
+    "fallbackPath": "assets/game/catalog/barbed_wire_fence_barricade_7a4d64e6.jpg",
+    "role": "reference",
+    "source_id": 80
+  },
+  {
+    "id": "source-81",
+    "category": "environment",
+    "title": "Destroyed military tank wreckage",
+    "path": "assets/game/catalog/destroyed_military_tank_wreckage_09c66cf2.webp",
+    "fallbackPath": "assets/game/catalog/destroyed_military_tank_wreckage_09c66cf2.jpg",
+    "role": "reference",
+    "source_id": 81
+  },
+  {
+    "id": "source-82",
+    "category": "environment",
+    "title": "Concrete military road segment 3",
+    "path": "assets/game/catalog/concrete_military_road_segment_3_15913314.webp",
+    "fallbackPath": "assets/game/catalog/concrete_military_road_segment_3_15913314.jpg",
+    "role": "reference",
+    "source_id": 82
+  },
+  {
+    "id": "source-83",
+    "category": "characters",
+    "title": "Green toy soldier character design",
+    "path": "assets/game/catalog/green_toy_soldier_character_design_7e430005.webp",
+    "fallbackPath": "assets/game/catalog/green_toy_soldier_character_design_7e430005.jpg",
+    "role": "reference",
+    "source_id": 83
+  },
+  {
+    "id": "source-84",
+    "category": "characters",
+    "title": "Toy medic soldier holding injector",
+    "path": "assets/game/catalog/toy_medic_soldier_holding_injector_6b0cdce4.webp",
+    "fallbackPath": "assets/game/catalog/toy_medic_soldier_holding_injector_6b0cdce4.jpg",
+    "role": "reference",
+    "source_id": 84
+  },
+  {
+    "id": "source-85",
+    "category": "characters",
+    "title": "Toy rocket launcher soldier",
+    "path": "assets/game/catalog/toy_rocket_launcher_soldier_e04ac1e3.webp",
+    "fallbackPath": "assets/game/catalog/toy_rocket_launcher_soldier_e04ac1e3.jpg",
+    "role": "reference",
+    "source_id": 85
+  },
+  {
+    "id": "source-86",
+    "category": "characters",
+    "title": "Toy soldier holding shotgun",
+    "path": "assets/game/catalog/toy_soldier_holding_shotgun_6ef8722e.webp",
+    "fallbackPath": "assets/game/catalog/toy_soldier_holding_shotgun_6ef8722e.jpg",
+    "role": "reference",
+    "source_id": 86
+  },
+  {
+    "id": "source-87",
+    "category": "characters",
+    "title": "Toy soldier holding rifle",
+    "path": "assets/game/catalog/toy_soldier_holding_rifle_69b4b58a.webp",
+    "fallbackPath": "assets/game/catalog/toy_soldier_holding_rifle_69b4b58a.jpg",
+    "role": "reference",
+    "source_id": 87
+  },
+  {
+    "id": "source-88",
+    "category": "characters",
+    "title": "Toy soldier holding energy pistols",
+    "path": "assets/game/catalog/toy_soldier_holding_energy_pistols_040697ec.webp",
+    "fallbackPath": "assets/game/catalog/toy_soldier_holding_energy_pistols_040697ec.jpg",
+    "role": "reference",
+    "source_id": 88
+  },
+  {
+    "id": "source-89",
+    "category": "characters",
+    "title": "Toy soldier holding twin SMGs",
+    "path": "assets/game/catalog/toy_soldier_holding_twin_smgs_56b84425.webp",
+    "fallbackPath": "assets/game/catalog/toy_soldier_holding_twin_smgs_56b84425.jpg",
+    "role": "reference",
+    "source_id": 89
+  },
+  {
+    "id": "source-90",
+    "category": "characters",
+    "title": "Green toy sniper soldier asset",
+    "path": "assets/game/catalog/green_toy_sniper_soldier_asset_80c8366d.webp",
+    "fallbackPath": "assets/game/catalog/green_toy_sniper_soldier_asset_80c8366d.jpg",
+    "role": "reference",
+    "source_id": 90
+  }
+]
