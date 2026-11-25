@@ -382,7 +382,7 @@ class World {
         var aspect = (cam.aspect && cam.aspect > 0.2) ? cam.aspect : (390 / 844);
         var halfVRad = (cam.fov * Math.PI / 180) * 0.5;
         var halfHRad = Math.atan(Math.tan(halfVRad) * aspect);
-        var minDistForWidth = (halfW / 0.80) / Math.max(0.22, Math.tan(halfHRad));
+        var minDistForWidth = (halfW / 0.74) / Math.max(0.22, Math.tan(halfHRad));
         var baseOffZ = 8.2 + this._camScale * 1.8 + sDepth * 0.78;
         var offZ = Math.max(baseOffZ, minDistForWidth * 0.82);
         var offY = 5.7 + this._camScale * 2.75 + Math.max(0, offZ - baseOffZ) * 0.45;

@@ -474,19 +474,31 @@ var V60UI = {
                 '<div class="v15-train-stage">' +
                 '<div class="v15-gear-col">' + leftSlots.map(renderSlot).join('') + '</div>' +
                 '<div class="v15-train-hero">' +
+                '<div class="v15-train-hero-wrap">' +
+                '<div class="v15-pedestal-shadow"></div>' +
                 '<img class="v15-train-hero-img" src="assets/game/characters/soldier_portrait.png" alt="绿色战术步兵">' +
+                '</div>' +
                 '<div class="v15-train-hero-badge"><b>Lv.' + lv + '</b><span style="color:' + (tier.color || '#ffe382') + '">' + tier.name + '</span></div>' +
                 '</div>' +
                 '<div class="v15-gear-col">' + rightSlots.map(renderSlot).join('') + '</div>' +
                 '</div>';
         }
         if (statsEl) {
+            var nextLv = Math.min(50, lv + 1);
+            var nDmg = (stats.dmgBonus || 0) + (lv < 50 ? 1 : 0);
+            var nHp = (stats.hpBonus || 0) + (lv < 50 ? 2 : 0);
+            var nCrit = ((stats.critBonus || 0) + (lv < 50 ? 0.005 : 0)) * 100;
+            var nDr = ((stats.drBonus || 0) + (lv < 50 ? 0.006 : 0)) * 100;
+            var nRec = (stats.recruitBonus || 0) + (lv < 50 && nextLv % 5 === 0 ? 1 : 0);
+            var delta = function(cur, nxt, suf) {
+                return (lv < 50 && nxt !== cur) ? '<b>' + cur + suf + ' <i>→ ' + nxt + suf + '</i></b>' : '<b>' + cur + suf + '</b>';
+            };
             statsEl.innerHTML =
-                '<div class="v15-stat-chip"><span>伤害加成</span><b>+' + (stats.dmgBonus || 0) + '</b></div>' +
-                '<div class="v15-stat-chip"><span>生命加成</span><b>+' + (stats.hpBonus || 0) + '</b></div>' +
-                '<div class="v15-stat-chip"><span>暴击率</span><b>+' + ((stats.critBonus || 0) * 100).toFixed(1) + '%</b></div>' +
-                '<div class="v15-stat-chip"><span>伤害减免</span><b>' + ((stats.drBonus || 0) * 100).toFixed(1) + '%</b></div>' +
-                '<div class="v15-stat-chip"><span>招募效率</span><b>+' + (stats.recruitBonus || 0) + '</b></div>' +
+                '<div class="v15-stat-chip"><span>伤害加成</span>' + delta('+' + (stats.dmgBonus || 0), '+' + nDmg, '') + '</div>' +
+                '<div class="v15-stat-chip"><span>生命加成</span>' + delta('+' + (stats.hpBonus || 0), '+' + nHp, '') + '</div>' +
+                '<div class="v15-stat-chip"><span>暴击率</span>' + delta('+' + ((stats.critBonus || 0) * 100).toFixed(1), '+' + nCrit.toFixed(1), '%') + '</div>' +
+                '<div class="v15-stat-chip"><span>伤害减免</span>' + delta(((stats.drBonus || 0) * 100).toFixed(1), nDr.toFixed(1), '%') + '</div>' +
+                '<div class="v15-stat-chip"><span>招募效率</span>' + delta('+' + (stats.recruitBonus || 0), '+' + nRec, '') + '</div>' +
                 '<div class="v15-stat-chip is-tier"><span>军团军衔</span><b>' + tier.name + '</b></div>';
         }
         // 紧凑背包区 (空状态单行不占半屏, 有掉落时正常展开操作)
@@ -636,6 +648,7 @@ var V60UI = {
                 '<div class="v15-page-coin"><img src="assets/game/ui/coin.png" alt=""><span>' + (game.profile.coins || 0) + '</span></div>' +
                 '</div>' +
                 '<div class="v15-armory-stage">' +
+                '<div class="v15-pedestal-shadow is-weapon"></div>' +
                 '<div class="v14-weapon-3d" id="v14-weapon-3d"></div>' +
                 '<div class="v118-weapon-art" role="img" aria-label="' + currentDef.name + '" data-weapon="' + current + '"' +
                 ' data-atlas-cols="4" data-atlas-rows="2" data-atlas-col="' + (currentIndex % 4) + '" data-atlas-row="' + Math.floor(currentIndex / 4) + '"' +

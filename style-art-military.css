@@ -1543,3 +1543,118 @@
     text-overflow: ellipsis;
     max-width: 100%;
 }
+
+/* =========================================================================
+ * V15-ART-009: 角色落地展示台 + 消除下屏留白 + 统一商店顶栏 + 协调军工按钮体系
+ * ========================================================================= */
+.v15-train-stage {
+    min-height: 368px !important;
+    align-items: flex-end !important;
+    padding: 18px 2px 14px !important;
+}
+.v15-gear-col {
+    gap: 14px !important;
+    padding-bottom: 18px;
+}
+.v15-train-hero {
+    min-height: 340px !important;
+    justify-content: flex-end !important;
+}
+.v15-train-hero-wrap {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+.v15-train-hero-img {
+    position: relative;
+    z-index: 2;
+    width: 214px !important;
+    height: 228px !important;
+}
+.v15-pedestal-shadow {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 132px;
+    height: 24px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(6, 14, 8, 0.72) 0%, rgba(6, 14, 8, 0.25) 55%, rgba(6, 14, 8, 0) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+.v15-pedestal-shadow.is-weapon {
+    bottom: 18px;
+    width: 176px;
+    height: 26px;
+}
+.v15-stat-chip {
+    padding: 9px 6px !important;
+}
+.v15-stat-chip b {
+    font-size: 13.5px !important;
+}
+.v15-stat-chip b i {
+    font-style: normal;
+    font-size: 10.5px;
+    color: #ffe382;
+    font-weight: 800;
+}
+#game-container.art-military.v42-ui #v60-train-bag {
+    flex: 0 0 auto !important;
+    margin-bottom: 10px !important;
+}
+#game-container.art-military.v42-ui #v60-train-upgrade {
+    margin-top: auto !important;
+}
+
+/* 军械库: 更大主展示台 + 协调军绿金进化按钮 + 充实底部 4x2 卡片 */
+.v15-armory-stage {
+    height: 266px !important;
+    align-items: flex-end !important;
+    padding-bottom: 12px;
+}
+#game-container.art-military.v42-ui #v118-armory-hero .v118-weapon-art {
+    width: 242px !important;
+    height: 216px !important;
+}
+#game-container.art-military.v42-ui .v60-armory-btn.evolve {
+    background: linear-gradient(180deg, #43be6a, #247c42) !important;
+    border: 1.5px solid #ffe488 !important;
+    color: #ffffff !important;
+    box-shadow: 0 3px 0 #144a26 !important;
+}
+#game-container.art-military.v42-ui .v60-armory-list {
+    gap: 8px !important;
+    padding: 10px 0 6px !important;
+}
+#game-container.art-military.v42-ui .v15-weapon-tile {
+    padding: 22px 4px 10px !important;
+    min-height: 112px !important;
+}
+#game-container.art-military.v42-ui .v15-weapon-tile .v118-weapon-art {
+    width: 72px !important;
+    height: 58px !important;
+}
+
+/* 升级商店: 统一顶栏 + 顶部后勤帐篷留景 + 清除冗余旧标题与底部返回键 */
+#game-container.art-military.v42-ui #shop-screen .art-panel-emblem,
+#game-container.art-military.v42-ui #shop-screen .v42-panel-kicker,
+#game-container.art-military.v42-ui #shop-screen .game-title,
+#game-container.art-military.v42-ui #shop-screen h2,
+#game-container.art-military.v42-ui #shop-screen .shop-coins,
+#game-container.art-military.v42-ui #shop-screen #btn-close-shop {
+    display: none !important;
+}
+#game-container.art-military.v42-ui #shop-screen #shop-list {
+    margin-top: 86px !important;
+    gap: 11px !important;
+    justify-content: space-between !important;
+}
+.v15-shop-svg {
+    width: 40px;
+    height: 40px;
+    display: block;
+    filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.5));
+}

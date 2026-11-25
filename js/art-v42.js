@@ -341,31 +341,32 @@
         var group = new THREE.Group();
         var frameParts = [];
         var trimParts = [];
-        var postW = 0.20;
-        var postH = 1.66;
+        // V15-ART-009: 精致纤细军工能量门框架 (收窄厚重灰柱, 强化暗军绿金属质感与发光能源边条)
+        var postW = 0.13;
+        var postH = 1.68;
         var postX = width * 0.5 - postW * 0.5;
-        var steelDark = 0x2B3442;
-        var steelMid = 0x455264;
+        var steelDark = 0x202D25;
+        var steelMid = 0x36493D;
 
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(postW, postH, 0.06, 0.22), -postX, 0.88, 0), color: steelMid });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(postW, postH, 0.06, 0.22),  postX, 0.88, 0), color: steelMid });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(width, 0.16, 0.06, 0.24), 0, 1.72, 0), color: style.frame });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.30, 0.18, 0.06, 0.32), -postX, 0.10, 0.01), color: steelDark });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.30, 0.18, 0.06, 0.32),  postX, 0.10, 0.01), color: steelDark });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.24, 0.10, 0.04, 0.26), -postX, 1.78, 0), color: steelDark });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.24, 0.10, 0.04, 0.26),  postX, 1.78, 0), color: steelDark });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(postW, postH, 0.04, 0.15), -postX, 0.88, 0), color: steelMid });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(postW, postH, 0.04, 0.15),  postX, 0.88, 0), color: steelMid });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(width, 0.13, 0.04, 0.18), 0, 1.74, 0), color: style.frame });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.20, 0.13, 0.04, 0.22), -postX, 0.08, 0.01), color: steelDark });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.20, 0.13, 0.04, 0.22),  postX, 0.08, 0.01), color: steelDark });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.18, 0.08, 0.03, 0.18), -postX, 1.79, 0), color: steelDark });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.18, 0.08, 0.03, 0.18),  postX, 1.79, 0), color: steelDark });
 
-        // V15: 底座黄黑战术防撞块 + 顶部中央发光状态指示灯
-        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.18, 0.14, 0.34), -postX, 0.18, 0.02), color: 0xF5B82E });
-        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.18, 0.14, 0.34),  postX, 0.18, 0.02), color: 0xF5B82E });
-        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.38, 0.14, 0.16), 0, 1.88, 0.02), color: style.light });
-        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.14, 0.11, 0.14), -postX, 1.88, 0), color: 0xFFB830 });
-        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.14, 0.11, 0.14),  postX, 1.88, 0), color: 0xFFB830 });
-        var insetX = width * 0.5 - 0.145;
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.05, 1.46, 0.014, 0.045), -insetX, 0.92, 0.08), color: style.light });
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.05, 1.46, 0.014, 0.045),  insetX, 0.92, 0.08), color: style.light });
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.28, 0.05, 0.014, 0.045), 0, 1.63, 0.08), color: style.light });
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.28, 0.05, 0.014, 0.045), 0, 0.21, 0.08), color: style.light });
+        // V15-ART-009: 底座暖金防撞块 + 顶部中央高光指示灯 + 鲜明内圈能量光条
+        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.13, 0.10, 0.24), -postX, 0.14, 0.02), color: 0xF5C43D });
+        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.13, 0.10, 0.24),  postX, 0.14, 0.02), color: 0xF5C43D });
+        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.42, 0.11, 0.12), 0, 1.86, 0.02), color: style.light });
+        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.11, 0.09, 0.11), -postX, 1.86, 0), color: 0xFFD24C });
+        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.11, 0.09, 0.11),  postX, 1.86, 0), color: 0xFFD24C });
+        var insetX = width * 0.5 - 0.115;
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.06, 1.50, 0.016, 0.05), -insetX, 0.92, 0.075), color: style.light });
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.06, 1.50, 0.016, 0.05),  insetX, 0.92, 0.075), color: style.light });
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.22, 0.055, 0.016, 0.05), 0, 1.65, 0.075), color: style.light });
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.22, 0.055, 0.016, 0.05), 0, 0.19, 0.075), color: style.light });
 
         var frameMat = preparePbr(new THREE.MeshStandardMaterial({
             vertexColors: true,

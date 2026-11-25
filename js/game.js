@@ -597,22 +597,34 @@ class Game {
         var btnClose = document.getElementById('btn-close-shop');
         if (btnClose) btnClose.addEventListener('click', function() { self._sfx('click'); self._closeShop(); });
         this._shopRows = {};
+        // V15-ART-009: 统一升级商店顶部导航栏 (返回 | 标题 | 实时金币) + 精准五项军工功能图标
+        var shopPanel = document.querySelector('#shop-screen .title-panel');
+        if (shopPanel && !document.getElementById('v15-shop-topbar')) {
+            var sTop = document.createElement('div');
+            sTop.id = 'v15-shop-topbar';
+            sTop.className = 'v15-armory-topbar';
+            sTop.innerHTML =
+                '<button type="button" class="v15-page-back" id="v15-shop-back">‹ 返回</button>' +
+                '<div class="v15-page-title-wrap"><span class="v15-page-kicker">SUPPLY DEPOT</span><strong>后勤升级商店</strong></div>' +
+                '<div class="v15-page-coin"><img src="assets/game/ui/coin.png" alt=""><span id="v15-shop-top-coins">0</span></div>';
+            shopPanel.insertBefore(sTop, shopPanel.firstChild);
+            sTop.querySelector('#v15-shop-back').addEventListener('click', function() { self._sfx('click'); self._closeShop(); });
+        }
+        var svgRapid = '<svg class="v15-shop-svg" viewBox="0 0 40 40"><defs><linearGradient id="gBolt" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFF29A"/><stop offset="55%" stop-color="#FFA826"/><stop offset="100%" stop-color="#E05A12"/></linearGradient></defs><rect x="6" y="13" width="6" height="19" rx="2" fill="#D4A642" stroke="#523508" stroke-width="1.5"/><path d="M6 13 L9 6 L12 13 Z" fill="#F2D06B" stroke="#523508" stroke-width="1.2"/><rect x="14" y="15" width="6" height="17" rx="2" fill="#C49434" stroke="#523508" stroke-width="1.5"/><path d="M14 15 L17 8 L20 15 Z" fill="#F2D06B" stroke="#523508" stroke-width="1.2"/><path d="M26 5 L18 21 H25 L21 35 L35 17 H27 L31 5 Z" fill="url(#gBolt)" stroke="#4D2304" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+        var svgPierce = '<svg class="v15-shop-svg" viewBox="0 0 40 40"><defs><linearGradient id="gAP" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFE680"/><stop offset="60%" stop-color="#E09A24"/><stop offset="100%" stop-color="#8A4E0B"/></linearGradient></defs><path d="M24 7 L34 11 V22 C34 28 29 33 24 35 C19 33 14 28 14 22 V11 Z" fill="#4E6658" stroke="#98B8A2" stroke-width="1.8"/><path d="M24 12 L21 20 L27 21 L23 30" fill="none" stroke="#FFE478" stroke-width="2.2" stroke-linecap="round"/><path d="M4 25 L16 14 L22 20 L10 31 Z" fill="url(#gAP)" stroke="#472804" stroke-width="1.5"/><path d="M16 14 L27 9 L22 20 Z" fill="#FFF2B8" stroke="#472804" stroke-width="1.4"/></svg>';
         var shopIconMap = {
-            recruit: 'assets/game/characters/soldier_portrait.png',
-            logistics: 'assets/game/ui/chest.png',
-            gun: 'assets/game/weapons/rifle.png',
-            rapid: 'assets/game/ui/star.png',
-            pierce: 'assets/game/ui/shield.png'
+            recruit: '<img class="v15-shop-icon-img" src="assets/game/characters/soldier_portrait.png" alt="新兵招募">',
+            logistics: '<img class="v15-shop-icon-img" src="assets/game/ui/chest.png" alt="后勤补给">',
+            gun: '<img class="v15-shop-icon-img" src="assets/game/weapons/rifle.png" alt="枪械强化">',
+            rapid: svgRapid,
+            pierce: svgPierce
         };
         if (listEl) {
             Object.keys(UPGRADE_DEFS).forEach(function(id) {
                 var def = UPGRADE_DEFS[id];
                 var row = document.createElement('div');
                 row.className = 'shop-row';
-                var iconSrc = shopIconMap[id];
-                var iconHtml = iconSrc
-                    ? '<img class="v15-shop-icon-img" src="' + iconSrc + '" alt="' + def.name + '">'
-                    : def.icon;
+                var iconHtml = shopIconMap[id] || def.icon;
                 row.innerHTML =
                     '<div class="shop-icon">' + iconHtml + '</div>' +
                     '<div class="shop-info">' +
@@ -673,6 +685,8 @@ class Game {
             }
         });
         if (this.ui.shopCoins) this.ui.shopCoins.textContent = this.profile.coins;
+        var topCoin = document.getElementById('v15-shop-top-coins');
+        if (topCoin) topCoin.textContent = this.profile.coins;
     }
 
     _buyUpgrade(id) {
