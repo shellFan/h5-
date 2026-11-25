@@ -99,7 +99,8 @@ class GamePacingController {
         if(wave) {
             // V5.1.5: 批次≥目标活敌×1.25 — 一批就能把 alive 填到目标(旧按波总量/1.5切批,
             // 批间真空期被击杀清空, alive 永远只有批大小)
-            var ceiling=Math.min(P.batchSizeMax,Math.max(P.batchSizeBase,
+            var maxBatch = this.runtimeHordeBoost ? Math.max(144, P.batchSizeMax) : P.batchSizeMax;
+            var ceiling=Math.min(maxBatch,Math.max(P.batchSizeBase,
                 Math.ceil(wave.total/1.5), Math.ceil((aliveTarget||30)*1.25)));
             var floor=Math.max(P.batchSizeBase,ceiling-4);
             return floor+Math.floor(Math.random()*(ceiling-floor+1));
@@ -110,10 +111,14 @@ class GamePacingController {
 
     _emit(w, squad) {
         if (!this.spawnFn || !w.pending.length) return false;
-        var slot = w.spawned % 48;
+        // V15-GAMEPLAY-002: 真实对局(runtimeHordeBoost)沿整条远景跑道纵深铺满尸潮长河(直至基地大门前), 告别后半段路面空洞!
+        var maxSlots = this.runtimeHordeBoost ? 156 : 48;
+        var rowStep = this.runtimeHordeBoost ? 1.85 : 0.95;
+        var slot = w.spawned % maxSlots;
         var col = slot % 6, row = Math.floor(slot / 6);
-        var x = (col - 2.5) * 1.04 + randRange(-.12, .12);
-        var z = Math.min(w.z - 1.5, squad.z - (CONFIG.PACING.spawnDistance || 14)) - row * .95 - randRange(0, .35);
+        var x = (col - 2.5) * 1.08 + randRange(-.16, .16);
+        var frontZ = Math.min(w.z - 1.5, squad.z - (CONFIG.PACING.spawnDistance || 14));
+        var z = frontZ - row * rowStep - randRange(0, 0.55);
         var enemy = this.spawnFn(w.pending[0], x, z, null);
         if (enemy === false || enemy === null) return false;
         w.pending.shift();
@@ -178,17 +183,13 @@ class GamePacingController {
             var cap = this._maxAlive();
             var targetCeiling = CONFIG.ALIVE_TARGET[Math.min(this.levelIndex || 0, CONFIG.ALIVE_TARGET.length - 1)];
             if (this.runtimeHordeBoost) targetCeiling = Math.round(targetCeiling * (CONFIG.ENEMY_ALIVE_TARGET_MULTIPLIER || 1));
-            var targetFormula = Math.round(((squad.count || 1) * 1.5 + 14) *
+            var targetFormula = Math.round(((squad.count || 1) * 1.5 + (this.runtimeHordeBoost ? 48 : 14)) *
                 (this.runtimeHordeBoost ? (CONFIG.ENEMY_ALIVE_TARGET_MULTIPLIER || 1) : 1));
-            var aliveTarget = Math.min(cap, targetCeiling, Math.max(32, targetFormula));
-            // V5.1.5 双相出怪(用户反馈"来超级多的"):
-            //   填充相: alive < 目标 → 帧预算突发 ceil(dt/0.008)≈4只/帧(120-240只/s) 尸潮墙成形
-            //   涓流相: alive ≥ 目标 → 1只/0.15s(6.7只/s) 持续施压逼近硬上限
-            // 弱队伍击杀慢 → alive 高于目标时间更长 → 涓流为主自动降速; 强队伍击杀快 → 填充为主屏满尸潮。
+            var aliveTarget = Math.min(cap, targetCeiling, Math.max(this.runtimeHordeBoost ? 96 : 32, targetFormula));
+            // V5.1.5 / V15-GAMEPLAY-002 双相出怪: 填充相迅速沿整条跑道铺满纵深尸潮长河
             if (alive < aliveTarget) {
-                // Accumulate fractional credit, so 30/60/120 Hz emit at the
-                // same rate. Bound catch-up work to avoid one-frame spawn spikes.
-                w.fillCredit = Math.min(3, (w.fillCredit || 0) + dt / P.fillFrameInterval);
+                var creditCap = this.runtimeHordeBoost ? 10 : 3;
+                w.fillCredit = Math.min(creditCap, (w.fillCredit || 0) + dt / P.fillFrameInterval);
                 var budget = Math.floor(w.fillCredit);
                 var emitted = 0;
                 while (w.pending.length && emitted < budget && alive < aliveTarget) {
