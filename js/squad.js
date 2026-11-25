@@ -49,6 +49,45 @@ class Squad {
         return added;
     }
 
+    /** V15-GAMEPLAY-001: 临时医疗战术护盾 (全局上限2层, 持续8秒; 满层不无限续期) */
+    grantMedicalShield(layers, durationSec, effects) {
+        if (this.count <= 0 || !this.alive) return 0;
+        var maxLayers = 2;
+        var cur = this._medShield || 0;
+        if (cur >= maxLayers) return 0; // 满层不叠加、不无限刷新持续时间
+        var add = Math.min(maxLayers - cur, Math.max(1, Math.floor(layers || 1)));
+        this._medShield = cur + add;
+        this._medShieldT = durationSec || 8;
+        if (effects) effects.floatText(this.x, 2.2, this.z, '战术护盾 ×' + this._medShield, '#6EE7B7', false);
+        return add;
+    }
+
+    /**
+     * V15-GAMEPLAY-001: 统一治疗入口 (A+B方案)
+     * - 有战斗减员(recoverableLoss > 0)时优先恢复损失编制, 绝不溢出变成新增人数
+     * - 满编(recoverableLoss === 0)时提供临时战术护盾(军医1层/医疗包2层, 持续8秒)
+     * - 队伍归零或非战斗态不允许治疗复活
+     */
+    healSquad(amount, source, effects) {
+        if (this.count <= 0 || !this.alive) return 0;
+        var requested = Math.max(0, Math.floor(amount || 0));
+        if (requested <= 0) return 0;
+        var loss = this.recoverableLoss || 0;
+        if (loss > 0) {
+            var capRoom = Math.max(0, this._maxLimit() - this.count);
+            var restored = Math.min(requested, loss, capRoom);
+            if (restored > 0) {
+                var actual = this.addReinforcements(restored, '恢复编制', effects);
+                this.recoverableLoss = Math.max(0, loss - actual);
+                return actual;
+            }
+            return 0;
+        }
+        // 满编时转临时护盾(绝不突破编制无脑加人)
+        this.grantMedicalShield(source === 'medkit' ? 2 : 1, 8, effects);
+        return 0;
+    }
+
     /** 设置小队人数(自动处理增减与弹出动画) */
     setCount(n) {
         n = clamp(Math.floor(n), 0, this._maxLimit());
@@ -129,9 +168,21 @@ class Squad {
 
     getDepth() { return this._formationDepth || 0; }
 
-    /** 僵尸击杀士兵 (V3.3: 复活无敌期间免疫) */
-    killSoldiers(n, effects) {
+    /** 僵尸击杀士兵 (V3.3: 复活无敌期间免疫; V15-GAMEPLAY-001: 医疗护盾逐层抵挡1人减员 + 记录可恢复战斗损失) */
+    killSoldiers(n, effects, options) {
         if (this.invulnT > 0) return; // 复活无敌
+        var rawN = Math.max(0, Math.floor(n || 0));
+        if (rawN <= 0) return;
+        // V15-GAMEPLAY-001: 临时医疗护盾(每层抵挡1人实际减员, 绝不1层免疫整次Boss高额伤害)
+        if (this._medShield > 0 && !(options && options.ignoreShield)) {
+            var blocked = Math.min(this._medShield, rawN);
+            this._medShield -= blocked;
+            if (this._medShield <= 0) this._medShieldT = 0;
+            rawN -= blocked;
+            if (effects) effects.floatText(this.x, 2.0, this.z, '护盾抵挡 -' + blocked, '#6EE7B7', false);
+            if (rawN <= 0) return;
+        }
+        n = rawN;
         var lethal = n >= this.count;
         // VNext: 伤害减免(科技/职业/装备, 上限60%) — 只作用于非致命伤害, 致命一击保留护盾判定
         // 概率化取整: 期望值精确且保持整数(避免小数人数破坏 setCount)
@@ -167,6 +218,9 @@ class Squad {
             }
         }
         this.setCount(this.count - n);
+        if (removed > 0 && !(options && options.unrecoverable)) {
+            this.recoverableLoss = (this.recoverableLoss || 0) + removed;
+        }
         if (this.count > 0 && removed > 0) this.renderer.triggerHit();
         // 在被杀士兵位置生成蓝色死亡粒子
         if (effects && deathPos.length > 0) {
@@ -303,19 +357,21 @@ class Squad {
         if (this._evRateMulT > 0) { this._evRateMulT -= dt; if (this._evRateMulT <= 0) this._evRateMul = 0; }
         if (this._evCritT > 0) { this._evCritT -= dt; if (this._evCritT <= 0) this._evCritBonus = 0; }
         if (this._evPierceT > 0) { this._evPierceT -= dt; if (this._evPierceT <= 0) this._evPierce = 0; }
-        // VNext: 职业被动(战地回复) + V10 QA: 科技"战地医疗"回血接线 + 职业技能自动循环
+        // V15-GAMEPLAY-001: 临时医疗护盾计时衰减 (暂停时随update冻结)
+        if (this._medShield > 0) {
+            this._medShieldT = (this._medShieldT || 0) - dt;
+            if (this._medShieldT <= 0) { this._medShield = 0; this._medShieldT = 0; }
+        }
+        // VNext / V15-GAMEPLAY-001: 职业被动(战地军医) + 科技"战地医疗"统一走 healSquad (12s间隔, 单次上限3人, 满编给1层护盾不无脑刷人)
         var cls = this._gameRef && this._gameRef._classStats;
         var techRegen = (this._gameRef && this._gameRef._techStats && this._gameRef._techStats.regen) || 0;
-        var regenN = ((cls && cls.regenN) || 0) + techRegen;
+        var regenN = Math.min(3, ((cls && cls.regenN) || 0) + techRegen);
         if (regenN > 0 && this.count > 0) {
-            var regenIv = (cls && cls.regenN) ? cls.regenInterval : 10; // 科技战地医疗: 每10秒
+            var regenIv = (cls && cls.regenN) ? (cls.regenInterval || 12) : 12;
             this._regenT = (this._regenT === undefined ? regenIv : this._regenT) - dt;
             if (this._regenT <= 0) {
                 this._regenT = regenIv;
-                var cap = this._maxLimit();
-                if (this.count < cap) {
-                    this.addReinforcements(regenN, '战地医疗', this._gameRef.effects);
-                }
+                this.healSquad(regenN, 'passive', this._gameRef.effects);
             }
         }
         if (cls && this.count > 0) {
@@ -453,6 +509,7 @@ class Squad {
         this._skillHarvest = 0; this._skillFortune = 0;
         this._comboFireFlow = 0; this._comboPierceFlow = 0; this._comboSwarmFlow = 0;
         this._regenT = undefined; this._classSkillT = undefined;
+        this.recoverableLoss = 0; this._medShield = 0; this._medShieldT = 0;
         this._totalDr = 0; this._classBulletSpeed = 1.0;
         this.invulnT = 0; // V12: 复活无敌时间复位, 防残留到下一局
         this.alive = true;

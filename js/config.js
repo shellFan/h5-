@@ -150,7 +150,8 @@ const CONFIG = {
     ENEMY_WAVE_MULTIPLIER: 3,
     ENEMY_MAX_ALIVE_MULTIPLIER: 2.2,
     ENEMY_ALIVE_TARGET_MULTIPLIER: 2,
-    ENEMY_HP_MULTIPLIER: [1.7, 2.2, 2.8, 3.4, 4.0, 2.8, 2.2, 2.5, 2.8, 2.6], // V8.0.1: L6=4.6为HP乘数bug时期标定(150敌×4.6实测开局10s全灭); L7-L10大编制波次以数量为难度主轴
+    // V15-GAMEPLAY-001: 关卡HP倍率配合新版基础HP (L1新手友好, L3-L10持续压迫不秒蒸)
+    ENEMY_HP_MULTIPLIER: [0.95, 1.15, 1.35, 1.55, 1.70, 1.80, 1.95, 2.10, 2.25, 2.45],
 
 
     // 射击
@@ -160,15 +161,15 @@ const CONFIG = {
     BULLET_MAX_VISIBLE: 120,    // 最大可见弹道数
     BULLET_RANGE: 18,           // 子弹射程
 
-    // 僵尸属性 (V4.0: 保留V3.7放大轮廓; 速度重校准 快速=1.5×普通, 盾/精英低速压迫感)
+    // 僵尸属性 (V15-GAMEPLAY-001: 提升基础生存能力, 告别一碰就蒸发; Boss独立血量不变)
     ZOMBIE: {
-        normal:  { hp: 3,  speed: 1.7,  scale: 1.45, color: 0x8FBC5A, killScore: 1 },
-        fast:    { hp: 2,  speed: 2.55, scale: 1.18, color: 0xA9CB6B, killScore: 1 },
-        shield:  { hp: 10, speed: 1.15, scale: 1.6,  color: 0x7EA35F, killScore: 2 },
-        split:   { hp: 4,  speed: 1.35, scale: 1.28, color: 0xA583C9, killScore: 2 },
-        spitter: { hp: 4,  speed: 1.25, scale: 1.38, color: 0x63C24B, killScore: 2 },
-        elite:   { hp: 26, speed: 1.0,  scale: 2.5,  color: 0x6F9A52, killScore: 5 },
-        bomber:  { hp: 6,  speed: 2.0,  scale: 1.32, color: 0xC94B4B, killScore: 2 }, // V11.5: 爆炸僵尸(死亡自爆波及)
+        normal:  { hp: 8,  speed: 1.7,  scale: 1.45, color: 0x8FBC5A, killScore: 1 },
+        fast:    { hp: 5,  speed: 2.55, scale: 1.18, color: 0xA9CB6B, killScore: 1 },
+        shield:  { hp: 24, speed: 1.15, scale: 1.6,  color: 0x7EA35F, killScore: 2 },
+        split:   { hp: 10, speed: 1.35, scale: 1.28, color: 0xA583C9, killScore: 2 },
+        spitter: { hp: 9,  speed: 1.25, scale: 1.38, color: 0x63C24B, killScore: 2 },
+        elite:   { hp: 55, speed: 1.0,  scale: 2.5,  color: 0x6F9A52, killScore: 5 },
+        bomber:  { hp: 14, speed: 2.0,  scale: 1.32, color: 0xC94B4B, killScore: 2 }, // V11.5: 爆炸僵尸(死亡自爆波及)
         boss:    { hp: 200, speed: 0.9, scale: 3.9,  color: 0x9C3B32, killScore: 50 }
     },
 
@@ -256,7 +257,10 @@ const LEVELS = [
                 { lane: 2, op: 'buff', value: 'crit', label: '暴击+5%' }
             ]},
             { type: 'wave', z: -64, enemies: [ { type: 'normal', count: 60 }, { type: 'fast', count: 24 } ] },
-            { type: 'wave', z: -78, enemies: [ { type: 'normal', count: 60 } ] }
+            { type: 'wave', z: -78, enemies: [ { type: 'normal', count: 60 } ] },
+            // V15-GAMEPLAY-001: 补齐L1后半段空白带 (新手友好, 仅普通/快速怪)
+            { type: 'wave', z: -85, enemies: [ { type: 'normal', count: 6 }, { type: 'fast', count: 2 } ] },
+            { type: 'wave', z: -91, enemies: [ { type: 'normal', count: 5 }, { type: 'fast', count: 3 } ] }
         ]
     },
     // ============ 第2关 快速尸潮 (总怪60, 火力分配) ============
@@ -285,7 +289,10 @@ const LEVELS = [
                 { lane: 2, op: 'buff', value: 'damage', label: '输出+1' }
             ]},
             { type: 'wave', z: -72, enemies: [ { type: 'fast', count: 69 }, { type: 'normal', count: 36 }, { type: 'shield', count: 9 } ] },
-            { type: 'wave', z: -86, enemies: [ { type: 'fast', count: 36 } ] }
+            { type: 'wave', z: -86, enemies: [ { type: 'fast', count: 36 } ] },
+            // V15-GAMEPLAY-001: 补齐L2后半段空白带
+            { type: 'wave', z: -93, enemies: [ { type: 'normal', count: 8 }, { type: 'fast', count: 4 } ] },
+            { type: 'wave', z: -99, enemies: [ { type: 'normal', count: 6 }, { type: 'fast', count: 4 }, { type: 'shield', count: 2 } ] }
         ]
     },
     // ============ 第3关 盾牌军团 (总怪78, 破防思路) ============
@@ -315,7 +322,10 @@ const LEVELS = [
             ]},
             { type: 'wave', z: -78, enemies: [ { type: 'shield', count: 69 }, { type: 'normal', count: 69 }, { type: 'spitter', count: 15 } ] },
             { type: 'wave', z: -94, enemies: [ { type: 'shield', count: 39 }, { type: 'normal', count: 54 }, { type: 'spitter', count: 24 } ] },
-            { type: 'wave', z: -108, enemies: [ { type: 'shield', count: 39 }, { type: 'fast', count: 39 } ] }
+            { type: 'wave', z: -108, enemies: [ { type: 'shield', count: 39 }, { type: 'fast', count: 39 } ] },
+            // V15-GAMEPLAY-001: 补齐L3后半段空白带
+            { type: 'wave', z: -114, enemies: [ { type: 'normal', count: 8 }, { type: 'fast', count: 4 }, { type: 'split', count: 2 } ] },
+            { type: 'wave', z: -118, enemies: [ { type: 'normal', count: 6 }, { type: 'fast', count: 4 }, { type: 'shield', count: 3 } ] }
         ]
     },
     // ============ 第4关 变异尸潮 (总怪96, 组合压力) ============
@@ -341,7 +351,10 @@ const LEVELS = [
             { type: 'gates', z: -64, gates: [ { lane: 0, op: 'skill', value: 'roll' }, { lane: 1, op: 'skill', value: 'roll' }, { lane: 2, op: 'skill', value: 'roll' } ] },
             { type: 'wave', z: -78, enemies: [ { type: 'split', count: 66 }, { type: 'spitter', count: 51 }, { type: 'normal', count: 66 } ] },
             { type: 'wave', z: -94, enemies: [ { type: 'split', count: 93 }, { type: 'fast', count: 78 }, { type: 'shield', count: 27 } ] },
-            { type: 'wave', z: -108, enemies: [ { type: 'split', count: 51 }, { type: 'spitter', count: 36 } ] }
+            { type: 'wave', z: -108, enemies: [ { type: 'split', count: 51 }, { type: 'spitter', count: 36 } ] },
+            // V15-GAMEPLAY-001: 补齐L4后半段空白带
+            { type: 'wave', z: -115, enemies: [ { type: 'normal', count: 10 }, { type: 'fast', count: 5 }, { type: 'spitter', count: 2 } ] },
+            { type: 'wave', z: -121, enemies: [ { type: 'normal', count: 8 }, { type: 'shield', count: 4 }, { type: 'bomber', count: 2 } ] }
         ]
     },
     // ============ 第5关 终局Boss (总怪127+Boss, 三阶段挑战) ============
@@ -377,6 +390,9 @@ const LEVELS = [
             ]},
             { type: 'wave', z: -110, enemies: [ { type: 'elite', count: 18 }, { type: 'shield', count: 51 }, { type: 'spitter', count: 36 }, { type: 'normal', count: 66 } ] },
             { type: 'wave', z: -124, enemies: [ { type: 'elite', count: 15 }, { type: 'normal', count: 87 }, { type: 'fast', count: 51 } ] },
+            // V15-GAMEPLAY-001: 补齐L5 Boss前空白带 (保留距Boss至少9米缓冲)
+            { type: 'wave', z: -132, enemies: [ { type: 'normal', count: 10 }, { type: 'fast', count: 6 }, { type: 'shield', count: 3 } ] },
+            { type: 'wave', z: -141, enemies: [ { type: 'normal', count: 8 }, { type: 'shield', count: 4 }, { type: 'elite', count: 1 } ] },
             { type: 'boss', z: -150, boss: { type: 'boss', hp: 2600 } }
         ]
     }
@@ -419,6 +435,7 @@ const LEVELS = [
                 { lane: 1, op: 'skill', value: 'roll' },
                 { lane: 2, op: 'buff', value: 'explosive', label: '爆炸弹' }
             ]},
+            { type: 'wave', z: -156, enemies: [ { type: 'normal', count: 10 }, { type: 'fast', count: 5 }, { type: 'shield', count: 3 } ] },
             { type: 'boss', z: -166, boss: { type: 'boss', hp: 5200, style: 'overlord', title: '末日吞噬者' } }
         ]
     }
@@ -455,6 +472,7 @@ const LEVELS = [
                 { lane: 1, op: 'skill', value: 'roll' },
                 { lane: 2, op: 'buff', value: 'crit2', label: '暴击+10%' }
             ]},
+            { type: 'wave', z: -137, enemies: [ { type: 'normal', count: 10 }, { type: 'fast', count: 6 }, { type: 'split', count: 4 } ] },
             { type: 'boss', z: -148, boss: { type: 'boss', hp: 4500, style: 'hivelord', title: '巢穴之母' } }
         ]
     },
@@ -490,6 +508,7 @@ const LEVELS = [
                 { lane: 1, op: 'skill', value: 'roll' },
                 { lane: 2, op: 'buff', value: 'crit2', label: '暴击+10%' }
             ]},
+            { type: 'wave', z: -136, enemies: [ { type: 'normal', count: 10 }, { type: 'fast', count: 6 }, { type: 'spitter', count: 4 }, { type: 'bomber', count: 2 } ] },
             { type: 'boss', z: -148, boss: { type: 'boss', hp: 5500, style: 'titan', title: '机械巨尸' } }
         ]
     },
@@ -524,6 +543,7 @@ const LEVELS = [
                 { lane: 1, op: 'buff', value: 'damage2', label: '输出+2' },
                 { lane: 2, op: 'skill', value: 'roll' }
             ]},
+            { type: 'wave', z: -119, enemies: [ { type: 'normal', count: 12 }, { type: 'shield', count: 6 }, { type: 'spitter', count: 4 }, { type: 'elite', count: 2 } ] },
             { type: 'boss', z: -130, boss: { type: 'boss', hp: 3500, style: 'bulwark', title: '钢盾领主' } },
             { type: 'boss', z: -166, boss: { type: 'boss', hp: 3500, style: 'hivelord', title: '裂变母巢' } }
         ]
@@ -567,6 +587,7 @@ const LEVELS = [
                 { lane: 2, op: 'skill', value: 'roll' }
             ]},
             { type: 'wave', z: -178, enemies: [ { type: 'elite', count: 16 }, { type: 'normal', count: 90 }, { type: 'fast', count: 70 }, { type: 'shield', count: 40 }, { type: 'spitter', count: 35 } ] },
+            { type: 'wave', z: -196, enemies: [ { type: 'normal', count: 10 }, { type: 'fast', count: 6 }, { type: 'shield', count: 4 }, { type: 'elite', count: 2 } ] },
             { type: 'boss', z: -208, boss: { type: 'boss', hp: 10000, style: 'overlord', title: '末日主宰' } }
         ]
     }];

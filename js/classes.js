@@ -35,7 +35,7 @@ var CLASS_DEFS = {
         id: 'medic', name: '战地军医', icon: '💉', color: '#39D98A',
         desc: '每10秒恢复2人, 减伤+10%, 单发×0.85',
         unlock: { clear: 6 }, unlockText: '通关第6关解锁',
-        mods: { dmgMul: 0.85, rateMul: 1.0, critBonus: 0, pierce: 0, dr: 0.1, bulletSpeed: 1.0, eliteDmgMul: 1.0, regenN: 2, regenInterval: 10 },
+        mods: { dmgMul: 0.85, rateMul: 1.0, critBonus: 0, pierce: 0, dr: 0.1, bulletSpeed: 1.0, eliteDmgMul: 1.0, regenN: 1, regenInterval: 12 },
         skill: { name: '战斗激励', icon: '🚑', cd: 28, firstCd: 14,
             desc: '全员暴击率 +15%, 持续6秒',
             apply: function(s, tier) { s._evCritBonus = 0.15 + tier * 0.05; s._evCritT = 6; } }
