@@ -612,13 +612,25 @@ class Game {
         }
         var svgRapid = '<svg class="v15-shop-svg" viewBox="0 0 40 40"><defs><linearGradient id="gBolt" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFF29A"/><stop offset="55%" stop-color="#FFA826"/><stop offset="100%" stop-color="#E05A12"/></linearGradient></defs><rect x="6" y="13" width="6" height="19" rx="2" fill="#D4A642" stroke="#523508" stroke-width="1.5"/><path d="M6 13 L9 6 L12 13 Z" fill="#F2D06B" stroke="#523508" stroke-width="1.2"/><rect x="14" y="15" width="6" height="17" rx="2" fill="#C49434" stroke="#523508" stroke-width="1.5"/><path d="M14 15 L17 8 L20 15 Z" fill="#F2D06B" stroke="#523508" stroke-width="1.2"/><path d="M26 5 L18 21 H25 L21 35 L35 17 H27 L31 5 Z" fill="url(#gBolt)" stroke="#4D2304" stroke-width="1.6" stroke-linejoin="round"/></svg>';
         var svgPierce = '<svg class="v15-shop-svg" viewBox="0 0 40 40"><defs><linearGradient id="gAP" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFE680"/><stop offset="60%" stop-color="#E09A24"/><stop offset="100%" stop-color="#8A4E0B"/></linearGradient></defs><path d="M24 7 L34 11 V22 C34 28 29 33 24 35 C19 33 14 28 14 22 V11 Z" fill="#4E6658" stroke="#98B8A2" stroke-width="1.8"/><path d="M24 12 L21 20 L27 21 L23 30" fill="none" stroke="#FFE478" stroke-width="2.2" stroke-linecap="round"/><path d="M4 25 L16 14 L22 20 L10 31 Z" fill="url(#gAP)" stroke="#472804" stroke-width="1.5"/><path d="M16 14 L27 9 L22 20 Z" fill="#FFF2B8" stroke="#472804" stroke-width="1.4"/></svg>';
+        var svgAirstrike = '<svg class="v15-shop-svg" viewBox="0 0 40 40"><defs><linearGradient id="gAir" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFE070"/><stop offset="55%" stop-color="#FF7A24"/><stop offset="100%" stop-color="#C82818"/></linearGradient></defs><circle cx="20" cy="20" r="14" fill="none" stroke="#FF8C36" stroke-width="2" stroke-dasharray="4 3"/><path d="M27 7 L19 19 L25 22 L12 34 L17 21 L11 18 Z" fill="url(#gAir)" stroke="#4A1806" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+        var svgCryo = '<svg class="v15-shop-svg" viewBox="0 0 40 40"><defs><linearGradient id="gIce" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E8FBFF"/><stop offset="55%" stop-color="#6CD8FF"/><stop offset="100%" stop-color="#1E7AD8"/></linearGradient></defs><path d="M20 5 V35 M7 12.5 L33 27.5 M33 12.5 L7 27.5" stroke="url(#gIce)" stroke-width="3.2" stroke-linecap="round"/><polygon points="20,12 27,16 27,24 20,28 13,24 13,16" fill="#B8F0FF" stroke="#164B8A" stroke-width="1.6"/></svg>';
+        var svgOverdrive = '<svg class="v15-shop-svg" viewBox="0 0 40 40"><defs><linearGradient id="gOD" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFF59A"/><stop offset="55%" stop-color="#FFB426"/><stop offset="100%" stop-color="#D94814"/></linearGradient></defs><circle cx="20" cy="20" r="14" fill="#3B2408" stroke="#F5C946" stroke-width="2"/><path d="M22 6 L11 22 H19 L16 34 L29 18 H21 Z" fill="url(#gOD)" stroke="#4A1A04" stroke-width="1.4" stroke-linejoin="round"/></svg>';
         var shopIconMap = {
             recruit: '<img class="v15-shop-icon-img" src="assets/game/characters/soldier_portrait.png" alt="新兵招募">',
             logistics: '<img class="v15-shop-icon-img" src="assets/game/ui/chest.png" alt="后勤补给">',
             gun: '<img class="v15-shop-icon-img" src="assets/game/weapons/rifle.png" alt="枪械强化">',
             rapid: svgRapid,
-            pierce: svgPierce
+            pierce: svgPierce,
+            skill_airstrike: svgAirstrike,
+            skill_cryo: svgCryo,
+            skill_overdrive: svgOverdrive
         };
+        this._skillSvgIcons = {
+            skill_airstrike: svgAirstrike,
+            skill_cryo: svgCryo,
+            skill_overdrive: svgOverdrive
+        };
+        this._initActiveSkillBar();
         if (listEl) {
             Object.keys(UPGRADE_DEFS).forEach(function(id) {
                 var def = UPGRADE_DEFS[id];
@@ -702,6 +714,158 @@ class Game {
         } else {
             this._showSupplyTip('已达到最高等级');
         }
+    }
+
+    // ===== V15-GAMEPLAY-002: 后期可升级战斗主动战术技能 (空袭 / 冰冻 / 超载) =====
+    _initActiveSkillBar() {
+        var self = this;
+        this._activeSkillOrder = [
+            { id: 'skill_airstrike', short: '空袭', key: '1' },
+            { id: 'skill_cryo', short: '冰冻', key: '2' },
+            { id: 'skill_overdrive', short: '超载', key: '3' }
+        ];
+        this._activeSkillCd = { skill_airstrike: 0, skill_cryo: 0, skill_overdrive: 0 };
+        this._activeSkillBtns = {};
+        var hud = document.getElementById('hud');
+        if (!hud || document.getElementById('v15-skill-bar')) return;
+        var bar = document.createElement('div');
+        bar.id = 'v15-skill-bar';
+        bar.className = 'hidden';
+        for (var i = 0; i < this._activeSkillOrder.length; i++) {
+            (function(cfg) {
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.id = 'v15-btn-' + cfg.id;
+                btn.className = 'v15-skill-btn hidden';
+                var ico = (self._skillSvgIcons && self._skillSvgIcons[cfg.id]) || '';
+                btn.innerHTML =
+                    '<span class="v15-skill-lv" id="v15-lv-' + cfg.id + '">Lv.1</span>' +
+                    ico +
+                    '<span class="v15-skill-lbl">' + cfg.short + '</span>' +
+                    '<span class="v15-skill-cd" id="v15-cd-' + cfg.id + '"></span>';
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    self.castActiveSkill(cfg.id);
+                });
+                bar.appendChild(btn);
+                self._activeSkillBtns[cfg.id] = btn;
+            })(this._activeSkillOrder[i]);
+        }
+        hud.appendChild(bar);
+        this._activeSkillBar = bar;
+        // 桌面端快捷键 1/2/3 释放主动技能
+        if (typeof window !== 'undefined' && !window._v15SkillKeyBound) {
+            window._v15SkillKeyBound = true;
+            window.addEventListener('keydown', function(e) {
+                if (!self || self.state !== 'playing' || self.paused) return;
+                if (e.key === '1') self.castActiveSkill('skill_airstrike');
+                else if (e.key === '2') self.castActiveSkill('skill_cryo');
+                else if (e.key === '3') self.castActiveSkill('skill_overdrive');
+            });
+        }
+    }
+
+    _resetActiveSkills() {
+        if (!this._activeSkillOrder) return;
+        var anyUnlocked = false;
+        for (var i = 0; i < this._activeSkillOrder.length; i++) {
+            var id = this._activeSkillOrder[i].id;
+            var lv = (this.profile && typeof UpgradeShop !== 'undefined') ? UpgradeShop.levelOf(this.profile, id) : 0;
+            this._activeSkillCd[id] = 0;
+            var btn = this._activeSkillBtns && this._activeSkillBtns[id];
+            if (btn) {
+                btn.classList.toggle('hidden', lv <= 0);
+                btn.classList.remove('is-cd');
+                var lvEl = document.getElementById('v15-lv-' + id);
+                if (lvEl) lvEl.textContent = 'Lv.' + lv;
+            }
+            if (lv > 0) anyUnlocked = true;
+        }
+        if (this._activeSkillBar) this._activeSkillBar.classList.toggle('hidden', !anyUnlocked);
+    }
+
+    _updateActiveSkills(dt) {
+        if (!this._activeSkillOrder || !this._activeSkillCd) return;
+        for (var i = 0; i < this._activeSkillOrder.length; i++) {
+            var id = this._activeSkillOrder[i].id;
+            var cd = this._activeSkillCd[id] || 0;
+            if (cd > 0) {
+                cd = Math.max(0, cd - dt);
+                this._activeSkillCd[id] = cd;
+                var btn = this._activeSkillBtns && this._activeSkillBtns[id];
+                var cdEl = document.getElementById('v15-cd-' + id);
+                if (btn) btn.classList.toggle('is-cd', cd > 0);
+                if (cdEl) cdEl.textContent = cd > 0 ? Math.ceil(cd) + 's' : '';
+            }
+        }
+    }
+
+    castActiveSkill(id) {
+        if (this.state !== 'playing' || this.paused || !this.profile || !this.squad || this.squad.count <= 0) return false;
+        var lv = (typeof UpgradeShop !== 'undefined') ? UpgradeShop.levelOf(this.profile, id) : 0;
+        if (lv <= 0) return false;
+        if ((this._activeSkillCd[id] || 0) > 0) return false;
+
+        var enemies = (this.enemies && this.enemies.enemies) ? this.enemies.enemies : [];
+        if (id === 'skill_airstrike') {
+            var dmg = 35 + lv * 20;
+            var cd = Math.max(10, 22 - lv * 1.5);
+            this._activeSkillCd[id] = cd;
+            for (var b = 0; b < 5; b++) {
+                var bz = this.squad.z - 8 - b * 6;
+                var bx = ((b % 3) - 1) * 1.8;
+                if (this.effects) this.effects.burst(bx, 1.0, bz, 0xFF7A24, 16, 5.5, 0.55);
+            }
+            for (var i = 0; i < enemies.length; i++) {
+                var e = enemies[i];
+                if (!e.alive) continue;
+                if (e.z <= this.squad.z + 2 && e.z >= this.squad.z - 42) {
+                    if (e.takeDamage) e.takeDamage(dmg, this.effects);
+                    else e.hp -= dmg;
+                }
+            }
+            if (this.world) this.world.shake(0.32, 0.35);
+            if (this.effects) this.effects.floatText(this.squad.x, 2.8, this.squad.z - 4, '战术空袭!', '#FF9E3D', true);
+            this._sfx('gate');
+        } else if (id === 'skill_cryo') {
+            var freezeSec = 3.5 + lv * 0.6;
+            var frostDmg = 15 + lv * 10;
+            this._activeSkillCd[id] = Math.max(12, 24 - lv * 1.5);
+            for (var j = 0; j < enemies.length; j++) {
+                var ej = enemies[j];
+                if (!ej.alive) continue;
+                if (!ej.isBoss) ej.frozenT = Math.max(ej.frozenT || 0, freezeSec);
+                if (ej.takeDamage) ej.takeDamage(frostDmg, this.effects);
+                else ej.hp -= frostDmg;
+            }
+            if (this.effects) {
+                this.effects.burst(this.squad.x, 1.2, this.squad.z - 12, 0x70D8FF, 22, 6.0, 0.6);
+                this.effects.floatText(this.squad.x, 2.8, this.squad.z - 4, '极寒冰冻!', '#70D8FF', true);
+            }
+            if (this.world) this.world.shake(0.18, 0.22);
+            this._sfx('gate');
+        } else if (id === 'skill_overdrive') {
+            var dur = 6 + lv * 1.2;
+            var mul = 1.6 + lv * 0.15;
+            this._activeSkillCd[id] = Math.max(14, 26 - lv * 1.5);
+            this.squad._evDmgMul = Math.max(this.squad._evDmgMul || 1, mul);
+            this.squad._evDmgMulT = Math.max(this.squad._evDmgMulT || 0, dur);
+            this.squad._evRateMul = Math.max(this.squad._evRateMul || 1, 1.35);
+            this.squad._evRateMulT = Math.max(this.squad._evRateMulT || 0, dur);
+            if (this.squad.grantMedicalShield) this.squad.grantMedicalShield(1, 8, this.effects);
+            if (this.effects) {
+                this.effects.burst(this.squad.x, 1.0, this.squad.z, 0xFFE066, 18, 4.5, 0.5);
+                this.effects.floatText(this.squad.x, 2.8, this.squad.z - 2, '火力超载!', '#FFE066', true);
+            }
+            this._sfx('win');
+        } else {
+            return false;
+        }
+        var btn = this._activeSkillBtns && this._activeSkillBtns[id];
+        var cdEl = document.getElementById('v15-cd-' + id);
+        if (btn) btn.classList.add('is-cd');
+        if (cdEl) cdEl.textContent = Math.ceil(this._activeSkillCd[id]) + 's';
+        return true;
     }
 
     /** V5.1: 刷新所有金币显示(首页/商店/结算) */
@@ -1043,6 +1207,8 @@ class Game {
 
             // V8.0: 随机事件系统每局重置
             if (typeof RandomEvents !== 'undefined') RandomEvents.reset();
+            // V15-GAMEPLAY-002: 战斗主动战术技能冷却与按钮刷新
+            this._resetActiveSkills();
             // V8.0: 挑战模式竞技场装配(普通关卡为 null)
             if (this._pendingChallenge) {
                 this._challenge = this._pendingChallenge;
@@ -1250,8 +1416,9 @@ class Game {
                 ChallengeDaily.report(this.profile, 'boss', 0);
             }
         }
-        // V8.0: 随机事件 + 挑战模式波次驱动
+        // V8.0: 随机事件 + 挑战模式波次驱动 + V15主动技能冷却
         if (typeof RandomEvents !== 'undefined') RandomEvents.update(dt, this);
+        this._updateActiveSkills(dt);
         if (this._challenge) this._updateChallenge(dt);
         // V3.3: 连杀系统 — 击杀数增长时combo+1, 2秒无击杀清零
         var kc = this.enemies.killCount;

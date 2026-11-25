@@ -1658,3 +1658,77 @@
     display: block;
     filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.5));
 }
+
+/* =========================================================================
+ * V15-GAMEPLAY-002: 战斗左下角主动战术技能栏 (空袭 / 冰冻 / 超载)
+ * ========================================================================= */
+#v15-skill-bar {
+    position: fixed !important;
+    left: 12px;
+    bottom: max(18px, env(safe-area-inset-bottom));
+    top: auto !important;
+    display: flex;
+    gap: 8px;
+    z-index: 26;
+    pointer-events: auto;
+}
+#v15-skill-bar.hidden { display: none !important; }
+.v15-skill-btn {
+    position: relative;
+    width: 54px;
+    height: 58px;
+    padding: 4px 2px 3px;
+    border-radius: 13px;
+    border: 2px solid #f4c84c;
+    background: linear-gradient(180deg, rgba(46, 76, 48, 0.94), rgba(22, 42, 26, 0.96));
+    box-shadow: 0 4px 0 #102014, 0 0 12px rgba(244, 200, 76, 0.32);
+    color: #fff2c2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.1s ease;
+}
+.v15-skill-btn:active { transform: scale(0.94); }
+.v15-skill-btn.is-cd {
+    border-color: rgba(122, 152, 110, 0.55);
+    box-shadow: 0 2px 0 #0d1a10;
+    opacity: 0.72;
+}
+.v15-skill-btn .v15-shop-svg {
+    width: 30px;
+    height: 30px;
+}
+.v15-skill-lbl {
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 1;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+}
+.v15-skill-lv {
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    font-size: 8.5px;
+    font-weight: 900;
+    color: #ffe382;
+    background: rgba(14, 28, 18, 0.85);
+    padding: 0 3px;
+    border-radius: 4px;
+}
+.v15-skill-cd {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 20, 14, 0.74);
+    color: #ffe891;
+    font-size: 14px;
+    font-weight: 900;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+.v15-skill-btn.is-cd .v15-skill-cd {
+    display: flex;
+}

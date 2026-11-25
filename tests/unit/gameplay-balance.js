@@ -92,6 +92,14 @@ assert(mockSquad.count === preHeal + 3 && mockSquad.recoverableLoss === 17, '有
 const CLASS_DEFS = vm.runInContext('CLASS_DEFS', ctx);
 assert(CLASS_DEFS.medic.mods.regenN === 1 && CLASS_DEFS.medic.mods.regenInterval === 12, '战地军医被动调整为12秒恢复1人');
 
+// 5. 后期可升级主动战术技能验证
+console.log('\n■ V15-GAMEPLAY-002 后期可升级主动技能');
+vm.runInContext(fs.readFileSync(path.join(ROOT, 'js/upgrades.js'), 'utf8'), ctx);
+const UDEFS = vm.runInContext('UPGRADE_DEFS', ctx);
+assert(UDEFS.skill_airstrike && UDEFS.skill_cryo && UDEFS.skill_overdrive, '商店包含3项后期主动技能(空袭/冰冻/超载)');
+assert(UDEFS.skill_airstrike.levels.length === 5 && UDEFS.skill_cryo.levels.length === 5 && UDEFS.skill_overdrive.levels.length === 5, '3项主动技能均为5级可升级成长');
+assert(UDEFS.skill_airstrike.effect(0) === '未解锁' && UDEFS.skill_airstrike.effect(1).indexOf('范围伤害') >= 0, '主动技能Lv.0未解锁, Lv.1解锁战斗生效');
+
 console.log('\n======================');
 console.log('V15-GAMEPLAY-001 测试: 通过 ' + pass + ' / 失败 ' + fail);
 if (fail > 0) process.exit(1);
