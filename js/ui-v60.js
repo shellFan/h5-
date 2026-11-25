@@ -418,7 +418,7 @@ var V60UI = {
         });
     },
 
-    // ===== V8.0: 军团训练中心(士兵等级+装备) =====
+    // ===== V8.0 / V15-ART-008: 军团训练中心(大型角色展示台 + 左右6独立装备槽 + 图标化属性 + 紧凑背包) =====
     renderTraining: function(game) {
         var self = this;
         var header = document.getElementById('v60-train-header');
@@ -431,43 +431,76 @@ var V60UI = {
         var tier = SoldierGrowth.tierName(game.profile);
         var stats = SoldierGrowth.stats(game.profile);
         var cost = SoldierGrowth.upgradeCost(game.profile);
-        if (header) header.innerHTML =
-            '<span class="v60-train-level">Lv.' + lv + '</span>' +
-            '<span class="v60-train-tier" style="color:' + tier.color + '">' + tier.name + '</span>' +
-            '<span class="v60-train-coins">🪙 ' + game.profile.coins + '</span>';
-        if (statsEl) statsEl.innerHTML =
-            '<div class="v60-stat-row"><span>伤害加成</span><b>+' + (stats.dmgBonus || 0) + '</b></div>' +
-            '<div class="v60-stat-row"><span>生命加成</span><b>+' + (stats.hpBonus || 0) + '</b></div>' +
-            '<div class="v60-stat-row"><span>暴击率</span><b>+' + ((stats.critBonus || 0) * 100).toFixed(1) + '%</b></div>' +
-            '<div class="v60-stat-row"><span>伤害减免</span><b>' + ((stats.drBonus || 0) * 100).toFixed(1) + '%</b></div>' +
-            '<div class="v60-stat-row"><span>招募效率</span><b>+' + (stats.recruitBonus || 0) + '</b></div>';
+
+        // 顶部统一商业顶栏 (返回 | 标题 | 金币)
+        header.innerHTML =
+            '<div class="v15-armory-topbar">' +
+            '<button type="button" class="v15-page-back" onclick="V60UI.hidePages()">‹ 返回</button>' +
+            '<div class="v15-page-title-wrap"><span class="v15-page-kicker">BARRACKS</span><strong>士兵训练中心</strong></div>' +
+            '<div class="v15-page-coin"><img src="assets/game/ui/coin.png" alt=""><span>' + (game.profile.coins || 0) + '</span></div>' +
+            '</div>';
+
+        // 左右 6 个独立战术装备槽 + 中央大型士兵展示台
+        var svgHelmet = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 14a8 8 0 0 1 16 0v2H4v-2Z"/><path d="M3 16h18v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2Z"/></svg>';
+        var svgVest   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4h10l2 4-2 2v10H7V10L5 8l2-4Z"/><path d="M12 4v16"/></svg>';
+        var svgGun    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11h14l4-2v4l-4-1H9l-2 5H4l2-5H3v-1Z"/></svg>';
+        var svgPack   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="7" width="12" height="13" rx="3"/><path d="M9 7V5a3 3 0 0 1 6 0v2M6 13h12"/></svg>';
+        var svgTac    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="13" r="6"/><path d="M10 4h4v3h-4zM12 10v6M9 13h6"/></svg>';
+        var svgStar   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.9L12 16.4 6.8 19.2l1-5.9-4.3-4.1 5.9-.9L12 3Z"/></svg>';
+        var slotIcons = {
+            helmet: svgHelmet, head: svgHelmet,
+            armor: svgVest, vest: svgVest, body: svgVest,
+            weapon: svgGun, gun: svgGun,
+            pack: svgPack, backpack: svgPack, bag: svgPack,
+            tactical: svgTac, accessory: svgTac, gadget: svgTac,
+            emblem: svgStar, badge: svgStar, medal: svgStar
+        };
+        var eq = game.profile.data.equipment || {};
+        var renderSlot = function(slot) {
+            var piece = eq[slot];
+            var qColor = piece ? EQUIP_QUALITY_COLORS[piece.quality] : '';
+            var label = EQUIP_SLOT_NAMES[slot] || slot;
+            var sub = piece ? ('+' + (piece.level - 1)) : label;
+            var title = piece ? (piece.name || (EQUIPMENT_DEFS[piece.id] ? EQUIPMENT_DEFS[piece.id].name : piece.id)) : (label + '（未装备）');
+            return '<div class="v15-gear-slot' + (piece ? ' is-equipped' : ' is-empty') + '" title="' + title + '"' +
+                (piece && qColor ? ' style="border-color:' + qColor + ';box-shadow:0 0 10px ' + qColor + '44"' : '') + '>' +
+                '<div class="v15-gear-ico">' + (slotIcons[slot] || slotIcons.emblem) + '</div>' +
+                '<div class="v15-gear-lbl">' + sub + '</div></div>';
+        };
+        var leftSlots = EQUIP_SLOTS.slice(0, 3);
+        var rightSlots = EQUIP_SLOTS.slice(3, 6);
         if (equipEl) {
-            var eq = game.profile.data.equipment || {};
-            var equipHtml = '<div class="v60-equip-title">装备栏</div>';
-            for (var si = 0; si < EQUIP_SLOTS.length; si++) {
-                var slot = EQUIP_SLOTS[si];
-                var piece = eq[slot];
-                var qName = piece ? EQUIP_QUALITY[piece.quality] : '空';
-                var qColor = piece ? EQUIP_QUALITY_COLORS[piece.quality] : '#666';
-                var eName = piece ? (piece.name || (EQUIPMENT_DEFS[piece.id] ? EQUIPMENT_DEFS[piece.id].name : piece.id)) : '未装备';
-                equipHtml += '<div class="v60-equip-row"><span class="v60-equip-slot">' + EQUIP_SLOT_NAMES[slot] + '</span>' +
-                    '<span class="v60-equip-name" style="color:' + qColor + '">' + eName + '</span>' +
-                    '<span class="v60-equip-quality">' + qName + (piece ? ' +' + (piece.level - 1) : '') + '</span></div>';
-            }
-            equipEl.innerHTML = equipHtml;
+            equipEl.innerHTML =
+                '<div class="v15-train-stage">' +
+                '<div class="v15-gear-col">' + leftSlots.map(renderSlot).join('') + '</div>' +
+                '<div class="v15-train-hero">' +
+                '<img class="v15-train-hero-img" src="assets/game/characters/soldier_portrait.png" alt="绿色战术步兵">' +
+                '<div class="v15-train-hero-badge"><b>Lv.' + lv + '</b><span style="color:' + (tier.color || '#ffe382') + '">' + tier.name + '</span></div>' +
+                '</div>' +
+                '<div class="v15-gear-col">' + rightSlots.map(renderSlot).join('') + '</div>' +
+                '</div>';
         }
-        // VNext: 背包(掉落装备 穿戴/强化/分解)
+        if (statsEl) {
+            statsEl.innerHTML =
+                '<div class="v15-stat-chip"><span>伤害加成</span><b>+' + (stats.dmgBonus || 0) + '</b></div>' +
+                '<div class="v15-stat-chip"><span>生命加成</span><b>+' + (stats.hpBonus || 0) + '</b></div>' +
+                '<div class="v15-stat-chip"><span>暴击率</span><b>+' + ((stats.critBonus || 0) * 100).toFixed(1) + '%</b></div>' +
+                '<div class="v15-stat-chip"><span>伤害减免</span><b>' + ((stats.drBonus || 0) * 100).toFixed(1) + '%</b></div>' +
+                '<div class="v15-stat-chip"><span>招募效率</span><b>+' + (stats.recruitBonus || 0) + '</b></div>' +
+                '<div class="v15-stat-chip is-tier"><span>军团军衔</span><b>' + tier.name + '</b></div>';
+        }
+        // 紧凑背包区 (空状态单行不占半屏, 有掉落时正常展开操作)
         var bagEl = document.getElementById('v60-train-bag');
         if (bagEl) {
             var bag = game.profile.data.bag || [];
             bagEl.innerHTML = '';
             if (!bag.length) {
-                bagEl.innerHTML = '<div class="v60-rank-empty">暂无掉落装备 · 通关战斗获取</div>';
+                bagEl.innerHTML = '<div class="v15-bag-compact-empty"><span>装备背包</span><small>暂无掉落装备 · 通关战斗获取</small></div>';
             } else if (typeof EquipmentLoot !== 'undefined' && EquipmentLoot.equipFromBag) {
                 var autoBtn = document.createElement('button');
                 autoBtn.id = 'v60-auto-equip-btn';
                 autoBtn.className = 'btn-secondary v60-auto-equip-btn';
-                autoBtn.textContent = '⚡ 一键穿戴最强装备';
+                autoBtn.textContent = '一键穿戴最强装备';
                 autoBtn.onclick = function() {
                     var eqNow = game.profile.data.equipment || {};
                     var curBag = (game.profile.data.bag || []).slice();
@@ -512,21 +545,20 @@ var V60UI = {
                     wearBtn.className = 'v60-bag-btn';
                     wearBtn.textContent = '穿戴';
                     wearBtn.onclick = function() {
-                        // V11 QA修复[P3]: 原守卫判的是SoldierGrowth却调用EquipmentLoot, 守卫与被调对象不一致
                         var r = EquipmentLoot ? EquipmentLoot.equipFromBag(game.profile, item.uid) : { ok: false };
                         if (r.ok) { game._sfx('gate'); game._refreshCoinDisplays(); self.renderTraining(game); }
                     };
                     actions.appendChild(wearBtn);
-                    var upBtn = document.createElement('button');
-                    upBtn.className = 'v60-bag-btn up';
+                    var upBtn2 = document.createElement('button');
+                    upBtn2.className = 'v60-bag-btn up';
                     var upCost = item.level >= 10 ? null : EQUIP_UPGRADE_COST(item.quality, item.level);
-                    upBtn.textContent = upCost === null ? 'MAX' : '强化🪙' + upCost;
-                    upBtn.disabled = upCost === null || game.profile.coins < upCost;
-                    upBtn.onclick = function() {
+                    upBtn2.textContent = upCost === null ? 'MAX' : '强化 ' + upCost;
+                    upBtn2.disabled = upCost === null || game.profile.coins < upCost;
+                    upBtn2.onclick = function() {
                         var r = EquipmentLoot.upgradeBagEquip(game.profile, item.uid);
                         if (r.ok) { game._sfx('gate'); game._refreshCoinDisplays(); self.renderTraining(game); }
                     };
-                    actions.appendChild(upBtn);
+                    actions.appendChild(upBtn2);
                     var sellBtn = document.createElement('button');
                     sellBtn.className = 'v60-bag-btn sell';
                     sellBtn.textContent = '分解';
@@ -541,18 +573,23 @@ var V60UI = {
             }
         }
         var maxed = lv >= 50;
+        var canUp = !maxed && game.profile.coins >= cost;
         if (upBtn) {
-            upBtn.textContent = maxed ? 'MAX' : '升级 (🪙' + cost + ')';
-            upBtn.disabled = maxed || game.profile.coins < cost;
+            upBtn.classList.toggle('affordable', canUp);
+            upBtn.innerHTML = maxed
+                ? '<span>已达最高等级 MAX</span>'
+                : '<span class="v15-train-up-main">强化升级 Lv.' + lv + ' → Lv.' + (lv + 1) + '</span>' +
+                  '<span class="v15-train-up-cost"><img class="v15-btn-coin" src="assets/game/ui/coin.png" alt="">' + cost + (canUp ? '' : ' · 金币不足') + '</span>';
+            upBtn.disabled = maxed || !canUp;
             upBtn.onclick = function() {
                 var r = SoldierGrowth.upgrade(game.profile);
                 if (r.ok) {
                     game._sfx('gate');
                     game._refreshCoinDisplays();
                     self.renderTraining(game);
-                    if (r.milestone && costEl) costEl.innerHTML = '<b style="color:#FFC247">🎉 解锁: ' + r.milestone.unlock + '</b>';
+                    if (r.milestone && costEl) costEl.innerHTML = '<b style="color:#FFC247">解锁: ' + r.milestone.unlock + '</b>';
                 } else if (costEl) {
-                    costEl.textContent = r.reason === 'insufficient' ? '金币不足 (需要🪙' + r.cost + ')' : '已满级';
+                    costEl.textContent = r.reason === 'insufficient' ? '金币不足 (需要 ' + r.cost + ')' : '已满级';
                 }
             };
         }
@@ -588,6 +625,10 @@ var V60UI = {
             var nextLine = nextStats
                 ? '<div class="v15-armory-next">下一级 Lv.' + (wLv + 1) + '：' + statTextOf(nextStats) + '</div>'
                 : '<div class="v15-armory-next is-max">已达最高强化等级</div>';
+            var evoTag = '';
+            if (wStats.evolvedName) evoTag = '<div class="v15-armory-evo-tag">已进化：' + wStats.evolvedName + '</div>';
+            else if (canEvo.ok) evoTag = '<div class="v15-armory-evo-tag">可进化：' + EVOLUTION_DEFS[canEvo.evoId].name + '</div>';
+            else if (canEvo.reason === 'tech_required') evoTag = '<div class="v15-armory-evo-tag is-lock">进化需科技：' + canEvo.tech + ' ×' + canEvo.need + '</div>';
             hero.innerHTML =
                 '<div class="v15-armory-topbar">' +
                 '<button type="button" class="v15-page-back" onclick="V60UI.hidePages()">‹ 返回</button>' +
@@ -604,7 +645,35 @@ var V60UI = {
                 '<div class="v15-armory-name-row"><span class="v118-armory-hero-name">' + currentDef.name + '</span>' +
                 '<span class="v118-armory-hero-level">Lv.' + wLv + ' / 5</span></div>' +
                 '<div class="v118-armory-hero-stats">' + statTextOf(wStats) + '</div>' +
-                nextLine + '</div>';
+                nextLine + evoTag +
+                '<div class="v15-armory-hero-actions" id="v15-armory-hero-actions"></div></div>';
+
+            // 主操作区固定在当前武器展示台下方(不再在下方重复出现大卡片!)
+            var heroActs = hero.querySelector('#v15-armory-hero-actions');
+            if (heroActs) {
+                var canBuyUp = upCost !== null && game.profile.coins >= upCost;
+                var hUpBtn = document.createElement('button');
+                hUpBtn.className = 'v60-armory-btn upgrade' + (canBuyUp ? ' affordable' : '');
+                hUpBtn.innerHTML = upCost !== null
+                    ? '<span>强化升级</span><span class="v15-act-price"><img class="v15-btn-coin" src="assets/game/ui/coin.png" alt="">' + upCost + (canBuyUp ? '' : ' 金币不足') + '</span>'
+                    : '<span>MAX 满级</span>';
+                hUpBtn.disabled = upCost === null || !canBuyUp;
+                hUpBtn.onclick = function() {
+                    var r = WeaponSystem.upgrade(game.profile);
+                    if (r.ok) { game._sfx('gate'); game._refreshCoinDisplays(); self.renderArmory(game); }
+                };
+                heroActs.appendChild(hUpBtn);
+                if (canEvo.ok) {
+                    var hEvoBtn = document.createElement('button');
+                    hEvoBtn.className = 'v60-armory-btn evolve';
+                    hEvoBtn.textContent = '进化 · ' + EVOLUTION_DEFS[canEvo.evoId].name;
+                    hEvoBtn.onclick = function() {
+                        var r = WeaponSystem.evolve(game.profile);
+                        if (r.ok) { game._sfx('win'); self.renderArmory(game); }
+                    };
+                    heroActs.appendChild(hEvoBtn);
+                }
+            }
             // V14: 3D 武器展示台(H5; 微信/minidom 自动回退 PNG)
             var v14host = hero.querySelector('#v14-weapon-3d');
             if (v14host && typeof WeaponShowcase !== 'undefined' && WeaponShowcase.mount(v14host, current)) {
@@ -614,6 +683,7 @@ var V60UI = {
         } else {
             hero.innerHTML = '';
         }
+        // 底部紧凑 4x2 武器缩略图选择栏(一屏完整展示全部 8 把武器, 零截断、零重复卡片!)
         for (var wi = 0; wi < weaponOrder.length; wi++) {
             var id = weaponOrder[wi];
             var def = WEAPON_DEFS[id];
@@ -622,57 +692,21 @@ var V60UI = {
             var canUnlock = WeaponSystem.canUnlock(game.profile, id);
             var unlockedNow = !def.unlockCondition || isCurrent || canUnlock ||
                 (def.unlockCondition.type === 'clear' && (game.profile.data.unlockedLevel || 1) > def.unlockCondition.level);
-            var st = def.effect(wLv);
-            var row = document.createElement('div');
-            row.className = 'v60-armory-row' + (isCurrent ? ' equipped' : unlockedNow ? ' owned' : ' locked');
+            var row = document.createElement('button');
+            row.type = 'button';
+            row.className = 'v60-armory-row v15-weapon-tile' + (isCurrent ? ' equipped' : unlockedNow ? ' owned' : ' locked');
             row.setAttribute('data-weapon', id);
-            var evoLine = '';
-            if (isCurrent) {
-                if (wStats.evolvedName) evoLine = '<div class="v60-armory-evo">✅ 已进化: ' + wStats.evolvedName + '</div>';
-                else if (canEvo.ok) evoLine = '<div class="v60-armory-evo">⚡ 可进化: ' + EVOLUTION_DEFS[canEvo.evoId].name + '</div>';
-                else if (canEvo.reason === 'tech_required') evoLine = '<div class="v60-armory-evo">🔒 进化需科技: ' + canEvo.tech + ' ×' + canEvo.need + '</div>';
-                // V11.3: 武器词条行
-                if (wStats.affixName) evoLine += '<div class="v60-armory-evo" style="color:#FFC247">📝 词条: ' + wStats.affixName + '</div>';
-            }
-            var statText = statTextOf(st);
+            var badgeText = isCurrent ? '装备中' : (unlockedNow ? ('Lv.' + wLv) : ('第' + def.unlockCondition.level + '关'));
             row.innerHTML =
+                '<span class="v15-wt-badge">' + badgeText + '</span>' +
                 '<div class="v118-weapon-art" role="img" aria-label="' + def.name + '" data-weapon="' + id + '"' +
                 ' data-atlas-cols="4" data-atlas-rows="2" data-atlas-col="' + (wi % 4) + '" data-atlas-row="' + Math.floor(wi / 4) + '"' +
                 ' style="--weapon-col:' + (wi % 4) + ';--weapon-row:' + Math.floor(wi / 4) + '"></div>' +
-                '<div class="v60-armory-head"><span class="v60-armory-icon">' + def.icon + '</span>' +
-                '<span class="v60-armory-name">' + def.name + (isCurrent ? ' ✓' : '') + '</span>' +
-                '<span class="v60-armory-lv">Lv.' + wLv + '/5</span></div>' +
-                '<div class="v60-armory-stats">' + statText + '</div>' +
-                evoLine + '<div class="v60-armory-actions"></div>';
-            var actions = row.querySelector('.v60-armory-actions');
-            if (!unlockedNow) {
-                actions.innerHTML = '<span class="v60-locked">通关第 ' + def.unlockCondition.level + ' 关解锁</span>';
-            } else if (isCurrent) {
-                var upBtn = document.createElement('button');
-                upBtn.className = 'v60-armory-btn upgrade';
-                upBtn.textContent = upCost !== null ? '升级 🪙' + upCost : 'MAX';
-                upBtn.disabled = upCost === null || game.profile.coins < upCost;
-                upBtn.onclick = function() {
-                    var r = WeaponSystem.upgrade(game.profile);
-                    if (r.ok) { game._sfx('gate'); game._refreshCoinDisplays(); self.renderArmory(game); }
-                };
-                actions.appendChild(upBtn);
-                if (canEvo.ok) {
-                    var evoBtn = document.createElement('button');
-                    evoBtn.className = 'v60-armory-btn evolve';
-                    evoBtn.textContent = '⚡进化';
-                    evoBtn.onclick = function() {
-                        var r = WeaponSystem.evolve(game.profile);
-                        if (r.ok) { game._sfx('win'); self.renderArmory(game); }
-                    };
-                    actions.appendChild(evoBtn);
-                }
-            } else {
-                var swBtn = document.createElement('button');
-                swBtn.className = 'v60-armory-btn';
-                swBtn.textContent = '切换';
-                swBtn.onclick = function(wid) { return function() { WeaponSystem.switchTo(game.profile, wid); game._sfx('gate'); self.renderArmory(game); }; }(id);
-                actions.appendChild(swBtn);
+                '<span class="v15-wt-name">' + def.name + '</span>';
+            if (unlockedNow && !isCurrent) {
+                row.onclick = function(wid) {
+                    return function() { WeaponSystem.switchTo(game.profile, wid); game._sfx('gate'); self.renderArmory(game); };
+                }(id);
             }
             el.appendChild(row);
         }

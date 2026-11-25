@@ -3,8 +3,8 @@
 class CombatSystem {
     static get TRACER_COLORS() {
         return {
-            rifle: 0xFFD84A, shotgun: 0xFFB04A, sniper: 0xFFF3D0, mg: 0xFFC44A,
-            flamethrower: 0xFF8C3C, rocket: 0xFF7A45, freeze: 0x7EDFFF, tesla: 0xB48CFF
+            rifle: 0xFFF8E8, shotgun: 0xFFE6C8, sniper: 0xFFFFFF, mg: 0xFFF0D4,
+            flamethrower: 0xFF9C4A, rocket: 0xFF8852, freeze: 0x9EE8FF, tesla: 0xC8A6FF
         };
     }
     static get HEAVY_MUZZLE() { return { shotgun: 1, mg: 1, flamethrower: 1, rocket: 1 }; }
@@ -47,48 +47,41 @@ class CombatSystem {
         }
     }
 
-    /** V15-ART-003: 锐利商业级曳光弹贴图 — 炽白高亮细长弹芯 + 金橙渐变尾迹(告别钝黄色水滴感) */
+    /** V15-ART-008: 锐利炽白激光曳光弹 — 细长炽白弹芯 + 短金橙光晕(彻底告别钝黄色水滴!) */
     _makeTracerTexture() {
         var c = document.createElement('canvas');
         c.width = 64; c.height = 256;
         var ctx = c.getContext('2d');
         ctx.clearRect(0, 0, 64, 256);
-        // 外层纤细金橙光晕尾迹
-        var tail = ctx.createLinearGradient(0, 18, 0, 252);
-        tail.addColorStop(0.0, 'rgba(255,250,210,1.0)');
-        tail.addColorStop(0.18, 'rgba(255,205,70,0.92)');
-        tail.addColorStop(0.55, 'rgba(255,145,25,0.48)');
-        tail.addColorStop(1.0, 'rgba(255,110,10,0)');
+        // 外层纤细金橙辉光
+        var tail = ctx.createLinearGradient(0, 10, 0, 244);
+        tail.addColorStop(0.0, 'rgba(255,245,190,0.92)');
+        tail.addColorStop(0.24, 'rgba(255,178,42,0.78)');
+        tail.addColorStop(0.62, 'rgba(255,118,16,0.34)');
+        tail.addColorStop(1.0, 'rgba(255,88,0,0)');
         ctx.fillStyle = tail;
         ctx.beginPath();
-        ctx.moveTo(22, 24);
-        ctx.lineTo(30, 252);
-        ctx.lineTo(34, 252);
-        ctx.lineTo(42, 24);
-        ctx.quadraticCurveTo(32, 4, 22, 24);
+        ctx.moveTo(25, 16);
+        ctx.lineTo(29.5, 244);
+        ctx.lineTo(34.5, 244);
+        ctx.lineTo(39, 16);
+        ctx.lineTo(32, 4);
         ctx.closePath();
         ctx.fill();
-        // 内层炽白锐利弹芯 (高对比度)
-        var core = ctx.createLinearGradient(0, 14, 0, 175);
+        // 内层纯白炽热锐利弹芯 (高对比度)
+        var core = ctx.createLinearGradient(0, 8, 0, 170);
         core.addColorStop(0.0, '#FFFFFF');
-        core.addColorStop(0.35, 'rgba(255,255,245,0.96)');
+        core.addColorStop(0.45, 'rgba(255,255,252,0.98)');
         core.addColorStop(1.0, 'rgba(255,240,180,0)');
         ctx.fillStyle = core;
         ctx.beginPath();
-        ctx.moveTo(27, 22);
-        ctx.lineTo(31, 175);
-        ctx.lineTo(33, 175);
-        ctx.lineTo(37, 22);
-        ctx.quadraticCurveTo(32, 8, 27, 22);
+        ctx.moveTo(29, 12);
+        ctx.lineTo(30.8, 170);
+        ctx.lineTo(33.2, 170);
+        ctx.lineTo(35, 12);
+        ctx.lineTo(32, 6);
         ctx.closePath();
         ctx.fill();
-        // 弹头前端爆发微光
-        var tip = ctx.createRadialGradient(32, 24, 2, 32, 24, 20);
-        tip.addColorStop(0, 'rgba(255,255,255,1)');
-        tip.addColorStop(0.45, 'rgba(255,235,140,0.85)');
-        tip.addColorStop(1, 'rgba(255,160,30,0)');
-        ctx.fillStyle = tip;
-        ctx.beginPath(); ctx.arc(32, 24, 20, 0, Math.PI * 2); ctx.fill();
         this._bulletTex = new THREE.CanvasTexture(c);
         if (this._bulletMat) {
             this._bulletMat.map = this._bulletTex;
@@ -412,9 +405,9 @@ class CombatSystem {
         if (!mesh) return;
         mesh.visible = true;
         mesh.position.set(pos.x, pos.y, pos.z);
-        if (decorative) mesh.scale.set(0.20, 1.75, 1);
-        else if (isCrit) mesh.scale.set(0.34, 2.8, 1);
-        else mesh.scale.set(0.26, 2.1, 1);
+        if (decorative) mesh.scale.set(0.15, 1.35, 1);
+        else if (isCrit) mesh.scale.set(0.24, 2.1, 1);
+        else mesh.scale.set(0.18, 1.55, 1);
         this.bullets.push({
             mesh: mesh, damage: decorative ? 0 : damage, life: decorative ? 0.85 : 1.2,
             decorative: !!decorative,
