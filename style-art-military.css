@@ -1660,25 +1660,25 @@
 }
 
 /* =========================================================================
- * V15-GAMEPLAY-002: 战斗左下角主动战术技能栏 (空袭 / 冰冻 / 超载)
+ * V15-GAMEPLAY-002 / V16.2: 战斗左下角主动战术技能栏 (空袭 / 冰冻 / 超载 / 龙卷风)
  * ========================================================================= */
 #v15-skill-bar {
     position: fixed !important;
-    left: 12px;
+    left: 10px;
     bottom: max(18px, env(safe-area-inset-bottom));
     top: auto !important;
     display: flex;
-    gap: 8px;
+    gap: 6px;
     z-index: 26;
     pointer-events: auto;
 }
 #v15-skill-bar.hidden { display: none !important; }
 .v15-skill-btn {
     position: relative;
-    width: 62px;
-    height: 64px;
-    padding: 5px 2px 4px;
-    border-radius: 14px;
+    width: 56px;
+    height: 60px;
+    padding: 4px 2px 4px;
+    border-radius: 13px;
     border: 2px solid #f4c84c;
     background: linear-gradient(180deg, rgba(46, 76, 48, 0.94), rgba(22, 42, 26, 0.96));
     box-shadow: 0 4px 0 #102014, 0 0 12px rgba(244, 200, 76, 0.35);

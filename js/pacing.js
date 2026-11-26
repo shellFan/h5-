@@ -119,10 +119,16 @@ class GamePacingController {
         var stagger = this.runtimeHordeBoost ? ((row % 2) ? 0.38 : -0.26) : 0;
         var jitterX = this.runtimeHordeBoost ? randRange(-0.42, 0.42) : randRange(-0.12, 0.12);
         var x = clamp((col - 2.5) * 1.06 + stagger + jitterX, -3.25, 3.25);
+        var type = w.pending[0];
         var frontZ = Math.min(w.z - 1.5, squad.z - (CONFIG.PACING.spawnDistance || 14));
         var jitterZ = this.runtimeHordeBoost ? randRange(-0.45, 0.85) : randRange(0, 0.35);
         var z = frontZ - row * rowStep - jitterZ;
-        var enemy = this.spawnFn(w.pending[0], x, z, null);
+        // V16.2: 路边伏击怪 flanker 在队伍前方 6.5-11m 从左右护栏外侧翻越进路
+        if (type === 'flanker') {
+            x = (slot % 2 === 0 ? -1 : 1) * 5.2;
+            z = squad.z - randRange(6.5, 11.0);
+        }
+        var enemy = this.spawnFn(type, x, z, null);
         if (enemy === false || enemy === null) return false;
         w.pending.shift();
         w.spawned++;

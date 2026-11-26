@@ -40,9 +40,9 @@ var EnemyModelLoader = class EnemyModelLoader {
         return this._promise;
     }
     static loadCritical() {
-        // V15-ART-005: 启动关键集包含普通/快速/重装怪与铁拳Boss(overlord/bruiser), 彻底杜绝首波Boss回退为放大普通怪!
-        if (typeof window !== 'undefined' && window.__BootProgress) window.__BootProgress.total = 14;
-        return this.load(['normal', 'fast', 'shield', 'elite', 'bruiser', 'overlord']);
+        // V16.2-GAMEPLAY-005: 启动关键集包含普通/快速/重装/酸液/投弹底座(bomber)/精英/Boss, 杜绝新怪回退
+        if (typeof window !== 'undefined' && window.__BootProgress) window.__BootProgress.total = 18;
+        return this.load(['normal', 'fast', 'shield', 'spitter', 'bomber', 'elite', 'bruiser', 'overlord']);
     }
     static _loadKeys(keys) {
         var loaded = [], loader = new THREE.GLTFLoader();
@@ -282,9 +282,10 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
             var bank=this._bank(style,lod),slot=bank.count++;
             if(slot>=448){bank.count=448;continue;}
             e.model.updateMatrix();this._root.copy(e.model.matrix);
-            // V15: 怪物/Boss柔和接地阴影
+            // V15 / V16.2: 怪物/Boss柔和接地阴影 (浮空跃栏/龙卷风卷起时缩小阴影增强立体感)
             if (!e.dying && shadowCount < 448) {
-                var shS = (e.visScale || 1) * (e.isBoss ? 1.55 : 0.96);
+                var liftScale = Math.max(0.45, Math.min(1.0, 1.0 - (e._liftY || 0) * 0.22));
+                var shS = (e.visScale || 1) * (e.isBoss ? 1.55 : 0.96) * liftScale;
                 this._pose.makeScale(shS, 1, shS * 0.86);
                 this._pose.setPosition(e.x, 0.032, e.z);
                 this.shadowMesh.setMatrixAt(shadowCount++, this._pose);
@@ -303,8 +304,10 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
                 var vt=tints[Math.floor(((e.phase||0)*13.37)%1*tints.length)%tints.length];
                 this._color.setRGB(vt[0],vt[1],vt[2]);
             }
-            // V12视觉: 特殊体型染色(冰冻/受击闪烁随后覆盖)
+            // V12/V16.2 视觉: 特殊体型专属辨识染色(冰冻/受击闪烁随后覆盖)
             if(e.type==='elite')this._color.setRGB(1.22,1.08,.72);          // 精英金染
+            else if(e.type==='thrower')this._color.setRGB(1.42,.86,.22);    // V16.2 投弹怪: 醒目橙琥珀色
+            else if(e.type==='flanker')this._color.setRGB(.22,1.28,1.42);   // V16.2 伏击怪: 醒目青蓝色
             if(e.frozenT>0)this._color.setRGB(.50,.85,1.35);
             if(e.phaseIndex>=3)this._color.setRGB(1.35,.72,.75);
             else if(e.phaseIndex===2)this._color.setRGB(1.12,.85,1.2);

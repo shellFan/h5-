@@ -615,6 +615,7 @@ class Game {
         var svgAirstrike = '<svg class="v15-shop-svg" viewBox="0 0 40 40"><defs><linearGradient id="gAir" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFE070"/><stop offset="55%" stop-color="#FF7A24"/><stop offset="100%" stop-color="#C82818"/></linearGradient></defs><circle cx="20" cy="20" r="14" fill="none" stroke="#FF8C36" stroke-width="2" stroke-dasharray="4 3"/><path d="M27 7 L19 19 L25 22 L12 34 L17 21 L11 18 Z" fill="url(#gAir)" stroke="#4A1806" stroke-width="1.5" stroke-linejoin="round"/></svg>';
         var svgCryo = '<svg class="v15-shop-svg" viewBox="0 0 40 40"><defs><linearGradient id="gIce" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E8FBFF"/><stop offset="55%" stop-color="#6CD8FF"/><stop offset="100%" stop-color="#1E7AD8"/></linearGradient></defs><path d="M20 5 V35 M7 12.5 L33 27.5 M33 12.5 L7 27.5" stroke="url(#gIce)" stroke-width="3.2" stroke-linecap="round"/><polygon points="20,12 27,16 27,24 20,28 13,24 13,16" fill="#B8F0FF" stroke="#164B8A" stroke-width="1.6"/></svg>';
         var svgOverdrive = '<svg class="v15-shop-svg" viewBox="0 0 40 40"><defs><linearGradient id="gOD" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFF59A"/><stop offset="55%" stop-color="#FFB426"/><stop offset="100%" stop-color="#D94814"/></linearGradient></defs><circle cx="20" cy="20" r="14" fill="#3B2408" stroke="#F5C946" stroke-width="2"/><path d="M22 6 L11 22 H19 L16 34 L29 18 H21 Z" fill="url(#gOD)" stroke="#4A1A04" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+        var svgTornado = '<svg class="v15-shop-svg" viewBox="0 0 40 40"><defs><linearGradient id="gTorn" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E6FFFF"/><stop offset="55%" stop-color="#38E8FF"/><stop offset="100%" stop-color="#0E88C8"/></linearGradient></defs><ellipse cx="20" cy="10" rx="13" ry="4" fill="none" stroke="url(#gTorn)" stroke-width="3"/><ellipse cx="20" cy="17" rx="10" ry="3.2" fill="none" stroke="url(#gTorn)" stroke-width="2.8"/><ellipse cx="20" cy="24" rx="7" ry="2.4" fill="none" stroke="url(#gTorn)" stroke-width="2.6"/><ellipse cx="20" cy="30" rx="4" ry="1.6" fill="none" stroke="#99F6FF" stroke-width="2.2"/><circle cx="20" cy="34.5" r="1.8" fill="#E6FFFF"/></svg>';
         var shopIconMap = {
             recruit: '<img class="v15-shop-icon-img" src="assets/game/characters/soldier_portrait.png" alt="新兵招募">',
             logistics: '<img class="v15-shop-icon-img" src="assets/game/ui/chest.png" alt="后勤补给">',
@@ -623,12 +624,14 @@ class Game {
             pierce: svgPierce,
             skill_airstrike: svgAirstrike,
             skill_cryo: svgCryo,
-            skill_overdrive: svgOverdrive
+            skill_overdrive: svgOverdrive,
+            skill_tornado: svgTornado
         };
         this._skillSvgIcons = {
             skill_airstrike: svgAirstrike,
             skill_cryo: svgCryo,
-            skill_overdrive: svgOverdrive
+            skill_overdrive: svgOverdrive,
+            skill_tornado: svgTornado
         };
         this._initActiveSkillBar();
         if (listEl) {
@@ -716,16 +719,18 @@ class Game {
         }
     }
 
-    // ===== V15-GAMEPLAY-002: 后期可升级战斗主动战术技能 (空袭 / 冰冻 / 超载) =====
+    // ===== V15-GAMEPLAY-002 / V16.2: 战斗主动战术技能 (空袭 / 冰冻 / 超载 / 龙卷风) =====
     _initActiveSkillBar() {
         var self = this;
         this._activeSkillOrder = [
             { id: 'skill_airstrike', short: '空袭', key: '1' },
             { id: 'skill_cryo', short: '冰冻', key: '2' },
-            { id: 'skill_overdrive', short: '超载', key: '3' }
+            { id: 'skill_overdrive', short: '超载', key: '3' },
+            { id: 'skill_tornado', short: '龙卷风', key: '4' }
         ];
-        this._activeSkillCd = { skill_airstrike: 0, skill_cryo: 0, skill_overdrive: 0 };
+        this._activeSkillCd = { skill_airstrike: 0, skill_cryo: 0, skill_overdrive: 0, skill_tornado: 0 };
         this._activeSkillBtns = {};
+        this._activeTornado = null;
         var hud = document.getElementById('hud');
         if (!hud || document.getElementById('v15-skill-bar')) return;
         var bar = document.createElement('div');
@@ -753,7 +758,7 @@ class Game {
         }
         hud.appendChild(bar);
         this._activeSkillBar = bar;
-        // 桌面端快捷键 1/2/3 释放主动技能
+        // 桌面端快捷键 1/2/3/4 释放主动技能
         if (typeof window !== 'undefined' && !window._v15SkillKeyBound) {
             window._v15SkillKeyBound = true;
             window.addEventListener('keydown', function(e) {
@@ -761,12 +766,76 @@ class Game {
                 if (e.key === '1') self.castActiveSkill('skill_airstrike');
                 else if (e.key === '2') self.castActiveSkill('skill_cryo');
                 else if (e.key === '3') self.castActiveSkill('skill_overdrive');
+                else if (e.key === '4') self.castActiveSkill('skill_tornado');
             });
         }
     }
 
+    _ensureTornadoMesh() {
+        if (this._tornadoGroup) return this._tornadoGroup;
+        var sc = (this.world && this.world.scene) || this.scene;
+        if (typeof THREE === 'undefined' || !sc) return null;
+        var g = new THREE.Group();
+        g.visible = false;
+        g.userData.artSource = 'V16.2 pooled 3D tactical tornado VFX';
+        // 外层半透明青白漏斗 (修长龙卷风廓形)
+        var outerGeo = new THREE.CylinderGeometry(1.75, 0.36, 4.0, 20, 6, true);
+        var outerMat = new THREE.MeshBasicMaterial({
+            color: 0x3CE8FF, transparent: true, opacity: 0.32,
+            side: THREE.DoubleSide, depthWrite: false
+        });
+        var outerMesh = new THREE.Mesh(outerGeo, outerMat);
+        outerMesh.position.y = 2.0;
+        g.add(outerMesh);
+        // 内层高亮风核
+        var coreGeo = new THREE.CylinderGeometry(0.82, 0.16, 3.9, 16, 4, true);
+        var coreMat = new THREE.MeshBasicMaterial({
+            color: 0xE6FFFF, transparent: true, opacity: 0.56,
+            blending: THREE.AdditiveBlending, side: THREE.DoubleSide, depthWrite: false
+        });
+        var coreMesh = new THREE.Mesh(coreGeo, coreMat);
+        coreMesh.position.y = 1.95;
+        g.add(coreMesh);
+        // 3道高速旋转风环
+        var rings = [];
+        var ringHeights = [0.55, 1.65, 2.95];
+        var ringRadii = [0.82, 1.32, 1.82];
+        for (var r = 0; r < 3; r++) {
+            var rGeo = new THREE.TorusGeometry(ringRadii[r], 0.085, 8, 24);
+            var rMat = new THREE.MeshBasicMaterial({
+                color: r === 1 ? 0xE6FFFF : 0x5CEEFF, transparent: true, opacity: 0.72,
+                blending: THREE.AdditiveBlending, depthWrite: false
+            });
+            var rMesh = new THREE.Mesh(rGeo, rMat);
+            rMesh.rotation.x = Math.PI * 0.5 + (r % 2 ? 0.18 : -0.18);
+            rMesh.position.y = ringHeights[r];
+            g.add(rMesh);
+            rings.push(rMesh);
+        }
+        // 贴地风压尘环
+        var baseGeo = new THREE.RingGeometry(0.6, 2.5, 24);
+        baseGeo.rotateX(-Math.PI * 0.5);
+        var baseMat = new THREE.MeshBasicMaterial({
+            color: 0x7DF4FF, transparent: true, opacity: 0.48,
+            blending: THREE.AdditiveBlending, side: THREE.DoubleSide, depthWrite: false
+        });
+        var baseRing = new THREE.Mesh(baseGeo, baseMat);
+        baseRing.position.y = 0.08;
+        g.add(baseRing);
+
+        g._outer = outerMesh;
+        g._core = coreMesh;
+        g._rings = rings;
+        g._baseRing = baseRing;
+        sc.add(g);
+        this._tornadoGroup = g;
+        return g;
+    }
+
     _resetActiveSkills() {
         if (!this._activeSkillOrder) return;
+        this._activeTornado = null;
+        if (this._tornadoGroup) this._tornadoGroup.visible = false;
         var anyUnlocked = false;
         for (var i = 0; i < this._activeSkillOrder.length; i++) {
             var id = this._activeSkillOrder[i].id;
@@ -796,6 +865,107 @@ class Game {
                 var cdEl = document.getElementById('v15-cd-' + id);
                 if (btn) btn.classList.toggle('is-cd', cd > 0);
                 if (cdEl) cdEl.textContent = cd > 0 ? Math.ceil(cd) + 's' : '';
+            }
+        }
+        this._updateTornado(dt);
+    }
+
+    /** V16.2: 战术龙卷风每帧推进、3D旋风动画、聚怪牵引(上限30只)与0.25s周期绞杀 */
+    _updateTornado(dt) {
+        var t = this._activeTornado;
+        var enemies = (this.enemies && this.enemies.enemies) ? this.enemies.enemies : [];
+        if (!t) {
+            if (this._tornadoGroup && this._tornadoGroup.visible) this._tornadoGroup.visible = false;
+            for (var c = 0; c < enemies.length; c++) {
+                var ec = enemies[c];
+                if (ec._tornadoPulled) ec._tornadoPulled = false;
+                if (!ec._vaulting && ec._liftY > 0) ec._liftY = Math.max(0, ec._liftY - dt * 4.5);
+            }
+            return;
+        }
+        t.remaining -= dt;
+        t.spin += dt * 11.5;
+        t.tickTimer += dt;
+        // 相对小队保持前推(对地速度 = 小队行进速度 + 2.0m/s, 确保旋风始终稳步扫入前方怪潮)
+        var advSpd = (this.squad && !this._bossEngaged) ? ((CONFIG.SQUAD_SPEED || 3.3) + 2.0) : t.speed;
+        t.z -= advSpd * dt;
+        t.x = clamp(t.baseX + Math.sin(t.spin * 0.22) * 0.65, -2.2, 2.2);
+
+        // 3D 旋风网格实时动画
+        var mesh = this._ensureTornadoMesh();
+        if (mesh) {
+            mesh.visible = true;
+            mesh.position.set(t.x, 0, t.z);
+            var fade = t.remaining < 0.45 ? Math.max(0.05, t.remaining / 0.45) : 1;
+            var radScale = (t.radius / 2.8) * fade;
+            mesh.scale.set(radScale, fade, radScale);
+            if (mesh._outer) mesh._outer.rotation.y = t.spin;
+            if (mesh._core) mesh._core.rotation.y = -t.spin * 1.45;
+            if (mesh._baseRing) mesh._baseRing.rotation.z = t.spin * 0.8;
+            if (mesh._rings) {
+                for (var r = 0; r < mesh._rings.length; r++) {
+                    mesh._rings[r].rotation.z = t.spin * (1.2 + r * 0.45);
+                }
+            }
+        }
+        if (this.effects && Math.random() < 0.45) {
+            var ang = Math.random() * Math.PI * 2;
+            var rr = Math.random() * t.radius * 0.75;
+            this.effects.burst(t.x + Math.cos(ang) * rr, 0.35 + Math.random() * 1.8, t.z + Math.sin(ang) * rr, 0x7DF4FF, 2, 2.6, 0.32);
+        }
+
+        // 每 0.25s 结算一次范围绞杀伤害
+        var doTickDmg = false;
+        if (t.tickTimer >= 0.25) {
+            t.tickTimer -= 0.25;
+            doTickDmg = true;
+        }
+        var pulledCount = 0;
+        var tickDmg = t.dps * 0.25;
+        for (var i = 0; i < enemies.length; i++) {
+            var e = enemies[i];
+            if (!e.alive || e._vaulting) continue;
+            var dx = t.x - e.x;
+            var dz = t.z - e.z;
+            var d = Math.hypot(dx, dz);
+            if (d <= t.radius) {
+                if (doTickDmg) {
+                    var dmg = e.isBoss ? tickDmg * 0.25 : tickDmg;
+                    if (e.takeDamage) e.takeDamage(dmg, this.effects);
+                    else e.hp -= dmg;
+                }
+                if (!e.alive) continue;
+                // Boss 免疫牵引, 精英 25% 牵引, 盾牌 50% 牵引, 其余 100%, 最多同时卷起 30 只
+                if (!e.isBoss && pulledCount < 30) {
+                    pulledCount++;
+                    var pullStr = (e.type === 'elite') ? 0.25 : (e.type === 'shield' ? 0.5 : 1.0);
+                    e._tornadoPulled = true;
+                    var inv = 1 / Math.max(0.15, d);
+                    var nx = dx * inv, nz = dz * inv;
+                    // 向心吸引 + 切向旋转
+                    var pullSpd = 5.4 * pullStr;
+                    var swirlSpd = 3.8 * pullStr;
+                    e.x = clamp(e.x + (nx * pullSpd - nz * swirlSpd) * dt, -3.2, 3.2);
+                    e.z += (nz * pullSpd + nx * swirlSpd) * dt;
+                    var targetLift = (e.type === 'elite' ? 0.25 : 0.85) * (1 - d / (t.radius * 1.15));
+                    e._liftY = clamp((e._liftY || 0) + (Math.max(0.18, targetLift) - (e._liftY || 0)) * Math.min(1, dt * 8), 0, 1.1);
+                } else {
+                    e._tornadoPulled = false;
+                }
+            } else {
+                if (e._tornadoPulled) e._tornadoPulled = false;
+                if (e._liftY > 0) e._liftY = Math.max(0, e._liftY - dt * 4.5);
+            }
+        }
+        t.pulledCount = pulledCount;
+
+        if (t.remaining <= 0) {
+            this._activeTornado = null;
+            if (mesh) mesh.visible = false;
+            for (var k = 0; k < enemies.length; k++) {
+                var ek = enemies[k];
+                ek._tornadoPulled = false;
+                if (!ek._vaulting) ek._liftY = 0;
             }
         }
     }
@@ -864,6 +1034,32 @@ class Game {
                 this.effects.floatText(this.squad.x, 2.8, this.squad.z - 2, '火力超载!', '#FFE066', true);
             }
             this._sfx('win');
+        } else if (id === 'skill_tornado') {
+            var tDur = 4.5 + lv * 0.5;
+            var tDps = 3 + lv;
+            var tRadius = 2.6 + lv * 0.2;
+            var tCd = Math.max(24, 42 - lv * 2);
+            this._activeSkillCd[id] = tCd;
+            var startX = clamp(this.squad.x, -2.0, 2.0);
+            var startZ = this.squad.z - 3.0;
+            this._activeTornado = {
+                x: startX, baseX: startX, z: startZ,
+                lv: lv, dur: tDur, remaining: tDur,
+                dps: tDps, radius: tRadius, speed: 2.2,
+                tickTimer: 0, spin: 0, pulledCount: 0
+            };
+            var tMesh = this._ensureTornadoMesh();
+            if (tMesh) {
+                tMesh.visible = true;
+                tMesh.position.set(startX, 0, startZ);
+            }
+            if (this.effects) {
+                if (this.effects.shockwave) this.effects.shockwave(startX, 0.08, startZ, 0x3CE8FF);
+                this.effects.burst(startX, 1.1, startZ, 0x7DF4FF, 22, 5.5, 0.55);
+                this.effects.floatText(startX, 2.9, startZ - 1, '战术龙卷风!', '#5CEEFF', true);
+            }
+            if (this.world) this.world.shake(0.22, 0.25);
+            this._sfx('gate');
         } else {
             return false;
         }

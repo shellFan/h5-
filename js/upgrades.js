@@ -65,6 +65,14 @@ var UPGRADE_DEFS = {
         desc: '【主动技】Lv.1解锁 · 短时间大幅提升火力/射速并获护盾',
         levels: [250, 500, 850, 1350, 2000],
         effect: function(lv) { return lv <= 0 ? '未解锁' : ('伤害×' + (1.6 + lv * 0.15).toFixed(2) + ' · 持续 ' + (6 + lv * 1.2).toFixed(1) + 's'); }
+    },
+    skill_tornado: {
+        id: 'skill_tornado',
+        name: '战术龙卷风',
+        icon: '🌪️',
+        desc: '【主动技】Lv.1解锁 · 释放推进旋风卷起怪潮并持续绞杀',
+        levels: [300, 450, 700, 1000, 1500],
+        effect: function(lv) { return lv <= 0 ? '未解锁' : ('持续 ' + (4.5 + lv * 0.5).toFixed(1) + 's · 半径 ' + (2.6 + lv * 0.2).toFixed(1) + 'm · 冷却 ' + (42 - lv * 2) + 's'); }
     }
 };
 

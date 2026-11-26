@@ -14,7 +14,10 @@ class Enemy {
         this.knockback = 0;
         this.frozenT = 0;       // V3.3: 冰冻减速剩余时间
         this._frozenFx = false; // 冰冻粒子只播一次
-        this.spitTimer = randRange(1, 2);
+        this.spitTimer = randRange(1.2, 2.4);
+        this.throwTimer = randRange(1.4, 2.6); // V16.2: 投弹怪初始投掷倒计时
+        this._liftY = 0;                       // V16.2: 跃栏/龙卷风浮空高度
+        this._tornadoPulled = false;           // V16.2: 被龙卷风牵引标记(暂停近战攻击)
         this.phase = Math.random() * Math.PI * 2;
         this.isBoss = (type === 'boss');
         this.enraged = false;   // V3.2: Boss狂暴阶段标记
@@ -27,12 +30,26 @@ class Enemy {
         this.removeReady = false;
         this.spawnT = this.isBoss ? 0 : 1; // V4.0: Boss弹性入场动画
 
-        // V3.5: 大众僵尸使用合并批处理模型(2 mesh/只), Boss/精英保留Group模型(细节动画+独立材质)
-        this.artStyle = styleOverride || (this.isBoss ? 'bruiser' : type); // V12.1: bomber owns a distinct round hazard-canister silhouette
+        // V16.2: 路边伏击怪 flanker 从道路护栏外侧(x=±5.2)翻越跃入战场
+        if (type === 'flanker') {
+            this._vaultSide = (x >= 0) ? 1 : -1;
+            this._vaultStartX = this._vaultSide * 5.2;
+            this._vaultEndX = this._vaultSide * randRange(2.05, 2.85);
+            this.x = this._vaultStartX;
+            this._vaultT = 0;
+            this._vaultDur = 0.72;
+            this._vaulting = true;
+            this._homeX = this._vaultEndX;
+            this._spreadX = clamp((this._homeX / 3.2) * 1.35, -1.45, 1.45);
+        }
+
+        // V3.5 / V16.2: thrower 复用 bomber 罐装轮廓+橙琥珀染色, flanker 复用 fast 敏捷轮廓+青蓝染色
+        var mappedStyle = (type === 'thrower') ? 'bomber' : (type === 'flanker' ? 'fast' : type);
+        this.artStyle = styleOverride || (this.isBoss ? 'bruiser' : mappedStyle);
         this.model = new THREE.Group();
         this.model.userData.merged = true;
         this.model.userData.artSource = 'assets/models/'+(['normal','fast','shield','split','spitter','elite','bomber'].includes(this.artStyle)?'zombies':'bosses')+'/'+this.artStyle+'/'+this.artStyle+'.glb (instanced anchor)';
-        this.model.position.set(x, 0, z);
+        this.model.position.set(this.x, 0, this.z);
         this.model.scale.setScalar(this.cfg.scale); // V2.2修复: 存活时应用类型scale
         this.visScale = this.cfg.scale; // 实际视觉scale(分裂僵尸会缩小)
         if(this.isBoss && this.artStyle==='elite') {this.visScale=2.25;this.model.scale.setScalar(this.visScale);}
@@ -123,6 +140,23 @@ class Enemy {
             this.model.scale.setScalar(this.visScale * Math.max(0.05, easeOutBack(this.spawnT)));
             if (this.spawnT < 1) return;
         }
+        // V16.2: 路边伏击怪 flanker 0.72s 翻越护栏抛物线入场 (空中无接触伤害)
+        if (this._vaulting) {
+            this._vaultT += dt / (this._vaultDur || 0.72);
+            var vt = Math.min(1, this._vaultT);
+            this.x = this._vaultStartX + (this._vaultEndX - this._vaultStartX) * vt;
+            this._liftY = Math.sin(vt * Math.PI) * 1.45;
+            this.z = BattleKinematics.enemyApproachZ(this.z, this.cfg.speed * 0.45, dt);
+            this.model.position.set(this.x, this._liftY, this.z);
+            this.model.rotation.z = -this._vaultSide * (1 - vt) * 0.45;
+            this.model.rotation.x = 0.25 * Math.sin(vt * Math.PI);
+            if (vt >= 1) {
+                this._vaulting = false;
+                this._liftY = 0;
+                if (effects) effects.burst(this.x, 0.2, this.z, 0x22D3EE, 6, 2.2, 0.3);
+            }
+            return;
+        }
         if(this.isBoss)V42BossController.update(this,dt,squad,manager,effects);
 
         // V3.3: 冰冻减速
@@ -149,13 +183,28 @@ class Enemy {
             });
         }
 
-        // 吐痰僵尸: 远程攻击
-        // V5.1.3: 攻击间隔随场上吐痰怪数量摊薄(×3体量下24只齐射=12击杀/秒, 任何队伍都融化)
-        if (this.type === 'spitter' && dist > attackDist && dist < 10) {
+        // V16.2: 酸液远程怪 spitter (8-9.5m射程, 3.8s间隔, 5m/s非追踪酸液弹, 最多6只同时齐射)
+        if (this.type === 'spitter' && !frozen && !this._tornadoPulled && dist > attackDist && dist < 9.5) {
             this.spitTimer -= dt;
             if (this.spitTimer <= 0) {
-                this.spitTimer = randRange(1.8, 2.5) * (1 + 0.3 * ((manager && manager._spitterCount) || 1));
-                manager.spawnSpit(this.x, 0.5, this.z, squad);
+                var spitScale = Math.max(1, ((manager && manager._spitterCount) || 1) / 6);
+                this.spitTimer = randRange(3.4, 4.2) * spitScale;
+                if (manager && manager.spits && manager.spits.length < 10) {
+                    this.attackT = 1;
+                    manager.spawnSpit(this.x, 0.6, this.z, squad);
+                }
+            }
+        }
+
+        // V16.2: 抛物线投弹怪 thrower (9-10.5m射程, 5.5s间隔, 1.3s地面红圈预警, 场上最多3枚炸弹)
+        if (this.type === 'thrower' && !frozen && !this._tornadoPulled && dist > attackDist + 1.2 && dist < 10.5) {
+            this.throwTimer -= dt;
+            if (this.throwTimer <= 0) {
+                this.throwTimer = randRange(5.0, 6.0);
+                if (manager && manager.spawnBomb && (!manager.bombs || manager.bombs.length < 3)) {
+                    this.attackT = 1;
+                    manager.spawnBomb(this.x, 1.0, this.z, squad.x, squad.z);
+                }
             }
         }
 
@@ -187,15 +236,20 @@ class Enemy {
             this.x += Math.sign(squad.x - this.x) * this.cfg.speed * dt;
         } else {
             // Melee requires horizontal contact too, not just a matching Z.
-            this.attackTimer -= dt;
-            if (this.attackTimer <= 0) {
-                // V5.1.4: Boss攻击间隔×2(挥击1.6s, 磨损0.625/s) — Boss竞速与召唤磨损平衡
-                this.attackTimer = CONFIG.ZOMBIE_ATTACK_INTERVAL * (this.attackMul || 1) * (frozen ? 2 : 1) * (this.isBoss ? 2 : 1);
-                this.attackT=1;
-                const kill = this.isBoss ? (this.enraged ? 3 : 1) : CONFIG.ZOMBIE_ATTACK_KILL; // 非狂暴1/狂暴3
-                squad.killSoldiers(kill, effects);
-                if (effects) {
-                    effects.burst(squad.x, 0.5, squad.z, 0xFF4444, 5, 2, 0.3);
+            // V16.2: 被龙卷风卷起的普通/特殊怪暂停近战攻击(Boss/精英除外)
+            if (this._tornadoPulled && !this.isBoss && this.type !== 'elite') {
+                this.attackTimer = Math.max(this.attackTimer, 0.25);
+            } else {
+                this.attackTimer -= dt;
+                if (this.attackTimer <= 0) {
+                    // V5.1.4: Boss攻击间隔×2(挥击1.6s, 磨损0.625/s) — Boss竞速与召唤磨损平衡
+                    this.attackTimer = CONFIG.ZOMBIE_ATTACK_INTERVAL * (this.attackMul || 1) * (frozen ? 2 : 1) * (this.isBoss ? 2 : 1);
+                    this.attackT=1;
+                    const kill = this.isBoss ? (this.enraged ? 3 : 1) : CONFIG.ZOMBIE_ATTACK_KILL; // 非狂暴1/狂暴3
+                    squad.killSoldiers(kill, effects);
+                    if (effects) {
+                        effects.burst(squad.x, 0.5, squad.z, 0xFF4444, 5, 2, 0.3);
+                    }
                 }
             }
         }
@@ -206,11 +260,11 @@ class Enemy {
             this.knockback *= Math.pow(0.05, dt);
         }
 
-        // 行走动画: 摇摆+弹跳+V3.7左右摇头蹒跚(尸吊感)
+        // 行走动画: 摇摆+弹跳+V3.7左右摇头蹒跚(尸吊感) + V16.2浮空高度(_liftY)
         const walkSpeed = this.isBoss ? 3 : 5;
         const sway = Math.sin(time * walkSpeed + this.phase) * 0.1;
         const bob = Math.abs(Math.sin(time * walkSpeed + this.phase)) * 0.06;
-        this.model.position.set(this.x, bob, this.z);
+        this.model.position.set(this.x, bob + (this._liftY || 0), this.z);
         this.model.rotation.z = sway;
         this.model.rotation.y = this._baseRotY + Math.sin(time * walkSpeed * 0.5 + this.phase) * 0.12;
         // V16.1: 受击轻微后仰与弹性受击缩放反馈 + 自然体型微差
@@ -269,9 +323,32 @@ class EnemyManager {
         this.bossStyle='bruiser';
         this.renderer=new EnemyArmyRenderer(scene);
         this._spitPool=Array.from({length:64},()=>({mesh:new THREE.Object3D(),life:0,vx:0,vz:0}));
-        this._spitInstances=new THREE.InstancedMesh(new THREE.SphereGeometry(.11,8,6),new THREE.MeshBasicMaterial({color:0x9dff67}),64);
+        this._spitInstances=new THREE.InstancedMesh(new THREE.SphereGeometry(.14,8,6),new THREE.MeshBasicMaterial({color:0x7CFF48}),64);
         this._spitInstances.count=0;this._spitInstances.frustumCulled=false;
         this._spitInstances.userData.artSource='V42 pooled acid projectiles';scene.add(this._spitInstances);
+        // V16.2: 抛物线投弹怪炸弹 + 1.3s 地面红色预警圈 (对象池, 场上最多3枚)
+        this.bombs = [];
+        this._bombPool = Array.from({length: 8}, () => ({ sx:0, sy:1, sz:0, tx:0, tz:0, t:0, dur:1.3 }));
+        this._bombMat4 = new THREE.Matrix4();
+        this._bombInstances = new THREE.InstancedMesh(
+            new THREE.SphereGeometry(0.24, 10, 8),
+            new THREE.MeshBasicMaterial({ color: 0xFF6B1A }),
+            8
+        );
+        this._bombInstances.count = 0; this._bombInstances.frustumCulled = false;
+        this._bombInstances.userData.artSource = 'V16.2 pooled parabolic bombs';
+        scene.add(this._bombInstances);
+        var ringGeo = new THREE.RingGeometry(0.85, 1.32, 24);
+        ringGeo.rotateX(-Math.PI * 0.5);
+        this._bombRingInstances = new THREE.InstancedMesh(
+            ringGeo,
+            new THREE.MeshBasicMaterial({ color: 0xFF2828, transparent: true, opacity: 0.78, side: THREE.DoubleSide, depthWrite: false }),
+            8
+        );
+        this._bombRingInstances.count = 0; this._bombRingInstances.frustumCulled = false;
+        this._bombRingInstances.renderOrder = 3;
+        this._bombRingInstances.userData.artSource = 'V16.2 bomb ground telegraph rings';
+        scene.add(this._bombRingInstances);
     }
 
     /** V4.0: loadFromLevel 只负责清场; 波次计划移交 GamePacingController 分批驱动 */
@@ -308,19 +385,40 @@ class EnemyManager {
         this._eliteAuraCount = 0; // V12视觉: 光环配额重置(共享几何/材质不dispose, 无泄漏)
         for (const s of this.spits) this._spitPool.push(s);
         this.spits = [];
+        if (this.bombs) {
+            for (const b of this.bombs) this._bombPool.push(b);
+            this.bombs = [];
+        }
         this.pendingSpawns = [];
         this.boss = null;
         this.bossKills = 0; // V10 QA修复: 原漏复位导致Boss击杀数跨关卡累计重复入账
         this.splitQueue = [];
         this.killCount = 0;
-        this.renderer.clear();this._spitInstances.count=0;
+        this.renderer.clear();
+        this._spitInstances.count=0;
+        if (this._bombInstances) this._bombInstances.count = 0;
+        if (this._bombRingInstances) this._bombRingInstances.count = 0;
     }
 
     spawnSpit(x, y, z, squad) {
         var s=this._spitPool.pop();if(!s)return;
         s.mesh.position.set(x,y,z);
-        var dx=squad.x-x,dz=squad.z-z, inv=8/Math.max(.01,Math.hypot(dx,dz));
-        s.vx=dx*inv;s.vz=dz*inv;s.life=2.5;this.spits.push(s);
+        // V16.2: 5 m/s 非追踪直线酸液弹(玩家可左右走位清晰躲避)
+        var dx=squad.x-x,dz=squad.z-z, inv=5.0/Math.max(.01,Math.hypot(dx,dz));
+        s.vx=dx*inv;s.vz=dz*inv;s.life=2.8;this.spits.push(s);
+    }
+
+    /** V16.2: 投弹怪抛物线炸弹(锁定投掷瞬间玩家位置 + 1.3s地面红圈预警) */
+    spawnBomb(x, y, z, targetX, targetZ) {
+        if (!this.bombs || this.bombs.length >= 3) return;
+        var b = this._bombPool.pop();
+        if (!b) return;
+        b.sx = x; b.sy = y; b.sz = z;
+        b.tx = clamp(targetX, -3.1, 3.1);
+        b.tz = targetZ;
+        b.t = 0;
+        b.dur = 1.3;
+        this.bombs.push(b);
     }
 
     update(dt, time, squad) {
@@ -428,6 +526,51 @@ class EnemyManager {
             this._spitInstances.setMatrixAt(si,this.spits[si].mesh.matrix);
         }
         this._spitInstances.instanceMatrix.needsUpdate=true;
+
+        // V16.2: 更新投弹怪抛物线炸弹 + 地面红色预警圈
+        if (this.bombs && this._bombInstances && this._bombRingInstances) {
+            for (var bi = this.bombs.length - 1; bi >= 0; bi--) {
+                var b = this.bombs[bi];
+                b.t += dt;
+                var p = Math.min(1, b.t / b.dur);
+                if (p >= 1) {
+                    // 落地引爆: 半径1.3m, 最多伤害3名士兵(走现有减员/护盾逻辑)
+                    var hitDist = Math.hypot(squad.x - b.tx, squad.z - b.tz);
+                    var hitRadius = 1.3 + (squad.getHalfWidth ? squad.getHalfWidth() * 0.45 : 0.45);
+                    if (hitDist <= hitRadius && squad.alive) {
+                        var dmgCount = hitDist <= 0.85 ? 3 : 2;
+                        squad.killSoldiers(dmgCount, this.effects);
+                    }
+                    if (this.effects) {
+                        if (this.effects.shockwave) this.effects.shockwave(b.tx, 0.08, b.tz, 0xFF4422);
+                        this.effects.burst(b.tx, 0.55, b.tz, 0xFF7A24, 14, 4.2, 0.5);
+                        this.effects.burst(b.tx, 0.35, b.tz, 0x3A3A3A, 6, 2.2, 0.6);
+                    }
+                    if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('boom');
+                    this._bombPool.push(b);
+                    this.bombs.splice(bi, 1);
+                }
+            }
+            this._bombInstances.count = this.bombs.length;
+            this._bombRingInstances.count = this.bombs.length;
+            for (var bj = 0; bj < this.bombs.length; bj++) {
+                var bb = this.bombs[bj];
+                var bp = Math.min(1, bb.t / bb.dur);
+                var bx = bb.sx + (bb.tx - bb.sx) * bp;
+                var bz = bb.sz + (bb.tz - bb.sz) * bp;
+                var by = bb.sy * (1 - bp) + Math.sin(bp * Math.PI) * 3.1;
+                var bScale = 1.0 + Math.sin(bp * Math.PI * 10) * 0.14;
+                this._bombMat4.makeScale(bScale, bScale, bScale);
+                this._bombMat4.setPosition(bx, by, bz);
+                this._bombInstances.setMatrixAt(bj, this._bombMat4);
+                var rScale = 0.88 + 0.18 * Math.sin(bp * Math.PI * 8);
+                this._bombMat4.makeScale(rScale, 1, rScale);
+                this._bombMat4.setPosition(bb.tx, 0.07, bb.tz);
+                this._bombRingInstances.setMatrixAt(bj, this._bombMat4);
+            }
+            this._bombInstances.instanceMatrix.needsUpdate = true;
+            this._bombRingInstances.instanceMatrix.needsUpdate = true;
+        }
         this.renderer.update(dt,time,this.enemies,squad.z);
     }
 

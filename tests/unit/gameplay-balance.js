@@ -29,7 +29,8 @@ console.log('\n■ V15-GAMEPLAY-001 怪物基础HP与关卡倍率');
 const Z = vm.runInContext('CONFIG.ZOMBIE', ctx);
 const MUL = vm.runInContext('CONFIG.ENEMY_HP_MULTIPLIER', ctx);
 const LEVELS = vm.runInContext('LEVELS', ctx);
-assert(Z.normal.hp === 10 && Z.fast.hp === 7 && Z.split.hp === 12 && Z.spitter.hp === 11, '基础小怪HP提升至 normal=10/fast=7/split=12/spitter=11');
+assert(Z.normal.hp === 10 && Z.fast.hp === 7 && Z.split.hp === 12 && Z.spitter.hp === 14, '基础小怪HP: normal=10/fast=7/split=12/spitter=14');
+assert(Z.thrower && Z.thrower.hp === 18 && Z.thrower.speed === 1.15 && Z.flanker && Z.flanker.hp === 12 && Z.flanker.speed === 2.15, 'V16.2新增投弹怪(thrower hp=18)与路边伏击怪(flanker hp=12)');
 assert(Z.bomber.hp === 16 && Z.shield.hp === 28 && Z.elite.hp === 65 && Z.boss.hp === 200, '重型怪HP提升至 bomber=16/shield=28/elite=65, boss=200不变');
 assert(MUL.length === 10 && MUL[0] < MUL[9], '10关HP倍率单调递增');
 assert(LEVELS[4].segments.some(s => s.type === 'boss' && s.boss.hp === 2600), 'L5 Boss独立血量2600保持不变');
@@ -93,13 +94,26 @@ const CLASS_DEFS = vm.runInContext('CLASS_DEFS', ctx);
 assert(CLASS_DEFS.medic.mods.regenN === 1 && CLASS_DEFS.medic.mods.regenInterval === 12, '战地军医被动调整为12秒恢复1人');
 
 // 5. 后期可升级主动战术技能验证
-console.log('\n■ V15-GAMEPLAY-002 后期可升级主动技能');
+console.log('\n■ V15-GAMEPLAY-002 / V16.2 后期可升级主动技能 (含战术龙卷风)');
 vm.runInContext(fs.readFileSync(path.join(ROOT, 'js/upgrades.js'), 'utf8'), ctx);
 const UDEFS = vm.runInContext('UPGRADE_DEFS', ctx);
-assert(UDEFS.skill_airstrike && UDEFS.skill_cryo && UDEFS.skill_overdrive, '商店包含3项后期主动技能(空袭/冰冻/超载)');
-assert(UDEFS.skill_airstrike.levels.length === 5 && UDEFS.skill_cryo.levels.length === 5 && UDEFS.skill_overdrive.levels.length === 5, '3项主动技能均为5级可升级成长');
-assert(UDEFS.skill_airstrike.effect(0) === '未解锁' && UDEFS.skill_airstrike.effect(1).indexOf('范围伤害') >= 0, '主动技能Lv.0未解锁, Lv.1解锁战斗生效');
+assert(UDEFS.skill_airstrike && UDEFS.skill_cryo && UDEFS.skill_overdrive && UDEFS.skill_tornado, '商店包含4项主动战术技能(空袭/冰冻/超载/龙卷风)');
+assert(UDEFS.skill_airstrike.levels.length === 5 && UDEFS.skill_cryo.levels.length === 5 && UDEFS.skill_overdrive.levels.length === 5 && UDEFS.skill_tornado.levels.length === 5, '4项主动技能均为5级可升级成长');
+assert(UDEFS.skill_airstrike.effect(0) === '未解锁' && UDEFS.skill_airstrike.effect(1).indexOf('范围伤害') >= 0, '空袭Lv.0未解锁, Lv.1解锁战斗生效');
+assert(UDEFS.skill_tornado.effect(0) === '未解锁' && UDEFS.skill_tornado.effect(1).indexOf('5.0s') >= 0 && UDEFS.skill_tornado.effect(5).indexOf('7.0s') >= 0, '战术龙卷风Lv.1(5.0s)→Lv.5(7.0s)按V16.2方案成长');
+
+// 6. V16.2-GAMEPLAY-005 关卡怪物丰富度验证 (L1>=4种, L2>=6种)
+console.log('\n■ V16.2-GAMEPLAY-005 关卡怪物多样性');
+const typesInLevel = (lvl) => {
+    const s = new Set();
+    lvl.segments.filter(seg => seg.type === 'wave').forEach(seg => seg.enemies.forEach(e => s.add(e.type)));
+    return s;
+};
+const l1Types = typesInLevel(LEVELS[0]);
+const l2Types = typesInLevel(LEVELS[1]);
+assert(l1Types.size >= 4 && l1Types.has('shield') && l1Types.has('flanker'), 'L1包含>=4种怪(含shield与flanker)');
+assert(l2Types.size >= 6 && l2Types.has('spitter') && l2Types.has('thrower') && l2Types.has('flanker'), 'L2包含>=6种怪(含spitter/thrower/flanker)');
 
 console.log('\n======================');
-console.log('V15-GAMEPLAY-001 测试: 通过 ' + pass + ' / 失败 ' + fail);
+console.log('V16.2 玩法平衡测试: 通过 ' + pass + ' / 失败 ' + fail);
 if (fail > 0) process.exit(1);
