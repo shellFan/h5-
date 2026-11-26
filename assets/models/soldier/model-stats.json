@@ -1,8 +1,8 @@
 {
   "version": "V15-ART-004",
   "blender": "4.2.3 LTS",
-  "heroTriangles": 9500,
-  "lodTriangles": 2656,
+  "heroTriangles": 9616,
+  "lodTriangles": 2689,
   "parts": [
     "Body",
     "Head",

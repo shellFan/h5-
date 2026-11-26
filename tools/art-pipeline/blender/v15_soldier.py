@@ -16,24 +16,25 @@ bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
 random.seed(1504)
 
-# V15-ART-005 Matte Toy Military PBR Palette (clear cloth/leather/metal separation, soft matte helmet)
+# V16.2 Modern Spec-Ops Tactical Commando PBR Palette (Zero WW2 dome look: matte tactical slate-navy FAST helmet,
+# armored charcoal plate carrier, ranger teal-olive uniform, bright cyan tactical visor/IFF strip & gold trim)
 PALETTE = [
-    ('helmet',   (0.155, 0.285, 0.095), 0.58, 0.05),  # 0: soft matte olive toy helmet (no harsh plastic glare!)
-    ('helm_rim', (0.095, 0.185, 0.058), 0.52, 0.12),  # 1: thicker matte-satin helmet rim
-    ('cloth',    (0.175, 0.290, 0.112), 0.86, 0.00),  # 2: matte woven olive tactical jacket
-    ('trousers', (0.125, 0.210, 0.082), 0.88, 0.00),  # 3: matte combat trousers
+    ('helmet',   (0.115, 0.185, 0.255), 0.48, 0.16),  # 0: modern matte tactical navy-slate FAST helmet
+    ('helm_rim', (0.055, 0.072, 0.095), 0.44, 0.25),  # 1: charcoal ARC rails, comms headset & mount
+    ('cloth',    (0.145, 0.255, 0.245), 0.82, 0.00),  # 2: modern ranger teal-slate combat uniform
+    ('trousers', (0.105, 0.165, 0.195), 0.85, 0.00),  # 3: dark tactical cargo trousers
     ('skin',     (0.920, 0.560, 0.330), 0.68, 0.00),  # 4: warm cartoon skin
     ('cheek',    (0.880, 0.340, 0.240), 0.74, 0.00),  # 5: warm rosy cheek
-    ('ivory',    (0.960, 0.955, 0.890), 0.52, 0.00),  # 6: crisp star / chevron / eye white
+    ('ivory',    (0.960, 0.970, 0.980), 0.42, 0.00),  # 6: crisp tactical emblem / eye white
     ('ink',      (0.028, 0.034, 0.044), 0.65, 0.00),  # 7: dark pupils / bore / rubber sole
-    ('pack',     (0.390, 0.305, 0.155), 0.84, 0.00),  # 8: matte woven khaki-tan canvas rucksack
-    ('pack_hi',  (0.510, 0.415, 0.220), 0.80, 0.00),  # 9: lighter canvas flap / pouches
-    ('strap',    (0.185, 0.125, 0.065), 0.68, 0.04),  # 10: satin-matte dark leather straps
-    ('brass',    (0.900, 0.650, 0.180), 0.26, 0.78),  # 11: metallic brass buckles & rivets
+    ('pack',     (0.125, 0.165, 0.210), 0.62, 0.12),  # 8: modern dark-slate MOLLE armored assault pack
+    ('pack_hi',  (0.140, 0.780, 0.980), 0.24, 0.15),  # 9: bright tactical cyan visor / IFF light bar
+    ('strap',    (0.070, 0.085, 0.105), 0.64, 0.08),  # 10: matte black nylon webbing straps
+    ('brass',    (0.940, 0.720, 0.200), 0.26, 0.78),  # 11: metallic tactical gold trim & rank chevrons
     ('gun',      (0.095, 0.118, 0.140), 0.30, 0.70),  # 12: brushed gunmetal receiver
-    ('steel',    (0.240, 0.285, 0.320), 0.26, 0.80),  # 13: metallic steel barrel & rail
-    ('boot',     (0.165, 0.118, 0.065), 0.64, 0.05),  # 14: leather combat boot
-    ('vest',     (0.240, 0.330, 0.145), 0.78, 0.02),  # 15: lighter olive tactical vest & knee pads
+    ('steel',    (0.280, 0.330, 0.380), 0.24, 0.82),  # 13: metallic steel barrel & rail
+    ('boot',     (0.085, 0.095, 0.110), 0.58, 0.08),  # 14: matte black tactical combat boots
+    ('vest',     (0.165, 0.225, 0.285), 0.54, 0.14),  # 15: modern armored plate carrier & shoulder pads
 ]
 
 def image_atlas(name, orm=False):
@@ -182,30 +183,18 @@ for x in [-0.16, 0.16]:
 for s in [-1, 1]:
     ell('ShoulderArmor', (s * 0.292, 0.695, 0.01), (0.128, 0.098, 0.125), 'Body', 'vest', 14, 8)
     rbox('ShoulderStrap', (s * 0.19, 0.725, 0.02), (0.058, 0.034, 0.25), 'Body', 'strap', 0.012)
-# Sculpted rounded khaki-tan military rucksack (visible from behind!)
-surface('RucksackBody', [
-    (0.43, 0.17, 0.085, 0.23),
-    (0.50, 0.20, 0.105, 0.235),
-    (0.66, 0.195, 0.105, 0.235),
-    (0.75, 0.17, 0.085, 0.23)
-], 'Body', 'pack', 20)
-# Curved padded top flap + rolled olive sleeping mat
-ell('PackLid', (0, 0.735, 0.245), (0.205, 0.075, 0.115), 'Body', 'pack_hi', 16, 8)
-ell('Bedroll', (0, 0.825, 0.235), (0.215, 0.062, 0.068), 'Body', 'helmet', 16, 8)
+# Modern Armored MOLLE Tactical Assault Pack + Radio Whip Antenna (Replaces WW2 khaki rucksack & bedroll!)
+rbox('TacPackCore', (0, 0.59, 0.245), (0.34, 0.34, 0.15), 'Body', 'pack', 0.035)
+rbox('TacPackPlate', (0, 0.61, 0.318), (0.26, 0.22, 0.045), 'Body', 'vest', 0.018)
+rbox('TacPackCyanBar', (0, 0.68, 0.342), (0.18, 0.045, 0.022), 'Body', 'pack_hi', 0.008)
+rbox('TacPackGoldBar', (0, 0.54, 0.342), (0.16, 0.036, 0.020), 'Body', 'brass', 0.006)
 for x in [-0.115, 0.115]:
-    rbox('PackStrap', (x, 0.62, 0.335), (0.036, 0.22, 0.022), 'Body', 'strap', 0.008)
-    rbox('PackBuckle', (x, 0.57, 0.348), (0.056, 0.044, 0.020), 'Body', 'brass', 0.008)
-    ell('SidePouch', (x * 1.65, 0.54, 0.235), (0.055, 0.088, 0.062), 'Body', 'pack_hi', 12, 7)
-    rbox('RollTie', (x, 0.825, 0.235), (0.028, 0.132, 0.142), 'Body', 'strap', 0.010)
-# Crisp white 5-point star patch on back of rucksack!
-rverts = [xyz((0, 0.62, 0.352))]
-for j in range(10):
-    a = math.pi / 2 + j * math.pi / 5
-    r = 0.058 if j % 2 == 0 else 0.026
-    rverts.append(xyz((math.cos(a) * r, 0.62 + math.sin(a) * r, 0.356)))
-rfaces = [(0, j + 1, (j + 1) % 10 + 1) for j in range(10)]
-rm = bpy.data.meshes.new('PackStar'); rm.from_pydata(rverts, [], rfaces); rm.update()
-ro = bpy.data.objects.new('PackStar', rm); bpy.context.collection.objects.link(ro); finish(ro, 'Body', 'ivory', False)
+    rbox('PackStrap', (x, 0.60, 0.328), (0.034, 0.26, 0.020), 'Body', 'strap', 0.008)
+    rbox('SidePod', (x * 1.65, 0.55, 0.24), (0.085, 0.15, 0.10), 'Body', 'helm_rim', 0.022)
+# Sleek vertical tactical comms radio antenna on left back shoulder!
+rbox('RadioBox', (-0.155, 0.76, 0.255), (0.075, 0.11, 0.075), 'Body', 'helm_rim', 0.014)
+tube('RadioWhip', [(-0.155, 0.81, 0.255), (-0.170, 1.18, 0.275), (-0.185, 1.46, 0.295)], 0.012, 'Body', 'steel')
+ell('RadioTip', (-0.185, 1.47, 0.295), (0.022, 0.022, 0.022), 'Body', 'pack_hi', 8, 6)
 
 # === 2. HEAD: Smooth Toy Head + Glossy Olive Helmet with Front Star & Rear Chevrons ===
 surface('Face', [
@@ -224,33 +213,26 @@ for x in [-0.086, 0.086]:
     tube('Brow', [(x - 0.045, 1.068, -0.192), (x, 1.078, -0.208), (x + 0.042, 1.066, -0.195)], 0.012, 'Head', 'strap')
     ell('Cheek', (x * 1.62, 0.935, -0.168), (0.038, 0.022, 0.012), 'Head', 'cheek', 10, 6)
 ell('Nose', (0, 0.955, -0.216), (0.034, 0.034, 0.036), 'Head', 'skin', 12, 7)
-# V15-ART-007: Refined helmet proportion (reduced visual bulk so armored torso, rucksack & rifle stand out)
+# V16.2: Modern High-Cut Ops-Core FAST Tactical Helmet + Comms Headset + Forehead NVG Goggles + Rear Counterweight
+# (ZERO round WW2 flared brim!)
 h_prof = []
 for i in range(11):
     a = (i / 10.0) * math.pi / 2.0
-    h_prof.append((1.09 + 0.275 * math.sin(a), max(0.008, 0.236 * math.cos(a)), max(0.008, 0.214 * math.cos(a)), 0.014))
-surface('HelmetDome', h_prof, 'Head', 'helmet', 26)
-surface('HelmetBrim', [
-    (1.068, 0.228, 0.220, 0.002),
-    (1.086, 0.252, 0.244, -0.004),
-    (1.112, 0.250, 0.242, -0.004),
-    (1.126, 0.228, 0.214, 0.008)
-], 'Head', 'helm_rim', 26)
-# Helmet chin strap & brass rivets
-for x in [-0.216, 0.216]:
-    rbox('ChinStrap', (x, 0.985, 0.020), (0.022, 0.180, 0.028), 'Head', 'strap', 0.008)
-    ell('HelmRivet', (x * 1.11, 1.12, 0.020), (0.015, 0.016, 0.016), 'Head', 'brass', 8, 6)
-# Raised white star on front + crisp double white chevrons on back of helmet!
-fverts = [xyz((0, 1.22, -0.208))]
-for j in range(10):
-    a = math.pi / 2 + j * math.pi / 5
-    r = 0.070 if j % 2 == 0 else 0.032
-    fverts.append(xyz((math.cos(a) * r, 1.22 + math.sin(a) * r, -0.215)))
-ffaces = [(0, (j + 1) % 10 + 1, j + 1) for j in range(10)]
-fm = bpy.data.meshes.new('FrontStar'); fm.from_pydata(fverts, [], ffaces); fm.update()
-fo = bpy.data.objects.new('FrontStar', fm); bpy.context.collection.objects.link(fo); finish(fo, 'Head', 'ivory', False)
-tube('RearChevron1', [(-0.060, 1.21, 0.212), (0, 1.182, 0.228), (0.060, 1.21, 0.212)], 0.010, 'Head', 'ivory')
-tube('RearChevron2', [(-0.044, 1.168, 0.222), (0, 1.146, 0.232), (0.044, 1.168, 0.222)], 0.008, 'Head', 'ivory')
+    h_prof.append((1.10 + 0.265 * math.sin(a), max(0.008, 0.232 * math.cos(a)), max(0.008, 0.222 * math.cos(a)), 0.014))
+surface('HelmetDome', h_prof, 'Head', 'helmet', 22)
+# Angular side ARC rails & over-ear tactical comms headset cups (unmistakably modern Spec-Ops!)
+for s in [-1, 1]:
+    rbox('ArcRail', (s * 0.228, 1.15, 0.01), (0.045, 0.075, 0.22), 'Head', 'helm_rim', 0.012)
+    ell('HeadsetCup', (s * 0.242, 1.02, 0.01), (0.062, 0.095, 0.082), 'Head', 'helm_rim', 12, 8)
+    ell('HeadsetRing', (s * 0.258, 1.02, 0.01), (0.022, 0.062, 0.055), 'Head', 'brass', 10, 6)
+# Forehead flipped-up tactical goggles / dual NVG mount with bright cyan visor glow
+rbox('GoggleFrame', (0, 1.175, -0.205), (0.31, 0.105, 0.085), 'Head', 'helm_rim', 0.022)
+rbox('GoggleVisor', (0, 1.175, -0.238), (0.25, 0.068, 0.032), 'Head', 'pack_hi', 0.012)
+# Top tactical strobe / rail ridge + Rear battery counterweight pack + Cyan IFF light strip (Hero back view!)
+rbox('TopRidge', (0, 1.355, 0.01), (0.095, 0.038, 0.26), 'Head', 'helm_rim', 0.012)
+rbox('RearBattery', (0, 1.14, 0.225), (0.175, 0.115, 0.068), 'Head', 'helm_rim', 0.018)
+rbox('RearCyanIFF', (0, 1.155, 0.262), (0.125, 0.038, 0.018), 'Head', 'pack_hi', 0.006)
+tube('RearChevron1', [(-0.058, 1.265, 0.195), (0, 1.242, 0.212), (0.058, 1.265, 0.195)], 0.011, 'Head', 'brass')
 
 # === 3. ARMS & CHUNKY STYLIZED ASSAULT RIFLE ===
 for x in [-0.275, 0.275]:
