@@ -146,6 +146,25 @@ class Game {
 
     _setupInput() {
         var self = this;
+        // V17.0 RC: 切后台 / 切标签页自动暂停 (冻结龙卷风、炸弹、酸液与技能冷却, 防止切回时意外团灭)
+        if (typeof document !== 'undefined' && !window._v17VisBound) {
+            window._v17VisBound = true;
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden && self.state === 'playing' && !self.paused) {
+                    if (self._togglePause) self._togglePause();
+                    else self.paused = true;
+                }
+            });
+        }
+        if (typeof wx !== 'undefined' && wx.onHide && !window._v17WxHideBound) {
+            window._v17WxHideBound = true;
+            wx.onHide(function() {
+                if (self.state === 'playing' && !self.paused) {
+                    if (self._togglePause) self._togglePause();
+                    else self.paused = true;
+                }
+            });
+        }
         // V4.0: 连续拖动 → 目标位置(锚点相对映射, 无阈值跳道), 队伍经阻尼平滑跟随
         var dragAnchorPx = 0;
         var dragAnchorWX = 0;
