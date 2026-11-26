@@ -43,12 +43,11 @@ class Enemy {
             this._spreadX = clamp((this._homeX / 3.2) * 1.35, -1.45, 1.45);
         }
 
-        // V3.5 / V16.2: thrower 复用 bomber 罐装轮廓+橙琥珀染色, flanker 复用 fast 敏捷轮廓+青蓝染色
-        var mappedStyle = (type === 'thrower') ? 'bomber' : (type === 'flanker' ? 'fast' : type);
-        this.artStyle = styleOverride || (this.isBoss ? 'bruiser' : mappedStyle);
+        // V16.3-P1: spitter / thrower / flanker 全部拥有独立 Blender 雕塑 GLB 资产
+        this.artStyle = styleOverride || (this.isBoss ? 'bruiser' : type);
         this.model = new THREE.Group();
         this.model.userData.merged = true;
-        this.model.userData.artSource = 'assets/models/'+(['normal','fast','shield','split','spitter','elite','bomber'].includes(this.artStyle)?'zombies':'bosses')+'/'+this.artStyle+'/'+this.artStyle+'.glb (instanced anchor)';
+        this.model.userData.artSource = 'assets/models/'+(['normal','fast','shield','split','spitter','thrower','flanker','elite','bomber'].includes(this.artStyle)?'zombies':'bosses')+'/'+this.artStyle+'/'+this.artStyle+'.glb (instanced anchor)';
         this.model.position.set(this.x, 0, this.z);
         this.model.scale.setScalar(this.cfg.scale); // V2.2修复: 存活时应用类型scale
         this.visScale = this.cfg.scale; // 实际视觉scale(分裂僵尸会缩小)
@@ -74,9 +73,12 @@ class Enemy {
         this._deathSide = clamp((this.x - (fromX === undefined ? this.x : fromX)) * 2, -1.4, 1.4);
         // 击退(非Boss)
         if (!this.isBoss) this.knockback = Math.min(this.knockback + (isCrit ? 2.35 : 1.5), isCrit ? 3.8 : 3.0);
-        // 命中火花
+        // V16.3: 区分普通命中 / 暴击 / 护盾破防 / 击杀火花反馈
         if (effects) {
-            effects.burst(this.x, 0.65, this.z, isCrit ? 0xFF8844 : 0xFFE066, isCrit ? 6 : 3, 2.5, .25);
+            var isShieldHit = (this.shieldT > 0 || this.type === 'shield');
+            var sparkColor = isCrit ? 0xFF7B2E : (isShieldHit ? 0x5CEEFF : 0xFFE680);
+            var sparkCount = isCrit ? 7 : (isShieldHit ? 4 : 3);
+            effects.burst(this.x, 0.65, this.z, sparkColor, sparkCount, isCrit ? 3.2 : 2.5, isCrit ? .30 : .22);
             if (effects.impact) effects.impact(this.x, .85, this.z, isCrit, this.hp <= 0);
             // 伤害数字 (V3.6: 降低概率避免大规模战斗时文字刷屏; V3.3: 暴击必显大字)
             if (isCrit) {
@@ -260,13 +262,19 @@ class Enemy {
             this.knockback *= Math.pow(0.05, dt);
         }
 
-        // 行走动画: 摇摆+弹跳+V3.7左右摇头蹒跚(尸吊感) + V16.2浮空高度(_liftY)
+        // 行走动画: 摇摆+弹跳+V3.7左右摇头蹒跚 + V16.3被龙卷风卷起时明显旋转失衡倾斜
         const walkSpeed = this.isBoss ? 3 : 5;
         const sway = Math.sin(time * walkSpeed + this.phase) * 0.1;
         const bob = Math.abs(Math.sin(time * walkSpeed + this.phase)) * 0.06;
         this.model.position.set(this.x, bob + (this._liftY || 0), this.z);
-        this.model.rotation.z = sway;
-        this.model.rotation.y = this._baseRotY + Math.sin(time * walkSpeed * 0.5 + this.phase) * 0.12;
+        if (this._tornadoPulled && !this.isBoss) {
+            this.model.rotation.z = Math.sin(time * 9.5 + this.phase) * 0.44;
+            this.model.rotation.y = this._baseRotY + (time * 8.5 + this.phase);
+            this.model.rotation.x = 0.28 + Math.cos(time * 7 + this.phase) * 0.18;
+        } else {
+            this.model.rotation.z = sway;
+            this.model.rotation.y = this._baseRotY + Math.sin(time * walkSpeed * 0.5 + this.phase) * 0.12;
+        }
         // V16.1: 受击轻微后仰与弹性受击缩放反馈 + 自然体型微差
         if (this._scaleVar === undefined) this._scaleVar = this.isBoss ? 1.0 : randRange(0.91, 1.11);
         var hitRatio = clamp((this.hitFlash || 0) / 0.13, 0, 1);
@@ -323,32 +331,68 @@ class EnemyManager {
         this.bossStyle='bruiser';
         this.renderer=new EnemyArmyRenderer(scene);
         this._spitPool=Array.from({length:64},()=>({mesh:new THREE.Object3D(),life:0,vx:0,vz:0}));
-        this._spitInstances=new THREE.InstancedMesh(new THREE.SphereGeometry(.14,8,6),new THREE.MeshBasicMaterial({color:0x7CFF48}),64);
+        this._spitInstances=new THREE.InstancedMesh(new THREE.SphereGeometry(.16,10,8),new THREE.MeshBasicMaterial({color:0x7CFF3B}),64);
         this._spitInstances.count=0;this._spitInstances.frustumCulled=false;
-        this._spitInstances.userData.artSource='V42 pooled acid projectiles';scene.add(this._spitInstances);
-        // V16.2: 抛物线投弹怪炸弹 + 1.3s 地面红色预警圈 (对象池, 场上最多3枚)
+        this._spitInstances.userData.artSource='V16.3 pooled glowing acid projectiles';scene.add(this._spitInstances);
+        // V16.3: 独立多部件3D卡通炸弹(铁灰弹体+红警示带+黄铜引信环+燃烧引线火花) + 动态收缩红圈危险区
         this.bombs = [];
-        this._bombPool = Array.from({length: 8}, () => ({ sx:0, sy:1, sz:0, tx:0, tz:0, t:0, dur:1.3 }));
+        this._bombPool = Array.from({length: 8}, () => ({ sx:0, sy:1, sz:0, tx:0, tz:0, t:0, dur:1.3, sparkT:0 }));
         this._bombMat4 = new THREE.Matrix4();
+        this._bombQuat = new THREE.Quaternion();
+        this._bombEuler = new THREE.Euler();
+        this._bombPos = new THREE.Vector3();
+        this._bombScale = new THREE.Vector3();
+        var bombParts = [
+            colorize(new THREE.SphereGeometry(0.25, 12, 10), 0x262D38),
+            colorize(new THREE.CylinderGeometry(0.255, 0.255, 0.075, 12), 0xEF4444),
+            colorize(new THREE.CylinderGeometry(0.085, 0.10, 0.075, 10), 0xD4A238).translate(0, 0.25, 0),
+            colorize(new THREE.CylinderGeometry(0.025, 0.025, 0.16, 6), 0xE8D4A8).rotateZ(-0.42).translate(0.04, 0.34, 0),
+            colorize(new THREE.OctahedronGeometry(0.075, 0), 0xFFAE22).translate(0.09, 0.42, 0)
+        ];
+        var bombGeo = mergeGeometries(bombParts);
         this._bombInstances = new THREE.InstancedMesh(
-            new THREE.SphereGeometry(0.24, 10, 8),
-            new THREE.MeshBasicMaterial({ color: 0xFF6B1A }),
+            bombGeo,
+            new THREE.MeshLambertMaterial({ color: 0xFFFFFF, vertexColors: true }),
             8
         );
         this._bombInstances.count = 0; this._bombInstances.frustumCulled = false;
-        this._bombInstances.userData.artSource = 'V16.2 pooled parabolic bombs';
+        this._bombInstances.userData.artSource = 'V16.3 3D cartoon iron bomb with lit fuse';
         scene.add(this._bombInstances);
-        var ringGeo = new THREE.RingGeometry(0.85, 1.32, 24);
+        // 1) 半透明红色危险区填充盘
+        var fillGeo = new THREE.CircleGeometry(1.30, 28);
+        fillGeo.rotateX(-Math.PI * 0.5);
+        this._bombFillInstances = new THREE.InstancedMesh(
+            fillGeo,
+            new THREE.MeshBasicMaterial({ color: 0xFF2222, transparent: true, opacity: 0.22, side: THREE.DoubleSide, depthWrite: false }),
+            8
+        );
+        this._bombFillInstances.count = 0; this._bombFillInstances.frustumCulled = false;
+        this._bombFillInstances.renderOrder = 3;
+        scene.add(this._bombFillInstances);
+        // 2) 外层固定危险边界环
+        var ringGeo = new THREE.RingGeometry(1.16, 1.32, 28);
         ringGeo.rotateX(-Math.PI * 0.5);
         this._bombRingInstances = new THREE.InstancedMesh(
             ringGeo,
-            new THREE.MeshBasicMaterial({ color: 0xFF2828, transparent: true, opacity: 0.78, side: THREE.DoubleSide, depthWrite: false }),
+            new THREE.MeshBasicMaterial({ color: 0xFF3322, transparent: true, opacity: 0.86, side: THREE.DoubleSide, depthWrite: false }),
             8
         );
         this._bombRingInstances.count = 0; this._bombRingInstances.frustumCulled = false;
-        this._bombRingInstances.renderOrder = 3;
-        this._bombRingInstances.userData.artSource = 'V16.2 bomb ground telegraph rings';
+        this._bombRingInstances.renderOrder = 4;
+        this._bombRingInstances.userData.artSource = 'V16.3 bomb outer danger ring';
         scene.add(this._bombRingInstances);
+        // 3) 内层动态收缩倒计时环 (1.3s 内从外缘收至中心提示引爆瞬间)
+        var innerGeo = new THREE.RingGeometry(0.90, 1.02, 28);
+        innerGeo.rotateX(-Math.PI * 0.5);
+        this._bombInnerInstances = new THREE.InstancedMesh(
+            innerGeo,
+            new THREE.MeshBasicMaterial({ color: 0xFFBB44, transparent: true, opacity: 0.90, side: THREE.DoubleSide, depthWrite: false }),
+            8
+        );
+        this._bombInnerInstances.count = 0; this._bombInnerInstances.frustumCulled = false;
+        this._bombInnerInstances.renderOrder = 5;
+        this._bombInnerInstances.userData.artSource = 'V16.3 bomb shrinking countdown ring';
+        scene.add(this._bombInnerInstances);
     }
 
     /** V4.0: loadFromLevel 只负责清场; 波次计划移交 GamePacingController 分批驱动 */
@@ -397,7 +441,9 @@ class EnemyManager {
         this.renderer.clear();
         this._spitInstances.count=0;
         if (this._bombInstances) this._bombInstances.count = 0;
+        if (this._bombFillInstances) this._bombFillInstances.count = 0;
         if (this._bombRingInstances) this._bombRingInstances.count = 0;
+        if (this._bombInnerInstances) this._bombInnerInstances.count = 0;
     }
 
     spawnSpit(x, y, z, squad) {
@@ -498,23 +544,31 @@ class EnemyManager {
             }
         }
 
-        // 更新吐痰弹
+        // 更新吐痰弹 (V16.3: 荧光酸液球脉动 + 绿色拖尾 + 命中/落地飞溅)
         for (let i = this.spits.length - 1; i >= 0; i--) {
             const s = this.spits[i];
             s.life -= dt;
             s.mesh.position.x += s.vx * dt;
             s.mesh.position.z += s.vz * dt;
+            s.mesh.scale.setScalar(1 + Math.sin(time * 16 + i) * 0.16);
+            if (this.effects && Math.random() < 0.35) {
+                this.effects.burst(s.mesh.position.x, s.mesh.position.y, s.mesh.position.z, 0x7CFF3B, 1, 0.8, 0.22);
+            }
             // 命中小队
             if (Math.abs(s.mesh.position.z - squad.z) < 0.8 &&
                 Math.abs(s.mesh.position.x - squad.x) < 1.5) {
                 squad.killSoldiers(1, this.effects);
-                this.effects.burst(s.mesh.position.x, 0.5, s.mesh.position.z, 0x44FF44, 5, 2, 0.3);
+                if (this.effects) {
+                    this.effects.burst(s.mesh.position.x, 0.5, s.mesh.position.z, 0x7CFF3B, 9, 2.8, 0.38);
+                    if (this.effects.splat) this.effects.splat(s.mesh.position.x, s.mesh.position.z, 0.85);
+                }
                 this.scene.remove(s.mesh);
                 this._spitPool.push(s);
                 this.spits.splice(i, 1);
                 continue;
             }
             if (s.life <= 0) {
+                if (this.effects) this.effects.burst(s.mesh.position.x, 0.3, s.mesh.position.z, 0x63C24B, 5, 1.8, 0.25);
                 this.scene.remove(s.mesh);
                 this._spitPool.push(s);
                 this.spits.splice(i, 1);
@@ -527,12 +581,20 @@ class EnemyManager {
         }
         this._spitInstances.instanceMatrix.needsUpdate=true;
 
-        // V16.2: 更新投弹怪抛物线炸弹 + 地面红色预警圈
+        // V16.3: 更新3D旋转引线炸弹 + 火花拖尾 + 半透明危险区/动态收缩倒计时圈 + 闪光爆炸
         if (this.bombs && this._bombInstances && this._bombRingInstances) {
             for (var bi = this.bombs.length - 1; bi >= 0; bi--) {
                 var b = this.bombs[bi];
                 b.t += dt;
+                b.sparkT = (b.sparkT || 0) + dt;
                 var p = Math.min(1, b.t / b.dur);
+                if (p < 1 && b.sparkT >= 0.08 && this.effects) {
+                    b.sparkT = 0;
+                    var sx2 = b.sx + (b.tx - b.sx) * p;
+                    var sz2 = b.sz + (b.tz - b.sz) * p;
+                    var sy2 = b.sy * (1 - p) + Math.sin(p * Math.PI) * 3.1;
+                    this.effects.burst(sx2, sy2 + 0.15, sz2, 0xFFAE22, 2, 1.5, 0.22);
+                }
                 if (p >= 1) {
                     // 落地引爆: 半径1.3m, 最多伤害3名士兵(走现有减员/护盾逻辑)
                     var hitDist = Math.hypot(squad.x - b.tx, squad.z - b.tz);
@@ -542,9 +604,11 @@ class EnemyManager {
                         squad.killSoldiers(dmgCount, this.effects);
                     }
                     if (this.effects) {
-                        if (this.effects.shockwave) this.effects.shockwave(b.tx, 0.08, b.tz, 0xFF4422);
+                        if (this.effects.boom) this.effects.boom(b.tx, 0.45, b.tz, 1.45);
+                        if (this.effects.explosion) this.effects.explosion(b.tx, 0.55, b.tz, 2);
+                        else if (this.effects.shockwave) this.effects.shockwave(b.tx, 0.08, b.tz, 0xFF4422);
                         this.effects.burst(b.tx, 0.55, b.tz, 0xFF7A24, 14, 4.2, 0.5);
-                        this.effects.burst(b.tx, 0.35, b.tz, 0x3A3A3A, 6, 2.2, 0.6);
+                        this.effects.burst(b.tx, 0.35, b.tz, 0x3A3A3A, 7, 2.4, 0.65);
                     }
                     if (typeof Platform !== 'undefined' && Platform.audio) Platform.audio.play('boom');
                     this._bombPool.push(b);
@@ -552,24 +616,40 @@ class EnemyManager {
                 }
             }
             this._bombInstances.count = this.bombs.length;
+            if (this._bombFillInstances) this._bombFillInstances.count = this.bombs.length;
             this._bombRingInstances.count = this.bombs.length;
+            if (this._bombInnerInstances) this._bombInnerInstances.count = this.bombs.length;
             for (var bj = 0; bj < this.bombs.length; bj++) {
                 var bb = this.bombs[bj];
                 var bp = Math.min(1, bb.t / bb.dur);
                 var bx = bb.sx + (bb.tx - bb.sx) * bp;
                 var bz = bb.sz + (bb.tz - bb.sz) * bp;
                 var by = bb.sy * (1 - bp) + Math.sin(bp * Math.PI) * 3.1;
-                var bScale = 1.0 + Math.sin(bp * Math.PI * 10) * 0.14;
-                this._bombMat4.makeScale(bScale, bScale, bScale);
-                this._bombMat4.setPosition(bx, by, bz);
+                var bScale = 1.0 + Math.sin(bp * Math.PI * 10) * 0.1;
+                this._bombEuler.set(bp * 8.5, bp * 4.2, bp * 6.0);
+                this._bombQuat.setFromEuler(this._bombEuler);
+                this._bombMat4.compose(
+                    this._bombPos.set(bx, by, bz),
+                    this._bombQuat,
+                    this._bombScale.set(bScale, bScale, bScale)
+                );
                 this._bombInstances.setMatrixAt(bj, this._bombMat4);
-                var rScale = 0.88 + 0.18 * Math.sin(bp * Math.PI * 8);
-                this._bombMat4.makeScale(rScale, 1, rScale);
-                this._bombMat4.setPosition(bb.tx, 0.07, bb.tz);
+                // 危险区填充盘 + 外环
+                this._bombMat4.makeScale(1, 1, 1);
+                this._bombMat4.setPosition(bb.tx, 0.06, bb.tz);
+                if (this._bombFillInstances) this._bombFillInstances.setMatrixAt(bj, this._bombMat4);
+                this._bombMat4.setPosition(bb.tx, 0.075, bb.tz);
                 this._bombRingInstances.setMatrixAt(bj, this._bombMat4);
+                // 动态收缩倒计时环 (1.28 -> 0.12)
+                var shrink = Math.max(0.12, 1.28 * (1 - bp));
+                this._bombMat4.makeScale(shrink, 1, shrink);
+                this._bombMat4.setPosition(bb.tx, 0.085, bb.tz);
+                if (this._bombInnerInstances) this._bombInnerInstances.setMatrixAt(bj, this._bombMat4);
             }
             this._bombInstances.instanceMatrix.needsUpdate = true;
+            if (this._bombFillInstances) this._bombFillInstances.instanceMatrix.needsUpdate = true;
             this._bombRingInstances.instanceMatrix.needsUpdate = true;
+            if (this._bombInnerInstances) this._bombInnerInstances.instanceMatrix.needsUpdate = true;
         }
         this.renderer.update(dt,time,this.enemies,squad.z);
     }

@@ -37,12 +37,12 @@ class CombatSystem {
         this._tracerQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2 + 0.42, 0, 0));
         this._tmpColor = new THREE.Color();
 
-        // 弹道对象池 (锚点 + 曳光纹理)
+        // 弹道对象池 (锚点 + 曳光纹理, V16.3 略增宽提亮强化视觉弹幕层次, 不改真实伤害)
         this.pool = [];
         for (var i = 0; i < CONFIG.BULLET_MAX_VISIBLE; i++) {
             var sprite = new THREE.Object3D();
             sprite.visible = false;
-            sprite.scale.set(0.26, 2.1, 1);
+            sprite.scale.set(0.32, 2.35, 1);
             this.pool.push(sprite);
         }
     }

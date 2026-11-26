@@ -777,56 +777,168 @@ class Game {
         if (typeof THREE === 'undefined' || !sc) return null;
         var g = new THREE.Group();
         g.visible = false;
-        g.userData.artSource = 'V16.2 pooled 3D tactical tornado VFX';
-        // 外层半透明青白漏斗 (修长龙卷风廓形)
-        var outerGeo = new THREE.CylinderGeometry(1.75, 0.36, 4.0, 20, 6, true);
-        var outerMat = new THREE.MeshBasicMaterial({
-            color: 0x3CE8FF, transparent: true, opacity: 0.32,
-            side: THREE.DoubleSide, depthWrite: false
-        });
-        var outerMesh = new THREE.Mesh(outerGeo, outerMat);
-        outerMesh.position.y = 2.0;
-        g.add(outerMesh);
-        // 内层高亮风核
-        var coreGeo = new THREE.CylinderGeometry(0.82, 0.16, 3.9, 16, 4, true);
-        var coreMat = new THREE.MeshBasicMaterial({
-            color: 0xE6FFFF, transparent: true, opacity: 0.56,
-            blending: THREE.AdditiveBlending, side: THREE.DoubleSide, depthWrite: false
-        });
-        var coreMesh = new THREE.Mesh(coreGeo, coreMat);
-        coreMesh.position.y = 1.95;
-        g.add(coreMesh);
-        // 3道高速旋转风环
-        var rings = [];
-        var ringHeights = [0.55, 1.65, 2.95];
-        var ringRadii = [0.82, 1.32, 1.82];
-        for (var r = 0; r < 3; r++) {
-            var rGeo = new THREE.TorusGeometry(ringRadii[r], 0.085, 8, 24);
-            var rMat = new THREE.MeshBasicMaterial({
-                color: r === 1 ? 0xE6FFFF : 0x5CEEFF, transparent: true, opacity: 0.72,
-                blending: THREE.AdditiveBlending, depthWrite: false
-            });
-            var rMesh = new THREE.Mesh(rGeo, rMat);
-            rMesh.rotation.x = Math.PI * 0.5 + (r % 2 ? 0.18 : -0.18);
-            rMesh.position.y = ringHeights[r];
-            g.add(rMesh);
-            rings.push(rMesh);
+        g.userData.artSource = 'V16.3 commercial multi-layer UV-scrolling spiral tornado VFX';
+
+        // V16.3: 程序化斜向流动螺旋风带贴图 (上下柔羽化彻底消除硬边"塑料杯"轮廓!)
+        var ribbonCv = document.createElement('canvas');
+        ribbonCv.width = 512; ribbonCv.height = 512;
+        var rctx = ribbonCv.getContext('2d');
+        rctx.clearRect(0, 0, 512, 512);
+        // 8条斜向青白风带(无缝横向平铺)
+        for (var band = 0; band < 8; band++) {
+            var yBase = band * 64;
+            var thick = 16 + (band % 3) * 8;
+            rctx.save();
+            var grad = rctx.createLinearGradient(0, yBase - thick, 0, yBase + thick);
+            grad.addColorStop(0, 'rgba(60,232,255,0)');
+            grad.addColorStop(0.35, 'rgba(92,238,255,0.58)');
+            grad.addColorStop(0.5, 'rgba(235,255,255,0.92)');
+            grad.addColorStop(0.65, 'rgba(92,238,255,0.52)');
+            grad.addColorStop(1, 'rgba(60,232,255,0)');
+            rctx.strokeStyle = grad;
+            rctx.lineWidth = thick;
+            rctx.lineCap = 'round';
+            for (var wrap = -1; wrap <= 1; wrap++) {
+                rctx.beginPath();
+                rctx.moveTo(wrap * 512, yBase + 70);
+                rctx.bezierCurveTo(wrap * 512 + 170, yBase + 25, wrap * 512 + 340, yBase - 15, wrap * 512 + 512, yBase - 58);
+                rctx.stroke();
+            }
+            rctx.restore();
         }
-        // 贴地风压尘环
-        var baseGeo = new THREE.RingGeometry(0.6, 2.5, 24);
-        baseGeo.rotateX(-Math.PI * 0.5);
-        var baseMat = new THREE.MeshBasicMaterial({
-            color: 0x7DF4FF, transparent: true, opacity: 0.48,
-            blending: THREE.AdditiveBlending, side: THREE.DoubleSide, depthWrite: false
-        });
-        var baseRing = new THREE.Mesh(baseGeo, baseMat);
-        baseRing.position.y = 0.08;
+        // 上下边缘柔和渐变透明遮罩(destination-in), 保证顶底完全羽化无硬边
+        rctx.globalCompositeOperation = 'destination-in';
+        var vMask = rctx.createLinearGradient(0, 0, 0, 512);
+        vMask.addColorStop(0.0, 'rgba(255,255,255,0)');
+        vMask.addColorStop(0.16, 'rgba(255,255,255,0.95)');
+        vMask.addColorStop(0.84, 'rgba(255,255,255,0.95)');
+        vMask.addColorStop(1.0, 'rgba(255,255,255,0)');
+        rctx.fillStyle = vMask;
+        rctx.fillRect(0, 0, 512, 512);
+        var ribbonTexOuter = new THREE.CanvasTexture(ribbonCv);
+        ribbonTexOuter.wrapS = THREE.RepeatWrapping;
+        ribbonTexOuter.wrapT = THREE.RepeatWrapping;
+        ribbonTexOuter.repeat.set(2, 1.4);
+        var ribbonTexMid = ribbonTexOuter.clone();
+        ribbonTexMid.needsUpdate = true;
+        ribbonTexMid.wrapS = THREE.RepeatWrapping;
+        ribbonTexMid.wrapT = THREE.RepeatWrapping;
+        ribbonTexMid.repeat.set(3, 1.8);
+
+        // 有机弯曲漏斗几何生成辅助(非笔直圆台, 带自然龙卷S形微弯+抛物线收腰)
+        var makeFunnel = function(rTop, rBot, h, segR, segH, bend) {
+            var geo = new THREE.CylinderGeometry(rTop, rBot, h, segR, segH, true);
+            var pos = geo.attributes.position;
+            for (var vi = 0; vi < pos.count; vi++) {
+                var py = pos.getY(vi);
+                var t = Math.max(0, Math.min(1, (py + h * 0.5) / h)); // 0 bottom -> 1 top (钳制防负值NaN)
+                // 抛物线收腰轮廓
+                var profile = 0.55 + 0.45 * Math.pow(t, 1.35);
+                var xOff = Math.sin(t * Math.PI * 1.15) * bend;
+                var zOff = Math.cos(t * Math.PI * 1.0) * bend * 0.45;
+                pos.setX(vi, pos.getX(vi) * profile + xOff);
+                pos.setZ(vi, pos.getZ(vi) * profile + zOff);
+            }
+            geo.computeVertexNormals();
+            return geo;
+        };
+
+        // 1. 外层螺旋气流风带
+        var outerMesh = new THREE.Mesh(
+            makeFunnel(2.05, 0.42, 4.5, 24, 14, 0.24),
+            new THREE.MeshBasicMaterial({
+                map: ribbonTexOuter, color: 0x62EEFF, transparent: true, opacity: 0.72,
+                blending: THREE.AdditiveBlending, side: THREE.DoubleSide, depthWrite: false
+            })
+        );
+        outerMesh.position.y = 2.25;
+        outerMesh.renderOrder = 6;
+        g.add(outerMesh);
+
+        // 2. 中层高速反相亮白风带
+        var midMesh = new THREE.Mesh(
+            makeFunnel(1.38, 0.26, 4.3, 20, 12, -0.16),
+            new THREE.MeshBasicMaterial({
+                map: ribbonTexMid, color: 0xDFFBFF, transparent: true, opacity: 0.78,
+                blending: THREE.AdditiveBlending, side: THREE.DoubleSide, depthWrite: false
+            })
+        );
+        midMesh.position.y = 2.15;
+        midMesh.renderOrder = 7;
+        g.add(midMesh);
+
+        // 3. 内层半透明高速风眼
+        var coreMesh = new THREE.Mesh(
+            makeFunnel(0.62, 0.14, 4.0, 14, 8, 0.08),
+            new THREE.MeshBasicMaterial({
+                map: ribbonTexOuter, color: 0xFFFFFF, transparent: true, opacity: 0.48,
+                blending: THREE.AdditiveBlending, side: THREE.DoubleSide, depthWrite: false
+            })
+        );
+        coreMesh.position.y = 2.0;
+        coreMesh.renderOrder = 8;
+        g.add(coreMesh);
+
+        // 4. 贴地旋转扬尘与漩涡气流盘 (柔边径向涡旋贴图, 不遮挡地面红圈预警)
+        var dustCv = document.createElement('canvas');
+        dustCv.width = 256; dustCv.height = 256;
+        var dctx = dustCv.getContext('2d');
+        dctx.translate(128, 128);
+        var dGrad = dctx.createRadialGradient(0, 0, 10, 0, 0, 120);
+        dGrad.addColorStop(0.0, 'rgba(180,248,255,0.55)');
+        dGrad.addColorStop(0.45, 'rgba(120,225,245,0.34)');
+        dGrad.addColorStop(0.78, 'rgba(190,210,218,0.18)');
+        dGrad.addColorStop(1.0, 'rgba(180,200,210,0)');
+        dctx.fillStyle = dGrad;
+        dctx.beginPath(); dctx.arc(0, 0, 120, 0, Math.PI * 2); dctx.fill();
+        for (var arm = 0; arm < 5; arm++) {
+            dctx.save();
+            dctx.rotate(arm * Math.PI * 2 / 5);
+            dctx.strokeStyle = 'rgba(220,252,255,0.55)';
+            dctx.lineWidth = 7;
+            dctx.lineCap = 'round';
+            dctx.beginPath();
+            for (var s = 0; s < 18; s++) {
+                var a = s * 0.24, r = 16 + s * 5.2;
+                if (s === 0) dctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+                else dctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+            }
+            dctx.stroke();
+            dctx.restore();
+        }
+        var dustPlane = new THREE.PlaneGeometry(4.8, 4.8);
+        dustPlane.rotateX(-Math.PI * 0.5);
+        var baseRing = new THREE.Mesh(dustPlane, new THREE.MeshBasicMaterial({
+            map: new THREE.CanvasTexture(dustCv), transparent: true, opacity: 0.72,
+            depthWrite: false
+        }));
+        baseRing.position.y = 0.05;
+        baseRing.renderOrder = 2;
         g.add(baseRing);
 
+        // 5. 对象池化螺旋上升碎屑/风刃 (18片轻量四面体碎屑, 绕风柱螺旋高速旋转)
+        var debris = [];
+        var dGeo = new THREE.TetrahedronGeometry(0.11, 0);
+        var dMat = new THREE.MeshBasicMaterial({ color: 0xD8F8FF, transparent: true, opacity: 0.85 });
+        for (var di = 0; di < 18; di++) {
+            var dm = new THREE.Mesh(dGeo, dMat);
+            dm.userData = {
+                phase: (di / 18) * Math.PI * 2,
+                hPhase: di / 18,
+                speed: 4.5 + (di % 4) * 1.4,
+                rMul: 0.85 + (di % 3) * 0.22
+            };
+            g.add(dm);
+            debris.push(dm);
+        }
+
         g._outer = outerMesh;
+        g._mid = midMesh;
         g._core = coreMesh;
-        g._rings = rings;
+        g._ribbonTexOuter = ribbonTexOuter;
+        g._ribbonTexMid = ribbonTexMid;
         g._baseRing = baseRing;
+        g._debris = debris;
         sc.add(g);
         this._tornadoGroup = g;
         return g;
@@ -891,20 +1003,38 @@ class Game {
         t.z -= advSpd * dt;
         t.x = clamp(t.baseX + Math.sin(t.spin * 0.22) * 0.65, -2.2, 2.2);
 
-        // 3D 旋风网格实时动画
+        // V16.3: 3D 螺旋风带 UV 流动 + 生成/持续/消散完整过渡 + 碎屑螺旋上升
         var mesh = this._ensureTornadoMesh();
         if (mesh) {
             mesh.visible = true;
             mesh.position.set(t.x, 0, t.z);
-            var fade = t.remaining < 0.45 ? Math.max(0.05, t.remaining / 0.45) : 1;
-            var radScale = (t.radius / 2.8) * fade;
-            mesh.scale.set(radScale, fade, radScale);
-            if (mesh._outer) mesh._outer.rotation.y = t.spin;
-            if (mesh._core) mesh._core.rotation.y = -t.spin * 1.45;
-            if (mesh._baseRing) mesh._baseRing.rotation.z = t.spin * 0.8;
-            if (mesh._rings) {
-                for (var r = 0; r < mesh._rings.length; r++) {
-                    mesh._rings[r].rotation.z = t.spin * (1.2 + r * 0.45);
+            var elapsed = t.dur - t.remaining;
+            var spawnIn = elapsed < 0.32 ? Math.max(0.1, elapsed / 0.32) : 1;
+            var fadeOut = t.remaining < 0.45 ? Math.max(0.05, t.remaining / 0.45) : 1;
+            var env = spawnIn * fadeOut;
+            var radScale = (t.radius / 2.8) * env;
+            mesh.scale.set(radScale, env, radScale);
+            if (mesh._outer) mesh._outer.rotation.y = t.spin * 0.72;
+            if (mesh._mid) mesh._mid.rotation.y = -t.spin * 1.15;
+            if (mesh._core) mesh._core.rotation.y = t.spin * 1.65;
+            if (mesh._ribbonTexOuter) {
+                mesh._ribbonTexOuter.offset.x = (mesh._ribbonTexOuter.offset.x + dt * 2.2) % 1;
+                mesh._ribbonTexOuter.offset.y = (mesh._ribbonTexOuter.offset.y - dt * 0.85) % 1;
+            }
+            if (mesh._ribbonTexMid) {
+                mesh._ribbonTexMid.offset.x = (mesh._ribbonTexMid.offset.x - dt * 3.1) % 1;
+                mesh._ribbonTexMid.offset.y = (mesh._ribbonTexMid.offset.y - dt * 1.25) % 1;
+            }
+            if (mesh._baseRing) mesh._baseRing.rotation.y = t.spin * 0.9;
+            if (mesh._debris) {
+                for (var di = 0; di < mesh._debris.length; di++) {
+                    var dm = mesh._debris[di];
+                    var ud = dm.userData;
+                    var hh = (ud.hPhase + elapsed * 0.55) % 1;
+                    var angD = ud.phase + elapsed * ud.speed;
+                    var radD = (0.45 + hh * 1.55) * ud.rMul;
+                    dm.position.set(Math.cos(angD) * radD, 0.25 + hh * 3.8, Math.sin(angD) * radD);
+                    dm.rotation.set(angD * 1.4, angD * 2.1, hh * 4.0);
                 }
             }
         }

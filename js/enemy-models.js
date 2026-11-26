@@ -40,9 +40,9 @@ var EnemyModelLoader = class EnemyModelLoader {
         return this._promise;
     }
     static loadCritical() {
-        // V16.2-GAMEPLAY-005: 启动关键集包含普通/快速/重装/酸液/投弹底座(bomber)/精英/Boss, 杜绝新怪回退
-        if (typeof window !== 'undefined' && window.__BootProgress) window.__BootProgress.total = 18;
-        return this.load(['normal', 'fast', 'shield', 'spitter', 'bomber', 'elite', 'bruiser', 'overlord']);
+        // V16.3-P1: 启动关键集包含普通/快速/重装/酸液/投弹/伏击(均为独立Blender雕塑GLB)/精英/Boss
+        if (typeof window !== 'undefined' && window.__BootProgress) window.__BootProgress.total = 22;
+        return this.load(['normal', 'fast', 'shield', 'spitter', 'thrower', 'flanker', 'bomber', 'elite', 'bruiser', 'overlord']);
     }
     static _loadKeys(keys) {
         var loaded = [], loader = new THREE.GLTFLoader();
@@ -51,7 +51,7 @@ var EnemyModelLoader = class EnemyModelLoader {
             window.__BootProgress.total = 2 + this.KEYS.length * 2; // 士兵2 + 全部僵尸/Boss
         }
         return Promise.allSettled(keys.flatMap(key => ['hero','lod'].map(lod=>new Promise((resolve,reject)=>{
-            var category=['normal','fast','shield','split','spitter','elite','bomber'].includes(key)?'zombies':'bosses';
+            var category=['normal','fast','shield','split','spitter','thrower','flanker','elite','bomber'].includes(key)?'zombies':'bosses';
             var url='assets/game/models/'+category+'/'+key+'/'+key+(lod==='lod'?'-lod':'')+'.glb';
             if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=121';
             loader.load(url,g=>{
@@ -84,7 +84,7 @@ var EnemyModelLoader = class EnemyModelLoader {
                 if(l.material!==h.material)SoldierModelLoader._disposeMaterial(l.material);
                 l.material=h.material;
                 h.material.onBeforeCompile=function(shader){shader.fragmentShader=shader.fragmentShader.replace('#include <encodings_fragment>','gl_FragColor = LinearTosRGB( gl_FragColor );');};
-                if(['spitter','spitking','hivelord','overlord','bomber'].includes(key)) {
+                if(['spitter','thrower','spitking','hivelord','overlord','bomber'].includes(key)) {
                     var image=h.material.map.image,canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;
                     var ctx=canvas.getContext('2d');ctx.drawImage(image._impl || image,0,0);var pixels=ctx.getImageData(0,0,canvas.width,canvas.height);
                     // Blender cell 11 is bottom-origin row 2; PNG/canvas flips it to top-origin row 1.
@@ -108,7 +108,7 @@ var EnemyModelLoader = class EnemyModelLoader {
     static get(){return this._data;}
 };
 EnemyModelLoader.PARTS=['Body','Head','Arms','LegL','LegR'];
-EnemyModelLoader.KEYS=['normal','fast','shield','split','spitter','elite','bomber','bruiser','bulwark','spitking','hivelord','titan','overlord'];
+EnemyModelLoader.KEYS=['normal','fast','shield','split','spitter','thrower','flanker','elite','bomber','bruiser','bulwark','spitking','hivelord','titan','overlord'];
 EnemyModelLoader.status='idle';EnemyModelLoader.loadMs=0;
 // V14.2: Boss 造型辨识表 — 每型专属染色/体态/入场特效色(表现层; GLB 资产不动)。
 // 解决 hivelord/titan 等实机同形同色不可辨识的问题(逐型实机截图审计)。
@@ -304,10 +304,8 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
                 var vt=tints[Math.floor(((e.phase||0)*13.37)%1*tints.length)%tints.length];
                 this._color.setRGB(vt[0],vt[1],vt[2]);
             }
-            // V12/V16.2 视觉: 特殊体型专属辨识染色(冰冻/受击闪烁随后覆盖)
+            // V12/V16.3 视觉: thrower/flanker/spitter 均已具备独立雕塑材质贴图, 仅保留精英金染与冰冻/受击状态覆盖
             if(e.type==='elite')this._color.setRGB(1.22,1.08,.72);          // 精英金染
-            else if(e.type==='thrower')this._color.setRGB(1.42,.86,.22);    // V16.2 投弹怪: 醒目橙琥珀色
-            else if(e.type==='flanker')this._color.setRGB(.22,1.28,1.42);   // V16.2 伏击怪: 醒目青蓝色
             if(e.frozenT>0)this._color.setRGB(.50,.85,1.35);
             if(e.phaseIndex>=3)this._color.setRGB(1.35,.72,.75);
             else if(e.phaseIndex===2)this._color.setRGB(1.12,.85,1.2);

@@ -322,16 +322,19 @@ class Effects {
                 if(free){this._textCache[free].dispose();delete this._textCache[free];}
             }
             tex = createTextTexture(text, damageNumber ? {
-                // V12视觉: 纯数字伤害 — 白芯+彩色描边(远看醒目, 近看不糊)
-                fontSize: big ? 120 : 88,
+                // V12/V16.3 视觉: 纯数字伤害 — 高清白芯+彩色圆角描边
+                fontSize: big ? 128 : 96,
+                height: 160,
                 fill: '#FFFFFF',
                 stroke: color,
-                strokeWidth: big ? 14 : 10
+                strokeWidth: big ? 16 : 12
             } : {
-                fontSize: big ? 110 : 80,
+                // V16.3: 技能/状态飘字高清渲染(200px高+厚描边, 杜绝模糊锯齿)
+                fontSize: big ? 120 : 88,
+                height: 200,
                 fill: color,
-                stroke: '#1a1a2e',
-                strokeWidth: big ? 10 : 7
+                stroke: '#0E1726',
+                strokeWidth: big ? 16 : 12
             });
             this._textCache[key] = tex;
         }
@@ -350,8 +353,10 @@ class Effects {
             (damageNumber ? y * .55 : y) + randRange(0, damageNumber ? .08 : .35),
             z + randRange(-0.4, 0.4)
         );
-        const sc = big ? (damageNumber ? .70 : .9) : .55;
-        sprite.scale.set(sc, sc * 0.5, 1);
+        // V16.3: 按纹理真实宽高比缩放, 彻底消除中文技能名横向压扁变形
+        var texAsp = (tex && tex.image && tex.image.height) ? (tex.image.width / tex.image.height) : 2;
+        var hSc = big ? (damageNumber ? 0.42 : 0.62) : 0.34;
+        sprite.scale.set(hSc * texAsp, hSc, 1);
         sprite.renderOrder = 999;
         this.scene.add(sprite);
         this.floatTexts.push({
