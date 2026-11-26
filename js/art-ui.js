@@ -30,9 +30,9 @@ var ArtUI = {
         }
         var panel = document.querySelector('#start-screen .title-panel');
         var avatar = document.querySelector('.logo-badge img');
-        if (avatar) { avatar.src = 'assets/game/ui/avatar.png'; avatar.alt = '绿色头盔指挥官'; }
+        if (avatar) { avatar.src = 'assets/game/ui/avatar.png?v=1901'; avatar.alt = '特种兵指挥官'; }
         var hudAvatar = document.querySelector('#avatar-box img');
-        if (hudAvatar) hudAvatar.src = 'assets/game/ui/avatar.png';
+        if (hudAvatar) hudAvatar.src = 'assets/game/ui/avatar.png?v=1901';
         if (panel) {
             // V15-ART-003: 真实美术资产驱动的商业级军事营地首页 (独立营地背景 + 金属徽章Logo + 统一3兵种主角团 + 单行关卡条 + 5格底栏)
             panel.classList.add('v15-home-lobby');
@@ -50,8 +50,7 @@ var ArtUI = {
                     '<button type="button" class="v15-side-btn" data-trigger="v60-btn-challenge">' + this.icon('medal') + '<span>挑战</span></button>' +
                 '</div>' +
                 '<div class="v15-hero-center-wrap">' +
-                    '<div class="v15-hero-shadow"></div>' +
-                    '<img class="v15-squad-hero-img" src="assets/game/v15/home_squad_hero.png" alt="膨胀小队主角团" draggable="false">' +
+                    '<div class="v15-hero-shadow" style="display:none"></div>' +
                 '</div>' +
                 '<div class="v15-side-col v15-side-right">' +
                     '<button type="button" class="v15-side-btn" data-trigger="v60-btn-ach">' + this.icon('trophy') + '<span>成就</span></button>' +
@@ -73,16 +72,16 @@ var ArtUI = {
                 var stageBar = document.createElement('div');
                 stageBar.id = 'v15-stage-bar';
                 stageBar.innerHTML =
-                    '<img class="v15-stage-thumb" src="assets/game/v15/home_military_camp_bg.jpg" alt="关卡预览" draggable="false">' +
+                    '<img class="v15-stage-thumb" src="assets/game/v15/home_military_camp_bg.jpg?v=1901" alt="关卡预览" draggable="false">' +
                     '<div class="v15-stage-mid">' +
-                        '<div class="v15-stage-kicker">当前关卡</div>' +
+                        '<div class="v15-stage-kicker">TACTICAL MISSION · 当前战区</div>' +
                         '<div class="v15-stage-ctrl">' +
                             '<button type="button" class="v15-stage-arrow" id="v15-stage-prev" aria-label="上一关">◀</button>' +
                             '<span id="v15-stage-label">第 1 关</span>' +
                             '<button type="button" class="v15-stage-arrow" id="v15-stage-next" aria-label="下一关">▶</button>' +
                         '</div>' +
                     '</div>' +
-                    '<button type="button" class="v15-stage-map-btn" id="v15-stage-map-open">' + this.icon('chest') + '<span>选关</span></button>';
+                    '<button type="button" class="v15-stage-map-btn" id="v15-stage-map-open">' + this.icon('chest') + '<span>战区</span></button>';
                 start.insertAdjacentElement('beforebegin', stageBar);
 
                 var syncStageLabel = function() {
@@ -107,20 +106,20 @@ var ArtUI = {
                 setTimeout(syncStageLabel, 120);
             }
 
-            if (start) start.innerHTML = '<span class="v15-start-crosshair">◎</span><span>开始战斗</span><span class="art-arrow">»</span>';
+            if (start) start.innerHTML = '<svg class="v19-start-ico" viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span>开始作战</span><span class="art-arrow">▸</span>';
             var growth = document.getElementById('v60-home-growth');
             if (growth && title) panel.insertBefore(growth, title);
 
-            // 底部 5 格商业级军事主导航栏 (绑定真实原业务入口)
+            // 底部 5 格商业级现代战术主导航栏 (统一使用新版特种兵头像, 彻底消除旧绿头盔!)
             if (!document.getElementById('v15-bottom-dock')) {
                 var dock = document.createElement('div');
                 dock.id = 'v15-bottom-dock';
                 dock.innerHTML =
-                    '<button type="button" class="v15-dock-tab active" data-dock="home">' + this.icon('shield') + '<span>首页</span></button>' +
-                    '<button type="button" class="v15-dock-tab" data-dock="train">' + this.icon('avatar') + '<span>士兵</span></button>' +
-                    '<button type="button" class="v15-dock-tab" data-dock="armory">' + this.image('weapons/rifle.png', '武器', 'v15-dock-gun-ico') + '<span>武器</span></button>' +
-                    '<button type="button" class="v15-dock-tab" data-dock="shop">' + this.icon('coin') + '<span>商店</span></button>' +
-                    '<button type="button" class="v15-dock-tab" data-dock="rank">' + this.icon('trophy') + '<span>排行榜</span></button>';
+                    '<button type="button" class="v15-dock-tab active" data-dock="home">' + this.icon('shield') + '<span>基地</span></button>' +
+                    '<button type="button" class="v15-dock-tab" data-dock="train"><img class="v15-dock-gun-ico v19-dock-avatar" src="assets/game/ui/avatar.png?v=1901" alt="士兵" draggable="false"><span>特种兵</span></button>' +
+                    '<button type="button" class="v15-dock-tab" data-dock="armory">' + this.image('weapons/rifle.png', '武器', 'v15-dock-gun-ico') + '<span>军械</span></button>' +
+                    '<button type="button" class="v15-dock-tab" data-dock="shop">' + this.icon('coin') + '<span>补给站</span></button>' +
+                    '<button type="button" class="v15-dock-tab" data-dock="rank">' + this.icon('trophy') + '<span>排行</span></button>';
                 panel.appendChild(dock);
                 dock.addEventListener('click', function(ev) {
                     var btn = ev.target.closest('.v15-dock-tab');
@@ -155,7 +154,7 @@ var ArtUI = {
             rightCol.id = 'v15-hud-right';
             rightCol.innerHTML =
                 '<div class="v15-pill v15-pill-coin">' + this.image('ui/coin.png', '', 'v15-pill-ico') + '<span id="v15-hud-coins">0</span></div>' +
-                '<div class="v15-pill v15-pill-squad">' + this.image('ui/avatar.png', '', 'v15-pill-ico') + '<span id="v15-hud-squad">1</span></div>';
+                '<div class="v15-pill v15-pill-squad"><img class="v15-pill-ico v19-hud-avatar" src="assets/game/ui/avatar.png?v=1901" alt="" draggable="false"><span id="v15-hud-squad">1</span></div>';
             topBar.appendChild(rightCol);
         }
         var progBar = document.getElementById('progress-bar-container');

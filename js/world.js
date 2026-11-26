@@ -75,10 +75,34 @@ class World {
         this.scene.add(dir.target); // target必须加入场景才能正确更新matrixWorld
         this.sunLight = dir;
 
-        // V18.0: 暖阳主光 + 冷蓝战术轮廓补光 (强化3D立体层次, 消除平面塑料感)
-        const fill = new THREE.DirectionalLight(0x82B8F0, 0.42);
+        // V19.0: 暖金主光 + 冷青蓝战术轮廓光 + 程序化 IBL 环境反射贴图 (赋予头盔/枪械/装甲真实商业3D金属高光, 0KB额外下载!)
+        const fill = new THREE.DirectionalLight(0x64B5F6, 0.48);
         fill.position.set(-6, 8, -10);
         this.scene.add(fill);
+        if (typeof THREE.PMREMGenerator !== 'undefined' && this.renderer) {
+            try {
+                var pmrem = new THREE.PMREMGenerator(this.renderer);
+                var envScene = new THREE.Scene();
+                var envCv = document.createElement('canvas');
+                envCv.width = 64; envCv.height = 64;
+                var ectx = envCv.getContext('2d');
+                var eg = ectx.createLinearGradient(0, 0, 0, 64);
+                eg.addColorStop(0.0, '#5CB8FF');
+                eg.addColorStop(0.45, '#FFE8C2');
+                eg.addColorStop(0.55, '#334155');
+                eg.addColorStop(1.0, '#0F172A');
+                ectx.fillStyle = eg;
+                ectx.fillRect(0, 0, 64, 64);
+                var envDome = new THREE.Mesh(
+                    new THREE.SphereGeometry(10, 12, 8),
+                    new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(envCv), side: THREE.BackSide })
+                );
+                envScene.add(envDome);
+                this._envRT = pmrem.fromScene(envScene, 0.04);
+                this.scene.environment = this._envRT.texture;
+                pmrem.dispose();
+            } catch (e) {}
+        }
     }
 
     /** V12视觉: 渐变天空穹顶 — 替代纯色背景, 一张Canvas渐变+BackSide球, 单drawCall, 无光照成本 */

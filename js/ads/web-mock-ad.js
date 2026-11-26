@@ -67,16 +67,16 @@ class WebMockAdService extends AdService {
         var self = this;
         var el = document.createElement('div');
         el.id = 'mock-ad-overlay';
-        el.style.cssText = 'position:absolute;inset:0;z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#111827,#1F2937);color:#fff;font-family:sans-serif;';
+        el.style.cssText = 'position:absolute;inset:0;z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,rgba(22,38,66,0.94),rgba(8,14,26,0.98));backdrop-filter:blur(6px);color:#F8FAFC;font-family:sans-serif;';
         el.innerHTML =
-            '<div style="position:absolute;top:14px;left:14px;background:#F59E0B;color:#111;font-weight:900;font-size:12px;padding:4px 10px;border-radius:8px;letter-spacing:1px;">激励广告测试 · MOCK AD</div>' +
-            '<div style="width:min(310px,84vw);padding:22px 18px;border-radius:18px;background:rgba(15,23,42,0.92);border:2px solid #F59E0B;box-shadow:0 16px 40px rgba(0,0,0,0.55);text-align:center;">' +
-            '<div style="font-size:13px;font-weight:800;color:#FBBF24;letter-spacing:1px;margin-bottom:8px;">当前为开发测试模式 · 可直接跳过</div>' +
-            '<div id="mock-ad-timer" style="font-size:48px;font-weight:900;color:#FDE68A;margin-bottom:8px;">3</div>' +
-            '<div id="mock-ad-tip" style="font-size:13px;color:#CBD5E1;line-height:1.5;margin-bottom:20px;">后期上线将无缝切换为微信/H5正式激励视频 SDK</div>' +
+            '<div style="width:min(326px,86vw);padding:22px 18px 18px;border-radius:20px;background:linear-gradient(170deg,#182844 0%,#0E192D 65%,#091120 100%);border:2px solid #38BDF8;box-shadow:0 8px 0 #050B14,0 20px 48px rgba(0,0,0,0.72),inset 0 1px 0 rgba(186,230,253,0.35);text-align:center;">' +
+            '<div style="display:inline-block;padding:3px 10px;border-radius:99px;background:rgba(56,189,248,0.16);border:1px solid rgba(56,189,248,0.55);font-size:11px;font-weight:900;color:#7DD3FC;letter-spacing:1.5px;margin-bottom:8px;">EMERGENCY RESCUE · 战地紧急救援</div>' +
+            '<div style="font-size:20px;font-weight:900;color:#FFF7D6;text-shadow:0 2px 4px rgba(0,0,0,0.6);margin-bottom:6px;">呼叫特种空降支援</div>' +
+            '<div id="mock-ad-timer" style="font-size:42px;font-weight:900;color:#FBBF24;margin-bottom:6px;">3</div>' +
+            '<div id="mock-ad-tip" style="font-size:13px;color:#94A3B8;line-height:1.55;margin-bottom:18px;padding:8px 10px;border-radius:10px;background:rgba(8,15,28,0.65);border:1px solid rgba(148,163,184,0.18);">恢复 40% 峰值兵力 · 3秒无敌护盾 · 震退贴脸怪潮<br><span style="color:#FBBF24;font-size:11px;">（开发测试模式：可直接跳过广告，每局限1次）</span></div>' +
             '<div style="display:flex;flex-direction:column;gap:10px;">' +
-            '<button id="mock-ad-finish" style="padding:13px 22px;font-size:16px;font-weight:900;background:linear-gradient(180deg,#34D399,#059669);color:#fff;border:none;border-radius:14px;cursor:pointer;box-shadow:0 4px 0 #065F46;">⚡ 跳过广告 · 立即复活 / 领奖</button>' +
-            '<button id="mock-ad-close" style="padding:11px 22px;font-size:14px;font-weight:700;background:#334155;color:#CBD5E1;border:none;border-radius:12px;cursor:pointer;">取消 · 返回结算(不发奖)</button>' +
+            '<button id="mock-ad-finish" style="padding:13px 20px;font-size:16px;font-weight:900;background:linear-gradient(180deg,#FFE866 0%,#FFB319 52%,#E06200 100%);color:#231000;border:2px solid #FFF8C8;border-radius:14px;cursor:pointer;box-shadow:0 5px 0 #8A3500,0 8px 18px rgba(224,98,0,0.42);">⚡ 跳过广告 · 立即复活</button>' +
+            '<button id="mock-ad-close" style="padding:10px 20px;font-size:13px;font-weight:800;background:linear-gradient(180deg,#1E293B,#0F172A);color:#94A3B8;border:1.5px solid #334155;border-radius:12px;cursor:pointer;">放弃救援 · 返回结算</button>' +
             '</div></div>';
         (document.getElementById('game-container') || document.body).appendChild(el);
         this._overlay = el;
@@ -136,7 +136,7 @@ class WebMockAdService extends AdService {
             }, 600);
         } else {
             this._timerEl.style.display = 'none';
-            this._tipEl.textContent = '模拟激励视频 · 点击下方按钮立即跳过复活或领取奖励';
+            this._tipEl.innerHTML = '恢复 40% 峰值兵力 · 3秒无敌护盾 · 震退贴脸怪潮<br><span style="color:#FBBF24;font-size:11px;">（开发测试模式：可直接跳过广告，每局限1次）</span>';
             this._finishBtn.style.visibility = 'visible';
             this._closeBtn.style.visibility = 'visible';
         }

@@ -302,9 +302,9 @@ var MilitaryArt = class MilitaryArt {
         var crateTex = this._makeCrateTexture();
 
         this.materials = {
-            road: this._material('road', 0xffffff, { map: roadTex, roughness: .88 }),
-            shoulder: this._material('shoulder', 0x9E9172, { map: groundTex, roughness: .94 }),
-            ground: this._material('ground', 0x597D47, { map: groundTex, roughness: .94 }),
+            road: this._material('road', 0xffffff, { map: roadTex, roughness: .95, envMapIntensity: 0.12 }),
+            shoulder: this._material('shoulder', 0x9E9172, { map: groundTex, roughness: .96, envMapIntensity: 0.12 }),
+            ground: this._material('ground', 0x597D47, { map: groundTex, roughness: .96, envMapIntensity: 0.14 }),
             curbA: this._material('curb-a', 0xF3F0DF, { roughness: .78 }),
             curbB: this._material('curb-b', 0xE6A93B, { roughness: .78 }),
             concrete: this._material('concrete', 0xb6b5a4, { roughness: .85 }),
@@ -578,7 +578,7 @@ var MilitaryArt = class MilitaryArt {
         if (typeof THREE === 'undefined' || !THREE.GLTFLoader) return;
         var self = this;
         var url = 'assets/game/v15/env_military_pack.glb';
-        if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=1505';
+        if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=1901';
         new THREE.GLTFLoader().load(url, function(gltf) {
             try {
                 var sharedMat = null;
@@ -597,15 +597,18 @@ var MilitaryArt = class MilitaryArt {
                         'gl_FragColor = LinearTosRGB( gl_FragColor );'
                     );
                 };
-                sharedMat.customProgramCacheKey = function() { return 'v15-envpack-pbr'; };
+                sharedMat.customProgramCacheKey = function() { return 'v19-envpack-pbr'; };
                 sharedMat.needsUpdate = true;
 
-                // 隐藏已被 Blender 雕塑 GLB 替代的旧简单几何体
+                // V19.0: 隐藏所有被 10 类雕塑 GLB 全面替代的旧基础方块/圆球/圆锥几何体!
                 var replacedNames = {
                     'military-watch-posts': 1, 'military-watch-decks': 1, 'military-watch-roofs': 1, 'military-watch-lamps': 1,
                     'military-tank-hulls': 1, 'military-tank-tracks': 1, 'military-tank-turrets': 1, 'military-tank-barrels': 1,
                     'military-tent-bodies': 1, 'military-tent-roofs': 1,
                     'military-tree-trunks': 1, 'military-tree-crowns-base': 1, 'military-tree-crowns-top': 1,
+                    'military-hangars': 1, 'military-hangar-roofs': 1,
+                    'military-crates': 1, 'military-oil-drums': 1, 'military-bushes': 1,
+                    'military-fuel-tanks': 1, 'military-barriers': 1, 'military-far-hills': 1,
                     'military-sandbags': 1
                 };
                 for (var mi = 0; mi < self._meshes.length; mi++) {
@@ -615,54 +618,88 @@ var MilitaryArt = class MilitaryArt {
                     }
                 }
 
-                // 1) 多层雕塑松树林 (非对称自然分布, 告别球体棒棒糖树!)
+                // 1) 高山松树 + 阔叶树双树种自然混交林 (彻底告别单调圆锥/棒棒糖树!)
                 if (geos.PineTree) {
                     self._add('glb-pines', geos.PineTree, sharedMat, self._repeat(function(seg) {
                         var s = seg % 2 ? -1 : 1;
                         return [
-                            { x: s * 7.8, y: 0, z: 2.2, sx: 1.15, sy: 1.25, sz: 1.15, ry: seg * 0.9 },
-                            { x: s * 11.2, y: 0, z: -7.6, sx: 1.35, sy: 1.45, sz: 1.35, ry: seg * 1.4 },
-                            { x: -s * 8.6, y: 0, z: -9.0, sx: 1.05, sy: 1.15, sz: 1.05, ry: -seg * 0.7 },
-                            { x: -s * 12.8, y: 0, z: 4.5, sx: 1.45, sy: 1.55, sz: 1.45, ry: seg * 1.1 }
+                            { x: s * 7.9, y: 0, z: 2.4, sx: 1.18, sy: 1.28, sz: 1.18, ry: seg * 0.9 },
+                            { x: -s * 12.4, y: 0, z: 4.8, sx: 1.48, sy: 1.58, sz: 1.48, ry: seg * 1.1 },
+                            { x: s * 14.5, y: 0, z: -9.5, sx: 1.62, sy: 1.72, sz: 1.62, ry: -seg * 0.8 }
                         ];
                     }), ['sunny', 'forest', 'city']);
                 }
-                // 2) 木质 X 交叉支撑瞭望哨塔
+                if (geos.BroadTree) {
+                    self._add('glb-broadtrees', geos.BroadTree, sharedMat, self._repeat(function(seg) {
+                        var s = seg % 2 ? 1 : -1;
+                        return [
+                            { x: s * 8.6, y: 0, z: -8.6, sx: 1.12, sy: 1.16, sz: 1.12, ry: seg * 1.3 },
+                            { x: -s * 11.2, y: 0, z: -6.8, sx: 1.32, sy: 1.38, sz: 1.32, ry: -seg * 0.6 }
+                        ];
+                    }), ['sunny', 'forest', 'city']);
+                }
+                // 1b) 岩石灌木簇 (替代旧圆球灌木)
+                if (geos.TacticalBush) {
+                    self._add('glb-bushes', geos.TacticalBush, sharedMat, self._repeat(function(seg) {
+                        var s = seg % 2 ? 1 : -1;
+                        return [
+                            { x: s * 5.35, y: 0, z: -8.4, sx: 1.1, sy: 1.1, sz: 1.1, ry: seg * 0.8 },
+                            { x: -s * 5.45, y: 0, z: 4.9, sx: 1.0, sy: 1.0, sz: 1.0, ry: -seg * 1.2 }
+                        ];
+                    }), ['sunny', 'forest', 'city']);
+                }
+                // 2) 现代钢架装甲瞭望哨塔 (含青色战术探照灯)
                 if (geos.Watchtower) {
                     self._add('glb-watchtowers', geos.Watchtower, sharedMat, self._repeat(function(seg) {
                         if (seg % 2) return [];
                         return [
-                            { x: -7.2, y: 0, z: 5.5, sx: 1.08, sy: 1.08, sz: 1.08, ry: 0.25 },
-                            { x:  7.4, y: 0, z: -7.5, sx: 1.08, sy: 1.08, sz: 1.08, ry: -2.85 }
+                            { x: -7.2, y: 0, z: 5.5, sx: 1.08, sy: 1.08, sz: 1.08, ry: 0.35 },
+                            { x:  7.4, y: 0, z: -7.5, sx: 1.08, sy: 1.08, sz: 1.08, ry: -2.75 }
                         ];
                     }));
                 }
-                // 3) 雕塑玩具军绿坦克 (带负重轮、斜装甲与炮口制退器!)
+                // 2b) 拱顶肋骨重装机库 (替代旧方块营房!)
+                if (geos.ArmoredHangar) {
+                    self._add('glb-hangars', geos.ArmoredHangar, sharedMat, self._repeat(function(seg) {
+                        var side = seg % 2 ? 1 : -1;
+                        return [{ x: side * 10.6, y: 0, z: -3.5, sx: 1.05, sy: 1.05, sz: 1.05, ry: 0 }];
+                    }));
+                }
+                // 3) 现代步战坦克 (带装甲裙板与青色观瞄镜)
                 if (geos.ToyTank) {
                     self._add('glb-tanks', geos.ToyTank, sharedMat, self._repeat(function(seg) {
                         var side = seg % 2 ? 1 : -1;
-                        return [{ x: side * 6.8, y: 0, z: -11.0, sx: 0.96, sy: 0.96, sz: 0.96, ry: side * -0.45 }];
+                        return [{ x: side * 6.8, y: 0, z: -11.0, sx: 0.98, sy: 0.98, sz: 0.98, ry: side * -0.45 }];
                     }), ['sunny', 'desert', 'city', 'forest']);
                 }
-                // 4) 雕塑橄榄帆布军用帐篷
+                // 4) 肋骨战术指挥帐篷
                 if (geos.MilitaryTent) {
                     self._add('glb-tents', geos.MilitaryTent, sharedMat, self._repeat(function(seg) {
                         var side = seg % 2 ? -1 : 1;
-                        return [{ x: side * 9.8, y: 0, z: 3.4, sx: 1.05, sy: 1.05, sz: 1.05, ry: side > 0 ? -1.45 : 1.45 }];
+                        return [{ x: side * 9.9, y: 0, z: 3.6, sx: 1.04, sy: 1.04, sz: 1.04, ry: side > 0 ? -1.45 : 1.45 }];
                     }), ['sunny', 'forest', 'desert']);
                 }
-                // 5) 雕塑沙袋掩体 + 军绿弹药箱
+                // 5) 沙袋掩体 + 托盘物资油桶组 (替代旧方块木箱与圆柱油桶!)
                 if (geos.SandbagBunker) {
                     self._add('glb-sandbags', geos.SandbagBunker, sharedMat, self._repeat(function(seg) {
                         var side = seg % 2 ? -1 : 1;
-                        return [{ x: side * 5.6, y: 0, z: -5.8, sx: 1.0, sy: 1.0, sz: 1.0, ry: side * -0.35 }];
+                        return [{ x: side * 5.55, y: 0, z: -5.8, sx: 1.02, sy: 1.02, sz: 1.02, ry: side * -0.35 }];
                     }));
                 }
-                // 6) 替换远景基地要塞大门为 Blender 雕塑垛口金星红旗城门!
+                if (geos.SupplyCluster) {
+                    self._add('glb-supplies', geos.SupplyCluster, sharedMat, self._repeat(function(seg) {
+                        var side = seg % 2 ? 1 : -1;
+                        return [
+                            { x: side * 5.45, y: 0, z: 3.4, sx: 1.0, sy: 1.0, sz: 1.0, ry: side * 0.25 },
+                            { x: -side * 5.65, y: 0, z: -1.8, sx: 0.92, sy: 0.92, sz: 0.92, ry: -side * 0.4 }
+                        ];
+                    }));
+                }
+                // 6) 替换远景基地要塞大门为全新重装特种指挥要塞大门!
                 if (geos.BunkerGate && self._horizonFortress) {
                     var gateMesh = new THREE.Mesh(geos.BunkerGate, sharedMat);
                     gateMesh.name = 'v15-glb-bunker-gate';
-                    gateMesh.scale.setScalar(1.12);
+                    gateMesh.scale.setScalar(1.16);
                     // 隐藏旧方块门楼, 保留三层远景山脉
                     for (var ci = 0; ci < self._horizonFortress.children.length; ci++) {
                         var ch = self._horizonFortress.children[ci];
@@ -689,33 +726,46 @@ var MilitaryArt = class MilitaryArt {
         var goldMat = this.materials.accent;
         var hillMat = this.materials.hill;
 
-        // V15-ART-007: 三层柔和手绘感远景山脊 (平滑谐波山体曲线, 彻底告别尖三角锥低模感!)
-        var makeRidgeMesh = function(width, maxH, depth, seed, colorHex, zPos) {
-            var segs = 36;
+        // V19.0: 三层壮阔雪顶岩峰与松林山脉 (与首页主视觉雪山要塞100%呼应, 含高度渐变顶点色!)
+        var makeRidgeMesh = function(width, maxH, depth, seed, baseHex, peakHex, zPos) {
+            var segs = 48;
             var shape = new THREE.Shape();
             shape.moveTo(-width * 0.5, -2);
             for (var i = 0; i <= segs; i++) {
                 var t = i / segs;
                 var x = (t - 0.5) * width;
                 var env = Math.sin(t * Math.PI);
-                var h = (0.38 + 0.34 * Math.sin(t * Math.PI * 3.0 + seed)
-                    + 0.18 * Math.sin(t * Math.PI * 6.5 + seed * 1.7)
-                    + 0.10 * Math.cos(t * Math.PI * 11.0 + seed * 0.6)) * maxH * (0.45 + 0.55 * env);
+                var ridge = Math.abs(Math.sin(t * Math.PI * 3.5 + seed)) * 0.55
+                    + Math.abs(Math.cos(t * Math.PI * 7.2 + seed * 1.6)) * 0.28
+                    + Math.sin(t * Math.PI * 13.0 + seed * 0.7) * 0.10;
+                var h = (0.22 + ridge) * maxH * (0.45 + 0.55 * env);
                 shape.lineTo(x, Math.max(1.2, h));
             }
             shape.lineTo(width * 0.5, -2);
             shape.closePath();
-            var geo = new THREE.ExtrudeGeometry(shape, { depth: depth, bevelEnabled: false, curveSegments: 8 });
+            var geo = new THREE.ExtrudeGeometry(shape, { depth: depth, bevelEnabled: false, curveSegments: 4 });
             geo.translate(0, 0, -depth * 0.5);
-            var mat = new THREE.MeshStandardMaterial({ color: colorHex, roughness: 0.96, metalness: 0.0, flatShading: false });
+            // 顶点高度渐变(山脚深松岩 -> 山巅冰川白雪)
+            var pos = geo.attributes.position;
+            var cols = new Float32Array(pos.count * 3);
+            var cBase = new THREE.Color(baseHex);
+            var cPeak = new THREE.Color(peakHex);
+            var cTmp = new THREE.Color();
+            for (var vi = 0; vi < pos.count; vi++) {
+                var ht = Math.max(0, Math.min(1, (pos.getY(vi) - maxH * 0.32) / (maxH * 0.45)));
+                cTmp.copy(cBase).lerp(cPeak, ht * ht);
+                cols[vi * 3] = cTmp.r; cols[vi * 3 + 1] = cTmp.g; cols[vi * 3 + 2] = cTmp.b;
+            }
+            geo.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+            var mat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF, vertexColors: true, roughness: 0.92, metalness: 0.02, flatShading: true });
             var mesh = new THREE.Mesh(geo, mat);
             mesh.position.set(0, -0.5, zPos);
             mesh.userData.v15Mountain = true;
             return mesh;
         };
-        g.add(makeRidgeMesh(110, 12.5, 4.0, 0.7, 0x567E4D, -12));  // 近景苍翠丘陵
-        g.add(makeRidgeMesh(130, 18.5, 5.0, 2.1, 0x6A8E7D, -22));  // 中景林岩山脉
-        g.add(makeRidgeMesh(155, 25.0, 6.0, 3.8, 0x8BAEC2, -33));  // 远景大气淡蓝山脊
+        g.add(makeRidgeMesh(115, 13.5, 4.0, 0.7, 0x2C473C, 0x527362, -12));  // 近景深林岩丘
+        g.add(makeRidgeMesh(140, 21.0, 5.0, 2.1, 0x3D566E, 0xA8C6DC, -23));  // 中景冷钢岩峰
+        g.add(makeRidgeMesh(168, 29.0, 6.0, 3.8, 0x5C7D99, 0xF0F7FF, -35));  // 远景高耸雪顶冰峰
 
         // 要塞主城墙(左右两翼 + 跨路门楼)
         var leftWall = new THREE.Mesh(new THREE.BoxGeometry(16, 6.2, 3.2), wallMat);
@@ -763,7 +813,7 @@ var MilitaryArt = class MilitaryArt {
         };
         var biome = themeToBiome[themeName] || 'sunny';
         var palettes = {
-            sunny:  { road: 0xf4f6f0, ground: 0x597D47, shoulder: 0x9C8F70, structure: 0x9bb089, roof: 0x35543e, accent: 0xf0b636, hill: 0x689458, curbB: 0xe8a838 },
+            sunny:  { road: 0x9AA6B2, ground: 0x4E7242, shoulder: 0x8A7F64, structure: 0x9bb089, roof: 0x35543e, accent: 0xf0b636, hill: 0x689458, curbB: 0xe8a838 },
             desert: { road: 0xf2ead9, ground: 0xc9a062, shoulder: 0xb38a52, structure: 0xc2a478, roof: 0x6b5b47, accent: 0xe6882e, hill: 0xb8864b, curbB: 0xd97d2b },
             city:   { road: 0xdce2e6, ground: 0x738282, shoulder: 0x677276, structure: 0x86979e, roof: 0x3c4d57, accent: 0xeeb544, hill: 0x64757c, curbB: 0xe3a83b },
             forest: { road: 0xe5ebe0, ground: 0x4b743f, shoulder: 0x7d7055, structure: 0x6c855c, roof: 0x2d4834, accent: 0xdca03c, hill: 0x456e3e, curbB: 0xd99e36 },

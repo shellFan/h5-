@@ -141,17 +141,31 @@
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
         if (iconType === 'helmet') {
-            // Stylized military helmet + face silhouette (matches V15 +20 gate)
+            // V19.0: Modern Spec-Ops FAST Helmet + Glowing Cyan Tactical Visor + Side Comms Pods
+            ctx.fillStyle = '#1E293B';
+            ctx.strokeStyle = '#070E1A';
+            ctx.lineWidth = 6;
             ctx.beginPath();
-            ctx.arc(0, -10, 48, Math.PI, 0, false);
-            ctx.lineTo(54, 4);
-            ctx.quadraticCurveTo(0, 14, -54, 4);
+            ctx.arc(0, -8, 44, Math.PI, 0, false);
+            ctx.lineTo(44, 6);
+            ctx.lineTo(30, 6);
+            ctx.lineTo(22, -4);
+            ctx.lineTo(-22, -4);
+            ctx.lineTo(-30, 6);
+            ctx.lineTo(-44, 6);
             ctx.closePath();
             ctx.stroke(); ctx.fill();
-            // Head/chin under helmet
-            ctx.beginPath();
-            ctx.arc(0, 14, 30, 0, Math.PI, false);
-            ctx.stroke(); ctx.fill();
+            // Side headset pods
+            ctx.fillStyle = '#0F172A';
+            ctx.beginPath(); ctx.roundRect(-50, 0, 14, 24, 5); ctx.roundRect(36, 0, 14, 24, 5); ctx.stroke(); ctx.fill();
+            // Chin / jaw
+            ctx.fillStyle = '#F8FAFC';
+            ctx.beginPath(); ctx.arc(0, 14, 27, 0.08 * Math.PI, 0.92 * Math.PI, false); ctx.stroke(); ctx.fill();
+            // Glowing cyan tactical visor goggles!
+            ctx.fillStyle = '#22D3EE';
+            ctx.beginPath(); ctx.roundRect(-30, -3, 60, 18, 7); ctx.stroke(); ctx.fill();
+            ctx.fillStyle = '#E0F2FE';
+            ctx.fillRect(-22, 0, 20, 5);
         } else if (iconType === 'rifle') {
             // Stylized assault rifle angled diagonally (matches V15 +50% gate)
             ctx.rotate(-0.42);
@@ -345,8 +359,8 @@
         var postW = 0.13;
         var postH = 1.68;
         var postX = width * 0.5 - postW * 0.5;
-        var steelDark = 0x202D25;
-        var steelMid = 0x36493D;
+        var steelDark = 0x0E1A2E;
+        var steelMid = 0x1D3354;
 
         frameParts.push({ geo: applyTransform(roundedRectGeometry(postW, postH, 0.04, 0.15), -postX, 0.88, 0), color: steelMid });
         frameParts.push({ geo: applyTransform(roundedRectGeometry(postW, postH, 0.04, 0.15),  postX, 0.88, 0), color: steelMid });

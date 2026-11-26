@@ -1736,3 +1736,310 @@
 .v15-skill-btn.is-cd .v15-skill-cd {
     display: flex;
 }
+
+
+/* =========================================================================
+ * V19.0 COMMERCIAL MODERN SPEC-OPS COMMAND UI REMAKE
+ * Deep Gunmetal-Navy Steel + Glowing Tactical Cyan + 3D Beveled Amber-Gold
+ * ========================================================================= */
+#game-container.art-military {
+    --v42-ink: #f8fafc;
+    --v42-muted: #94a3b8;
+    --v42-blue: #38bdf8;
+    --v42-cyan: #22d3ee;
+    --v42-gold: #fbbf24;
+    --v-navy: #0b1324;
+    --ui-text: #f8fafc;
+    --ui-quiet: #94a3b8;
+    --ui-line: #334e78;
+    --ui-gold: #fbbf24;
+    --ui-panel: #111e36;
+}
+
+/* 1. 首页全屏 9:16 商业主视觉海报 + 清理冗余杂乱胶囊 */
+#game-container.art-military #start-screen {
+    background-image: linear-gradient(180deg, rgba(8, 18, 38, 0.34) 0%, rgba(10, 20, 38, 0.0) 28%, rgba(8, 16, 32, 0.05) 68%, rgba(6, 12, 24, 0.86) 100%), url('assets/game/v15/home_military_camp_bg.jpg?v=1901') !important;
+    background-size: cover !important;
+    background-position: center center !important;
+}
+
+/* 清理顶部拥挤杂乱的旧文字按钮(底部已有完整补给站/特种兵导航) */
+#game-container.art-military #start-screen #btn-open-shop,
+#game-container.art-military #start-screen .v42-best-record {
+    display: none !important;
+}
+
+/* 顶部状态栏: 整洁单行枪铁蓝金属胶囊 */
+#game-container.art-military #start-screen .v51-top-strip,
+#game-container.art-military #start-screen .home-top-row {
+    align-items: center !important;
+}
+#game-container.art-military .logo-badge {
+    border: 2px solid #38bdf8 !important;
+    background: linear-gradient(180deg, #162844, #0b1528) !important;
+    box-shadow: 0 3px 0 #050b16, 0 0 12px rgba(56, 189, 248, 0.45) !important;
+}
+#game-container.art-military .v51-coin-pill,
+#game-container.art-military #btn-free-supply,
+#game-container.art-military #btn-mute {
+    background: linear-gradient(180deg, rgba(20, 35, 62, 0.92), rgba(10, 19, 36, 0.96)) !important;
+    border: 1.5px solid rgba(94, 212, 252, 0.55) !important;
+    box-shadow: 0 3px 0 #060d1a, 0 6px 14px rgba(0, 0, 0, 0.45) !important;
+    color: #f8fafc !important;
+    border-radius: 99px !important;
+}
+
+/* 等级经验条: 纤薄精致科技装甲条 */
+#game-container.art-military .v15-home-lobby #v60-home-growth {
+    margin: 2px 10px 4px !important;
+    padding: 4px 10px !important;
+    border-radius: 99px !important;
+    background: linear-gradient(180deg, rgba(13, 24, 44, 0.88), rgba(8, 15, 28, 0.92)) !important;
+    border: 1.5px solid rgba(56, 189, 248, 0.48) !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.42) !important;
+}
+
+/* 左右悬浮功能入口: 磨砂枪铁蓝立体徽章 */
+.v15-side-btn {
+    width: 48px !important;
+    height: 50px !important;
+    border-radius: 13px !important;
+    border: 1.5px solid rgba(103, 212, 255, 0.58) !important;
+    background: linear-gradient(180deg, rgba(22, 39, 68, 0.88), rgba(10, 19, 36, 0.94)) !important;
+    box-shadow: 0 4px 0 #060d1a, 0 6px 14px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(186, 230, 253, 0.28) !important;
+    color: #f1f5f9 !important;
+    font-size: 10px !important;
+    font-weight: 900 !important;
+    backdrop-filter: blur(4px);
+}
+.v15-side-btn:active {
+    transform: translateY(2px);
+}
+
+/* 首页战区选择卡: 重装枪铁蓝指挥台 */
+#v15-stage-bar {
+    margin: 2px 14px 8px !important;
+    padding: 7px 10px !important;
+    border-radius: 16px !important;
+    background: linear-gradient(180deg, rgba(20, 35, 62, 0.94), rgba(10, 18, 34, 0.98)) !important;
+    border: 2px solid rgba(56, 189, 248, 0.65) !important;
+    box-shadow: 0 5px 0 #050b16, 0 10px 22px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(186, 230, 253, 0.28) !important;
+}
+.v15-stage-thumb {
+    border: 1.8px solid #38bdf8 !important;
+    border-radius: 10px !important;
+}
+.v15-stage-kicker {
+    color: #7dd3fc !important;
+    font-size: 9.5px !important;
+    letter-spacing: 1.2px !important;
+}
+.v15-stage-arrow {
+    border: 1.5px solid #38bdf8 !important;
+    background: linear-gradient(180deg, #1e3a66, #0f203c) !important;
+    color: #e0f2fe !important;
+    box-shadow: 0 2px 0 #060e1c !important;
+}
+.v15-stage-map-btn {
+    border: 1.5px solid #fbbf24 !important;
+    background: linear-gradient(180deg, #423012, #241908) !important;
+    color: #fde68a !important;
+}
+
+/* 首页核心大按钮: 商业爆款 3D 倒角高光琥珀金 */
+#game-container.art-military .v15-home-lobby #btn-start {
+    width: 82% !important;
+    max-width: 308px !important;
+    height: 58px !important;
+    margin: 2px auto 10px !important;
+    background: linear-gradient(180deg, #fff38a 0%, #ffb71b 48%, #e05e00 100%) !important;
+    border: 2.5px solid #fff9d2 !important;
+    border-radius: 18px !important;
+    box-shadow: 0 6px 0 #873200, 0 12px 26px rgba(224, 94, 0, 0.52), inset 0 2px 0 rgba(255, 255, 255, 0.8) !important;
+    color: #241000 !important;
+    font-size: 21px !important;
+    font-weight: 900 !important;
+    letter-spacing: 1.5px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+}
+#game-container.art-military .v15-home-lobby #btn-start:active {
+    transform: translateY(3px) !important;
+    box-shadow: 0 3px 0 #873200, 0 6px 14px rgba(224, 94, 0, 0.4) !important;
+}
+.v19-start-ico {
+    flex-shrink: 0;
+    filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.45));
+}
+
+/* 底部 5 格主导航坞: 枪铁装甲底座 + 琥珀金高亮激活态 */
+#v15-bottom-dock {
+    background: linear-gradient(180deg, rgba(16, 28, 50, 0.96), rgba(8, 14, 26, 0.99)) !important;
+    border: 2px solid rgba(56, 189, 248, 0.48) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 6px 0 #040811, 0 -4px 18px rgba(0, 0, 0, 0.45) !important;
+    padding: 5px !important;
+}
+.v15-dock-tab {
+    background: linear-gradient(180deg, rgba(26, 43, 74, 0.85), rgba(14, 24, 44, 0.92)) !important;
+    border: 1.5px solid rgba(100, 148, 204, 0.32) !important;
+    border-radius: 13px !important;
+    color: #cbd5e1 !important;
+}
+.v15-dock-tab.active {
+    background: linear-gradient(180deg, #ffe875 0%, #f59e0b 65%, #d97706 100%) !important;
+    border-color: #fffbeb !important;
+    color: #1f1100 !important;
+    box-shadow: 0 3px 0 #78350f, 0 0 14px rgba(251, 191, 36, 0.45) !important;
+}
+.v19-dock-avatar, .v19-hud-avatar {
+    border-radius: 50%;
+}
+
+/* 2. 战斗 HUD 全面升级: 枪铁蓝战术顶栏 + 青蓝激光进度条 + 枪铁金技能坞 */
+#game-container.art-military #btn-pause {
+    background: linear-gradient(180deg, rgba(20, 36, 64, 0.94), rgba(10, 19, 36, 0.96)) !important;
+    border: 2px solid rgba(94, 212, 252, 0.68) !important;
+    box-shadow: 0 4px 0 #060d1a, 0 6px 14px rgba(0, 0, 0, 0.45) !important;
+}
+#game-container.art-military #level-title {
+    background: linear-gradient(180deg, rgba(18, 33, 58, 0.94), rgba(9, 17, 32, 0.97)) !important;
+    border: 1.8px solid rgba(94, 212, 252, 0.62) !important;
+    box-shadow: 0 3px 0 #050b16 !important;
+    color: #f8fafc !important;
+}
+#game-container.art-military #progress-bar-container {
+    background: rgba(9, 17, 32, 0.88) !important;
+    border: 1.8px solid rgba(94, 212, 252, 0.55) !important;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.7) !important;
+}
+#game-container.art-military #progress-bar {
+    background: linear-gradient(90deg, #06b6d4, #22d3ee, #34d399) !important;
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.65) !important;
+}
+#game-container.art-military .v15-pill {
+    background: linear-gradient(180deg, rgba(18, 33, 58, 0.94), rgba(9, 17, 32, 0.97)) !important;
+    border: 1.6px solid rgba(94, 212, 252, 0.58) !important;
+    box-shadow: 0 3px 0 #050b16 !important;
+}
+#game-container.art-military .v15-pill-coin {
+    border-color: rgba(251, 191, 36, 0.72) !important;
+}
+#game-container.art-military .stat-pill {
+    background: rgba(11, 21, 38, 0.84) !important;
+    border: 1px solid rgba(94, 212, 252, 0.42) !important;
+    color: #e2e8f0 !important;
+}
+
+/* 4键战术技能坞 & 右下角刷门按钮 */
+.v15-skill-btn {
+    border: 2px solid #38bdf8 !important;
+    background: linear-gradient(180deg, rgba(22, 40, 70, 0.95), rgba(10, 19, 36, 0.98)) !important;
+    box-shadow: 0 4px 0 #050b16, 0 0 12px rgba(56, 189, 248, 0.35), inset 0 1px 0 rgba(186, 230, 253, 0.3) !important;
+    color: #f8fafc !important;
+}
+.v15-skill-lv {
+    background: rgba(8, 15, 28, 0.9) !important;
+    color: #7dd3fc !important;
+}
+#game-container.art-military #btn-reroll-gates {
+    background: linear-gradient(180deg, rgba(22, 40, 70, 0.95), rgba(10, 19, 36, 0.98)) !important;
+    border: 2px solid #fbbf24 !important;
+    box-shadow: 0 4px 0 #050b16, 0 6px 14px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* 3. 全站二级弹窗 / 商店 / 军械库 / 训练中心 / 胜败结算 统一枪铁蓝+琥珀金商业风格 */
+#game-container.art-military .title-panel,
+#game-container.art-military #pause-screen .title-panel,
+#game-container.art-military #win-screen .title-panel,
+#game-container.art-military #lose-screen .title-panel,
+#game-container.art-military #shop-screen .title-panel {
+    border: 2px solid rgba(56, 189, 248, 0.65) !important;
+    background: linear-gradient(170deg, rgba(22, 38, 66, 0.96) 0%, rgba(12, 22, 40, 0.98) 60%, rgba(8, 15, 28, 0.99) 100%) !important;
+    box-shadow: 0 8px 0 #040912, 0 22px 48px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(186, 230, 253, 0.3) !important;
+}
+#game-container.art-military .shop-row {
+    background: linear-gradient(180deg, rgba(24, 42, 72, 0.88), rgba(13, 24, 44, 0.94)) !important;
+    border: 1.5px solid rgba(94, 212, 252, 0.35) !important;
+    box-shadow: 0 3px 0 #060d1a !important;
+}
+#game-container.art-military .shop-buy.affordable,
+#game-container.art-military .btn-ad,
+#game-container.art-military #btn-next-level {
+    background: linear-gradient(180deg, #fff078 0%, #ffb319 52%, #e05e00 100%) !important;
+    border: 2px solid #fff8c8 !important;
+    color: #231000 !important;
+    font-weight: 900 !important;
+    box-shadow: 0 4px 0 #873200, 0 8px 18px rgba(224, 94, 0, 0.42) !important;
+}
+
+/* 危机事件顶部非阻断战术警报横幅 */
+.v80-event-banner {
+    pointer-events: none !important;
+    border-radius: 14px !important;
+    backdrop-filter: blur(6px);
+}
+.v80-event-banner.bad {
+    background: linear-gradient(90deg, rgba(127, 29, 29, 0.94), rgba(69, 10, 10, 0.96)) !important;
+    border: 2px solid #f87171 !important;
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5) !important;
+}
+
+/* V19.0.1 高权重清扫旧军绿残留 & 隐藏首页底部灰色提示胶囊 */
+#game-container.art-military #start-screen .v42-control-pill,
+#game-container.art-military #start-screen .v42-controls {
+    display: none !important;
+}
+#game-container.art-military.v42-ui #level-title,
+#game-container.art-military #level-title {
+    background: linear-gradient(180deg, rgba(18, 33, 58, 0.95), rgba(9, 17, 32, 0.98)) !important;
+    border: 1.8px solid rgba(94, 212, 252, 0.68) !important;
+    box-shadow: 0 3px 0 #050b16 !important;
+    color: #f8fafc !important;
+}
+#game-container.art-military.v42-ui .stat-pill,
+#game-container.art-military .stat-pill {
+    background: linear-gradient(180deg, rgba(16, 30, 54, 0.92), rgba(9, 17, 32, 0.95)) !important;
+    border: 1.4px solid rgba(94, 212, 252, 0.48) !important;
+    color: #f1f5f9 !important;
+}
+#game-container.art-military.v42-ui #btn-reroll-gates,
+#game-container.art-military #btn-reroll-gates {
+    background: linear-gradient(180deg, rgba(22, 40, 70, 0.95), rgba(10, 19, 36, 0.98)) !important;
+    border: 2px solid #fbbf24 !important;
+    box-shadow: 0 4px 0 #050b16, 0 6px 14px rgba(0, 0, 0, 0.5) !important;
+}
+#game-container.art-military.v42-ui #shop-screen,
+#game-container.art-military #shop-screen {
+    background: radial-gradient(circle at 50% 15%, rgba(22, 42, 74, 0.95), rgba(8, 14, 26, 0.98)) !important;
+}
+#game-container.art-military.v42-ui .v15-armory-topbar,
+#game-container.art-military .v15-armory-topbar {
+    background: linear-gradient(180deg, rgba(20, 36, 64, 0.96), rgba(10, 19, 36, 0.98)) !important;
+    border-bottom: 1.5px solid rgba(56, 189, 248, 0.45) !important;
+}
+#game-container.art-military.v42-ui .v15-page-back,
+#game-container.art-military .v15-page-back {
+    background: linear-gradient(180deg, #1e3a66, #0f203c) !important;
+    border: 1.5px solid rgba(94, 212, 252, 0.65) !important;
+    color: #e0f2fe !important;
+}
+#game-container.art-military.v42-ui .shop-row,
+#game-container.art-military .shop-row {
+    background: linear-gradient(180deg, rgba(22, 39, 68, 0.92), rgba(11, 21, 38, 0.96)) !important;
+    border: 1.5px solid rgba(94, 212, 252, 0.42) !important;
+    box-shadow: 0 4px 0 #050b16 !important;
+}
+#game-container.art-military.v42-ui .shop-icon,
+#game-container.art-military .shop-icon {
+    background: linear-gradient(180deg, #152847, #0b1629) !important;
+    border: 1.5px solid rgba(94, 212, 252, 0.45) !important;
+}
+#game-container.art-military.v42-ui .v15-shop-lv,
+#game-container.art-military .v15-shop-lv {
+    background: rgba(56, 189, 248, 0.16) !important;
+    border: 1px solid rgba(56, 189, 248, 0.5) !important;
+    color: #7dd3fc !important;
+}
