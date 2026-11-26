@@ -219,10 +219,13 @@ class Effects {
     impact(x, y, z, critical, lethal) {
         var p = this._impactPool.pop();
         if (!p) return;
-        p.position.set(x, y, z + .15);
-        p.userData = { life: .16, maxLife: .16, size: lethal ? .9 : critical ? .78 : .48,
-            color: critical ? 0xFF9C47 : 0xFFF0AF, angle: Math.random() * Math.PI };
+        p.position.set(x, y, z + .16);
+        p.userData = { life: .18, maxLife: .18, size: lethal ? 1.15 : critical ? .92 : .58,
+            color: lethal ? 0xFFE066 : (critical ? 0xFF8C38 : 0x7DD3FC), angle: Math.random() * Math.PI };
         this.impacts.push(p);
+        if (lethal) {
+            this.explosionFlash(x, y + 0.1, z + 0.1, 1.35, 0xFFD166);
+        }
     }
 
     /** V14: 分级爆炸组合器 — 闪光+冲击波+火花+烟尘按档位组合(tier 1小/2普/3大/4Boss)

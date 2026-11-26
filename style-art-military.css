@@ -1987,33 +1987,230 @@
     box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5) !important;
 }
 
-/* V19.0.1 高权重清扫旧军绿残留 & 隐藏首页底部灰色提示胶囊 */
+/* V19.1 高权重彻底清扫全部残留旧军绿主题 (HUD/首页音量/经验条/左属性胶囊/刷门键/二级页/加载页) */
 #game-container.art-military #start-screen .v42-control-pill,
 #game-container.art-military #start-screen .v42-controls {
     display: none !important;
 }
+
+/* 首页微调 (ChatGPT V19.0 96分细节封板): 音量键枪铁化、经验条紧凑青蓝化、侧栏缩减8%、主视觉微光粒子 */
+#game-container.art-military .v42-home-sound,
+#game-container.art-military.v42-ui .v42-home-sound,
+#game-container.art-military #btn-home-sound {
+    background: linear-gradient(180deg, rgba(20, 36, 64, 0.94), rgba(10, 19, 36, 0.97)) !important;
+    border: 1.5px solid rgba(56, 189, 248, 0.62) !important;
+    box-shadow: 0 3px 0 #050b16, 0 5px 12px rgba(0, 0, 0, 0.45) !important;
+    color: #e0f2fe !important;
+    border-radius: 99px !important;
+}
+#game-container.art-military .v42-home-top,
+#game-container.art-military.v42-ui .v42-home-top {
+    margin: 0 0 3px !important;
+    min-height: 36px !important;
+    gap: 5px !important;
+}
+#game-container.art-military .v15-home-lobby #v60-home-growth,
+#game-container.art-military.v42-ui .v15-home-lobby #v60-home-growth {
+    margin: 1px 12px 3px !important;
+    padding: 3px 9px !important;
+    background: linear-gradient(180deg, rgba(13, 24, 44, 0.90), rgba(8, 15, 28, 0.94)) !important;
+    border: 1.4px solid rgba(56, 189, 248, 0.50) !important;
+}
+#game-container.art-military .v60-xp-bar,
+#game-container.art-military.v42-ui .v60-xp-bar {
+    background: #070f1e !important;
+    border: 1px solid rgba(56, 189, 248, 0.38) !important;
+}
+#game-container.art-military .v60-xp-fill,
+#game-container.art-military.v42-ui .v60-xp-fill {
+    background: linear-gradient(90deg, #0284c7, #38bdf8, #67e8f9) !important;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.55) !important;
+}
+#game-container.art-military .v60-growth-xp {
+    color: #bae6fd !important;
+}
+
+/* 首页左右侧功能入口缩减约 8% + 独立定制 SVG 图标高光 */
+.v15-side-col {
+    gap: 6px !important;
+    top: 10px !important;
+}
+.v15-side-btn {
+    width: 44px !important;
+    height: 45px !important;
+    border-radius: 12px !important;
+    font-size: 9.5px !important;
+}
+.v19-custom-nav-svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.55));
+}
+
+/* 首页微动画: 背景轻呼吸 + 漂浮战术冷青/暖金星火微粒 + 主按钮流光 */
+@keyframes v19BgBreathe {
+    0%, 100% { background-size: 100% auto; }
+    50% { background-size: 103% auto; }
+}
+@keyframes v19LogoFloat {
+    0%, 100% { transform: translateY(0); filter: drop-shadow(0 6px 12px rgba(0,0,0,0.52)); }
+    50% { transform: translateY(-2.5px); filter: drop-shadow(0 9px 16px rgba(56,189,248,0.28)); }
+}
+@keyframes v19SparkRise {
+    0% { transform: translateY(16px) scale(0.7); opacity: 0; }
+    25% { opacity: 0.78; }
+    80% { opacity: 0.55; }
+    100% { transform: translateY(-135px) scale(1.15); opacity: 0; }
+}
+.v15-logo-img {
+    animation: v19LogoFloat 4.2s ease-in-out infinite;
+}
+.v19-home-fx {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+.v19-home-fx i {
+    position: absolute;
+    bottom: 14%;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 8px #38bdf8;
+    opacity: 0;
+    animation: v19SparkRise 5.4s linear infinite;
+}
+.v19-home-fx i:nth-child(2n) {
+    background: #fbbf24;
+    box-shadow: 0 0 8px #fbbf24;
+    width: 3px;
+    height: 3px;
+}
+
+/* 战斗 HUD 100% 彻底统一枪铁蓝 + 战术青蓝 + 琥珀金 (修复 #level-name / #progress-bar-fill / .stat-row / #btn-refresh-gates) */
+#game-container.art-military.v42-ui #level-name,
+#game-container.art-military #level-name,
 #game-container.art-military.v42-ui #level-title,
 #game-container.art-military #level-title {
-    background: linear-gradient(180deg, rgba(18, 33, 58, 0.95), rgba(9, 17, 32, 0.98)) !important;
-    border: 1.8px solid rgba(94, 212, 252, 0.68) !important;
-    box-shadow: 0 3px 0 #050b16 !important;
+    background: linear-gradient(180deg, rgba(18, 34, 62, 0.95) 0%, rgba(9, 18, 34, 0.98) 100%) !important;
+    border: 1.8px solid rgba(56, 189, 248, 0.72) !important;
+    box-shadow: 0 3px 0 #050b16, 0 5px 12px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(186, 230, 253, 0.25) !important;
     color: #f8fafc !important;
+    text-shadow: 0 1.5px 0 #040914 !important;
 }
+#game-container.art-military.v42-ui #progress-bar-container,
+#game-container.art-military #progress-bar-container {
+    background: linear-gradient(180deg, #07101f, #0f1d35) !important;
+    border: 1.8px solid rgba(56, 189, 248, 0.62) !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45), inset 0 2px 4px rgba(0, 0, 0, 0.75) !important;
+}
+#game-container.art-military.v42-ui #progress-bar-fill,
+#game-container.art-military #progress-bar-fill {
+    background: linear-gradient(90deg, #0284c7 0%, #22d3ee 60%, #34d399 100%) !important;
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.65), inset 0 2px 0 rgba(255, 255, 255, 0.45) !important;
+}
+#game-container.art-military #progress-flag .flag-pole { background: #e0f2fe !important; }
+#game-container.art-military #progress-flag .flag-cloth { background: #38bdf8 !important; border-color: #0369a1 !important; }
+
+/* 战斗左上角伤害/射速属性胶囊 (#stats-panel / .stat-row) 彻底清除旧军绿 */
+#game-container.art-military.v42-ui #stats-panel,
+#game-container.art-military #stats-panel {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+#game-container.art-military.v42-ui #stats-panel .stat-row,
+#game-container.art-military.v42-ui #stats-panel #stat-row-count,
+#game-container.art-military.v42-ui #stats-panel #stat-row-damage,
+#game-container.art-military.v42-ui #stats-panel #stat-row-firerate,
+#game-container.art-military #stats-panel .stat-row,
 #game-container.art-military.v42-ui .stat-pill,
 #game-container.art-military .stat-pill {
-    background: linear-gradient(180deg, rgba(16, 30, 54, 0.92), rgba(9, 17, 32, 0.95)) !important;
-    border: 1.4px solid rgba(94, 212, 252, 0.48) !important;
-    color: #f1f5f9 !important;
+    background: linear-gradient(180deg, rgba(18, 33, 58, 0.94), rgba(9, 17, 32, 0.98)) !important;
+    border: 1.5px solid rgba(56, 189, 248, 0.58) !important;
+    box-shadow: 0 3px 0 #050b16, 0 4px 10px rgba(0, 0, 0, 0.45) !important;
+    color: #e2e8f0 !important;
+    border-radius: 99px !important;
 }
+#game-container.art-military.v42-ui #stats-panel .stat-label,
+#game-container.art-military #stats-panel .stat-label {
+    color: #bae6fd !important;
+}
+#game-container.art-military.v42-ui #stats-panel .stat-val,
+#game-container.art-military.v42-ui #stats-panel #stat-damage,
+#game-container.art-military.v42-ui #stats-panel #stat-firerate,
+#game-container.art-military #stats-panel .stat-val {
+    color: #fbbf24 !important;
+    font-weight: 900 !important;
+}
+
+/* 战斗右下角广告刷门按钮 (#btn-refresh-gates) 彻底清除旧军绿 */
+#game-container.art-military.v42-ui #btn-refresh-gates,
+#game-container.art-military #btn-refresh-gates,
 #game-container.art-military.v42-ui #btn-reroll-gates,
 #game-container.art-military #btn-reroll-gates {
-    background: linear-gradient(180deg, rgba(22, 40, 70, 0.95), rgba(10, 19, 36, 0.98)) !important;
+    background: linear-gradient(180deg, rgba(22, 40, 70, 0.96), rgba(10, 19, 36, 0.99)) !important;
     border: 2px solid #fbbf24 !important;
-    box-shadow: 0 4px 0 #050b16, 0 6px 14px rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0 4px 0 #050b16, 0 6px 14px rgba(0, 0, 0, 0.52), inset 0 1px 0 rgba(254, 243, 199, 0.35) !important;
+    color: #fef3c7 !important;
 }
+#game-container.art-military #squad-count-badge,
+#game-container.art-military.v42-ui #squad-count-badge {
+    background: linear-gradient(180deg, rgba(14, 116, 144, 0.92), rgba(15, 23, 42, 0.95)) !important;
+    border: 1.6px solid #38bdf8 !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* 全站二级功能页 / 军械库 / 训练页 / 胜败结算 / 启动加载条 彻底告别旧军绿 */
+#boot-loading {
+    background: radial-gradient(circle at 50% 25%, #172b4d 0%, #091224 70%, #050a14 100%) !important;
+    color: #f8fafc !important;
+}
+#boot-loading .boot-bar-fill {
+    background: linear-gradient(90deg, #0284c7, #38bdf8, #fbbf24) !important;
+}
+#game-container.art-military .v60-page,
+#game-container.art-military.v42-ui .v60-page,
 #game-container.art-military.v42-ui #shop-screen,
 #game-container.art-military #shop-screen {
-    background: radial-gradient(circle at 50% 15%, rgba(22, 42, 74, 0.95), rgba(8, 14, 26, 0.98)) !important;
+    background: radial-gradient(circle at 50% 15%, rgba(22, 42, 74, 0.96), rgba(8, 14, 26, 0.99)) !important;
+}
+#game-container.art-military .v60-panel,
+#game-container.art-military .v60-page .title-panel,
+#game-container.art-military.v42-ui .v60-page .title-panel {
+    background: linear-gradient(170deg, rgba(20, 36, 64, 0.96) 0%, rgba(10, 19, 36, 0.99) 100%) !important;
+    border: 2px solid rgba(56, 189, 248, 0.58) !important;
+    box-shadow: 0 8px 0 #040912, 0 20px 44px rgba(0, 0, 0, 0.78) !important;
+}
+#game-container.art-military .v60-ach-row,
+#game-container.art-military .v60-tech-row,
+#game-container.art-military .v60-codex-card,
+#game-container.art-military .v60-challenge-card,
+#game-container.art-military .v60-map-node,
+#game-container.art-military .v60-bag-item,
+#game-container.art-military .v60-setting-row,
+#game-container.art-military .v60-signin-day,
+#game-container.art-military .v60-weapon-card,
+#game-container.art-military .v60-weapon-row,
+#game-container.art-military .v60-rank-row,
+#game-container.art-military .win-stat,
+#game-container.art-military #win-coins,
+#game-container.art-military #lose-coins,
+#game-container.art-military .art-train-showcase,
+#game-container.art-military .v118-armory-hero {
+    background: linear-gradient(180deg, rgba(22, 39, 68, 0.92), rgba(11, 21, 38, 0.96)) !important;
+    border: 1.5px solid rgba(56, 189, 248, 0.42) !important;
+    color: #f1f5f9 !important;
+}
+#game-container.art-military .btn-secondary {
+    background: linear-gradient(180deg, #1e3a66, #0f203c) !important;
+    border: 1.5px solid rgba(94, 212, 252, 0.58) !important;
+    box-shadow: 0 3px 0 #050b16 !important;
+    color: #e0f2fe !important;
 }
 #game-container.art-military.v42-ui .v15-armory-topbar,
 #game-container.art-military .v15-armory-topbar {

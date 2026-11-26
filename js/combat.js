@@ -42,44 +42,51 @@ class CombatSystem {
         for (var i = 0; i < CONFIG.BULLET_MAX_VISIBLE; i++) {
             var sprite = new THREE.Object3D();
             sprite.visible = false;
-            sprite.scale.set(0.32, 2.35, 1);
+            sprite.scale.set(0.38, 2.75, 1);
             this.pool.push(sprite);
         }
     }
 
-    /** V15-ART-008: 锐利炽白激光曳光弹 — 细长炽白弹芯 + 短金橙光晕(彻底告别钝黄色水滴!) */
+    /** V19.1: 商业级高能战术曳光弹 — 炽白弹头激波 + 琥珀青金流光尾迹 (在深色战术路面上锐利醒目!) */
     _makeTracerTexture() {
         var c = document.createElement('canvas');
         c.width = 64; c.height = 256;
         var ctx = c.getContext('2d');
         ctx.clearRect(0, 0, 64, 256);
-        // 外层纤细金橙辉光
-        var tail = ctx.createLinearGradient(0, 10, 0, 244);
-        tail.addColorStop(0.0, 'rgba(255,245,190,0.92)');
-        tail.addColorStop(0.24, 'rgba(255,178,42,0.78)');
-        tail.addColorStop(0.62, 'rgba(255,118,16,0.34)');
-        tail.addColorStop(1.0, 'rgba(255,88,0,0)');
+        // 弹头前缘柔和等离子辉光晕
+        var headGlow = ctx.createRadialGradient(32, 24, 2, 32, 24, 24);
+        headGlow.addColorStop(0.0, 'rgba(255,252,220,0.95)');
+        headGlow.addColorStop(0.45, 'rgba(56,189,248,0.42)');
+        headGlow.addColorStop(1.0, 'rgba(56,189,248,0)');
+        ctx.fillStyle = headGlow;
+        ctx.fillRect(0, 0, 64, 56);
+        // 外层锐利金橙高速曳光尾焰
+        var tail = ctx.createLinearGradient(0, 10, 0, 248);
+        tail.addColorStop(0.0, 'rgba(255,248,200,0.98)');
+        tail.addColorStop(0.22, 'rgba(255,190,48,0.88)');
+        tail.addColorStop(0.58, 'rgba(255,118,16,0.42)');
+        tail.addColorStop(1.0, 'rgba(255,80,0,0)');
         ctx.fillStyle = tail;
         ctx.beginPath();
-        ctx.moveTo(25, 16);
-        ctx.lineTo(29.5, 244);
-        ctx.lineTo(34.5, 244);
-        ctx.lineTo(39, 16);
-        ctx.lineTo(32, 4);
+        ctx.moveTo(22, 18);
+        ctx.lineTo(29, 248);
+        ctx.lineTo(35, 248);
+        ctx.lineTo(42, 18);
+        ctx.lineTo(32, 3);
         ctx.closePath();
         ctx.fill();
-        // 内层纯白炽热锐利弹芯 (高对比度)
-        var core = ctx.createLinearGradient(0, 8, 0, 170);
+        // 内层纯白超高速锐利弹芯
+        var core = ctx.createLinearGradient(0, 6, 0, 188);
         core.addColorStop(0.0, '#FFFFFF');
-        core.addColorStop(0.45, 'rgba(255,255,252,0.98)');
+        core.addColorStop(0.52, 'rgba(255,255,255,0.98)');
         core.addColorStop(1.0, 'rgba(255,240,180,0)');
         ctx.fillStyle = core;
         ctx.beginPath();
-        ctx.moveTo(29, 12);
-        ctx.lineTo(30.8, 170);
-        ctx.lineTo(33.2, 170);
-        ctx.lineTo(35, 12);
-        ctx.lineTo(32, 6);
+        ctx.moveTo(28, 12);
+        ctx.lineTo(30.6, 188);
+        ctx.lineTo(33.4, 188);
+        ctx.lineTo(36, 12);
+        ctx.lineTo(32, 4);
         ctx.closePath();
         ctx.fill();
         this._bulletTex = new THREE.CanvasTexture(c);

@@ -40,21 +40,30 @@ var ArtUI = {
             if (title && !panel.querySelector('.v15-logo-img')) {
                 title.innerHTML = '<img class="v15-logo-img" src="assets/game/v15/home_logo.png" alt="膨胀小队" draggable="false">';
             }
+            var svgChallenge = '<svg class="v19-custom-nav-svg" viewBox="0 0 24 24"><path d="M5 19L19 5M14 5h5v5" stroke="#FBBF24" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 19L5 5M10 5H5v5" stroke="#F87171" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="12" cy="12" r="3.2" fill="#FEF08A" stroke="#78350F" stroke-width="1.5"/></svg>';
+            var svgCodex = '<svg class="v19-custom-nav-svg" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3" fill="#0F294A" stroke="#38BDF8" stroke-width="2"/><path d="M8 8h8M8 12h8M8 16h5" stroke="#7DD3FC" stroke-width="2" stroke-linecap="round"/><circle cx="16.5" cy="16.5" r="2.2" fill="#FBBF24"/></svg>';
             var hero = document.createElement('div');
             hero.className = 'art-home-hero v15-camp-stage';
             hero.innerHTML =
+                '<div class="v19-home-fx" aria-hidden="true">' +
+                    '<i style="left:16%;animation-delay:0s"></i>' +
+                    '<i style="left:32%;animation-delay:1.4s"></i>' +
+                    '<i style="left:54%;animation-delay:0.7s"></i>' +
+                    '<i style="left:72%;animation-delay:2.3s"></i>' +
+                    '<i style="left:84%;animation-delay:3.5s"></i>' +
+                '</div>' +
                 '<div class="v15-side-col v15-side-left">' +
                     '<button type="button" class="v15-side-btn" data-trigger="v60-btn-map">' + this.icon('shield') + '<span>地图</span></button>' +
                     '<button type="button" class="v15-side-btn" data-trigger="v60-btn-tech">' + this.icon('star') + '<span>科技</span></button>' +
                     '<button type="button" class="v15-side-btn" data-trigger="v60-btn-daily">' + this.icon('coin') + '<span>每日</span></button>' +
-                    '<button type="button" class="v15-side-btn" data-trigger="v60-btn-challenge">' + this.icon('medal') + '<span>挑战</span></button>' +
+                    '<button type="button" class="v15-side-btn" data-trigger="v60-btn-challenge">' + svgChallenge + '<span>挑战</span></button>' +
                 '</div>' +
                 '<div class="v15-hero-center-wrap">' +
                     '<div class="v15-hero-shadow" style="display:none"></div>' +
                 '</div>' +
                 '<div class="v15-side-col v15-side-right">' +
                     '<button type="button" class="v15-side-btn" data-trigger="v60-btn-ach">' + this.icon('trophy') + '<span>成就</span></button>' +
-                    '<button type="button" class="v15-side-btn" data-trigger="v60-btn-codex">' + this.icon('medal') + '<span>图鉴</span></button>' +
+                    '<button type="button" class="v15-side-btn" data-trigger="v60-btn-codex">' + svgCodex + '<span>图鉴</span></button>' +
                     '<button type="button" class="v15-side-btn" data-trigger="v60-btn-set">' + this.icon('settings') + '<span>设置</span></button>' +
                 '</div>';
             if (title) title.insertAdjacentElement('afterend', hero);
@@ -242,9 +251,9 @@ var ArtUI = {
         var box = document.createElement('div');
         box.id = 'art-train-showcase';
         box.className = 'art-train-showcase';
-        box.innerHTML = this.image('characters/soldier_portrait.png', '绿色玩具士兵', 'art-train-soldier') +
-            '<div class="art-train-copy"><span class="art-overline">SQUAD TRAINING</span>' +
-            '<strong>绿色战术步兵团</strong><p>强化全队火力、生命与减伤属性</p></div>';
+        box.innerHTML = this.image('characters/soldier_portrait.png?v=1901', '特种作战指挥官', 'art-train-soldier') +
+            '<div class="art-train-copy"><span class="art-overline">SPEC-OPS TRAINING</span>' +
+            '<strong>现代特种突击团</strong><p>强化全队火力、护甲生命与战术减伤属性</p></div>';
         var header = panel.querySelector('.v60-train-head') || panel.querySelector('.v60-page-title');
         if (header) header.insertAdjacentElement('afterend', box);
         else panel.insertBefore(box, panel.firstChild);

@@ -105,61 +105,30 @@ class World {
         }
     }
 
-    /** V12视觉: 渐变天空穹顶 — 替代纯色背景, 一张Canvas渐变+BackSide球, 单drawCall, 无光照成本 */
+    /** V19.1 商业级自然渐变天空穹顶 + 柔和层积云与大气透视光晕 (单球单drawCall, 彻底移除巨型低模白云球!) */
     _buildSky() {
         const cv = document.createElement('canvas');
-        cv.width = 16; cv.height = 256;
-        const ctx = cv.getContext('2d');
-        this._skyCanvas = cv; // V13: 主题系统重绘渐变用
-        var g = ctx.createLinearGradient(0, 0, 0, 256);
-        // 顶:饱和天蓝 → 中:晴空蓝 → 地平线:暖白(与雾色衔接, 远景建筑融入天际)
-        g.addColorStop(0.00, '#4FA3DF');
-        g.addColorStop(0.45, '#87CEEB');
-        g.addColorStop(0.80, '#C9E6F5');
-        g.addColorStop(1.00, '#EAF4FA');
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, 16, 256);
-        // 顶部淡光晕(太阳方位感)
-        var sun = ctx.createRadialGradient(8, 36, 2, 8, 36, 90);
-        sun.addColorStop(0, 'rgba(255,246,214,0.35)');
-        sun.addColorStop(1, 'rgba(255,246,214,0)');
-        ctx.fillStyle = sun;
-        ctx.fillRect(0, 0, 16, 256);
+        cv.width = 512; cv.height = 256;
+        this._skyCanvas = cv;
+        this._paintSky(['#1F5FA2', '#52A3E2', '#A6D6F4', '#E6F3FB']);
         var tex = new THREE.CanvasTexture(cv);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.ClampToEdgeWrapping;
         var mat = new THREE.MeshBasicMaterial({ map: tex, side: THREE.BackSide, fog: false, depthWrite: false });
-        var dome = new THREE.Mesh(new THREE.SphereGeometry(96, 24, 16), mat);
+        var dome = new THREE.Mesh(new THREE.SphereGeometry(96, 32, 20), mat);
         dome.renderOrder = -10;
-        dome.userData.artSource = 'js/world.js:_buildSky() V15 阳光晴空穹顶 16x256';
+        dome.userData.artSource = 'js/world.js:_buildSky() V19.1 自然渐变天穹与柔和体积层云 512x256';
         this.scene.add(dome);
         this._skyDome = dome;
 
-        // V15: 立体卡通蓬松白云群 (单 InstancedMesh, 1 drawCall, 跟随相机地平线, 清晰可见于远景山脉与要塞上方)
-        var cloudSpecs = [
-            [-22, 13.5, -62, 4.4, 2.0, 2.8], [-18.2, 14.8, -61.5, 3.6, 2.3, 2.6], [-25.5, 13.2, -62.2, 3.0, 1.7, 2.3],
-            [20, 14.0, -64, 4.8, 2.2, 3.0], [24.2, 15.2, -63.5, 3.7, 2.2, 2.6], [16.2, 13.5, -64.2, 3.2, 1.8, 2.4],
-            [-4, 15.6, -66, 5.2, 2.2, 3.0], [0.4, 16.6, -65.5, 3.8, 2.4, 2.6], [-8.2, 15.1, -66.2, 3.3, 1.9, 2.4],
-            [9, 12.6, -58, 3.2, 1.6, 2.2], [11.8, 13.4, -57.8, 2.5, 1.7, 2.0],
-            [-32, 12.2, -56, 3.8, 1.8, 2.4], [32, 12.8, -58, 4.0, 1.9, 2.6]
-        ];
-        var cloudGeo = new THREE.SphereGeometry(1, 10, 8);
-        var cloudMat = new THREE.MeshBasicMaterial({ color: 0xF8FCFF, fog: false, transparent: true, opacity: 0.94 });
-        var cloudMesh = new THREE.InstancedMesh(cloudGeo, cloudMat, cloudSpecs.length);
-        cloudMesh.frustumCulled = false;
-        cloudMesh.renderOrder = -5;
-        var dummy = new THREE.Object3D();
-        for (var ci = 0; ci < cloudSpecs.length; ci++) {
-            var cs = cloudSpecs[ci];
-            dummy.position.set(cs[0], cs[1], cs[2]);
-            dummy.scale.set(cs[3], cs[4], cs[5]);
-            dummy.updateMatrix();
-            cloudMesh.setMatrixAt(ci, dummy.matrix);
-        }
-        cloudMesh.instanceMatrix.needsUpdate = true;
-        cloudMesh.userData.artSource = 'js/world.js:_buildSky() V15 卡通蓬松白云群';
-        this.scene.add(cloudMesh);
+        // V19.1: 隐藏旧版平面化巨型球体云团(保留引用兼容旧主题逻辑)
+        var cloudGeo = new THREE.SphereGeometry(0.1, 4, 4);
+        var cloudMat = new THREE.MeshBasicMaterial({ visible: false });
+        var cloudMesh = new THREE.InstancedMesh(cloudGeo, cloudMat, 1);
+        cloudMesh.count = 0;
+        cloudMesh.visible = false;
         this._skyClouds = cloudMesh;
 
-        // 雾色向地平线色靠拢(V13: 雾色统一由主题预设决定, 与 applyTheme 一致)
         var T0 = (CONFIG.WORLD_THEMES && (CONFIG.WORLD_THEMES[this._themeApplied || 'default'])) || CONFIG.WORLD_THEMES.default;
         this.scene.fog.color.setHex(T0.fog);
     }
@@ -491,22 +460,73 @@ class World {
         if(this._militaryArt)this._militaryArt.setTheme(themeName);
     }
 
-    /** V13: 按主题重绘天穹渐变(与 _buildSky 同规格: 4 停靠点 + 顶部太阳光晕) */
+    /** V19.1: 按主题重绘 512x256 自然大气渐变 + 柔和多层羽化云带 + 太阳暖光晕 */
     _paintSky(stops) {
         if (!this._skyCanvas || !stops || stops.length < 4) return;
-        var ctx = this._skyCanvas.getContext('2d');
-        var g = ctx.createLinearGradient(0, 0, 0, 256);
+        var cv = this._skyCanvas;
+        var w = cv.width, h = cv.height;
+        var ctx = cv.getContext('2d');
+        var g = ctx.createLinearGradient(0, 0, 0, h);
         g.addColorStop(0.00, stops[0]);
-        g.addColorStop(0.45, stops[1]);
-        g.addColorStop(0.80, stops[2]);
+        g.addColorStop(0.42, stops[1]);
+        g.addColorStop(0.76, stops[2]);
         g.addColorStop(1.00, stops[3]);
         ctx.fillStyle = g;
-        ctx.fillRect(0, 0, 16, 256);
-        var sun = ctx.createRadialGradient(8, 36, 2, 8, 36, 90);
-        sun.addColorStop(0, 'rgba(255,246,214,0.35)');
-        sun.addColorStop(1, 'rgba(255,246,214,0)');
+        ctx.fillRect(0, 0, w, h);
+
+        // 太阳高空柔和暖金散射光晕 (对齐正前方远景地平线偏右上)
+        var sunX = w * 0.56, sunY = h * 0.30;
+        var sun = ctx.createRadialGradient(sunX, sunY, 4, sunX, sunY, 130);
+        sun.addColorStop(0.0, 'rgba(255,250,224,0.48)');
+        sun.addColorStop(0.35, 'rgba(255,238,196,0.18)');
+        sun.addColorStop(1.0, 'rgba(255,238,196,0)');
         ctx.fillStyle = sun;
-        ctx.fillRect(0, 0, 16, 256);
+        ctx.fillRect(0, 0, w, h);
+
+        // 柔和自然体积层积云带 (底面淡蓝灰阴影 + 顶面暖白羽化高光, 绝不抢戏或像硬塑料球!)
+        var paintSoftCloud = function(cx, cy, rx, ry, alpha) {
+            // 云底柔和冷影
+            var sh = ctx.createRadialGradient(cx, cy + ry * 0.24, rx * 0.08, cx, cy + ry * 0.24, rx);
+            sh.addColorStop(0, 'rgba(138,176,208,' + (alpha * 0.34).toFixed(3) + ')');
+            sh.addColorStop(1, 'rgba(138,176,208,0)');
+            ctx.save();
+            ctx.translate(cx, cy + ry * 0.22);
+            ctx.scale(1, ry / rx);
+            ctx.fillStyle = sh;
+            ctx.beginPath(); ctx.arc(0, 0, rx, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+            // 云顶暖白柔光簇
+            var puffs = [[-0.36, 0.06, 0.62], [0.0, -0.14, 0.78], [0.38, 0.04, 0.60], [-0.16, -0.06, 0.66], [0.20, -0.05, 0.64]];
+            for (var pi = 0; pi < puffs.length; pi++) {
+                var px = cx + puffs[pi][0] * rx, py = cy + puffs[pi][1] * ry, pr = rx * puffs[pi][2];
+                var pg = ctx.createRadialGradient(px, py - pr * 0.12, pr * 0.05, px, py, pr);
+                pg.addColorStop(0.0, 'rgba(255,253,248,' + alpha.toFixed(3) + ')');
+                pg.addColorStop(0.48, 'rgba(244,250,255,' + (alpha * 0.52).toFixed(3) + ')');
+                pg.addColorStop(1.0, 'rgba(244,250,255,0)');
+                ctx.save();
+                ctx.translate(px, py);
+                ctx.scale(1, (ry / rx) * 1.15);
+                ctx.fillStyle = pg;
+                ctx.beginPath(); ctx.arc(0, 0, pr, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+            }
+        };
+        var bands = [
+            [72, 86, 56, 15, 0.42], [176, 76, 68, 17, 0.46], [298, 82, 74, 18, 0.44], [426, 78, 62, 16, 0.40],
+            [124, 104, 48, 11, 0.30], [242, 100, 54, 12, 0.32], [368, 102, 52, 12, 0.30]
+        ];
+        for (var bi = 0; bi < bands.length; bi++) {
+            var b = bands[bi];
+            paintSoftCloud(b[0], b[1], b[2], b[3], b[4]);
+        }
+
+        // 地平线柔和大气雾化过渡带
+        var hz = ctx.createLinearGradient(0, h * 0.62, 0, h * 0.92);
+        hz.addColorStop(0, 'rgba(226,242,252,0)');
+        hz.addColorStop(1, 'rgba(226,242,252,0.36)');
+        ctx.fillStyle = hz;
+        ctx.fillRect(0, h * 0.62, w, h * 0.32);
+
         if (this._skyDome && this._skyDome.material && this._skyDome.material.map) {
             this._skyDome.material.map.needsUpdate = true;
         }

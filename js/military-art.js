@@ -74,40 +74,62 @@ var MilitaryArt = class MilitaryArt {
             ctx.fillStyle = (i % 3 === 0) ? 'rgba(255,252,240,0.07)' : ((i % 3 === 1) ? 'rgba(20,26,32,0.09)' : 'rgba(138,124,98,0.06)');
             ctx.fillRect(x, y, 2 + (i % 2), 2 + ((i + 1) % 2));
         }
-        // 横向混凝土板块伸缩缝 + 自然微裂纹
+        // 横向混凝土板块伸缩缝 + 真实沥青网状裂纹 + 战区跑道导引喷漆箭头 + 双轮胎花纹印
         for (var sy = 0; sy < 512; sy += 128) {
-            ctx.fillStyle = 'rgba(26, 32, 38, 0.28)';
+            ctx.fillStyle = 'rgba(18, 24, 30, 0.34)';
             ctx.fillRect(14, sy, 484, 3);
-            ctx.fillStyle = 'rgba(255,255,250,0.11)';
+            ctx.fillStyle = 'rgba(235, 240, 245, 0.09)';
             ctx.fillRect(14, sy + 3, 484, 2);
-            // 缝边细小分支裂纹
-            ctx.strokeStyle = 'rgba(28,34,40,0.22)';
-            ctx.lineWidth = 1.5;
+            // 多分叉自然沥青裂纹与局部冷补沥青块
+            ctx.fillStyle = 'rgba(24, 30, 38, 0.18)';
             ctx.beginPath();
-            var cx0 = 60 + ((sy * 3) % 340);
+            ctx.ellipse(90 + ((sy * 5) % 310), sy + 52, 26, 14, 0.3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(16, 22, 28, 0.30)';
+            ctx.lineWidth = 1.6;
+            ctx.beginPath();
+            var cx0 = 54 + ((sy * 3) % 350);
             ctx.moveTo(cx0, sy + 2);
-            ctx.lineTo(cx0 + 18, sy + 14);
-            ctx.lineTo(cx0 + 34, sy + 9);
-            ctx.lineTo(cx0 + 48, sy + 22);
+            ctx.lineTo(cx0 + 16, sy + 18);
+            ctx.lineTo(cx0 + 36, sy + 12);
+            ctx.lineTo(cx0 + 54, sy + 30);
+            ctx.moveTo(cx0 + 16, sy + 18);
+            ctx.lineTo(cx0 + 6, sy + 38);
             ctx.stroke();
         }
-        // 两侧暖黄军用实边线 (带深色衬边与轻微磨损)
-        ctx.fillStyle = 'rgba(26, 30, 26, 0.42)';
+        // 重型装甲车双轮辙印与横向胎纹残迹
+        ctx.fillStyle = 'rgba(16, 20, 26, 0.13)';
+        var tracksX = [74, 122, 230, 278, 386, 434];
+        for (var ti = 0; ti < tracksX.length; ti++) {
+            var tx = tracksX[ti];
+            ctx.fillRect(tx, 0, 9, 512);
+            for (var ty = (ti % 2) * 8; ty < 512; ty += 18) {
+                ctx.fillRect(tx - 2, ty, 13, 4);
+            }
+        }
+        // 中道军用跑道战术导引喷漆标识 (低对比度做旧白漆)
+        ctx.fillStyle = 'rgba(226, 232, 240, 0.12)';
+        ctx.beginPath();
+        ctx.moveTo(256, 210); ctx.lineTo(282, 248); ctx.lineTo(268, 248); ctx.lineTo(256, 230); ctx.lineTo(244, 248); ctx.lineTo(230, 248);
+        ctx.closePath(); ctx.fill();
+
+        // 两侧降饱和做旧琥珀军用警戒边线 (告别刺眼亮黄)
+        ctx.fillStyle = 'rgba(18, 24, 30, 0.48)';
         ctx.fillRect(12, 0, 14, 512);
         ctx.fillRect(486, 0, 14, 512);
-        ctx.fillStyle = '#EBBF3F';
-        ctx.fillRect(14, 0, 10, 512);
-        ctx.fillRect(488, 0, 10, 512);
-        // 三跑道清晰白色虚线分隔 (对齐三车道, 轻微做旧)
-        ctx.fillStyle = 'rgba(26, 32, 38, 0.22)';
+        ctx.fillStyle = '#C99B3B';
+        ctx.fillRect(14, 0, 9, 512);
+        ctx.fillRect(489, 0, 9, 512);
+        // 三跑道做旧战术灰白虚线分隔
+        ctx.fillStyle = 'rgba(18, 24, 30, 0.28)';
         for (var ly0 = 16; ly0 < 512; ly0 += 85) {
-            ctx.fillRect(165, ly0 + 2, 12, 50);
-            ctx.fillRect(335, ly0 + 2, 12, 50);
+            ctx.fillRect(165, ly0 + 2, 10, 46);
+            ctx.fillRect(337, ly0 + 2, 10, 46);
         }
-        ctx.fillStyle = '#F2F5EE';
+        ctx.fillStyle = 'rgba(218, 226, 234, 0.72)';
         for (var ly = 16; ly < 512; ly += 85) {
-            ctx.fillRect(166, ly, 10, 50);
-            ctx.fillRect(336, ly, 10, 50);
+            ctx.fillRect(166, ly, 8, 46);
+            ctx.fillRect(338, ly, 8, 46);
         }
         var tex = new THREE.CanvasTexture(cv);
         tex.wrapS = THREE.ClampToEdgeWrapping;
@@ -212,18 +234,25 @@ var MilitaryArt = class MilitaryArt {
         var cv = document.createElement('canvas');
         cv.width = 128; cv.height = 192;
         var ctx = cv.getContext('2d');
-        ctx.fillStyle = '#C9342C';
+        // V19.1: 现代特种作战深枪铁蓝 + 战术青蓝光带 + 琥珀金徽标战旗 (告别旧版突兀大红旗, 与首页与要塞100%统一!)
+        var bg = ctx.createLinearGradient(0, 0, 0, 192);
+        bg.addColorStop(0, '#162A4A');
+        bg.addColorStop(1, '#0B1528');
+        ctx.fillStyle = bg;
         ctx.fillRect(0, 0, 128, 192);
-        // 顶部和底部金边
-        ctx.fillStyle = '#F5C946';
+        ctx.strokeStyle = '#38BDF8';
+        ctx.lineWidth = 6;
+        ctx.strokeRect(5, 5, 118, 182);
+        // 顶部和底部琥珀金战术边带
+        ctx.fillStyle = '#F5B82E';
         ctx.fillRect(0, 0, 128, 12);
-        ctx.fillRect(0, 168, 128, 10);
-        // 中央金色圆形五角星徽章
-        ctx.fillStyle = '#FFE072';
-        ctx.beginPath(); ctx.arc(64, 88, 34, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#B82820';
-        ctx.beginPath(); ctx.arc(64, 88, 28, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#FFE47A';
+        ctx.fillRect(0, 174, 128, 10);
+        // 中央特种战术盾徽 + 金色星章
+        ctx.fillStyle = 'rgba(56,189,248,0.22)';
+        ctx.beginPath(); ctx.arc(64, 88, 36, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#7DD3FC'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(64, 88, 34, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = '#FFE066';
         ctx.beginPath();
         for (var i = 0; i < 10; i++) {
             var a = -Math.PI / 2 + i * Math.PI / 5;
@@ -232,6 +261,11 @@ var MilitaryArt = class MilitaryArt {
             else ctx.lineTo(64 + Math.cos(a) * r, 88 + Math.sin(a) * r);
         }
         ctx.closePath(); ctx.fill();
+        // 底部双V战术臂章条
+        ctx.strokeStyle = '#F5B82E'; ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(32, 138); ctx.lineTo(64, 156); ctx.lineTo(96, 138);
+        ctx.stroke();
         return new THREE.CanvasTexture(cv);
     }
 
@@ -305,8 +339,8 @@ var MilitaryArt = class MilitaryArt {
             road: this._material('road', 0xffffff, { map: roadTex, roughness: .95, envMapIntensity: 0.12 }),
             shoulder: this._material('shoulder', 0x9E9172, { map: groundTex, roughness: .96, envMapIntensity: 0.12 }),
             ground: this._material('ground', 0x597D47, { map: groundTex, roughness: .96, envMapIntensity: 0.14 }),
-            curbA: this._material('curb-a', 0xF3F0DF, { roughness: .78 }),
-            curbB: this._material('curb-b', 0xE6A93B, { roughness: .78 }),
+            curbA: this._material('curb-a', 0x6A7582, { roughness: .74, metalness: .26, envMapIntensity: 0.35 }),
+            curbB: this._material('curb-b', 0x3D4959, { roughness: .64, metalness: .42, envMapIntensity: 0.42 }),
             concrete: this._material('concrete', 0xb6b5a4, { roughness: .85 }),
             structure: this._material('structure', 0x8ea381, { map: bldgTex, roughness: .76 }),
             roof: this._material('roof', 0x3b5944, { metalness: .16, roughness: .64 }),
@@ -578,7 +612,7 @@ var MilitaryArt = class MilitaryArt {
         if (typeof THREE === 'undefined' || !THREE.GLTFLoader) return;
         var self = this;
         var url = 'assets/game/v15/env_military_pack.glb';
-        if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=1901';
+        if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=1910';
         new THREE.GLTFLoader().load(url, function(gltf) {
             try {
                 var sharedMat = null;
@@ -609,7 +643,7 @@ var MilitaryArt = class MilitaryArt {
                     'military-hangars': 1, 'military-hangar-roofs': 1,
                     'military-crates': 1, 'military-oil-drums': 1, 'military-bushes': 1,
                     'military-fuel-tanks': 1, 'military-barriers': 1, 'military-far-hills': 1,
-                    'military-sandbags': 1
+                    'military-sandbags': 1, 'military-blast-walls': 1
                 };
                 for (var mi = 0; mi < self._meshes.length; mi++) {
                     if (replacedNames[self._meshes[mi].name]) {
@@ -726,46 +760,57 @@ var MilitaryArt = class MilitaryArt {
         var goldMat = this.materials.accent;
         var hillMat = this.materials.hill;
 
-        // V19.0: 三层壮阔雪顶岩峰与松林山脉 (与首页主视觉雪山要塞100%呼应, 含高度渐变顶点色!)
-        var makeRidgeMesh = function(width, maxH, depth, seed, baseHex, peakHex, zPos) {
-            var segs = 48;
+        // V19.1: 三层非对称自然险峻岩峰与远景大气雾化雪山 (折线峭壁+山脊凹凸法线起伏+远景雾化融合!)
+        var makeRidgeMesh = function(width, maxH, depth, seed, baseHex, midHex, peakHex, zPos) {
+            var segs = 72;
             var shape = new THREE.Shape();
             shape.moveTo(-width * 0.5, -2);
             for (var i = 0; i <= segs; i++) {
                 var t = i / segs;
                 var x = (t - 0.5) * width;
-                var env = Math.sin(t * Math.PI);
-                var ridge = Math.abs(Math.sin(t * Math.PI * 3.5 + seed)) * 0.55
-                    + Math.abs(Math.cos(t * Math.PI * 7.2 + seed * 1.6)) * 0.28
-                    + Math.sin(t * Math.PI * 13.0 + seed * 0.7) * 0.10;
-                var h = (0.22 + ridge) * maxH * (0.45 + 0.55 * env);
-                shape.lineTo(x, Math.max(1.2, h));
+                var env = Math.pow(Math.sin(t * Math.PI), 0.72);
+                // 避免正弦波规则等距感: 叠加非公度多频折峰 + 中央峡谷豁口(突出基地要塞主视觉!)
+                var valley = 1.0 - 0.34 * Math.exp(-Math.pow((t - 0.5) / 0.14, 2));
+                var p1 = Math.pow(Math.abs(Math.sin(t * 9.7 + seed)), 1.35) * 0.52;
+                var p2 = Math.pow(Math.abs(Math.cos(t * 21.3 + seed * 1.9)), 1.6) * 0.30;
+                var p3 = Math.abs(Math.sin(t * 43.1 + seed * 3.1)) * 0.14;
+                var asym = (t < 0.5 ? 1.08 : 0.94);
+                var h = (0.16 + p1 + p2 + p3) * maxH * (0.38 + 0.62 * env) * valley * asym;
+                shape.lineTo(x, Math.max(1.0, h));
             }
             shape.lineTo(width * 0.5, -2);
             shape.closePath();
-            var geo = new THREE.ExtrudeGeometry(shape, { depth: depth, bevelEnabled: false, curveSegments: 4 });
+            var geo = new THREE.ExtrudeGeometry(shape, { depth: depth, bevelEnabled: true, bevelSegments: 1, bevelSize: 0.45, bevelThickness: 0.65, curveSegments: 2 });
             geo.translate(0, 0, -depth * 0.5);
-            // 顶点高度渐变(山脚深松岩 -> 山巅冰川白雪)
             var pos = geo.attributes.position;
             var cols = new Float32Array(pos.count * 3);
             var cBase = new THREE.Color(baseHex);
+            var cMid = new THREE.Color(midHex);
             var cPeak = new THREE.Color(peakHex);
             var cTmp = new THREE.Color();
             for (var vi = 0; vi < pos.count; vi++) {
-                var ht = Math.max(0, Math.min(1, (pos.getY(vi) - maxH * 0.32) / (maxH * 0.45)));
-                cTmp.copy(cBase).lerp(cPeak, ht * ht);
+                var vx = pos.getX(vi), vy = pos.getY(vi), vz = pos.getZ(vi);
+                // 赋予山体前后岩壁凹凸起伏, 消除纸板拉伸感
+                if (vy > 0.5) {
+                    pos.setZ(vi, vz + Math.sin(vx * 0.23 + vy * 0.31 + seed) * 1.35);
+                }
+                var snowNoise = Math.sin(vx * 0.37 + seed * 2.0) * 0.08;
+                var ht = Math.max(0, Math.min(1, (vy / maxH) + snowNoise));
+                if (ht < 0.52) cTmp.copy(cBase).lerp(cMid, ht / 0.52);
+                else cTmp.copy(cMid).lerp(cPeak, (ht - 0.52) / 0.48);
                 cols[vi * 3] = cTmp.r; cols[vi * 3 + 1] = cTmp.g; cols[vi * 3 + 2] = cTmp.b;
             }
+            geo.computeVertexNormals();
             geo.setAttribute('color', new THREE.BufferAttribute(cols, 3));
-            var mat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF, vertexColors: true, roughness: 0.92, metalness: 0.02, flatShading: true });
+            var mat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF, vertexColors: true, roughness: 0.94, metalness: 0.02, flatShading: true, fog: true, envMapIntensity: 0.18 });
             var mesh = new THREE.Mesh(geo, mat);
-            mesh.position.set(0, -0.5, zPos);
+            mesh.position.set(0, -0.6, zPos);
             mesh.userData.v15Mountain = true;
             return mesh;
         };
-        g.add(makeRidgeMesh(115, 13.5, 4.0, 0.7, 0x2C473C, 0x527362, -12));  // 近景深林岩丘
-        g.add(makeRidgeMesh(140, 21.0, 5.0, 2.1, 0x3D566E, 0xA8C6DC, -23));  // 中景冷钢岩峰
-        g.add(makeRidgeMesh(168, 29.0, 6.0, 3.8, 0x5C7D99, 0xF0F7FF, -35));  // 远景高耸雪顶冰峰
+        g.add(makeRidgeMesh(122, 12.5, 4.5, 0.8, 0x2A4338, 0x3F5E4E, 0x6A877B, -13));  // 近景苍翠林岩脊
+        g.add(makeRidgeMesh(152, 20.5, 5.5, 2.4, 0x435B73, 0x68839C, 0xC8DDF0, -25));  // 中景冷蓝峭壁岩峰
+        g.add(makeRidgeMesh(184, 28.5, 6.5, 4.3, 0x6D8DA8, 0x9BB8D1, 0xF4FAFF, -39));  // 远景大气雾化雪峰
 
         // 要塞主城墙(左右两翼 + 跨路门楼)
         var leftWall = new THREE.Mesh(new THREE.BoxGeometry(16, 6.2, 3.2), wallMat);
@@ -813,11 +858,11 @@ var MilitaryArt = class MilitaryArt {
         };
         var biome = themeToBiome[themeName] || 'sunny';
         var palettes = {
-            sunny:  { road: 0x9AA6B2, ground: 0x4E7242, shoulder: 0x8A7F64, structure: 0x9bb089, roof: 0x35543e, accent: 0xf0b636, hill: 0x689458, curbB: 0xe8a838 },
-            desert: { road: 0xf2ead9, ground: 0xc9a062, shoulder: 0xb38a52, structure: 0xc2a478, roof: 0x6b5b47, accent: 0xe6882e, hill: 0xb8864b, curbB: 0xd97d2b },
-            city:   { road: 0xdce2e6, ground: 0x738282, shoulder: 0x677276, structure: 0x86979e, roof: 0x3c4d57, accent: 0xeeb544, hill: 0x64757c, curbB: 0xe3a83b },
-            forest: { road: 0xe5ebe0, ground: 0x4b743f, shoulder: 0x7d7055, structure: 0x6c855c, roof: 0x2d4834, accent: 0xdca03c, hill: 0x456e3e, curbB: 0xd99e36 },
-            snow:   { road: 0xeef3f6, ground: 0xd2e5ee, shoulder: 0xaabcc6, structure: 0x8ea6b0, roof: 0x3f5b69, accent: 0xf0a63e, hill: 0xb4cedb, curbB: 0xe89438 }
+            sunny:  { road: 0x929EA9, ground: 0x4A6E3E, shoulder: 0x82785E, structure: 0x8FA49E, roof: 0x2E4756, accent: 0xE6AD32, hill: 0x5B8650, curbB: 0x485668 },
+            desert: { road: 0xACA292, ground: 0xB89158, shoulder: 0x9E7A48, structure: 0xB59A72, roof: 0x594C3C, accent: 0xDC842C, hill: 0xA87A44, curbB: 0x5C5246 },
+            city:   { road: 0x8A96A2, ground: 0x627074, shoulder: 0x586368, structure: 0x7A8B94, roof: 0x334452, accent: 0xE6AE3C, hill: 0x586972, curbB: 0x435060 },
+            forest: { road: 0x8E9A94, ground: 0x446B39, shoulder: 0x73674E, structure: 0x647D58, roof: 0x294232, accent: 0xD69C38, hill: 0x3F6639, curbB: 0x44524A },
+            snow:   { road: 0x9CAAB6, ground: 0xBBD0DC, shoulder: 0x96A8B4, structure: 0x849CA8, roof: 0x385262, accent: 0xE8A23A, hill: 0xA4BECD, curbB: 0x4D5E70 }
         };
         var palette = palettes[biome];
         this.materials.road.color.setHex(palette.road);

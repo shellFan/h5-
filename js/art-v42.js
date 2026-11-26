@@ -92,27 +92,62 @@
         var rgb = Math.round(c.r * 255) + ',' + Math.round(c.g * 255) + ',' + Math.round(c.b * 255);
         var lrgb = Math.round(l.r * 255) + ',' + Math.round(l.g * 255) + ',' + Math.round(l.b * 255);
         var drgb = Math.round(d.r * 255) + ',' + Math.round(d.g * 255) + ',' + Math.round(d.b * 255);
+
+        // V19.1: 军事科技全息投影能量幕墙 (顶部与底座强等离子辉光 + 中部半透战术扫描网 + 四角准星框)
         var grad = ctx.createLinearGradient(0, 0, 0, 512);
-        grad.addColorStop(0.00, 'rgba(' + lrgb + ',0.95)');
-        grad.addColorStop(0.10, 'rgba(' + rgb + ',0.84)');
-        grad.addColorStop(0.55, 'rgba(' + drgb + ',0.66)');
-        grad.addColorStop(0.88, 'rgba(' + rgb + ',0.86)');
+        grad.addColorStop(0.00, 'rgba(' + lrgb + ',0.94)');
+        grad.addColorStop(0.12, 'rgba(' + rgb + ',0.78)');
+        grad.addColorStop(0.50, 'rgba(' + drgb + ',0.52)');
+        grad.addColorStop(0.86, 'rgba(' + rgb + ',0.80)');
         grad.addColorStop(1.00, 'rgba(' + lrgb + ',0.96)');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, 256, 512);
 
-        ctx.fillStyle = 'rgba(255,255,255,0.16)';
+        // 精细水平全息扫描线
+        ctx.fillStyle = 'rgba(' + lrgb + ',0.13)';
+        for (var sy = 8; sy < 504; sy += 10) {
+            ctx.fillRect(8, sy, 240, 2);
+        }
+        // 科技六角蜂巢全息暗纹
+        ctx.strokeStyle = 'rgba(' + lrgb + ',0.18)';
+        ctx.lineWidth = 1.4;
+        var hr = 22, dx = hr * 1.5, dy = hr * 1.732;
+        for (var row = 0; row < 14; row++) {
+            for (var col = 0; col < 8; col++) {
+                var cx = col * dx + 12, cy = row * dy + (col % 2 ? dy * 0.5 : 0);
+                ctx.beginPath();
+                for (var si = 0; si < 6; si++) {
+                    var ang = si * Math.PI / 3;
+                    var px = cx + Math.cos(ang) * (hr - 2), py = cy + Math.sin(ang) * (hr - 2);
+                    if (si === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                }
+                ctx.closePath(); ctx.stroke();
+            }
+        }
+
+        // 斜向全息流光束
+        ctx.fillStyle = 'rgba(255,255,255,0.18)';
         ctx.beginPath();
-        ctx.moveTo(16, 0); ctx.lineTo(106, 0); ctx.lineTo(0, 210); ctx.lineTo(0, 120);
+        ctx.moveTo(18, 0); ctx.lineTo(96, 0); ctx.lineTo(0, 195); ctx.lineTo(0, 110);
         ctx.closePath(); ctx.fill();
         ctx.fillStyle = 'rgba(255,255,255,0.10)';
         ctx.beginPath();
-        ctx.moveTo(180, 0); ctx.lineTo(224, 0); ctx.lineTo(36, 512); ctx.lineTo(0, 512);
+        ctx.moveTo(186, 0); ctx.lineTo(226, 0); ctx.lineTo(42, 512); ctx.lineTo(4, 512);
         ctx.closePath(); ctx.fill();
 
-        ctx.strokeStyle = 'rgba(' + lrgb + ',0.88)';
-        ctx.lineWidth = 10;
-        ctx.strokeRect(5, 5, 246, 502);
+        // 外圈等离子边线 + 四角战术锁定折角 [ ]
+        ctx.strokeStyle = 'rgba(' + lrgb + ',0.72)';
+        ctx.lineWidth = 6;
+        ctx.strokeRect(6, 6, 244, 500);
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 7;
+        var cb = 34;
+        ctx.beginPath();
+        ctx.moveTo(12, 12 + cb); ctx.lineTo(12, 12); ctx.lineTo(12 + cb, 12);
+        ctx.moveTo(244 - cb, 12); ctx.lineTo(244, 12); ctx.lineTo(244, 12 + cb);
+        ctx.moveTo(12, 500 - cb); ctx.lineTo(12, 500); ctx.lineTo(12 + cb, 500);
+        ctx.moveTo(244 - cb, 500); ctx.lineTo(244, 500); ctx.lineTo(244, 500 - cb);
+        ctx.stroke();
 
         var texture = new THREE.CanvasTexture(canvas);
         texture.wrapS = THREE.ClampToEdgeWrapping;
@@ -355,39 +390,52 @@
         var group = new THREE.Group();
         var frameParts = [];
         var trimParts = [];
-        // V15-ART-009: 精致纤细军工能量门框架 (收窄厚重灰柱, 强化暗军绿金属质感与发光能源边条)
-        var postW = 0.13;
+        // V19.1: 军事科技全息投影门框架 (重装斜切枪铁发射基座 + 侧翼能量稳定鳍 + 顶部全息投影横梁与核心透镜)
+        var postW = 0.135;
         var postH = 1.68;
         var postX = width * 0.5 - postW * 0.5;
-        var steelDark = 0x0E1A2E;
-        var steelMid = 0x1D3354;
+        var steelDark = 0x0B1526;
+        var steelMid = 0x1A2F4E;
+        var steelHighlight = 0x324E76;
 
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(postW, postH, 0.04, 0.15), -postX, 0.88, 0), color: steelMid });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(postW, postH, 0.04, 0.15),  postX, 0.88, 0), color: steelMid });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(width, 0.13, 0.04, 0.18), 0, 1.74, 0), color: style.frame });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.20, 0.13, 0.04, 0.22), -postX, 0.08, 0.01), color: steelDark });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.20, 0.13, 0.04, 0.22),  postX, 0.08, 0.01), color: steelDark });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.18, 0.08, 0.03, 0.18), -postX, 1.79, 0), color: steelDark });
-        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.18, 0.08, 0.03, 0.18),  postX, 1.79, 0), color: steelDark });
+        // 左右装甲立柱 + 外侧斜撑科技散热翼
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(postW, postH, 0.035, 0.16), -postX, 0.88, 0), color: steelMid });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(postW, postH, 0.035, 0.16),  postX, 0.88, 0), color: steelMid });
+        frameParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.065, 0.92, 0.12), -postX - 0.075, 0.62, 0, 0, 0, 0.08), color: steelHighlight });
+        frameParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.065, 0.92, 0.12),  postX + 0.075, 0.62, 0, 0, 0, -0.08), color: steelHighlight });
+        // 重装全息底座锚桩
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.28, 0.17, 0.04, 0.28), -postX, 0.09, 0.01), color: steelDark });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.28, 0.17, 0.04, 0.28),  postX, 0.09, 0.01), color: steelDark });
+        // 顶部全息投影发射横梁 + 装甲护罩
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(width + 0.08, 0.16, 0.04, 0.22), 0, 1.76, 0), color: steelDark });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(width * 0.62, 0.13, 0.035, 0.26), 0, 1.86, 0.02), color: steelMid });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.22, 0.11, 0.03, 0.22), -postX, 1.82, 0), color: steelHighlight });
+        frameParts.push({ geo: applyTransform(roundedRectGeometry(0.22, 0.11, 0.03, 0.22),  postX, 1.82, 0), color: steelHighlight });
 
-        // V15-ART-009: 底座暖金防撞块 + 顶部中央高光指示灯 + 鲜明内圈能量光条
-        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.13, 0.10, 0.24), -postX, 0.14, 0.02), color: 0xF5C43D });
-        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.13, 0.10, 0.24),  postX, 0.14, 0.02), color: 0xF5C43D });
-        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.42, 0.11, 0.12), 0, 1.86, 0.02), color: style.light });
-        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.11, 0.09, 0.11), -postX, 1.86, 0), color: 0xFFD24C });
-        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.11, 0.09, 0.11),  postX, 1.86, 0), color: 0xFFD24C });
+        // 全息能量发射线圈、底座琥珀警示条与内圈等离子导轨
+        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.20, 0.06, 0.30), -postX, 0.16, 0.02), color: 0xFBBF24 });
+        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.20, 0.06, 0.30),  postX, 0.16, 0.02), color: 0xFBBF24 });
+        // 立柱三段能量环
+        for (var ry = 0.45; ry <= 1.35; ry += 0.45) {
+            trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.165, 0.045, 0.185), -postX, ry, 0), color: style.light });
+            trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.165, 0.045, 0.185),  postX, ry, 0), color: style.light });
+        }
+        // 顶部全息投影核心透镜 + 两侧肩灯
+        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.52, 0.085, 0.28), 0, 1.86, 0.03), color: style.light });
+        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.13, 0.08, 0.14), -postX, 1.89, 0.02), color: 0xFBBF24 });
+        trimParts.push({ geo: applyTransform(new THREE.BoxGeometry(0.13, 0.08, 0.14),  postX, 1.89, 0.02), color: 0xFBBF24 });
         var insetX = width * 0.5 - 0.115;
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.06, 1.50, 0.016, 0.05), -insetX, 0.92, 0.075), color: style.light });
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.06, 1.50, 0.016, 0.05),  insetX, 0.92, 0.075), color: style.light });
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.22, 0.055, 0.016, 0.05), 0, 1.65, 0.075), color: style.light });
-        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.22, 0.055, 0.016, 0.05), 0, 0.19, 0.075), color: style.light });
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.055, 1.50, 0.016, 0.05), -insetX, 0.92, 0.082), color: style.light });
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(0.055, 1.50, 0.016, 0.05),  insetX, 0.92, 0.082), color: style.light });
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.22, 0.055, 0.016, 0.05), 0, 1.66, 0.082), color: style.light });
+        trimParts.push({ geo: applyTransform(roundedRectGeometry(width - 0.22, 0.055, 0.016, 0.05), 0, 0.19, 0.082), color: style.light });
 
         var frameMat = preparePbr(new THREE.MeshStandardMaterial({
             vertexColors: true,
-            roughness: 0.38,
-            metalness: 0.45,
+            roughness: 0.30,
+            metalness: 0.72,
             emissive: new THREE.Color(style.dark),
-            emissiveIntensity: 0.08
+            emissiveIntensity: 0.10
         }));
         var frame = new THREE.Mesh(mergeColored(frameParts), frameMat);
         frame.castShadow = true;

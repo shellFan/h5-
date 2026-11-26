@@ -69,13 +69,20 @@ class WebMockAdService extends AdService {
         el.id = 'mock-ad-overlay';
         el.style.cssText = 'position:absolute;inset:0;z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,rgba(22,38,66,0.94),rgba(8,14,26,0.98));backdrop-filter:blur(6px);color:#F8FAFC;font-family:sans-serif;';
         el.innerHTML =
-            '<div style="width:min(326px,86vw);padding:22px 18px 18px;border-radius:20px;background:linear-gradient(170deg,#182844 0%,#0E192D 65%,#091120 100%);border:2px solid #38BDF8;box-shadow:0 8px 0 #050B14,0 20px 48px rgba(0,0,0,0.72),inset 0 1px 0 rgba(186,230,253,0.35);text-align:center;">' +
-            '<div style="display:inline-block;padding:3px 10px;border-radius:99px;background:rgba(56,189,248,0.16);border:1px solid rgba(56,189,248,0.55);font-size:11px;font-weight:900;color:#7DD3FC;letter-spacing:1.5px;margin-bottom:8px;">EMERGENCY RESCUE · 战地紧急救援</div>' +
-            '<div style="font-size:20px;font-weight:900;color:#FFF7D6;text-shadow:0 2px 4px rgba(0,0,0,0.6);margin-bottom:6px;">呼叫特种空降支援</div>' +
-            '<div id="mock-ad-timer" style="font-size:42px;font-weight:900;color:#FBBF24;margin-bottom:6px;">3</div>' +
-            '<div id="mock-ad-tip" style="font-size:13px;color:#94A3B8;line-height:1.55;margin-bottom:18px;padding:8px 10px;border-radius:10px;background:rgba(8,15,28,0.65);border:1px solid rgba(148,163,184,0.18);">恢复 40% 峰值兵力 · 3秒无敌护盾 · 震退贴脸怪潮<br><span style="color:#FBBF24;font-size:11px;">（开发测试模式：可直接跳过广告，每局限1次）</span></div>' +
-            '<div style="display:flex;flex-direction:column;gap:10px;">' +
-            '<button id="mock-ad-finish" style="padding:13px 20px;font-size:16px;font-weight:900;background:linear-gradient(180deg,#FFE866 0%,#FFB319 52%,#E06200 100%);color:#231000;border:2px solid #FFF8C8;border-radius:14px;cursor:pointer;box-shadow:0 5px 0 #8A3500,0 8px 18px rgba(224,98,0,0.42);">⚡ 跳过广告 · 立即复活</button>' +
+            '<div style="width:min(334px,88vw);padding:20px 18px 18px;border-radius:20px;background:linear-gradient(170deg,#182844 0%,#0E192D 65%,#091120 100%);border:2px solid #38BDF8;box-shadow:0 8px 0 #050B14,0 20px 48px rgba(0,0,0,0.78),inset 0 1px 0 rgba(186,230,253,0.35);text-align:center;">' +
+            '<div style="display:inline-block;padding:3px 11px;border-radius:99px;background:rgba(56,189,248,0.16);border:1px solid rgba(56,189,248,0.55);font-size:10.5px;font-weight:900;color:#7DD3FC;letter-spacing:1.4px;margin-bottom:10px;">EMERGENCY RESCUE · 战地紧急救援</div>' +
+            '<div style="width:100%;height:78px;border-radius:14px;background:radial-gradient(circle at 50% 60%,rgba(34,211,238,0.28),rgba(12,24,46,0.92));border:1.5px solid rgba(56,189,248,0.38);display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px;box-shadow:inset 0 0 18px rgba(56,189,248,0.18);">' +
+                '<svg viewBox="0 0 64 64" width="58" height="58"><defs><linearGradient id="v19sh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#38BDF8"/><stop offset="1" stop-color="#0284C7"/></linearGradient></defs>' +
+                '<path d="M12 22c0-11 9-17 20-17s20 6 20 17H12z" fill="url(#v19sh)" stroke="#BAE6FD" stroke-width="2"/>' +
+                '<path d="M14 22l12 14M50 22L38 36M32 22v14" stroke="#7DD3FC" stroke-width="1.8"/>' +
+                '<rect x="20" y="36" width="24" height="20" rx="5" fill="#1E293B" stroke="#FBBF24" stroke-width="2.2"/>' +
+                '<path d="M32 41v10M27 46h10" stroke="#4ADE80" stroke-width="3.4" stroke-linecap="round"/></svg>' +
+                '<div style="text-align:left;"><div style="font-size:18px;font-weight:900;color:#FFF7D6;text-shadow:0 2px 4px rgba(0,0,0,0.6);">呼叫特种空降支援</div><div style="font-size:11.5px;color:#7DD3FC;font-weight:700;margin-top:2px;">直升机空投兵力 · 全屏震退清场</div></div>' +
+            '</div>' +
+            '<div id="mock-ad-timer" style="font-size:38px;font-weight:900;color:#FBBF24;margin-bottom:6px;">3</div>' +
+            '<div id="mock-ad-tip" style="margin-bottom:16px;"></div>' +
+            '<div style="display:flex;flex-direction:column;gap:9px;">' +
+            '<button id="mock-ad-finish" style="padding:13px 20px;font-size:16px;font-weight:900;background:linear-gradient(180deg,#FFE866 0%,#FFB319 52%,#E06200 100%);color:#231000;border:2px solid #FFF8C8;border-radius:14px;cursor:pointer;box-shadow:0 5px 0 #8A3500,0 8px 18px rgba(224,98,0,0.45);">⚡ 跳过广告 · 立即复活</button>' +
             '<button id="mock-ad-close" style="padding:10px 20px;font-size:13px;font-weight:800;background:linear-gradient(180deg,#1E293B,#0F172A);color:#94A3B8;border:1.5px solid #334155;border-radius:12px;cursor:pointer;">放弃救援 · 返回结算</button>' +
             '</div></div>';
         (document.getElementById('game-container') || document.body).appendChild(el);
@@ -136,7 +143,15 @@ class WebMockAdService extends AdService {
             }, 600);
         } else {
             this._timerEl.style.display = 'none';
-            this._tipEl.innerHTML = '恢复 40% 峰值兵力 · 3秒无敌护盾 · 震退贴脸怪潮<br><span style="color:#FBBF24;font-size:11px;">（开发测试模式：可直接跳过广告，每局限1次）</span>';
+            var peakN = (typeof window !== 'undefined' && window.__game && window.__game.maxCount) ? window.__game.maxCount : 6;
+            var revN = Math.max(1, Math.min(12, Math.ceil(peakN * 0.4)));
+            this._tipEl.innerHTML =
+                '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">' +
+                    '<div style="padding:7px 4px;border-radius:10px;background:rgba(15,28,52,0.92);border:1px solid rgba(56,189,248,0.45);"><div style="font-size:16px;font-weight:900;color:#4ADE80;">+' + revN + '人</div><div style="font-size:10px;color:#94A3B8;margin-top:1px;">恢复兵力</div></div>' +
+                    '<div style="padding:7px 4px;border-radius:10px;background:rgba(15,28,52,0.92);border:1px solid rgba(56,189,248,0.45);"><div style="font-size:16px;font-weight:900;color:#38BDF8;">3秒</div><div style="font-size:10px;color:#94A3B8;margin-top:1px;">无敌护盾</div></div>' +
+                    '<div style="padding:7px 4px;border-radius:10px;background:rgba(15,28,52,0.92);border:1px solid rgba(56,189,248,0.45);"><div style="font-size:16px;font-weight:900;color:#FBBF24;">清场</div><div style="font-size:10px;color:#94A3B8;margin-top:1px;">震退近敌</div></div>' +
+                '</div>' +
+                '<div style="font-size:11px;color:#FBBF24;font-weight:700;">本局剩余 1 次救援机会 · 开发模式可直接跳过</div>';
             this._finishBtn.style.visibility = 'visible';
             this._closeBtn.style.visibility = 'visible';
         }

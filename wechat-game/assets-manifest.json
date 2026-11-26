@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-11-24T08:11:02.347Z",
+  "generatedAt": "2026-11-26T14:51:17.604Z",
   "note": "微信小游戏资源清单(构建生成); P0=首局必需, P1=当前关卡, P2=Boss/后续, P3=装饰",
-  "totalSize": 6330821,
+  "totalSize": 7730547,
   "files": [
     {
       "path": "art/characters/energy_portrait.png",
@@ -62,10 +62,10 @@
     {
       "path": "art/characters/soldier_portrait.png",
       "package": "art",
-      "size": 57097,
+      "size": 108520,
       "priority": "P3",
       "role": "other",
-      "sha1": "d1a2b89f5700"
+      "sha1": "b8a36d895e04"
     },
     {
       "path": "art/effects/boss_entry.png",
@@ -182,10 +182,10 @@
     {
       "path": "art/ui/avatar.png",
       "package": "art",
-      "size": 25203,
+      "size": 108520,
       "priority": "P3",
       "role": "other",
-      "sha1": "c7e6553a8a6c"
+      "sha1": "b8a36d895e04"
     },
     {
       "path": "art/ui/chest.png",
@@ -276,84 +276,132 @@
       "sha1": "2012605e15e8"
     },
     {
-      "path": "art/weapons/gatling.png",
+      "path": "art/v15/bg_armory.jpg",
       "package": "art",
-      "size": 28892,
+      "size": 85532,
       "priority": "P3",
       "role": "other",
-      "sha1": "84a81665edde"
+      "sha1": "48ecb4186d5f"
+    },
+    {
+      "path": "art/v15/bg_shop.jpg",
+      "package": "art",
+      "size": 91796,
+      "priority": "P3",
+      "role": "other",
+      "sha1": "b805e96b4357"
+    },
+    {
+      "path": "art/v15/bg_train.jpg",
+      "package": "art",
+      "size": 106301,
+      "priority": "P3",
+      "role": "other",
+      "sha1": "a94eec407439"
+    },
+    {
+      "path": "art/v15/env_military_pack.glb",
+      "package": "art",
+      "size": 425364,
+      "priority": "P3",
+      "role": "other",
+      "sha1": "1e0423c39094"
+    },
+    {
+      "path": "art/v15/home_logo.png",
+      "package": "art",
+      "size": 93905,
+      "priority": "P3",
+      "role": "other",
+      "sha1": "060fde5d9741"
+    },
+    {
+      "path": "art/v15/home_military_camp_bg.jpg",
+      "package": "art",
+      "size": 203411,
+      "priority": "P3",
+      "role": "other",
+      "sha1": "2ba94366d07b"
+    },
+    {
+      "path": "art/weapons/gatling.png",
+      "package": "art",
+      "size": 29225,
+      "priority": "P3",
+      "role": "other",
+      "sha1": "615c6576064d"
     },
     {
       "path": "art/weapons/laser.png",
       "package": "art",
-      "size": 37607,
+      "size": 38466,
       "priority": "P3",
       "role": "other",
-      "sha1": "8379216447ae"
+      "sha1": "8a01722a314c"
     },
     {
       "path": "art/weapons/mg.png",
       "package": "art",
-      "size": 33902,
+      "size": 34009,
       "priority": "P3",
       "role": "other",
-      "sha1": "0505a4548d4d"
+      "sha1": "d0ce31d1542b"
     },
     {
       "path": "art/weapons/plasma.png",
       "package": "art",
-      "size": 29203,
+      "size": 31093,
       "priority": "P3",
       "role": "other",
-      "sha1": "3d5f947aa04e"
+      "sha1": "9faf99c2fcab"
     },
     {
       "path": "art/weapons/railgun.png",
       "package": "art",
-      "size": 29014,
+      "size": 30272,
       "priority": "P3",
       "role": "other",
-      "sha1": "28d643dd3845"
+      "sha1": "810e66e07c02"
     },
     {
       "path": "art/weapons/rifle.png",
       "package": "art",
-      "size": 32561,
+      "size": 33894,
       "priority": "P3",
       "role": "other",
-      "sha1": "06eb47a325ea"
+      "sha1": "a11ec5cc68e9"
     },
     {
       "path": "art/weapons/rocket.png",
       "package": "art",
-      "size": 33325,
+      "size": 34983,
       "priority": "P3",
       "role": "other",
-      "sha1": "dbdb0d0678b6"
+      "sha1": "56c72dfc150b"
     },
     {
       "path": "art/weapons/shotgun.png",
       "package": "art",
-      "size": 33149,
+      "size": 33002,
       "priority": "P3",
       "role": "other",
-      "sha1": "39c7176ccb6e"
+      "sha1": "e8749d083285"
     },
     {
       "path": "art/weapons/smg.png",
       "package": "art",
-      "size": 28593,
+      "size": 28664,
       "priority": "P3",
       "role": "other",
-      "sha1": "c18214cd6b2f"
+      "sha1": "6af70fdaea46"
     },
     {
       "path": "art/weapons/sniper.png",
       "package": "art",
-      "size": 28773,
+      "size": 29018,
       "priority": "P3",
       "role": "other",
-      "sha1": "e6267888a029"
+      "sha1": "0196f54bf9c6"
     },
     {
       "path": "assets/art-v1/effects/bullet-glow.svg",
@@ -398,34 +446,34 @@
     {
       "path": "assets/game/models/bosses/bruiser/bruiser-lod.glb",
       "package": "assets",
-      "size": 45050,
+      "size": 113360,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "e3a4f1493855"
+      "sha1": "83b04a0bd319"
     },
     {
       "path": "assets/game/models/bosses/bruiser/bruiser.glb",
       "package": "assets",
-      "size": 143082,
+      "size": 211996,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "80da2fd97124"
+      "sha1": "166bc6513d3c"
     },
     {
       "path": "assets/game/models/bosses/bulwark/bulwark-lod.glb",
       "package": "assets",
-      "size": 47351,
+      "size": 113360,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "c49412f45676"
+      "sha1": "83b04a0bd319"
     },
     {
       "path": "assets/game/models/bosses/bulwark/bulwark.glb",
       "package": "assets",
-      "size": 150043,
+      "size": 211996,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "6b615922268c"
+      "sha1": "166bc6513d3c"
     },
     {
       "path": "assets/game/models/bosses/hivelord/hivelord-lod.glb",
@@ -446,18 +494,18 @@
     {
       "path": "assets/game/models/bosses/overlord/overlord-lod.glb",
       "package": "assets",
-      "size": 47828,
+      "size": 113360,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "1f5a41929e98"
+      "sha1": "83b04a0bd319"
     },
     {
       "path": "assets/game/models/bosses/overlord/overlord.glb",
       "package": "assets",
-      "size": 145976,
+      "size": 211996,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "1a11e8ee8f2f"
+      "sha1": "166bc6513d3c"
     },
     {
       "path": "assets/game/models/bosses/spitking/spitking-lod.glb",
@@ -478,34 +526,34 @@
     {
       "path": "assets/game/models/bosses/titan/titan-lod.glb",
       "package": "assets",
-      "size": 47311,
+      "size": 113360,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "69db5e4d310a"
+      "sha1": "83b04a0bd319"
     },
     {
       "path": "assets/game/models/bosses/titan/titan.glb",
       "package": "assets",
-      "size": 146923,
+      "size": 211996,
       "priority": "P2",
       "role": "Boss模型",
-      "sha1": "89a26af89642"
+      "sha1": "166bc6513d3c"
     },
     {
       "path": "assets/game/models/soldier/soldier-lod.glb",
       "package": "assets",
-      "size": 131019,
+      "size": 114480,
       "priority": "P0",
       "role": "士兵模型(首局必需)",
-      "sha1": "7a29eba6c6cf"
+      "sha1": "9c10bf659330"
     },
     {
       "path": "assets/game/models/soldier/soldier.glb",
       "package": "assets",
-      "size": 329971,
+      "size": 267572,
       "priority": "P0",
       "role": "士兵模型(首局必需)",
-      "sha1": "32590bb3c2e7"
+      "sha1": "29ee11e632f6"
     },
     {
       "path": "assets/game/models/zombies/bomber/bomber-lod.glb",
@@ -526,82 +574,98 @@
     {
       "path": "assets/game/models/zombies/elite/elite-lod.glb",
       "package": "assets",
-      "size": 48009,
+      "size": 42972,
       "priority": "P1",
       "role": "特型僵尸",
-      "sha1": "c2314c57b32a"
+      "sha1": "c7d1aba6303d"
     },
     {
       "path": "assets/game/models/zombies/elite/elite.glb",
       "package": "assets",
-      "size": 142325,
+      "size": 69352,
       "priority": "P1",
       "role": "特型僵尸",
-      "sha1": "f9e5b42c5d86"
+      "sha1": "efe85cbea853"
     },
     {
       "path": "assets/game/models/zombies/fast/fast-lod.glb",
       "package": "assets",
-      "size": 44179,
+      "size": 29472,
       "priority": "P0",
       "role": "基础僵尸(首局必需)",
-      "sha1": "00ca1675a55e"
+      "sha1": "428fd1456d57"
     },
     {
       "path": "assets/game/models/zombies/fast/fast.glb",
       "package": "assets",
-      "size": 124007,
+      "size": 46224,
       "priority": "P0",
       "role": "基础僵尸(首局必需)",
-      "sha1": "2c3da4c53997"
+      "sha1": "09d718d0f900"
+    },
+    {
+      "path": "assets/game/models/zombies/flanker/flanker-lod.glb",
+      "package": "assets",
+      "size": 29684,
+      "priority": "P1",
+      "role": "特型僵尸",
+      "sha1": "a66471220d88"
+    },
+    {
+      "path": "assets/game/models/zombies/flanker/flanker.glb",
+      "package": "assets",
+      "size": 46704,
+      "priority": "P1",
+      "role": "特型僵尸",
+      "sha1": "f68261fb6c78"
     },
     {
       "path": "assets/game/models/zombies/normal/normal-lod.glb",
       "package": "assets",
-      "size": 41838,
+      "size": 41800,
       "priority": "P0",
       "role": "基础僵尸(首局必需)",
-      "sha1": "3516e804b974"
+      "sha1": "932819951e2e"
     },
     {
       "path": "assets/game/models/zombies/normal/normal.glb",
       "package": "assets",
-      "size": 122554,
+      "size": 70524,
       "priority": "P0",
       "role": "基础僵尸(首局必需)",
-      "sha1": "f6c014c3e48a"
+      "sha1": "030ae6ba60c4"
     },
     {
       "path": "assets/game/models/zombies/shield/shield-lod.glb",
       "package": "assets",
-      "size": 47523,
+      "size": 43224,
       "priority": "P1",
       "role": "特型僵尸",
-      "sha1": "5c5033250144"
+      "sha1": "9a5a8a91a63e"
     },
     {
       "path": "assets/game/models/zombies/shield/shield.glb",
       "package": "assets",
-      "size": 139731,
+      "size": 69184,
       "priority": "P1",
       "role": "特型僵尸",
-      "sha1": "12fe93260743"
+      "sha1": "6c0d20f532d7"
     },
     {
       "path": "assets/game/models/zombies/spitter/spitter-lod.glb",
       "package": "assets",
-      "size": 43489,
+      "size": 30484,
       "priority": "P1",
       "role": "特型僵尸",
-      "sha1": "c3521fca71fa"
+      "sha1": "a0b0e4498d87"
     },
     {
       "path": "assets/game/models/zombies/spitter/spitter.glb",
       "package": "assets",
-      "size": 129169,
+      "size": 49916,
       "priority": "P1",
       "role": "特型僵尸",
-      "sha1": "d19d4545ef7c"
+      "sha1": "f650af0a5f72"
     },
     {
       "path": "assets/game/models/zombies/split/split-lod.glb",
@@ -618,6 +682,22 @@
       "priority": "P1",
       "role": "特型僵尸",
       "sha1": "1bb6afe2d08e"
+    },
+    {
+      "path": "assets/game/models/zombies/thrower/thrower-lod.glb",
+      "package": "assets",
+      "size": 42200,
+      "priority": "P1",
+      "role": "特型僵尸",
+      "sha1": "12638aa2b803"
+    },
+    {
+      "path": "assets/game/models/zombies/thrower/thrower.glb",
+      "package": "assets",
+      "size": 73232,
+      "priority": "P1",
+      "role": "特型僵尸",
+      "sha1": "361a4d4ff19f"
     },
     {
       "path": "assets/models/weapons/flamethrower/flamethrower.glb",

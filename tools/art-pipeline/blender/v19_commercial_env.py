@@ -141,39 +141,68 @@ def join_prop(name, objs):
     o.data.materials.clear(); o.data.materials.append(mat)
     return o
 
-# 1. PineTree (Tall Stylized Layered Alpine Pine + Root Flare)
+def foliage_tuft(lst, p, scale, col, seed=1.0, subs=2, h_span=4.5):
+    """Organic sculpted foliage cluster (displaced icosphere — eliminates geometric cone/ball look!)."""
+    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=subs, radius=1.0, location=xyz(p))
+    o = bpy.context.object
+    for v in o.data.vertices:
+        vx, vy, vz = v.co.x, v.co.y, v.co.z
+        # Organic leafy tuft lobes + slightly flattened underside
+        lobe = 1.0 + 0.18 * math.sin(vx * 3.7 + seed) * math.cos(vy * 3.3 - seed) + 0.12 * math.sin(vz * 4.5 + seed * 1.7)
+        if vz < -0.2:
+            vz *= 0.72
+        v.co.x = vx * scale[0] * lobe
+        v.co.y = vy * scale[2] * lobe
+        v.co.z = vz * scale[1] * lobe
+    o.data.update()
+    lst.append(tag_uv(o, col, True, h_span))
+
+# 1. PineTree (Natural Sculpted Multi-Bough Alpine Conifer — NO plain stacked cones!)
 pts = []
-cone(pts, (0, 0.85, 0), 0.34, 1.7, 'wood_dk', 8, h_span=4.5)
-for tier, (y, r, h, c, rz) in enumerate([
-    (1.65, 1.48, 1.35, 'pine_dk', 0.2),
-    (2.45, 1.24, 1.30, 'pine_lt', 0.8),
-    (3.22, 0.98, 1.22, 'pine_dk', 1.5),
-    (3.92, 0.68, 1.10, 'pine_lt', 2.1),
-]):
-    cone(pts, (0.03 * (tier % 2 - 0.5), y, 0), r, h, c, 8, (0.04, -0.03, rz), h_span=4.6)
+# Slightly curved organic trunk + root buttresses
+cone(pts, (0, 1.05, 0), 0.34, 2.1, 'wood_dk', 8, (0.03, 0, 0.02), h_span=4.8)
+for ra in [0.0, 2.1, 4.2]:
+    rbox(pts, (math.cos(ra) * 0.24, 0.20, math.sin(ra) * 0.24), (0.20, 0.42, 0.32), 'wood_dk', 0.05, (0.35, ra, 0), h_span=4.8)
+# Sculpted drooping pine bough clusters with dark under-shadow & sunlit upper tufts
+pine_clusters = [
+    (0.0, 1.62, 0.0, 1.38, 0.56, 1.34, 'pine_dk', 1.1),
+    (-0.42, 1.85, 0.32, 0.92, 0.48, 0.88, 'pine_lt', 2.3),
+    (0.45, 1.90, -0.28, 0.90, 0.48, 0.90, 'pine_lt', 3.4),
+    (0.04, 2.42, -0.03, 1.12, 0.54, 1.10, 'pine_dk', 4.2),
+    (0.32, 2.65, 0.26, 0.78, 0.44, 0.78, 'pine_lt', 5.1),
+    (-0.30, 2.70, -0.24, 0.76, 0.44, 0.76, 'pine_lt', 6.0),
+    (-0.03, 3.22, 0.02, 0.84, 0.52, 0.84, 'pine_dk', 7.2),
+    (0.14, 3.48, -0.10, 0.64, 0.45, 0.64, 'pine_lt', 8.4),
+    (0.0, 3.98, 0.0, 0.46, 0.58, 0.46, 'pine_lt', 9.3),
+]
+for cx, cy, cz, sx, sy, sz, col, sd in pine_clusters:
+    foliage_tuft(pts, (cx, cy, cz), (sx, sy, sz), col, sd, 2, h_span=4.8)
 join_prop('PineTree', pts)
 
-# 2. BroadTree (Lush Multi-Canopy Stylized Oak Tree — breaks pine repetition!)
+# 2. BroadTree (Natural Multi-Limb Lush Woodland Tree — organic leafy canopy!)
 bt = []
-cone(bt, (0, 1.05, 0), 0.36, 2.1, 'wood_dk', 8, h_span=4.4)
-rbox(bt, (-0.32, 1.75, 0.08), (0.16, 0.85, 0.16), 'wood_dk', 0.03, (0, 0, 0.55), h_span=4.4)
-rbox(bt, (0.34, 1.82, -0.06), (0.15, 0.80, 0.15), 'wood_dk', 0.03, (0, 0, -0.52), h_span=4.4)
-for cx, cy, cz, sx, sy, sz, col in [
-    (0.0, 2.75, 0.0, 1.35, 1.05, 1.28, 'pine_dk'),
-    (-0.75, 2.45, 0.32, 0.92, 0.78, 0.88, 'pine_lt'),
-    (0.78, 2.52, -0.25, 0.95, 0.80, 0.90, 'pine_lt'),
-    (0.18, 3.38, 0.15, 0.96, 0.78, 0.92, 'pine_lt'),
-    (-0.35, 3.12, -0.42, 0.82, 0.70, 0.82, 'pine_dk'),
-]:
-    ell(bt, (cx, cy, cz), (sx, sy, sz), col, 10, 7, h_span=4.4)
+cone(bt, (0, 1.10, 0), 0.38, 2.2, 'wood_dk', 8, (-0.03, 0, 0.04), h_span=4.6)
+for bx, by, bz, rx, rz in [(-0.38, 1.82, 0.10, 0.12, 0.58), (0.40, 1.88, -0.08, -0.10, -0.54), (0.06, 2.02, 0.32, 0.52, 0.05)]:
+    rbox(bt, (bx, by, bz), (0.16, 0.92, 0.16), 'wood_dk', 0.04, (rx, 0, rz), h_span=4.6)
+broad_clusters = [
+    (0.0, 2.62, 0.0, 1.28, 0.82, 1.22, 'pine_dk', 1.5),
+    (-0.82, 2.48, 0.28, 0.88, 0.68, 0.84, 'pine_lt', 2.7),
+    (0.84, 2.55, -0.24, 0.90, 0.70, 0.86, 'pine_lt', 3.9),
+    (0.16, 2.68, 0.72, 0.82, 0.64, 0.78, 'pine_lt', 4.8),
+    (-0.36, 3.18, -0.38, 0.86, 0.68, 0.84, 'pine_dk', 5.6),
+    (0.24, 3.42, 0.14, 0.94, 0.72, 0.90, 'pine_lt', 6.4),
+    (-0.22, 3.55, 0.22, 0.72, 0.60, 0.72, 'pine_lt', 7.8),
+]
+for cx, cy, cz, sx, sy, sz, col, sd in broad_clusters:
+    foliage_tuft(bt, (cx, cy, cz), (sx, sy, sz), col, sd, 2, h_span=4.6)
 join_prop('BroadTree', bt)
 
-# 3. TacticalBush (Clustered Foliage + Base Rock — replaces plain sphere bushes!)
+# 3. TacticalBush (Organic Displaced Shrubbery + Weathered Crag Rock)
 bs = []
-ell(bs, (-0.35, 0.42, 0.12), (0.68, 0.48, 0.62), 'pine_dk', 9, 6, h_span=1.2)
-ell(bs, (0.32, 0.48, -0.08), (0.62, 0.52, 0.58), 'pine_lt', 9, 6, h_span=1.2)
-ell(bs, (0.0, 0.62, 0.22), (0.48, 0.42, 0.46), 'pine_lt', 8, 6, h_span=1.2)
-rbox(bs, (0.65, 0.22, 0.28), (0.52, 0.38, 0.44), 'conc_dk', 0.12, (0.2, 0.4, 0.1), h_span=1.2)
+foliage_tuft(bs, (-0.36, 0.40, 0.12), (0.68, 0.44, 0.62), 'pine_dk', 2.1, 2, h_span=1.2)
+foliage_tuft(bs, (0.34, 0.46, -0.08), (0.62, 0.48, 0.58), 'pine_lt', 4.3, 2, h_span=1.2)
+foliage_tuft(bs, (0.02, 0.60, 0.20), (0.48, 0.40, 0.46), 'pine_lt', 6.5, 1, h_span=1.2)
+rbox(bs, (0.66, 0.22, 0.28), (0.54, 0.38, 0.44), 'conc_dk', 0.12, (0.2, 0.4, 0.1), h_span=1.2)
 join_prop('TacticalBush', bs)
 
 # 4. Watchtower (Modern Steel-Truss Guard Tower + Armored Cabin + Cyan Searchlight)
@@ -234,42 +263,58 @@ rbox(tn, (0, 0.82, 2.34), (1.35, 1.62, 0.18), 'void_dk', 0.04, h_span=3.4)
 rbox(tn, (0, 1.72, 2.38), (1.55, 0.18, 0.22), 'gold', 0.03, h_span=3.4)
 join_prop('MilitaryTent', tn)
 
-# 8. BunkerGate (EPIC Spec-Ops Command Fortress Gatehouse!)
+# 8. BunkerGate (V19.1 Heavy Armored Spec-Ops Command Blast Fortress — matches Home KeyArt!)
 bg = []
-# Sloped fortified wings + buttresses
-rbox(bg, (-13.0, 3.2, 0), (13.0, 6.4, 3.4), 'concrete', 0.14, h_span=12.0)
-rbox(bg, (13.0, 3.2, 0), (13.0, 6.4, 3.4), 'concrete', 0.14, h_span=12.0)
+# Sloped fortified perimeter wings + heavy steel-plated buttresses + embrasure slits
+rbox(bg, (-13.2, 3.3, 0), (13.2, 6.6, 3.6), 'hangar', 0.14, h_span=13.0)
+rbox(bg, (13.2, 3.3, 0), (13.2, 6.6, 3.6), 'hangar', 0.14, h_span=13.0)
 for bx in [-17.5, -13.5, -9.5, 9.5, 13.5, 17.5]:
-    rbox(bg, (bx, 3.0, 1.65), (1.35, 6.0, 1.1), 'conc_dk', 0.08, (-0.08, 0, 0), h_span=12.0)
-    rbox(bg, (bx, 6.7, 0), (1.8, 1.1, 3.6), 'steel_dk', 0.08, h_span=12.0)
-# Central armored bridgehead + blast portal + cyan tech bars + gold hazard trim
-rbox(bg, (0, 7.5, 0.2), (12.4, 3.8, 4.2), 'concrete', 0.16, h_span=12.0)
-rbox(bg, (0, 9.65, 0.2), (13.2, 0.85, 4.8), 'steel_dk', 0.10, h_span=12.0)
-rbox(bg, (0, 5.75, 2.28), (9.6, 0.36, 0.24), 'gold', 0.04, h_span=12.0)
-rbox(bg, (0, 2.8, -0.3), (7.8, 5.6, 2.6), 'void_dk', 0.06, h_span=12.0)
-# Twin heavy Spec-Ops Bastion Towers + rooftop radar/turrets + cyan IFF beacons
-for sx in [-5.9, 5.9]:
-    rbox(bg, (sx, 5.6, 0.45), (4.2, 11.2, 4.6), 'hangar', 0.18, h_span=12.5)
-    rbox(bg, (sx, 11.45, 0.45), (4.7, 0.95, 5.0), 'steel_dk', 0.10, h_span=12.5)
-    rbox(bg, (sx, 9.8, 0.45), (4.35, 0.42, 4.75), 'gold', 0.05, h_span=12.5)
-    rbox(bg, (sx, 8.2, 2.76), (2.2, 0.48, 0.16), 'cyan_glow', 0.03, h_span=12.5)
-    # Banners
-    rbox(bg, (sx * 0.74, 6.2, 2.38), (1.35, 2.9, 0.14), 'red', 0.03, h_span=12.5)
-    rbox(bg, (sx * 0.74, 7.65, 2.42), (1.55, 0.26, 0.18), 'gold', 0.03, h_span=12.5)
-    # Rooftop radar dome / AA pod
-    ell(bg, (sx, 12.45, 0.45), (1.25, 1.05, 1.25), 'steel_lt', 12, 8, h_span=13.5)
-# Central Command Star Crest
-cyl(bg, (0, 7.65, 2.28), 1.68, 0.36, 'steel_dk', 18, (math.pi * 0.5, 0, 0), h_span=12.0)
-cyl(bg, (0, 7.65, 2.42), 1.38, 0.22, 'cyan_glow', 18, (math.pi * 0.5, 0, 0), h_span=12.0)
-verts = [xyz((0, 7.65, 2.75))]
+    rbox(bg, (bx, 3.1, 1.85), (1.55, 6.2, 1.35), 'steel_dk', 0.08, (-0.10, 0, 0), h_span=13.0)
+    rbox(bg, (bx, 6.9, 0.1), (1.95, 1.2, 3.9), 'steel_lt', 0.08, h_span=13.0)
+    rbox(bg, (bx, 4.6, 2.45), (0.85, 0.28, 0.18), 'cyan_glow', 0.02, h_span=13.0)
+# Central overhead armored command bridge + angled steel glacis + mechanical ribs
+rbox(bg, (0, 7.8, 0.3), (12.8, 4.0, 4.5), 'steel_dk', 0.16, h_span=13.0)
+rbox(bg, (0, 8.4, 2.45), (10.6, 2.2, 0.65), 'hangar', 0.10, (-0.12, 0, 0), h_span=13.0)
+rbox(bg, (0, 10.05, 0.3), (13.8, 0.95, 5.1), 'steel_lt', 0.10, h_span=13.0)
+for rx in [-3.4, -1.8, 1.8, 3.4]:
+    rbox(bg, (rx, 7.6, 2.65), (0.38, 3.4, 0.42), 'steel_dk', 0.04, h_span=13.0)
+# Heavy Interlocking Blast Portal Frame + Hydraulic Jambs + Recessed Armored Blast Doors
+rbox(bg, (0, 5.85, 2.48), (9.8, 0.48, 0.48), 'gold', 0.05, h_span=13.0)
+rbox(bg, (0, 2.9, -0.35), (8.2, 5.8, 2.4), 'void_dk', 0.06, h_span=13.0)
+for dx in [-2.1, 2.1]:
+    # Partially parted massive steel blast doors revealing deep dark interior + hazard ribs
+    rbox(bg, (dx * 1.35, 2.85, 0.35), (2.4, 5.5, 0.45), 'conc_dk', 0.06, h_span=13.0)
+    rbox(bg, (dx * 1.35, 2.85, 0.60), (2.1, 0.38, 0.14), 'gold', 0.02, h_span=13.0)
+    rbox(bg, (dx * 1.35, 4.25, 0.60), (1.6, 0.24, 0.14), 'cyan_glow', 0.02, h_span=13.0)
+# Twin Heavy Spec-Ops Bastion Towers + Sloped Armor Cheeks + Twin CIWS Radar Turrets
+for sx in [-6.1, 6.1]:
+    rbox(bg, (sx, 5.8, 0.55), (4.5, 11.6, 4.9), 'hangar', 0.18, h_span=13.5)
+    rbox(bg, (sx, 2.6, 2.95), (4.1, 5.2, 0.95), 'steel_dk', 0.10, (-0.12, 0, 0), h_span=13.5)
+    rbox(bg, (sx, 11.85, 0.55), (5.1, 1.05, 5.4), 'steel_dk', 0.10, h_span=13.5)
+    rbox(bg, (sx, 10.1, 0.55), (4.75, 0.48, 5.05), 'gold', 0.05, h_span=13.5)
+    rbox(bg, (sx, 8.4, 3.04), (2.6, 0.56, 0.18), 'cyan_glow', 0.03, h_span=13.5)
+    rbox(bg, (sx, 6.6, 3.04), (1.8, 0.28, 0.18), 'cyan_glow', 0.02, h_span=13.5)
+    # Armored tower vertical ribs
+    for tx in [-1.6, 1.6]:
+        rbox(bg, (sx + tx, 6.2, 2.95), (0.36, 7.6, 0.36), 'steel_lt', 0.04, h_span=13.5)
+    # Rooftop CIWS Vulcan AA Turret + Radar Dome + Twin Barrels + Comms Mast
+    cyl(bg, (sx, 12.65, 0.55), 1.45, 0.65, 'steel_dk', 14, h_span=14.0)
+    ell(bg, (sx, 13.45, 0.35), (1.18, 1.08, 1.18), 'steel_lt', 12, 8, h_span=14.0)
+    for bx_off in [-0.35, 0.35]:
+        cyl(bg, (sx + bx_off, 13.15, 1.75), 0.11, 1.85, 'steel_dk', 8, (math.pi * 0.42, 0, 0), h_span=14.0)
+    cyl(bg, (sx - (0.9 if sx < 0 else -0.9), 14.2, -0.6), 0.07, 2.8, 'steel_lt', 6, h_span=15.0)
+# Central Spec-Ops Command Holographic Shield Emblem
+cyl(bg, (0, 8.15, 2.80), 1.78, 0.38, 'steel_dk', 18, (math.pi * 0.5, 0, 0), h_span=13.0)
+cyl(bg, (0, 8.15, 2.96), 1.46, 0.22, 'cyan_glow', 18, (math.pi * 0.5, 0, 0), h_span=13.0)
+verts = [xyz((0, 8.15, 3.30))]
 for j in range(10):
     a = math.pi / 2 + j * math.pi / 5
-    r = 1.22 if j % 2 == 0 else 0.52
-    verts.append(xyz((math.cos(a) * r, 7.65 + math.sin(a) * r, 2.56)))
+    r = 1.28 if j % 2 == 0 else 0.54
+    verts.append(xyz((math.cos(a) * r, 8.15 + math.sin(a) * r, 3.10)))
 faces = [(0, j + 1, (j + 1) % 10 + 1) for j in range(10)]
 sm = bpy.data.meshes.new('GateStar'); sm.from_pydata(verts, [], faces); sm.update()
 so = bpy.data.objects.new('GateStar', sm); bpy.context.collection.objects.link(so)
-bg.append(tag_uv(so, 'gold', False, 12.0))
+bg.append(tag_uv(so, 'gold', False, 13.0))
 join_prop('BunkerGate', bg)
 
 # 9. SandbagBunker

@@ -53,7 +53,7 @@ var EnemyModelLoader = class EnemyModelLoader {
         return Promise.allSettled(keys.flatMap(key => ['hero','lod'].map(lod=>new Promise((resolve,reject)=>{
             var category=['normal','fast','shield','split','spitter','thrower','flanker','elite','bomber'].includes(key)?'zombies':'bosses';
             var url='assets/game/models/'+category+'/'+key+'/'+key+(lod==='lod'?'-lod':'')+'.glb';
-            if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=121';
+            if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=1910';
             loader.load(url,g=>{
                 try {
                     g.scene.updateMatrixWorld(true);
@@ -83,8 +83,10 @@ var EnemyModelLoader = class EnemyModelLoader {
                 var h=styles[key].hero,l=styles[key].lod;
                 if(l.material!==h.material)SoldierModelLoader._disposeMaterial(l.material);
                 l.material=h.material;
+                // V19.1: 控制有机生物材质的IBL反射强度(消除玩具塑料反光), 重装护盾/精英/Boss保留硬朗金属高光
+                h.material.envMapIntensity = ['shield','elite','bruiser','bulwark','titan','overlord'].includes(key) ? 0.78 : 0.36;
                 h.material.onBeforeCompile=function(shader){shader.fragmentShader=shader.fragmentShader.replace('#include <encodings_fragment>','gl_FragColor = LinearTosRGB( gl_FragColor );');};
-                if(['spitter','thrower','spitking','hivelord','overlord','bomber'].includes(key)) {
+                if(['spitter','thrower','spitking','hivelord','overlord','bomber','shield','elite'].includes(key)) {
                     var image=h.material.map.image,canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;
                     var ctx=canvas.getContext('2d');ctx.drawImage(image._impl || image,0,0);var pixels=ctx.getImageData(0,0,canvas.width,canvas.height);
                     // Blender cell 11 is bottom-origin row 2; PNG/canvas flips it to top-origin row 1.
