@@ -149,8 +149,8 @@ const CONFIG = {
     ENEMY_WAVE_MULTIPLIER: 4,
     ENEMY_MAX_ALIVE_MULTIPLIER: 2.4,
     ENEMY_ALIVE_TARGET_MULTIPLIER: 2.2,
-    // V15-GAMEPLAY-001: 关卡HP倍率配合新版基础HP (L1新手友好, L3-L10持续压迫不秒蒸)
-    ENEMY_HP_MULTIPLIER: [0.95, 1.15, 1.35, 1.55, 1.70, 1.80, 1.95, 2.10, 2.25, 2.45],
+    // V16.1: 关卡HP倍率 (L1=0.72 确保零养成新手95%+稳过, L2-L10平滑抬升保持紧迫压迫感)
+    ENEMY_HP_MULTIPLIER: [0.72, 1.05, 1.30, 1.50, 1.65, 1.80, 1.95, 2.10, 2.25, 2.45],
 
 
     // 射击 (V15-GAMEPLAY-004: 适度下调初始射速 2.2→1.75 降低前期DPS, 增强"快冲过来又险险顶住"的紧迫爽感)
@@ -243,7 +243,7 @@ const LEVELS = [
                 { lane: 1, op: 'add', value: 5, label: '+5' },
                 { lane: 2, op: 'add', value: 3, label: '+3' }
             ]},
-            { type: 'wave', z: -18, enemies: [ { type: 'normal', count: 48 } ] },
+            { type: 'wave', z: -18, enemies: [ { type: 'normal', count: 36 }, { type: 'fast', count: 12 } ] },
             { type: 'gates', z: -28, gates: [
                 { lane: 0, op: 'add', value: 5, label: '+5' },
                 { lane: 1, op: 'buff', value: 'damage', label: '输出+1' },

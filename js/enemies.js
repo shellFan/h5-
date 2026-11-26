@@ -213,11 +213,16 @@ class Enemy {
         this.model.position.set(this.x, bob, this.z);
         this.model.rotation.z = sway;
         this.model.rotation.y = this._baseRotY + Math.sin(time * walkSpeed * 0.5 + this.phase) * 0.12;
-        // V3.2: 攻击时前扑啃咬动画(近战范围内身体前倾伸缩)
+        // V16.1: 受击轻微后仰与弹性受击缩放反馈 + 自然体型微差
+        if (this._scaleVar === undefined) this._scaleVar = this.isBoss ? 1.0 : randRange(0.91, 1.11);
+        var hitRatio = clamp((this.hitFlash || 0) / 0.13, 0, 1);
+        if (this.hitFlash > 0) this.hitFlash = Math.max(0, this.hitFlash - dt);
+        this.model.scale.setScalar(this.visScale * this._scaleVar * (1 + hitRatio * 0.12));
+        // V3.2: 攻击时前扑啃咬动画 + 受击后仰
         if (dist <= attackDist) {
-            this.model.rotation.x = -0.16 + Math.sin(time * 9 + this.phase) * 0.13;
+            this.model.rotation.x = -0.16 + Math.sin(time * 9 + this.phase) * 0.13 + hitRatio * 0.32;
         } else {
-            this.model.rotation.x = Math.sin(time * walkSpeed + this.phase) * 0.05;
+            this.model.rotation.x = Math.sin(time * walkSpeed + this.phase) * 0.05 + hitRatio * 0.34;
         }
 
         // 受击反馈 (V3.5: 合并模型用缩放冲击, Group模型用emissive闪烁)

@@ -111,14 +111,17 @@ class GamePacingController {
 
     _emit(w, squad) {
         if (!this.spawnFn || !w.pending.length) return false;
-        // V15-GAMEPLAY-002: 真实对局(runtimeHordeBoost)沿整条远景跑道纵深铺满尸潮长河(直至基地大门前), 告别后半段路面空洞!
+        // V16.1: 不规则错位有机尸潮长河 (奇偶排交错 + 自然横纵抖动, 打破整齐表格排排站!)
         var maxSlots = this.runtimeHordeBoost ? 156 : 48;
         var rowStep = this.runtimeHordeBoost ? 1.85 : 0.95;
         var slot = w.spawned % maxSlots;
         var col = slot % 6, row = Math.floor(slot / 6);
-        var x = (col - 2.5) * 1.08 + randRange(-.16, .16);
+        var stagger = this.runtimeHordeBoost ? ((row % 2) ? 0.38 : -0.26) : 0;
+        var jitterX = this.runtimeHordeBoost ? randRange(-0.42, 0.42) : randRange(-0.12, 0.12);
+        var x = clamp((col - 2.5) * 1.06 + stagger + jitterX, -3.25, 3.25);
         var frontZ = Math.min(w.z - 1.5, squad.z - (CONFIG.PACING.spawnDistance || 14));
-        var z = frontZ - row * rowStep - randRange(0, 0.55);
+        var jitterZ = this.runtimeHordeBoost ? randRange(-0.45, 0.85) : randRange(0, 0.35);
+        var z = frontZ - row * rowStep - jitterZ;
         var enemy = this.spawnFn(w.pending[0], x, z, null);
         if (enemy === false || enemy === null) return false;
         w.pending.shift();

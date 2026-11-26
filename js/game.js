@@ -814,7 +814,11 @@ class Game {
             for (var b = 0; b < 5; b++) {
                 var bz = this.squad.z - 8 - b * 6;
                 var bx = ((b % 3) - 1) * 1.8;
-                if (this.effects) this.effects.burst(bx, 1.0, bz, 0xFF7A24, 16, 5.5, 0.55);
+                if (this.effects) {
+                    if (this.effects.shockwave) this.effects.shockwave(bx, 0.08, bz, 0xFF4422);
+                    this.effects.burst(bx, 1.0, bz, 0xFF7A24, 18, 6.0, 0.55);
+                    this.effects.burst(bx, 1.4, bz, 0x3A3A3A, 8, 3.2, 0.70);
+                }
             }
             for (var i = 0; i < enemies.length; i++) {
                 var e = enemies[i];
@@ -829,7 +833,7 @@ class Game {
             this._sfx('gate');
         } else if (id === 'skill_cryo') {
             var freezeSec = 3.5 + lv * 0.6;
-            var frostDmg = 4 + lv * 4;
+            var frostDmg = 2 + lv * 2;
             this._activeSkillCd[id] = Math.max(12, 24 - lv * 1.5);
             for (var j = 0; j < enemies.length; j++) {
                 var ej = enemies[j];
@@ -839,7 +843,8 @@ class Game {
                 else ej.hp -= frostDmg;
             }
             if (this.effects) {
-                this.effects.burst(this.squad.x, 1.2, this.squad.z - 12, 0x70D8FF, 22, 6.0, 0.6);
+                if (this.effects.shockwave) this.effects.shockwave(this.squad.x, 0.08, this.squad.z - 12, 0x60E0FF);
+                this.effects.burst(this.squad.x, 1.2, this.squad.z - 12, 0x70D8FF, 26, 6.5, 0.65);
                 this.effects.floatText(this.squad.x, 2.8, this.squad.z - 4, '极寒冰冻!', '#70D8FF', true);
             }
             if (this.world) this.world.shake(0.18, 0.22);
@@ -854,7 +859,8 @@ class Game {
             this.squad._evRateMulT = Math.max(this.squad._evRateMulT || 0, dur);
             if (this.squad.grantMedicalShield) this.squad.grantMedicalShield(1, 8, this.effects);
             if (this.effects) {
-                this.effects.burst(this.squad.x, 1.0, this.squad.z, 0xFFE066, 18, 4.5, 0.5);
+                if (this.effects.shockwave) this.effects.shockwave(this.squad.x, 0.08, this.squad.z, 0xFFD84A);
+                this.effects.burst(this.squad.x, 1.0, this.squad.z, 0xFFE066, 22, 5.0, 0.55);
                 this.effects.floatText(this.squad.x, 2.8, this.squad.z - 2, '火力超载!', '#FFE066', true);
             }
             this._sfx('win');

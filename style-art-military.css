@@ -1675,13 +1675,13 @@
 #v15-skill-bar.hidden { display: none !important; }
 .v15-skill-btn {
     position: relative;
-    width: 54px;
-    height: 58px;
-    padding: 4px 2px 3px;
-    border-radius: 13px;
+    width: 62px;
+    height: 64px;
+    padding: 5px 2px 4px;
+    border-radius: 14px;
     border: 2px solid #f4c84c;
     background: linear-gradient(180deg, rgba(46, 76, 48, 0.94), rgba(22, 42, 26, 0.96));
-    box-shadow: 0 4px 0 #102014, 0 0 12px rgba(244, 200, 76, 0.32);
+    box-shadow: 0 4px 0 #102014, 0 0 12px rgba(244, 200, 76, 0.35);
     color: #fff2c2;
     display: flex;
     flex-direction: column;
@@ -1690,6 +1690,10 @@
     cursor: pointer;
     overflow: hidden;
     transition: transform 0.1s ease;
+}
+/* V16.1: 清除顶部属性栏重复的"人数"显示(右上角胶囊已常驻显示) */
+#game-container.art-military.v42-ui #stat-row-count {
+    display: none !important;
 }
 .v15-skill-btn:active { transform: scale(0.94); }
 .v15-skill-btn.is-cd {

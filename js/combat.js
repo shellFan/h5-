@@ -159,9 +159,9 @@ class CombatSystem {
                         this._fire({ x: positions[k].x + 0.38, y: positions[k].y, z: positions[k].z }, dmgFinal, target, isCrit);
                     }
                 }
-                // V15-ART-002: 全队视觉弹幕与交错枪口火焰(纯视觉装饰弹道, damage=0 不影响任何数值平衡!)
+                // V16.1: 强化全队视觉弹幕与交错枪口火焰(纯视觉装饰弹道, damage=0 不影响任何数值平衡!)
                 if (count >= 4 && this.pool.length > 16) {
-                    var decoCount = Math.min(8, Math.floor(Math.sqrt(count) * 1.15));
+                    var decoCount = Math.min(12, Math.floor(Math.sqrt(count) * 1.65));
                     var decoPos = squad.getShootPositions(decoCount);
                     var aliveList = enemyManager.enemies;
                     for (var dk = 0; dk < decoPos.length && this.pool.length > 10; dk++) {
@@ -405,9 +405,9 @@ class CombatSystem {
         if (!mesh) return;
         mesh.visible = true;
         mesh.position.set(pos.x, pos.y, pos.z);
-        if (decorative) mesh.scale.set(0.15, 1.35, 1);
-        else if (isCrit) mesh.scale.set(0.24, 2.1, 1);
-        else mesh.scale.set(0.18, 1.55, 1);
+        if (decorative) mesh.scale.set(0.20, 1.70, 1);
+        else if (isCrit) mesh.scale.set(0.36, 2.65, 1);
+        else mesh.scale.set(0.25, 2.0, 1);
         this.bullets.push({
             mesh: mesh, damage: decorative ? 0 : damage, life: decorative ? 0.85 : 1.2,
             decorative: !!decorative,
@@ -420,7 +420,7 @@ class CombatSystem {
 
         // 枪口闪光 (V15: 增强全队齐射枪口火焰表现力)
         var wid = (this._squad && this._squad._gameRef && this._squad._gameRef._weaponStats) ? this._squad._gameRef._weaponStats.weaponId : 'rifle';
-        var muzzleScale = decorative ? 0.88 : (CombatSystem.HEAVY_MUZZLE[wid] ? 1.45 : 1.15);
+        var muzzleScale = decorative ? 1.05 : (CombatSystem.HEAVY_MUZZLE[wid] ? 1.65 : 1.38);
         this.effects.muzzleFlash(pos.x, pos.y, pos.z, muzzleScale);
     }
 
