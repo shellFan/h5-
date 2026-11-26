@@ -29,8 +29,8 @@ console.log('\n■ V15-GAMEPLAY-001 怪物基础HP与关卡倍率');
 const Z = vm.runInContext('CONFIG.ZOMBIE', ctx);
 const MUL = vm.runInContext('CONFIG.ENEMY_HP_MULTIPLIER', ctx);
 const LEVELS = vm.runInContext('LEVELS', ctx);
-assert(Z.normal.hp === 8 && Z.fast.hp === 5 && Z.split.hp === 10 && Z.spitter.hp === 9, '基础小怪HP提升至 normal=8/fast=5/split=10/spitter=9');
-assert(Z.bomber.hp === 14 && Z.shield.hp === 24 && Z.elite.hp === 55 && Z.boss.hp === 200, '重型怪HP提升至 bomber=14/shield=24/elite=55, boss=200不变');
+assert(Z.normal.hp === 10 && Z.fast.hp === 7 && Z.split.hp === 12 && Z.spitter.hp === 11, '基础小怪HP提升至 normal=10/fast=7/split=12/spitter=11');
+assert(Z.bomber.hp === 16 && Z.shield.hp === 28 && Z.elite.hp === 65 && Z.boss.hp === 200, '重型怪HP提升至 bomber=16/shield=28/elite=65, boss=200不变');
 assert(MUL.length === 10 && MUL[0] < MUL[9], '10关HP倍率单调递增');
 assert(LEVELS[4].segments.some(s => s.type === 'boss' && s.boss.hp === 2600), 'L5 Boss独立血量2600保持不变');
 

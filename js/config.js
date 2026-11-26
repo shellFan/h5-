@@ -145,30 +145,30 @@ const CONFIG = {
         }
     },
 
-    // 试玩强化：每关 authored wave 总量×3，并提高同屏密度。
-    ENEMY_WAVE_MULTIPLIER: 3,
-    ENEMY_MAX_ALIVE_MULTIPLIER: 2.2,
-    ENEMY_ALIVE_TARGET_MULTIPLIER: 2,
+    // 试玩强化：每关 authored wave 总量×4，全路高密尸潮压迫感
+    ENEMY_WAVE_MULTIPLIER: 4,
+    ENEMY_MAX_ALIVE_MULTIPLIER: 2.4,
+    ENEMY_ALIVE_TARGET_MULTIPLIER: 2.2,
     // V15-GAMEPLAY-001: 关卡HP倍率配合新版基础HP (L1新手友好, L3-L10持续压迫不秒蒸)
     ENEMY_HP_MULTIPLIER: [0.95, 1.15, 1.35, 1.55, 1.70, 1.80, 1.95, 2.10, 2.25, 2.45],
 
 
-    // 射击
+    // 射击 (V15-GAMEPLAY-004: 适度下调初始射速 2.2→1.75 降低前期DPS, 增强"快冲过来又险险顶住"的紧迫爽感)
     BULLET_SPEED: 28,
     BULLET_DAMAGE_BASE: 1,
-    BULLET_FIRE_RATE_BASE: 2.2, // 每秒每兵射击次数
+    BULLET_FIRE_RATE_BASE: 1.75, // 每秒每兵射击次数
     BULLET_MAX_VISIBLE: 120,    // 最大可见弹道数
     BULLET_RANGE: 18,           // 子弹射程
 
-    // 僵尸属性 (V15-GAMEPLAY-001: 提升基础生存能力, 告别一碰就蒸发; Boss独立血量不变)
+    // 僵尸属性 (V15-GAMEPLAY-004: 进一步强化怪潮压迫感, Boss独立血量不变)
     ZOMBIE: {
-        normal:  { hp: 8,  speed: 1.7,  scale: 1.45, color: 0x8FBC5A, killScore: 1 },
-        fast:    { hp: 5,  speed: 2.55, scale: 1.18, color: 0xA9CB6B, killScore: 1 },
-        shield:  { hp: 24, speed: 1.15, scale: 1.6,  color: 0x7EA35F, killScore: 2 },
-        split:   { hp: 10, speed: 1.35, scale: 1.28, color: 0xA583C9, killScore: 2 },
-        spitter: { hp: 9,  speed: 1.25, scale: 1.38, color: 0x63C24B, killScore: 2 },
-        elite:   { hp: 55, speed: 1.0,  scale: 2.5,  color: 0x6F9A52, killScore: 5 },
-        bomber:  { hp: 14, speed: 2.0,  scale: 1.32, color: 0xC94B4B, killScore: 2 }, // V11.5: 爆炸僵尸(死亡自爆波及)
+        normal:  { hp: 10, speed: 1.75, scale: 1.45, color: 0x8FBC5A, killScore: 1 },
+        fast:    { hp: 7,  speed: 2.6,  scale: 1.18, color: 0xA9CB6B, killScore: 1 },
+        shield:  { hp: 28, speed: 1.18, scale: 1.6,  color: 0x7EA35F, killScore: 2 },
+        split:   { hp: 12, speed: 1.38, scale: 1.28, color: 0xA583C9, killScore: 2 },
+        spitter: { hp: 11, speed: 1.28, scale: 1.38, color: 0x63C24B, killScore: 2 },
+        elite:   { hp: 65, speed: 1.02, scale: 2.5,  color: 0x6F9A52, killScore: 5 },
+        bomber:  { hp: 16, speed: 2.05, scale: 1.32, color: 0xC94B4B, killScore: 2 }, // V11.5: 爆炸僵尸(死亡自爆波及)
         boss:    { hp: 200, speed: 0.9, scale: 3.9,  color: 0x9C3B32, killScore: 50 }
     },
 

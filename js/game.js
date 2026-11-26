@@ -829,7 +829,7 @@ class Game {
             this._sfx('gate');
         } else if (id === 'skill_cryo') {
             var freezeSec = 3.5 + lv * 0.6;
-            var frostDmg = 15 + lv * 10;
+            var frostDmg = 4 + lv * 4;
             this._activeSkillCd[id] = Math.max(12, 24 - lv * 1.5);
             for (var j = 0; j < enemies.length; j++) {
                 var ej = enemies[j];

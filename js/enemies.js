@@ -165,14 +165,24 @@ class Enemy {
         if (dz < 0) this._returningToFront = true;
         if (this.z <= squad.z - attackDist) this._returningToFront = false;
         if (dist > attackDist || this._returningToFront) {
-            // V5.1.1修复: 前方怪(+Z)向防线追击; 落后于军团的怪(-Z)以2.5倍冲刺归队
-            // (旧Math.abs(sign)写反了落后怪方向 → 怪永远追不上 → 波次永不完成关卡卡死)
+            // V5.1.1 / V15-GAMEPLAY-004: 保持宽阵型全路推进, 绝不早早缩成一条直线!
+            // 仅在近距离(dist < 6.5m)才带各自扇形偏移(_spreadX)包抄小队前排
+            if (this._homeX === undefined) {
+                this._homeX = clamp(this.x, -3.2, 3.2);
+                this._spreadX = clamp((this._homeX / 3.2) * 1.35, -1.45, 1.45);
+            }
             const behind = this._returningToFront;
             const spd = this.cfg.speed * (this.speedMul || 1) * (frozen ? 0.3 : 1) * (behind ? 2.5 : 1);
             if (behind) this.z = Math.max(squad.z - attackDist, this.z - spd * dt);
             else this.z = BattleKinematics.enemyApproachZ(this.z, spd, dt);
-            const dx = squad.x - this.x;
-            this.x += clamp(dx, -1, 1) * spd * 0.4 * dt;
+            var desiredX = this._homeX + Math.sin(time * 1.4 + this.phase) * 0.18;
+            if (dist < 6.5 || this.isBoss) {
+                var blend = this.isBoss ? 1.0 : clamp((6.5 - dist) / 4.5, 0, 1);
+                var closeX = clamp(squad.x + (this.isBoss ? 0 : this._spreadX), -3.2, 3.2);
+                desiredX = desiredX * (1 - blend) + closeX * blend;
+            }
+            const dx = desiredX - this.x;
+            this.x = clamp(this.x + clamp(dx, -1, 1) * spd * 0.45 * dt, -3.35, 3.35);
         } else if (Math.abs(this.x - squad.x) > (squad.getHalfWidth ? squad.getHalfWidth() : 1) + (this.isBoss ? 1.2 : .45)) {
             this.x += Math.sign(squad.x - this.x) * this.cfg.speed * dt;
         } else {

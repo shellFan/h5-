@@ -41,13 +41,13 @@ var UPGRADE_DEFS = {
         levels: [250, 500, 900],
         effect: function(lv) { return '穿透 +' + lv; }
     },
-    // ===== V15-GAMEPLAY-002: 后期可升级主动战术技能 (Lv.1 解锁战斗主动释放) =====
+    // ===== V15-GAMEPLAY-002 / 004: 可升级主动战术技能 (前中期即可解锁体验, 后期持续强化) =====
     skill_airstrike: {
         id: 'skill_airstrike',
         name: '战术空袭',
         icon: '🚀',
         desc: '【主动技】Lv.1解锁 · 前方跑道5连环轰炸清潮',
-        levels: [300, 550, 900, 1400, 2000],
+        levels: [150, 350, 650, 1100, 1700],
         effect: function(lv) { return lv <= 0 ? '未解锁' : ('范围伤害 ' + (35 + lv * 20) + ' · 冷却 ' + (22 - lv * 1.5).toFixed(1) + 's'); }
     },
     skill_cryo: {
@@ -55,7 +55,7 @@ var UPGRADE_DEFS = {
         name: '极寒冰冻',
         icon: '❄️',
         desc: '【主动技】Lv.1解锁 · 冻结全屏怪潮并造成冰霜伤害',
-        levels: [350, 600, 950, 1500, 2200],
+        levels: [200, 420, 750, 1200, 1800],
         effect: function(lv) { return lv <= 0 ? '未解锁' : ('冻结 ' + (3.5 + lv * 0.6).toFixed(1) + 's · 冷却 ' + (24 - lv * 1.5).toFixed(1) + 's'); }
     },
     skill_overdrive: {
@@ -63,7 +63,7 @@ var UPGRADE_DEFS = {
         name: '火力超载',
         icon: '⚡',
         desc: '【主动技】Lv.1解锁 · 短时间大幅提升火力/射速并获护盾',
-        levels: [400, 700, 1100, 1600, 2400],
+        levels: [250, 500, 850, 1350, 2000],
         effect: function(lv) { return lv <= 0 ? '未解锁' : ('伤害×' + (1.6 + lv * 0.15).toFixed(2) + ' · 持续 ' + (6 + lv * 1.2).toFixed(1) + 's'); }
     }
 };
