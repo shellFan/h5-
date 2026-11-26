@@ -121,6 +121,19 @@ class Game {
         this._bindHomeButtons(); // V10 QA: 动态首页按钮绑定(依赖 installUI 创建的 DOM)
         if (typeof V60UI !== 'undefined') V60UI.install(this);
         if (typeof ArtUI !== 'undefined') ArtUI.install(this);
+        // 本地试玩测试模式 (?test=1 且仅限 localhost/127.0.0.1 生效, 正式线上环境完全关闭)
+        if (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1') && location.search.indexOf('test=1') !== -1 && this.profile) {
+            this.profile.data.unlockedLevel = LEVELS.length;
+            if ((this.profile.data.coins || 0) < 9999) this.profile.data.coins = 9999;
+            this.profile.data.upgrades = this.profile.data.upgrades || {};
+            ['skill_airstrike', 'skill_cryo', 'skill_overdrive', 'skill_tornado'].forEach(function(sk) {
+                if ((this.profile.data.upgrades[sk] || 0) < 2) this.profile.data.upgrades[sk] = 2;
+            }, this);
+            this.profile.save();
+            if (this._refreshLevelSelect) this._refreshLevelSelect();
+            if (this._refreshCoinDisplays) this._refreshCoinDisplays();
+            if (this._refreshShop) this._refreshShop();
+        }
 
         this._loop = this._loop.bind(this);
         requestAnimationFrame(this._loop);
@@ -464,12 +477,45 @@ class Game {
         });
     }
 
-    /** 实际复活执行(由广告协调器发奖回调) */
+    /** V18.0 实际复活执行(由广告协调器幂等发奖回调): 恢复40%峰值人数(1~12人) + 3秒无敌 + 1层护盾 + 击退附近怪 + 清弹 + 8秒危机保护 */
     _applyRevive(count, invSec) {
+        var peak = Math.max(1, this.maxCount || count || 1);
+        var reviveCount = Math.max(1, Math.min(12, Math.ceil(peak * 0.4)));
         this.state = 'playing';
+        this.paused = false;
         this.squad.alive = true;
-        this.squad.setCount(count);
-        this.squad.invulnT = invSec || 2.0;
+        this.squad.setCount(reviveCount);
+        this.squad.invulnT = Math.max(3.0, invSec || 3.0);
+        if (this.squad.grantMedicalShield) this.squad.grantMedicalShield(1, 10, this.effects);
+        // 安全击退 5.5m 内贴脸怪至前方安全距离 (不记击杀、不刷金币)
+        if (this.enemies && this.enemies.enemies) {
+            for (var i = 0; i < this.enemies.enemies.length; i++) {
+                var e = this.enemies.enemies[i];
+                if (!e.alive) continue;
+                if (Math.abs(e.z - this.squad.z) < 5.5) {
+                    e.z = this.squad.z - 8.5 - (i % 4) * 0.8;
+                    if (e.model) e.model.position.z = e.z;
+                }
+            }
+        }
+        // 清除复活点附近即将命中的炸弹与酸液弹
+        if (this.enemies) {
+            if (this.enemies.bombs) {
+                for (var bi = this.enemies.bombs.length - 1; bi >= 0; bi--) {
+                    this.enemies._bombPool.push(this.enemies.bombs[bi]);
+                    this.enemies.bombs.splice(bi, 1);
+                }
+            }
+            if (this.enemies.spits) {
+                for (var si = this.enemies.spits.length - 1; si >= 0; si--) {
+                    this.enemies.scene.remove(this.enemies.spits[si].mesh);
+                    this.enemies._spitPool.push(this.enemies.spits[si]);
+                    this.enemies.spits.splice(si, 1);
+                }
+            }
+        }
+        // 复活后 8 秒内不触发新随机危机
+        if (typeof RandomEvents !== 'undefined' && RandomEvents.onRevive) RandomEvents.onRevive();
         // V8.0: 挑战模式复活 — 重新开启计分(基准重置, 只计复活后的增量)
         if (this._challenge) {
             this._challenge._scored = false;
@@ -479,9 +525,11 @@ class Game {
         if (this.ui.hud) this.ui.hud.classList.remove('hidden');
         // 复活反馈
         if (this.effects) {
-            this.effects.floatText(this.squad.x, 2.2, this.squad.z, '复活!', '#75DFFF', true);
-            this.effects.shockwave(this.squad.x, 0.05, this.squad.z, 0x75DFFF);
+            this.effects.floatText(this.squad.x, 2.3, this.squad.z, '紧急救援复活! +' + reviveCount + '人', '#5CEEFF', true);
+            this.effects.shockwave(this.squad.x, 0.08, this.squad.z, 0x5CEEFF);
+            this.effects.burst(this.squad.x, 1.0, this.squad.z, 0x75DFFF, 20, 4.8, 0.55);
         }
+        this._sfx('win');
     }
 
     /** V3.4: 双倍结算(胜利界面按钮 → 激励视频) */
@@ -928,7 +976,7 @@ class Game {
         var dustPlane = new THREE.PlaneGeometry(4.8, 4.8);
         dustPlane.rotateX(-Math.PI * 0.5);
         var baseRing = new THREE.Mesh(dustPlane, new THREE.MeshBasicMaterial({
-            map: new THREE.CanvasTexture(dustCv), transparent: true, opacity: 0.72,
+            map: new THREE.CanvasTexture(dustCv), transparent: true, opacity: 0.15,
             depthWrite: false
         }));
         baseRing.position.y = 0.05;
@@ -1458,16 +1506,16 @@ class Game {
     start() {
         try {
             var level = LEVELS[this.levelIndex];
-            // V5.1: 永久升级应用 — 初始人数 = 关卡基础 + 新兵招募等级; 穿透初始等级
-            var startCount = this.shop ? this.shop.startCount(this.profile, level.startCount) : level.startCount;
-            this.squad.reset(Math.min(startCount, CONFIG.SQUAD_MAX_COUNT));
+            // V18.0: 严格1人开局! 原新兵招募等级平滑迁移为开局战术护盾与征召效率
+            this.squad.reset(1);
             if (this.shop && this.profile) {
+                var recLv = this.shop.levelOf(this.profile, 'recruit');
+                if (recLv >= 2 && this.squad.grantMedicalShield) this.squad.grantMedicalShield(Math.min(2, Math.floor(recLv / 2)), 12);
                 this.squad.pierce = Math.min(3, this.shop.pierceBonus(this.profile));
             }
             // V8.0: 武器+科技战斗属性
             this._weaponStats = (typeof WeaponSystem !== 'undefined' && this.profile) ? WeaponSystem.stats(this.profile) : {};
             this._techStats = (typeof TechTree !== 'undefined' && this.profile) ? TechTree.combatStats(this.profile) : {};
-            if (this._techStats.startBonus) this.squad.setCount(this.squad.count + this._techStats.startBonus);
             // V10 QA: 科技"战术储备"开局金币接线(每关一次幂等发放, 防重开刷币)
             if (this._techStats.startCoins && this.profile) {
                 this.profile.claimReward('startcoins:L' + this.levelIndex, this._techStats.startCoins);

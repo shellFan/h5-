@@ -3,11 +3,11 @@
 var UPGRADE_DEFS = {
     recruit: {
         id: 'recruit',
-        name: '新兵招募',
+        name: '战地征召',
         icon: '🎖️',
-        desc: '每级初始人数 +1',
+        desc: '开局统一1人 · 每级提升战地护盾与征召效率',
         levels: [100, 180, 300, 450, 650, 900, 1200, 1600, 2100, 2700],
-        effect: function(lv) { return '初始人数 ' + (1 + lv); }
+        effect: function(lv) { return '征召效率 Lv.' + lv + (lv >= 2 ? ' (开局护盾+' + Math.min(2, Math.floor(lv / 2)) + ')' : ''); }
     },
     logistics: {
         id: 'logistics',

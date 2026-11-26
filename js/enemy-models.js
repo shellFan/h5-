@@ -304,8 +304,16 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
                 var vt=tints[Math.floor(((e.phase||0)*13.37)%1*tints.length)%tints.length];
                 this._color.setRGB(vt[0],vt[1],vt[2]);
             }
-            // V12/V16.3 视觉: thrower/flanker/spitter 均已具备独立雕塑材质贴图, 仅保留精英金染与冰冻/受击状态覆盖
-            if(e.type==='elite')this._color.setRGB(1.22,1.08,.72);          // 精英金染
+            // V18.0: 商业级低饱和哑光配色校准 (降糖果感15%, 强化fast暗红/shield黑铁/normal暗紫辨识)
+            if (!e.isBoss && e.type !== 'elite') {
+                if (e.type === 'normal') this._color.multiplyScalar(0.88);
+                else if (e.type === 'fast') this._color.setRGB(1.10, 0.56, 0.62);
+                else if (e.type === 'shield') this._color.setRGB(0.74, 0.78, 0.85);
+                else if (e.type === 'spitter') this._color.setRGB(0.86, 0.90, 0.84);
+                else if (e.type === 'thrower') this._color.setRGB(0.90, 0.84, 0.78);
+                else if (e.type === 'flanker') this._color.setRGB(0.82, 0.90, 0.94);
+            }
+            if(e.type==='elite')this._color.setRGB(1.18,1.02,.68);          // 精英暗金染
             if(e.frozenT>0)this._color.setRGB(.50,.85,1.35);
             if(e.phaseIndex>=3)this._color.setRGB(1.35,.72,.75);
             else if(e.phaseIndex===2)this._color.setRGB(1.12,.85,1.2);

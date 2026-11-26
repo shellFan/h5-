@@ -69,13 +69,15 @@ class WebMockAdService extends AdService {
         el.id = 'mock-ad-overlay';
         el.style.cssText = 'position:absolute;inset:0;z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#111827,#1F2937);color:#fff;font-family:sans-serif;';
         el.innerHTML =
-            '<div style="position:absolute;top:10px;left:14px;background:#F59E0B;color:#111;font-weight:900;font-size:12px;padding:3px 10px;border-radius:6px;letter-spacing:1px;">测试广告模拟器 · TEST AD</div>' +
-            '<div id="mock-ad-timer" style="font-size:52px;font-weight:900;color:#FDE68A;margin-bottom:8px;">3</div>' +
-            '<div id="mock-ad-tip" style="font-size:14px;color:#9CA3AF;margin-bottom:26px;">模拟激励视频播放中…（完整观看才可领取奖励）</div>' +
-            '<div style="display:flex;gap:14px;">' +
-            '<button id="mock-ad-finish" style="padding:12px 30px;font-size:16px;font-weight:800;background:linear-gradient(180deg,#4DA8FF,#1A6FD4);color:#fff;border:none;border-radius:30px;cursor:pointer;">模拟完整观看</button>' +
-            '<button id="mock-ad-close" style="padding:12px 30px;font-size:16px;font-weight:700;background:#374151;color:#D1D5DB;border:none;border-radius:30px;cursor:pointer;">提前关闭(不发奖)</button>' +
-            '</div>';
+            '<div style="position:absolute;top:14px;left:14px;background:#F59E0B;color:#111;font-weight:900;font-size:12px;padding:4px 10px;border-radius:8px;letter-spacing:1px;">激励广告测试 · MOCK AD</div>' +
+            '<div style="width:min(310px,84vw);padding:22px 18px;border-radius:18px;background:rgba(15,23,42,0.92);border:2px solid #F59E0B;box-shadow:0 16px 40px rgba(0,0,0,0.55);text-align:center;">' +
+            '<div style="font-size:13px;font-weight:800;color:#FBBF24;letter-spacing:1px;margin-bottom:8px;">当前为开发测试模式 · 可直接跳过</div>' +
+            '<div id="mock-ad-timer" style="font-size:48px;font-weight:900;color:#FDE68A;margin-bottom:8px;">3</div>' +
+            '<div id="mock-ad-tip" style="font-size:13px;color:#CBD5E1;line-height:1.5;margin-bottom:20px;">后期上线将无缝切换为微信/H5正式激励视频 SDK</div>' +
+            '<div style="display:flex;flex-direction:column;gap:10px;">' +
+            '<button id="mock-ad-finish" style="padding:13px 22px;font-size:16px;font-weight:900;background:linear-gradient(180deg,#34D399,#059669);color:#fff;border:none;border-radius:14px;cursor:pointer;box-shadow:0 4px 0 #065F46;">⚡ 跳过广告 · 立即复活 / 领奖</button>' +
+            '<button id="mock-ad-close" style="padding:11px 22px;font-size:14px;font-weight:700;background:#334155;color:#CBD5E1;border:none;border-radius:12px;cursor:pointer;">取消 · 返回结算(不发奖)</button>' +
+            '</div></div>';
         (document.getElementById('game-container') || document.body).appendChild(el);
         this._overlay = el;
         this._timerEl = el.querySelector('#mock-ad-timer');
@@ -134,7 +136,7 @@ class WebMockAdService extends AdService {
             }, 600);
         } else {
             this._timerEl.style.display = 'none';
-            this._tipEl.textContent = 'TEST AD · 点击下方按钮模拟观看结果';
+            this._tipEl.textContent = '模拟激励视频 · 点击下方按钮立即跳过复活或领取奖励';
             this._finishBtn.style.visibility = 'visible';
             this._closeBtn.style.visibility = 'visible';
         }

@@ -22,8 +22,8 @@ var MilitaryArt = class MilitaryArt {
         var cv = document.createElement('canvas');
         cv.width = 512; cv.height = 512;
         var ctx = cv.getContext('2d');
-        // V15-ART-006: 做旧军用混凝土战术跑道 (分块微色差 + 柔和车辙 + 细裂纹 + 路肩尘土过渡)
-        ctx.fillStyle = '#7E868C';
+        // V18.0: 深沉做旧军用战术沥青混凝土跑道 (压暗路面以突出子弹曳光、红圈预警与角色立体感)
+        ctx.fillStyle = '#5F6870';
         ctx.fillRect(0, 0, 512, 512);
         // 4块混凝土板块细微明暗冷暖变化 (打破死板单色网格感)
         var slabTones = ['rgba(255,252,244,0.05)', 'rgba(30,38,44,0.05)', 'rgba(245,248,255,0.04)', 'rgba(42,38,32,0.05)'];
@@ -121,8 +121,8 @@ var MilitaryArt = class MilitaryArt {
         var cv = document.createElement('canvas');
         cv.width = 512; cv.height = 512;
         var ctx = cv.getContext('2d');
-        // V15-ART-006: 柔和手绘军营草地 (低饱和鼠尾草橄榄绿 + 泥土斑驳 + 手绘V形草簇 + 碎石)
-        ctx.fillStyle = '#CBD6B6';
+        // V18.0: 沉稳写实卡通军营橄榄绿地表 (降明度降饱和, 告别发白草皮感)
+        ctx.fillStyle = '#92A57E';
         ctx.fillRect(0, 0, 512, 512);
         // 大尺度有机草地明暗、泥土色块 (彻底告别荧光绿塑料平面)
         for (var i = 0; i < 85; i++) {

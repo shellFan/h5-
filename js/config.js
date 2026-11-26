@@ -74,25 +74,25 @@ const CONFIG = {
     // sky: 穹顶渐变 4 停靠点(顶→地平线) | envTint: 环境(草地/建筑实例)染色目标 | domeTint: 穹顶乘色
     WORLD_THEMES: {
         default: {
-            sky: ['#257EE0', '#63B5F6', '#B5E0FA', '#E4F4FE'],
-            fog: 0xC6E5F7, fogNear: 60, fogFar: 155,
-            sunColor: 0xFFF3D4, sunIntensity: 0.92,
-            hemiSky: 0xB8E4FF, hemiGround: 0x6A9650, hemiIntensity: 0.56,
-            envTint: 0x6A9B66, domeTint: 0xFFFFFF, ground: 'asphalt'
+            sky: ['#1B5DA8', '#4E95D8', '#C8D8E4', '#EFE1C8'],
+            fog: 0xD2D4CE, fogNear: 44, fogFar: 132,
+            sunColor: 0xFFE6B8, sunIntensity: 1.04,
+            hemiSky: 0x9CCBF5, hemiGround: 0x3D5236, hemiIntensity: 0.50,
+            envTint: 0x5A7E54, domeTint: 0xFFFFFF, ground: 'asphalt'
         },
-        dawn: { // L1 新兵训练 — V15 阳光军事基地晴空日光
-            sky: ['#257EE0', '#63B5F6', '#B5E0FA', '#E4F4FE'],
-            fog: 0xC8E6F8, fogNear: 60, fogFar: 155,
-            sunColor: 0xFFF3D4, sunIntensity: 0.92,
-            hemiSky: 0xBCE6FF, hemiGround: 0x6A9650, hemiIntensity: 0.56,
-            envTint: 0x6A9B66, domeTint: 0xFFFFFF, ground: 'asphalt'
+        dawn: { // L1 新兵训练 — V18.0 黄金战术日光+空气透视(告别平淡塑料感)
+            sky: ['#1B5DA8', '#4E95D8', '#C8D8E4', '#EFE1C8'],
+            fog: 0xD2D4CE, fogNear: 44, fogFar: 132,
+            sunColor: 0xFFE6B8, sunIntensity: 1.04,
+            hemiSky: 0x9CCBF5, hemiGround: 0x3D5236, hemiIntensity: 0.50,
+            envTint: 0x5A7E54, domeTint: 0xFFFFFF, ground: 'asphalt'
         },
-        noon: { // L2 快速尸潮 — 明快正午
-            sky: ['#3E96DE', '#7FC4EE', '#CFE9F8', '#EAF6FB'],
-            fog: 0xD8ECF6, fogNear: 48, fogFar: 135,
-            sunColor: 0xFFFBE8, sunIntensity: 0.78,
-            hemiSky: 0xBEE4FF, hemiGround: 0x94C49A, hemiIntensity: 0.5,
-            envTint: 0x6FA37C, domeTint: 0xFFFFFF, ground: 'asphalt'
+        noon: { // L2 快速尸潮 — 战术高对比晴空
+            sky: ['#266DB8', '#5EA4DE', '#BBD6E8', '#E2EAEF'],
+            fog: 0xC6D6E2, fogNear: 42, fogFar: 126,
+            sunColor: 0xFFEDD0, sunIntensity: 0.96,
+            hemiSky: 0x9CCBF5, hemiGround: 0x4E6E52, hemiIntensity: 0.48,
+            envTint: 0x5E8566, domeTint: 0xFFFFFF, ground: 'asphalt'
         },
         overcast: { // L3 盾牌军团 — 阴云灰蓝(压抑感)
             sky: ['#5E7E9E', '#8FA9C2', '#C2D2DE', '#DDE6EC'],
@@ -149,8 +149,8 @@ const CONFIG = {
     ENEMY_WAVE_MULTIPLIER: 4,
     ENEMY_MAX_ALIVE_MULTIPLIER: 2.4,
     ENEMY_ALIVE_TARGET_MULTIPLIER: 2.2,
-    // V17.0 RC: 关卡HP倍率 (补偿L1-L4新增高血量特殊怪, 确保L1无养成>=95%稳过, L3起平滑抬升压迫感)
-    ENEMY_HP_MULTIPLIER: [0.65, 0.82, 1.02, 1.25, 1.48, 1.72, 1.92, 2.10, 2.28, 2.45],
+    // V18.0: 关卡HP倍率 (L1即具备真实翻车风险与紧张感, 配合1人开局与精简增兵门, 目标L1无复活70-80%)
+    ENEMY_HP_MULTIPLIER: [0.84, 0.96, 1.12, 1.32, 1.52, 1.72, 1.92, 2.10, 2.28, 2.45],
 
 
     // 射击 (V15-GAMEPLAY-004: 适度下调初始射速 2.2→1.75 降低前期DPS, 增强"快冲过来又险险顶住"的紧迫爽感)
@@ -160,15 +160,15 @@ const CONFIG = {
     BULLET_MAX_VISIBLE: 120,    // 最大可见弹道数
     BULLET_RANGE: 18,           // 子弹射程
 
-    // 僵尸属性 (V16.2-GAMEPLAY-005: 新增投弹怪 thrower 与路边伏击怪 flanker, 优化酸液远程怪 spitter)
+    // 僵尸属性 (V18.0 商业版校准: 1人起步下不造血牛怪, 以密度/混编/机制制造压迫感)
     ZOMBIE: {
         normal:  { hp: 10, speed: 1.75, scale: 1.45, color: 0x8FBC5A, killScore: 1 },
         fast:    { hp: 7,  speed: 2.6,  scale: 1.18, color: 0xA9CB6B, killScore: 1 },
         shield:  { hp: 28, speed: 1.18, scale: 1.6,  color: 0x7EA35F, killScore: 2 },
         split:   { hp: 12, speed: 1.38, scale: 1.28, color: 0xA583C9, killScore: 2 },
-        spitter: { hp: 14, speed: 1.40, scale: 1.38, color: 0x63C24B, killScore: 2 }, // 酸液远程怪(非追踪可走位躲避)
-        thrower: { hp: 18, speed: 1.15, scale: 1.48, color: 0xF59E0B, killScore: 3 }, // V16.2: 抛物线投弹怪(1.3s红圈预警)
-        flanker: { hp: 12, speed: 2.15, scale: 1.24, color: 0x22D3EE, killScore: 2 }, // V16.2: 路边翻越伏击怪(护栏外跃入)
+        spitter: { hp: 11, speed: 1.40, scale: 1.38, color: 0x63C24B, killScore: 2 }, // 酸液远程怪(非追踪可走位躲避)
+        thrower: { hp: 16, speed: 1.15, scale: 1.48, color: 0xF59E0B, killScore: 3 }, // V18.0: 抛物线投弹怪(1.5s红圈预警)
+        flanker: { hp: 9,  speed: 2.15, scale: 1.24, color: 0x22D3EE, killScore: 2 }, // V18.0: 路边翻越伏击怪(护栏外跃入)
         elite:   { hp: 65, speed: 1.02, scale: 2.5,  color: 0x6F9A52, killScore: 5 },
         bomber:  { hp: 16, speed: 2.05, scale: 1.32, color: 0xC94B4B, killScore: 2 }, // V11.5: 爆炸僵尸(死亡自爆波及)
         boss:    { hp: 200, speed: 0.9, scale: 3.9,  color: 0x9C3B32, killScore: 50 }
@@ -241,27 +241,27 @@ const LEVELS = [
         rewardCoins: 60,
         segments: [
             { type: 'gates', z: -8, gates: [
-                { lane: 0, op: 'add', value: 8, label: '+8' },
-                { lane: 1, op: 'add', value: 5, label: '+5' },
+                { lane: 0, op: 'add', value: 3, label: '+3' },
+                { lane: 1, op: 'add', value: 2, label: '+2' },
+                { lane: 2, op: 'add', value: 1, label: '+1' }
+            ]},
+            { type: 'wave', z: -18, enemies: [ { type: 'normal', count: 7 }, { type: 'fast', count: 3 } ] },
+            { type: 'gates', z: -28, gates: [
+                { lane: 0, op: 'add', value: 2, label: '+2' },
+                { lane: 1, op: 'buff', value: 'damage', label: '输出+1' },
                 { lane: 2, op: 'add', value: 3, label: '+3' }
             ]},
-            { type: 'wave', z: -18, enemies: [ { type: 'normal', count: 36 }, { type: 'fast', count: 12 } ] },
-            { type: 'gates', z: -28, gates: [
-                { lane: 0, op: 'add', value: 5, label: '+5' },
-                { lane: 1, op: 'buff', value: 'damage', label: '输出+1' },
-                { lane: 2, op: 'add', value: 8, label: '+8' }
-            ]},
-            { type: 'wave', z: -40, enemies: [ { type: 'normal', count: 54 }, { type: 'fast', count: 18 } ] },
+            { type: 'wave', z: -40, enemies: [ { type: 'normal', count: 10 }, { type: 'fast', count: 5 } ] },
             { type: 'gates', z: -52, gates: [
                 { lane: 0, op: 'buff', value: 'firerate', label: '射速+10%' },
-                { lane: 1, op: 'add', value: 8, label: '+8' },
+                { lane: 1, op: 'add', value: 3, label: '+3' },
                 { lane: 2, op: 'buff', value: 'crit', label: '暴击+5%' }
             ]},
-            { type: 'wave', z: -64, enemies: [ { type: 'normal', count: 48 }, { type: 'fast', count: 20 }, { type: 'shield', count: 8 }, { type: 'flanker', count: 8 } ] },
-            { type: 'wave', z: -78, enemies: [ { type: 'normal', count: 44 }, { type: 'shield', count: 8 }, { type: 'flanker', count: 8 } ] },
-            // V16.2-GAMEPLAY-005: L1后半段混入盾牌与路边翻越伏击怪(共4种怪), 爽感与层次大增
-            { type: 'wave', z: -85, enemies: [ { type: 'normal', count: 22 }, { type: 'fast', count: 10 }, { type: 'shield', count: 4 }, { type: 'flanker', count: 6 } ] },
-            { type: 'wave', z: -91, enemies: [ { type: 'normal', count: 18 }, { type: 'fast', count: 10 }, { type: 'shield', count: 6 }, { type: 'flanker', count: 6 } ] }
+            { type: 'wave', z: -64, enemies: [ { type: 'normal', count: 11 }, { type: 'fast', count: 5 }, { type: 'shield', count: 2 }, { type: 'flanker', count: 3 } ] },
+            { type: 'wave', z: -78, enemies: [ { type: 'normal', count: 10 }, { type: 'shield', count: 2 }, { type: 'flanker', count: 3 } ] },
+            // V18.0: 适配1人开局与精简增兵门的L1后半段混编怪潮 (实机×4仍保持密集尸潮, 无复活通关率约70-80%)
+            { type: 'wave', z: -85, enemies: [ { type: 'normal', count: 8 }, { type: 'fast', count: 4 }, { type: 'shield', count: 2 }, { type: 'flanker', count: 3 } ] },
+            { type: 'wave', z: -91, enemies: [ { type: 'normal', count: 8 }, { type: 'fast', count: 4 }, { type: 'shield', count: 2 }, { type: 'flanker', count: 3 } ] }
         ]
     },
     // ============ 第2关 快速尸潮 (总怪60, 火力分配) ============
@@ -273,9 +273,9 @@ const LEVELS = [
         rewardCoins: 80,
         segments: [
             { type: 'gates', z: -8, gates: [
-                { lane: 0, op: 'add', value: 8, label: '+8' },
-                { lane: 1, op: 'add', value: 5, label: '+5' },
-                { lane: 2, op: 'buff', value: 'pierce', label: '穿透+1' }
+                { lane: 0, op: 'add', value: 3, label: '+3' },
+                { lane: 1, op: 'add', value: 2, label: '+2' },
+                { lane: 2, op: 'add', value: 1, label: '+1' }
             ]},
             { type: 'wave', z: -20, enemies: [ { type: 'fast', count: 32 }, { type: 'normal', count: 28 } ] },
             { type: 'gates', z: -34, gates: [
@@ -286,7 +286,7 @@ const LEVELS = [
             { type: 'wave', z: -46, enemies: [ { type: 'fast', count: 44 }, { type: 'normal', count: 30 }, { type: 'flanker', count: 8 } ] },
             { type: 'gates', z: -60, gates: [
                 { lane: 0, op: 'buff', value: 'firerate', label: '射速+10%' },
-                { lane: 1, op: 'add', value: 8, label: '+8' },
+                { lane: 1, op: 'add', value: 3, label: '+3' },
                 { lane: 2, op: 'buff', value: 'damage', label: '输出+1' }
             ]},
             { type: 'wave', z: -72, enemies: [ { type: 'fast', count: 56 }, { type: 'normal', count: 30 }, { type: 'shield', count: 10 }, { type: 'flanker', count: 10 }, { type: 'spitter', count: 8 } ] },
@@ -305,14 +305,14 @@ const LEVELS = [
         rewardCoins: 110,
         segments: [
             { type: 'gates', z: -8, gates: [
-                { lane: 0, op: 'buff', value: 'damage', label: '输出+1' },
-                { lane: 1, op: 'add', value: 10, label: '+10' },
-                { lane: 2, op: 'buff', value: 'crit', label: '暴击+5%' }
+                { lane: 0, op: 'add', value: 4, label: '+4' },
+                { lane: 1, op: 'add', value: 3, label: '+3' },
+                { lane: 2, op: 'add', value: 2, label: '+2' }
             ]},
             { type: 'wave', z: -22, enemies: [ { type: 'shield', count: 24 }, { type: 'normal', count: 48 } ] },
             { type: 'gates', z: -36, gates: [
                 { lane: 0, op: 'buff', value: 'pierce', label: '穿透+1' },
-                { lane: 1, op: 'mul', value: 2, label: '\u00d72' },
+                { lane: 1, op: 'add', value: 4, label: '+4' },
                 { lane: 2, op: 'buff', value: 'firerate', label: '射速+10%' }
             ]},
             { type: 'wave', z: -50, enemies: [ { type: 'shield', count: 42 }, { type: 'fast', count: 40 } ] },
@@ -617,9 +617,15 @@ LEVELS.forEach(function(level) {
     for (var j = 0; j < firstGatesSeg.gates.length; j++) {
         if (firstGatesSeg.gates[j].op === 'add') { addGate = firstGatesSeg.gates[j]; break; }
     }
-    var base = addGate ? addGate.value : 10;
-    var mid = Math.max(4, Math.round(base * 0.8));   // V5.1.3: 低档再上调(0.8/0.6) — ×3体量下弱build安全
-    var low = Math.max(3, Math.round(base * 0.6));
+    var base = addGate ? addGate.value : 3;
+    var mid = Math.max(1, base - 1);
+    var low = Math.max(1, base - 2);
+    if (mid === base) mid = Math.max(1, base - 1);
+    if (low === mid) low = Math.max(1, mid - 1);
+    if (base >= 6) {
+        mid = Math.max(2, Math.round(base * 0.72));
+        low = Math.max(1, Math.round(base * 0.48));
+    }
     firstGatesSeg.gates = [
         { lane: 0, op: 'add', value: base, label: '+' + base },
         { lane: 1, op: 'add', value: mid,  label: '+' + mid },

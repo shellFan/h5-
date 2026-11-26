@@ -106,12 +106,12 @@ em.spawnBomb(0, 1, -10, 0, -2);
 em.spawnBomb(0, 1, -10, 1, -2); // should be ignored (max 3)
 assert(em.bombs.length === 3, '投弹怪场上炸弹严格限制最多 3 枚');
 assert(em.bombs[0].tx === -3.1 && em.bombs[1].tx === 3.1, '炸弹目标落点严格钳制在道路内 [-3.1, 3.1]');
-assert(em.bombs[0].dur === 1.3, '炸弹地面预警时间严格为 1.3 秒');
+assert(em.bombs[0].dur === 1.5, '炸弹地面预警时间严格为 1.5 秒 (V18.0)');
 
-// Simulate 1.35s explosion & pool recycling
+// Simulate 1.55s explosion & pool recycling
 let killedByBomb = 0;
 const mockSquad = { x: 0, z: -2, alive: true, count: 20, getHalfWidth: () => 0.8, killSoldiers(n) { killedByBomb += n; } };
-em.update(1.35, 1.35, mockSquad);
+em.update(1.55, 1.55, mockSquad);
 assert(em.bombs.length === 0 && em._bombPool.length === initBombPool, '炸弹引爆后 100% 归还对象池无泄漏');
 assert(killedByBomb > 0 && killedByBomb <= 3, '单枚命中炸弹最多伤害 3 名士兵 (实际=' + killedByBomb + ')');
 

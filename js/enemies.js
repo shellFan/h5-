@@ -155,6 +155,8 @@ class Enemy {
             if (vt >= 1) {
                 this._vaulting = false;
                 this._liftY = 0;
+                // V18.0: 伏击怪落地后给予 0.6s 保护窗口, 绝不落地瞬间秒伤玩家
+                this.attackTimer = Math.max(this.attackTimer || 0, 0.6);
                 if (effects) effects.burst(this.x, 0.2, this.z, 0x22D3EE, 6, 2.2, 0.3);
             }
             return;
@@ -248,7 +250,15 @@ class Enemy {
                     this.attackTimer = CONFIG.ZOMBIE_ATTACK_INTERVAL * (this.attackMul || 1) * (frozen ? 2 : 1) * (this.isBoss ? 2 : 1);
                     this.attackT=1;
                     const kill = this.isBoss ? (this.enraged ? 3 : 1) : CONFIG.ZOMBIE_ATTACK_KILL; // 非狂暴1/狂暴3
-                    squad.killSoldiers(kill, effects);
+                    if (squad.applySquadDamage) {
+                        squad.applySquadDamage({
+                            sourceType: this.isBoss ? 'boss_melee' : ('melee_' + this.type),
+                            damage: kill,
+                            hitPosition: { x: this.x, z: this.z }
+                        }, effects);
+                    } else {
+                        squad.killSoldiers(kill, effects);
+                    }
                     if (effects) {
                         effects.burst(squad.x, 0.5, squad.z, 0xFF4444, 5, 2, 0.3);
                     }
@@ -331,9 +341,9 @@ class EnemyManager {
         this.bossStyle='bruiser';
         this.renderer=new EnemyArmyRenderer(scene);
         this._spitPool=Array.from({length:64},()=>({mesh:new THREE.Object3D(),life:0,vx:0,vz:0}));
-        this._spitInstances=new THREE.InstancedMesh(new THREE.SphereGeometry(.16,10,8),new THREE.MeshBasicMaterial({color:0x7CFF3B}),64);
+        this._spitInstances=new THREE.InstancedMesh(new THREE.SphereGeometry(.22,10,8),new THREE.MeshBasicMaterial({color:0x88FF33}),64);
         this._spitInstances.count=0;this._spitInstances.frustumCulled=false;
-        this._spitInstances.userData.artSource='V16.3 pooled glowing acid projectiles';scene.add(this._spitInstances);
+        this._spitInstances.userData.artSource='V18.0 high-visibility glowing acid projectiles';scene.add(this._spitInstances);
         // V16.3: 独立多部件3D卡通炸弹(铁灰弹体+红警示带+黄铜引信环+燃烧引线火花) + 动态收缩红圈危险区
         this.bombs = [];
         this._bombPool = Array.from({length: 8}, () => ({ sx:0, sy:1, sz:0, tx:0, tz:0, t:0, dur:1.3, sparkT:0 }));
@@ -454,7 +464,7 @@ class EnemyManager {
         s.vx=dx*inv;s.vz=dz*inv;s.life=2.8;this.spits.push(s);
     }
 
-    /** V16.2: 投弹怪抛物线炸弹(锁定投掷瞬间玩家位置 + 1.3s地面红圈预警) */
+    /** V18.0: 投弹怪抛物线炸弹(锁定投掷瞬间玩家位置 + 1.5s清晰红圈预警) */
     spawnBomb(x, y, z, targetX, targetZ) {
         if (!this.bombs || this.bombs.length >= 3) return;
         var b = this._bombPool.pop();
@@ -463,7 +473,7 @@ class EnemyManager {
         b.tx = clamp(targetX, -3.1, 3.1);
         b.tz = targetZ;
         b.t = 0;
-        b.dur = 1.3;
+        b.dur = 1.5;
         this.bombs.push(b);
     }
 
@@ -510,10 +520,11 @@ class EnemyManager {
                     this.splitQueue.push({ x: e.x, z: e.z, delay: 0.2 });
                     this.splitQueue.push({ x: e.x, z: e.z, delay: 0.35 });
                 }
-                // V11.5: 爆炸僵尸 — 死亡自爆, 半径2.2内波及小队-2人 + 红色冲击
+                // V18.0: 爆炸僵尸 — 真实2D半径2.2m自爆(修复原仅测1D Z距离3.0m导致隔空掉人)
                 if (e.type === 'bomber' && squad) {
-                    if (Math.abs(e.z - squad.z) < 3.0 && squad.alive) { // V11.5: 半径3.0(击退漂移容忍)
-                        squad.killSoldiers(2, this.effects);
+                    if (Math.hypot(e.x - squad.x, e.z - squad.z) < 2.2 && squad.alive) {
+                        if (squad.applySquadDamage) squad.applySquadDamage({ sourceType: 'bomber_blast', damage: 2, hitPosition: { x: e.x, z: e.z } }, this.effects);
+                        else squad.killSoldiers(2, this.effects);
                     }
                     if (this.effects) {
                         // V14: 分级爆炸组合(闪光+双冲击波+橙白火花+烟尘), 保留红色自爆身份
@@ -554,10 +565,15 @@ class EnemyManager {
             if (this.effects && Math.random() < 0.35) {
                 this.effects.burst(s.mesh.position.x, s.mesh.position.y, s.mesh.position.z, 0x7CFF3B, 1, 0.8, 0.22);
             }
-            // 命中小队
-            if (Math.abs(s.mesh.position.z - squad.z) < 0.8 &&
-                Math.abs(s.mesh.position.x - squad.x) < 1.5) {
-                squad.killSoldiers(1, this.effects);
+            // V18.0: 酸液弹采用真实小队半宽碰撞盒(修复小编制队伍隔1.4米被隐形击中的Bug)
+            var squadHalfW = squad.getHalfWidth ? squad.getHalfWidth() : 0.55;
+            if (Math.abs(s.mesh.position.z - squad.z) < 0.65 &&
+                Math.abs(s.mesh.position.x - squad.x) < (squadHalfW + 0.35)) {
+                if (squad.applySquadDamage) {
+                    squad.applySquadDamage({ sourceType: 'spitter_acid', damage: 1, hitPosition: { x: s.mesh.position.x, z: s.mesh.position.z } }, this.effects);
+                } else {
+                    squad.killSoldiers(1, this.effects);
+                }
                 if (this.effects) {
                     this.effects.burst(s.mesh.position.x, 0.5, s.mesh.position.z, 0x7CFF3B, 9, 2.8, 0.38);
                     if (this.effects.splat) this.effects.splat(s.mesh.position.x, s.mesh.position.z, 0.85);
@@ -596,12 +612,13 @@ class EnemyManager {
                     this.effects.burst(sx2, sy2 + 0.15, sz2, 0xFFAE22, 2, 1.5, 0.22);
                 }
                 if (p >= 1) {
-                    // 落地引爆: 半径1.3m, 最多伤害3名士兵(走现有减员/护盾逻辑)
+                    // 落地引爆: 真实2D半径1.3m+小队前缘, 最多伤害3名士兵(走统一伤害入口)
                     var hitDist = Math.hypot(squad.x - b.tx, squad.z - b.tz);
-                    var hitRadius = 1.3 + (squad.getHalfWidth ? squad.getHalfWidth() * 0.45 : 0.45);
+                    var hitRadius = 1.3 + (squad.getHalfWidth ? squad.getHalfWidth() * 0.35 : 0.35);
                     if (hitDist <= hitRadius && squad.alive) {
                         var dmgCount = hitDist <= 0.85 ? 3 : 2;
-                        squad.killSoldiers(dmgCount, this.effects);
+                        if (squad.applySquadDamage) squad.applySquadDamage({ sourceType: 'thrower_bomb', damage: dmgCount, hitPosition: { x: b.tx, z: b.tz } }, this.effects);
+                        else squad.killSoldiers(dmgCount, this.effects);
                     }
                     if (this.effects) {
                         if (this.effects.boom) this.effects.boom(b.tx, 0.45, b.tz, 1.45);

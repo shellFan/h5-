@@ -222,6 +222,34 @@ class Squad {
             this.recoverableLoss = (this.recoverableLoss || 0) + removed;
         }
         if (this.count > 0 && removed > 0) this.renderer.triggerHit();
+        // V18.0: 每一次真实减员必有红色 -N 飘字 + 右上角人数红闪 + DamageTrace 追踪记录
+        if (removed > 0) {
+            if (effects) {
+                var hx = (options && options.hitPosition && options.hitPosition.x !== undefined) ? options.hitPosition.x : this.x;
+                var hz = (options && options.hitPosition && options.hitPosition.z !== undefined) ? options.hitPosition.z : this.z;
+                effects.floatText(hx, 1.55, hz, '-' + removed, '#FF4444', removed >= 2);
+            }
+            if (typeof document !== 'undefined') {
+                var badge = document.getElementById('hud-count');
+                if (badge) {
+                    badge.style.color = '#FF5555';
+                    clearTimeout(this._hudFlashTimer);
+                    this._hudFlashTimer = setTimeout(function() { if (badge) badge.style.color = ''; }, 240);
+                }
+            }
+        }
+        if (typeof window !== 'undefined') {
+            window.__damageTrace = window.__damageTrace || [];
+            window.__damageTrace.push({
+                sourceType: (options && options.sourceType) || 'unknown',
+                damage: n,
+                actualLoss: removed,
+                before: before,
+                after: this.count,
+                t: Date.now()
+            });
+            if (window.__damageTrace.length > 40) window.__damageTrace.shift();
+        }
         // 在被杀士兵位置生成蓝色死亡粒子
         if (effects && deathPos.length > 0) {
             for (let i = 0; i < deathPos.length; i++) {
@@ -231,6 +259,16 @@ class Squad {
                 );
             }
         }
+    }
+
+    /** V18.0: 统一小队伤害入口 (记录伤害源、坐标与追踪日志, 禁止绕过) */
+    applySquadDamage(payload, effects) {
+        if (!payload || !payload.damage || payload.damage <= 0) return;
+        this.killSoldiers(payload.damage, effects, {
+            sourceType: payload.sourceType || 'unknown',
+            hitPosition: payload.hitPosition || null,
+            unrecoverable: !!payload.unrecoverable
+        });
     }
 
     /** 应用状态门效果 (V3.3: 完整Buff体系) */

@@ -75,9 +75,9 @@ class World {
         this.scene.add(dir.target); // target必须加入场景才能正确更新matrixWorld
         this.sunLight = dir;
 
-        // 补光 (晴空冷蓝轮廓补光, 增强玩具模型立体感)
-        const fill = new THREE.DirectionalLight(0xC2E4FF, 0.34);
-        fill.position.set(-4, 7, -9);
+        // V18.0: 暖阳主光 + 冷蓝战术轮廓补光 (强化3D立体层次, 消除平面塑料感)
+        const fill = new THREE.DirectionalLight(0x82B8F0, 0.42);
+        fill.position.set(-6, 8, -10);
         this.scene.add(fill);
     }
 
