@@ -581,6 +581,10 @@ class World {
         const w = container.clientWidth;
         const h = container.clientHeight;
         if (!w || !h) return;
+        // CSS pixels, shared with projected HUD elements. Reading canvas layout
+        // after HUD writes forces a synchronous layout in every moving frame.
+        this.viewportWidth = w;
+        this.viewportHeight = h;
         this.renderer.setSize(w, h, false);
         this.camera.aspect = w / h;
         this.camera.updateProjectionMatrix();

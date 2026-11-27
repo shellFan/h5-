@@ -1,0 +1,56 @@
+{
+  "cpuThrottle": 4,
+  "viewport": "390x844 DPR1",
+  "baseline": "ce5b366",
+  "note": "HUD only, 90 animation frames per sample; full browser LayoutDuration includes deferred layout, excludes 3D rendering",
+  "samples": [
+    {
+      "round": 0,
+      "variant": "baseline",
+      "meanMs": 2.913333335849974,
+      "p95Ms": 4.600000023841858,
+      "layouts": 97,
+      "layoutMs": 66.4
+    },
+    {
+      "round": 0,
+      "variant": "current",
+      "meanMs": 0.5288888901472092,
+      "p95Ms": 1,
+      "layouts": 91,
+      "layoutMs": 109.803
+    },
+    {
+      "round": 1,
+      "variant": "current",
+      "meanMs": 0.4855555590656069,
+      "p95Ms": 0.8999999761581421,
+      "layouts": 92,
+      "layoutMs": 117.69800000000002
+    },
+    {
+      "round": 1,
+      "variant": "baseline",
+      "meanMs": 5.7100000013907755,
+      "p95Ms": 7.5999999940395355,
+      "layouts": 97,
+      "layoutMs": 127.938
+    },
+    {
+      "round": 2,
+      "variant": "baseline",
+      "meanMs": 4.555555555555555,
+      "p95Ms": 7.199999988079071,
+      "layouts": 97,
+      "layoutMs": 94.246
+    },
+    {
+      "round": 2,
+      "variant": "current",
+      "meanMs": 0.40555555721124015,
+      "p95Ms": 0.7000000178813934,
+      "layouts": 91,
+      "layoutMs": 115.69600000000003
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 // ===== game-bundle.js (V12 微信小游戏构建产物: 单一模块作用域, 源脚本按 index.html 顺序拼接) =====
-// 生成: tools/build-wechat.js @ 2026-11-27T17:35:51.001Z
+// 生成: tools/build-wechat.js @ 2026-11-27T18:01:25.427Z
 // 代码与 H5 完全同源; 平台差异收敛于入口 game.js
 /* ==== index.html 内联脚本(BootProgress/错误横幅, H5 中先于业务脚本执行 — 保序) ==== */
 
@@ -15054,6 +15054,10 @@ class World {
         const w = container.clientWidth;
         const h = container.clientHeight;
         if (!w || !h) return;
+        // CSS pixels, shared with projected HUD elements. Reading canvas layout
+        // after HUD writes forces a synchronous layout in every moving frame.
+        this.viewportWidth = w;
+        this.viewportHeight = h;
         this.renderer.setSize(w, h, false);
         this.camera.aspect = w / h;
         this.camera.updateProjectionMatrix();
@@ -21885,8 +21889,8 @@ class Game {
             var cam = this.world.camera;
             this._badgeV.set(this.squad.x, 1.42 * (this.squad._formationScale || 1) + .2, this.squad.z - .1).project(cam);
             if (this._badgeV.z < 1) {
-                var cw = this.world.canvas.clientWidth || window.innerWidth;
-                var ch = this.world.canvas.clientHeight || window.innerHeight;
+                var cw = this.world.viewportWidth || window.innerWidth;
+                var ch = this.world.viewportHeight || window.innerHeight;
                 var sx = (this._badgeV.x * 0.5 + 0.5) * cw;
                 var sy = (-this._badgeV.y * 0.5 + 0.5) * ch;
                 // 屏幕内钳制: 避免压到HUD或飞出边界

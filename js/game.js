@@ -1949,8 +1949,8 @@ class Game {
             var cam = this.world.camera;
             this._badgeV.set(this.squad.x, 1.42 * (this.squad._formationScale || 1) + .2, this.squad.z - .1).project(cam);
             if (this._badgeV.z < 1) {
-                var cw = this.world.canvas.clientWidth || window.innerWidth;
-                var ch = this.world.canvas.clientHeight || window.innerHeight;
+                var cw = this.world.viewportWidth || window.innerWidth;
+                var ch = this.world.viewportHeight || window.innerHeight;
                 var sx = (this._badgeV.x * 0.5 + 0.5) * cw;
                 var sy = (-this._badgeV.y * 0.5 + 0.5) * ch;
                 // 屏幕内钳制: 避免压到HUD或飞出边界

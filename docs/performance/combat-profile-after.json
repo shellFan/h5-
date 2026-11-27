@@ -1,0 +1,134 @@
+{
+  "times": {
+    "squad": 766.9999999403954,
+    "enemies": 386.2999998629093,
+    "combat": 417.0000001192093,
+    "effects": 243.69999971985817
+  },
+  "state": "playing",
+  "bullets": 45,
+  "impacts": 36,
+  "calls": 71,
+  "profile": [
+    [
+      "getProgramInfoLog :-1",
+      446.82000000000016
+    ],
+    [
+      "(program) :-1",
+      414.43599999999986
+    ],
+    [
+      " three.min.js:5",
+      316.2929999999999
+    ],
+    [
+      "init audio-adapter.js:18",
+      271.75699999999995
+    ],
+    [
+      "multiplyMatrices three.min.js:5",
+      232.11
+    ],
+    [
+      "_updateUI game.js?v=20261128:1913",
+      158.91299999999998
+    ],
+    [
+      "bufferSubData :-1",
+      137.31700000000004
+    ],
+    [
+      "_playWebAudio audio-adapter.js:108",
+      134.83399999999997
+    ],
+    [
+      "bindVertexArray :-1",
+      116.988
+    ],
+    [
+      "makeRotationFromEuler three.min.js:5",
+      113.269
+    ],
+    [
+      "obj.<computed> :0",
+      110.28599999999999
+    ],
+    [
+      "(idle) :-1",
+      107.76300000000003
+    ],
+    [
+      "Ut three.min.js:5",
+      102.73600000000002
+    ],
+    [
+      "toArray three.min.js:5",
+      102.65899999999999
+    ],
+    [
+      "update combat.js?v=140:98",
+      99.17500000000001
+    ],
+    [
+      "Js.renderBufferDirect three.min.js:5",
+      95.939
+    ],
+    [
+      "copy three.min.js:5",
+      91.59199999999997
+    ],
+    [
+      "makeRotationX three.min.js:5",
+      82.54899999999999
+    ],
+    [
+      "update enemy-models.js?v=20261128:285",
+      80.46699999999998
+    ],
+    [
+      "update soldier-renderer.js?v=20261128:186",
+      78.301
+    ],
+    [
+      "setValue three.min.js:5",
+      78.24200000000002
+    ],
+    [
+      "update three.min.js:5",
+      77.754
+    ],
+    [
+      "update effects.js?v=141:470",
+      77.70100000000001
+    ],
+    [
+      "update enemies.js?v=16122:115",
+      74.77699999999999
+    ],
+    [
+      "bindBuffer :-1",
+      72.32600000000002
+    ],
+    [
+      "set three.min.js:5",
+      70.776
+    ],
+    [
+      "(garbage collector) :-1",
+      70.563
+    ],
+    [
+      "dr three.min.js:5",
+      70.31299999999999
+    ],
+    [
+      "Dt three.min.js:5",
+      70.13600000000002
+    ],
+    [
+      "getProgramCacheKey three.min.js:5",
+      69.03500000000004
+    ]
+  ]
+}

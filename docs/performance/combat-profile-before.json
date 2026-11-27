@@ -1,0 +1,134 @@
+{
+  "times": {
+    "squad": 988.8999997675419,
+    "enemies": 402.00000008940697,
+    "combat": 433.80000019073486,
+    "effects": 259.5000002682209
+  },
+  "state": "playing",
+  "bullets": 45,
+  "impacts": 36,
+  "calls": 71,
+  "profile": [
+    [
+      "_updateUI game.js?v=20261128:1913",
+      926.9399999999998
+    ],
+    [
+      "getProgramInfoLog :-1",
+      434.16699999999975
+    ],
+    [
+      "(program) :-1",
+      398.8720000000001
+    ],
+    [
+      " three.min.js:5",
+      361.339
+    ],
+    [
+      "init audio-adapter.js:18",
+      275.98299999999995
+    ],
+    [
+      "multiplyMatrices three.min.js:5",
+      216.75400000000005
+    ],
+    [
+      "_playWebAudio audio-adapter.js:108",
+      168.51300000000003
+    ],
+    [
+      "bufferSubData :-1",
+      154.23299999999998
+    ],
+    [
+      "toArray three.min.js:5",
+      142.325
+    ],
+    [
+      "copy three.min.js:5",
+      127.39300000000006
+    ],
+    [
+      "(idle) :-1",
+      121.69300000000004
+    ],
+    [
+      "obj.<computed> :0",
+      121.09099999999998
+    ],
+    [
+      "Js.renderBufferDirect three.min.js:5",
+      114.96499999999997
+    ],
+    [
+      "makeRotationX three.min.js:5",
+      109.437
+    ],
+    [
+      "Ut three.min.js:5",
+      105.329
+    ],
+    [
+      "update combat.js?v=140:98",
+      104.38100000000001
+    ],
+    [
+      "bindVertexArray :-1",
+      102.88
+    ],
+    [
+      "update soldier-renderer.js?v=20261128:186",
+      96.90500000000002
+    ],
+    [
+      "update enemy-models.js?v=20261128:285",
+      95.65
+    ],
+    [
+      "update three.min.js:5",
+      92.031
+    ],
+    [
+      "uniformMatrix4fv :-1",
+      91.50199999999995
+    ],
+    [
+      "makeRotationFromEuler three.min.js:5",
+      91.36399999999999
+    ],
+    [
+      "setValue three.min.js:5",
+      89.77399999999997
+    ],
+    [
+      "compose three.min.js:5",
+      87.33999999999997
+    ],
+    [
+      "_updateInner game.js?v=20261128:1763",
+      80.07199999999997
+    ],
+    [
+      "bindBuffer :-1",
+      79.98700000000001
+    ],
+    [
+      "set three.min.js:5",
+      79.54999999999998
+    ],
+    [
+      "update effects.js?v=141:470",
+      78.57900000000002
+    ],
+    [
+      "_partMatrix soldier-renderer.js?v=20261128:392",
+      77.41200000000002
+    ],
+    [
+      "update enemies.js?v=16122:115",
+      76.119
+    ]
+  ]
+}
