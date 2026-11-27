@@ -1,5 +1,5 @@
 // ===== game-bundle.js (V12 微信小游戏构建产物: 单一模块作用域, 源脚本按 index.html 顺序拼接) =====
-// 生成: tools/build-wechat.js @ 2026-11-26T14:51:17.488Z
+// 生成: tools/build-wechat.js @ 2026-11-27T01:42:35.500Z
 // 代码与 H5 完全同源; 平台差异收敛于入口 game.js
 /* ==== index.html 内联脚本(BootProgress/错误横幅, H5 中先于业务脚本执行 — 保序) ==== */
 
@@ -15443,8 +15443,8 @@ class Effects {
         p.userData = { life: .18, maxLife: .18, size: lethal ? 1.15 : critical ? .92 : .58,
             color: lethal ? 0xFFE066 : (critical ? 0xFF8C38 : 0x7DD3FC), angle: Math.random() * Math.PI };
         this.impacts.push(p);
-        if (lethal) {
-            this.explosionFlash(x, y + 0.1, z + 0.1, 1.35, 0xFFD166);
+        if (lethal && this.flash) {
+            this.flash(x, y + 0.1, z + 0.1, 0xFFD166, 1.15);
         }
     }
 

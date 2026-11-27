@@ -223,8 +223,8 @@ class Effects {
         p.userData = { life: .18, maxLife: .18, size: lethal ? 1.15 : critical ? .92 : .58,
             color: lethal ? 0xFFE066 : (critical ? 0xFF8C38 : 0x7DD3FC), angle: Math.random() * Math.PI };
         this.impacts.push(p);
-        if (lethal) {
-            this.explosionFlash(x, y + 0.1, z + 0.1, 1.35, 0xFFD166);
+        if (lethal && this.flash) {
+            this.flash(x, y + 0.1, z + 0.1, 0xFFD166, 1.15);
         }
     }
 
