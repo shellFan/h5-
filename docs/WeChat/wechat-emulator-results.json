@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-11-24T08:11:58.230Z",
-  "passed": 24,
+  "timestamp": "2026-11-27T17:25:15.072Z",
+  "passed": 20,
   "total": 24,
   "results": [
     {
@@ -14,19 +14,19 @@
       "detail": ""
     },
     {
-      "name": "五主题地图材质随包加载并裁切",
+      "name": "军营场景随包加载且不重复构建旧地图",
       "ok": true,
-      "detail": "{\"tiles\":8,\"mapped\":true}"
+      "detail": "{\"ready\":true,\"model\":true,\"legacySceneCreated\":false}"
     },
     {
       "name": "UI DOM 节点构建",
       "ok": true,
-      "detail": "nodes=467, rules=949, keyframes=21"
+      "detail": "nodes=699, rules=1293, keyframes=25"
     },
     {
       "name": "军事首页英雄区通过 minidom 后代选择器安装",
-      "ok": true,
-      "detail": "{\"rootClass\":\"v42-ui art-military art-mini\",\"hero\":true,\"text\":\"TOY ARMY · READY小小军团大大火力集合出发，守住每一条跑道。\"}"
+      "ok": false,
+      "detail": "{\"rootClass\":\"v42-ui art-military art-mini\",\"hero\":true,\"text\":\"地图科技每日挑战成就图鉴设置\"}"
     },
     {
       "name": "军事首页十个导航保留真实文本标签",
@@ -35,28 +35,28 @@
     },
     {
       "name": "微信首页面板与导航布局不越过 390px 视口",
-      "ok": true,
-      "detail": "{\"panel\":{\"x\":10,\"y\":8,\"w\":370,\"h\":869},\"nav\":[{\"x\":32,\"y\":640,\"w\":62,\"h\":64},{\"x\":98,\"y\":640,\"w\":62,\"h\":64},{\"x\":164,\"y\":640,\"w\":62,\"h\":64},{\"x\":230,\"y\":640,\"w\":62,\"h\":64},{\"x\":296,\"y\":640,\"w\":62,\"h\":64},{\"x\":32,\"y\":704,\"w\":62,\"h\":64},{\"x\":98,\"y\":704,\"w\":62,\"h\":64},{\"x\":164,\"y\":704,\"w\":62,\"h\":64},{\"x\":230,\"y\":704,\"w\":62,\"h\":64},{\"x\":296,\"y\":704,\"w\":62,\"h\":64}]}"
+      "ok": false,
+      "detail": "{\"panel\":{\"x\":10,\"y\":8,\"w\":370,\"h\":330},\"nav\":[null,null,null,null,null,null,null,null,null,null]}"
     },
     {
       "name": "首页开始按钮布局",
       "ok": true,
-      "detail": "{\"x\":195,\"y\":485}"
+      "detail": "{\"x\":164.04,\"y\":251.41366906474815}"
     },
     {
       "name": "军械库透明图集随包加载",
-      "ok": true,
-      "detail": "{\"count\":9,\"loaded\":9,\"cells\":8,\"textures\":1}"
+      "ok": false,
+      "detail": "{\"count\":1,\"loaded\":1,\"cells\":1,\"textures\":1}"
     },
     {
       "name": "军械库8种插图按单格裁切",
-      "ok": true,
-      "detail": "{\"count\":9,\"loaded\":9,\"cells\":8,\"textures\":1}"
+      "ok": false,
+      "detail": "{\"count\":1,\"loaded\":1,\"cells\":1,\"textures\":1}"
     },
     {
       "name": "军械库共享单张图集解码",
       "ok": true,
-      "detail": "{\"count\":9,\"loaded\":9,\"cells\":8,\"textures\":1}"
+      "detail": "{\"count\":1,\"loaded\":1,\"cells\":1,\"textures\":1}"
     },
     {
       "name": "点击开始进入战斗(state=playing)",
@@ -66,7 +66,7 @@
     {
       "name": "战斗HUD人数渲染",
       "ok": true,
-      "detail": "人数=7"
+      "detail": "人数=3"
     },
     {
       "name": "战斗状态持续",
@@ -76,7 +76,7 @@
     {
       "name": "拖动输入桥接(队伍移动)",
       "ok": true,
-      "detail": "x: 0.00 → -2.04"
+      "detail": "x: 0.00 → -2.25"
     },
     {
       "name": "暂停按钮生效",

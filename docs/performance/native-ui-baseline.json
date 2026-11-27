@@ -1,0 +1,23 @@
+{
+  "baseline": "e9a0731 committed native bundle, unchanged current CSS/DOM/assets",
+  "home": {
+    "heroText": "地图科技每日挑战成就图鉴设置",
+    "heroTextCheck": false,
+    "navBoxes": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "armory": {
+    "count": 1,
+    "cells": 1
+  }
+}

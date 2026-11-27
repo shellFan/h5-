@@ -1,0 +1,42 @@
+{
+  "method": "CPU + render submission; excludes asynchronous GPU completion",
+  "cpuThrottle": 4,
+  "homeReadyMs": {
+    "before": 1506.1000000238419,
+    "after": 1231.4000000059605
+  },
+  "sceneReadyMs": {
+    "before": 1601.5,
+    "after": 1301.9000000059605
+  },
+  "battle": [
+    {
+      "count": 31,
+      "beforeMs": 11.879166666169962,
+      "afterMs": 11.529999999950329,
+      "beforeP95": 18.400000005960464,
+      "afterP95": 18.099999994039536
+    },
+    {
+      "count": 100,
+      "beforeMs": 11.674166666467984,
+      "afterMs": 12.229166665921609,
+      "beforeP95": 17.099999994039536,
+      "afterP95": 17.299999982118607
+    },
+    {
+      "count": 300,
+      "beforeMs": 11.211666666219632,
+      "afterMs": 12.999166666716338,
+      "beforeP95": 19.099999994039536,
+      "afterP95": 20.099999994039536
+    },
+    {
+      "count": 500,
+      "beforeMs": 14.755000000695388,
+      "afterMs": 9.499166666716338,
+      "beforeP95": 23.30000001192093,
+      "afterP95": 16
+    }
+  ]
+}

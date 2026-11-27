@@ -1,0 +1,133 @@
+{
+  "baseline": "e9a0731",
+  "cpuThrottle": 4,
+  "samples": "64 warmup +128 update-only calls per condition; no GPU render",
+  "results": [
+    {
+      "round": 0,
+      "count": 100,
+      "variant": "before",
+      "meanMs": 0.7921874998137355,
+      "p95Ms": 2
+    },
+    {
+      "round": 0,
+      "count": 100,
+      "variant": "after",
+      "meanMs": 0.4835937498137355,
+      "p95Ms": 1.300000011920929
+    },
+    {
+      "round": 0,
+      "count": 300,
+      "variant": "before",
+      "meanMs": 2.0703125002328306,
+      "p95Ms": 4.399999976158142
+    },
+    {
+      "round": 0,
+      "count": 300,
+      "variant": "after",
+      "meanMs": 1.0648437498603016,
+      "p95Ms": 1.899999976158142
+    },
+    {
+      "round": 0,
+      "count": 500,
+      "variant": "before",
+      "meanMs": 2.086718749953434,
+      "p95Ms": 3.7000000178813934
+    },
+    {
+      "round": 0,
+      "count": 500,
+      "variant": "after",
+      "meanMs": 2.084375000325963,
+      "p95Ms": 4.699999988079071
+    },
+    {
+      "round": 1,
+      "count": 100,
+      "variant": "after",
+      "meanMs": 0.44609374995343387,
+      "p95Ms": 1.300000011920929
+    },
+    {
+      "round": 1,
+      "count": 100,
+      "variant": "before",
+      "meanMs": 0.4031250001862645,
+      "p95Ms": 0.5999999940395355
+    },
+    {
+      "round": 1,
+      "count": 300,
+      "variant": "after",
+      "meanMs": 1.0265625000465661,
+      "p95Ms": 1.5
+    },
+    {
+      "round": 1,
+      "count": 300,
+      "variant": "before",
+      "meanMs": 1.1242187500465661,
+      "p95Ms": 1.7999999821186066
+    },
+    {
+      "round": 1,
+      "count": 500,
+      "variant": "after",
+      "meanMs": 1.7117187499534339,
+      "p95Ms": 2.699999988079071
+    },
+    {
+      "round": 1,
+      "count": 500,
+      "variant": "before",
+      "meanMs": 2.1249999997671694,
+      "p95Ms": 3.699999988079071
+    },
+    {
+      "round": 2,
+      "count": 100,
+      "variant": "before",
+      "meanMs": 0.39296875009313226,
+      "p95Ms": 0.699999988079071
+    },
+    {
+      "round": 2,
+      "count": 100,
+      "variant": "after",
+      "meanMs": 0.34453124995343387,
+      "p95Ms": 0.6000000238418579
+    },
+    {
+      "round": 2,
+      "count": 300,
+      "variant": "before",
+      "meanMs": 1.4531249995343387,
+      "p95Ms": 2.9000000059604645
+    },
+    {
+      "round": 2,
+      "count": 300,
+      "variant": "after",
+      "meanMs": 1.0125000006519258,
+      "p95Ms": 1.4000000059604645
+    },
+    {
+      "round": 2,
+      "count": 500,
+      "variant": "before",
+      "meanMs": 1.8992187497206032,
+      "p95Ms": 2.600000023841858
+    },
+    {
+      "round": 2,
+      "count": 500,
+      "variant": "after",
+      "meanMs": 1.6960937504190952,
+      "p95Ms": 2.4000000059604645
+    }
+  ]
+}

@@ -97,11 +97,13 @@ async function main() {
         await page.waitForFunction('window.__uiScene !== undefined', { timeout: 20000 });
         check('minidom UI 纹理挂接(3D叠加)', true);
         const worldAtlas = await page.evaluate(async () => {
-            const scenery = window.__game.world._v121Scenery;
-            await scenery.ready;
-            return { tiles: scenery.tiles.length, mapped: !!scenery.materials.rock.map };
+            const world = window.__game.world;
+            const scenery = world._militaryArt;
+            return { ready: await scenery.ready,
+                model: !!world.scene.getObjectByName('military-glb-pines'),
+                legacySceneCreated: !!world._v121Scenery };
         });
-        check('五主题地图材质随包加载并裁切', worldAtlas.tiles === 8 && worldAtlas.mapped, JSON.stringify(worldAtlas));
+        check('军营场景随包加载且不重复构建旧地图', worldAtlas.ready && worldAtlas.model && !worldAtlas.legacySceneCreated, JSON.stringify(worldAtlas));
         const uiStats = await page.evaluate('window.__minidom.getStats()');
         check('UI DOM 节点构建', uiStats.nodes > 100, `nodes=${uiStats.nodes}, rules=${uiStats.rules}, keyframes=${uiStats.keyframes}`);
 

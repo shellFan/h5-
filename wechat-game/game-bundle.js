@@ -1,5 +1,5 @@
 // ===== game-bundle.js (V12 微信小游戏构建产物: 单一模块作用域, 源脚本按 index.html 顺序拼接) =====
-// 生成: tools/build-wechat.js @ 2026-11-27T01:42:35.500Z
+// 生成: tools/build-wechat.js @ 2026-11-27T17:35:51.001Z
 // 代码与 H5 完全同源; 平台差异收敛于入口 game.js
 /* ==== index.html 内联脚本(BootProgress/错误横幅, H5 中先于业务脚本执行 — 保序) ==== */
 
@@ -21,7 +21,7 @@
         })();
         // VNext: 加载进度追踪器(被 soldier-loader / enemy-models 调用; 仅统计真实文件进度, 无定时器伪造)
         window.__BootProgress = {
-            files: {}, total: 26, // 2士兵 + 12×2 僵尸/Boss GLB
+            files: {}, total: 6, // Soldier hero/LOD + normal/fast hero/LOD
             _done: false,
             file: function(url, loaded, total) {
                 // V15修复: done() 闩锁 — 后台续载的进度事件不得把"准备完毕!100%"
@@ -1193,6 +1193,21 @@ var ArtUI = {
 // Runtime military-base presentation (V5.1 visual upgrade).
 // Self-contained instanced 3D cartoon military base; allocates once at init, never per frame.
 var MilitaryArt = class MilitaryArt {
+    static preload() {
+        if (this._preloadPromise) return this._preloadPromise;
+        var url = 'art/v15/env_military_pack.glb';
+        if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=1910';
+        this._preloadPromise = new Promise(function(resolve, reject) {
+            new THREE.GLTFLoader().load(url, resolve, undefined, function(error) {
+                reject(Error('Military environment load failed: ' + (error.message || url)));
+            });
+        }).catch(function(error) {
+            MilitaryArt._preloadPromise = null; // Explicit subsequent attempts can retry.
+            throw error;
+        });
+        return this._preloadPromise;
+    }
+
     constructor(world) {
         this.world = world;
         this.scene = world.scene;
@@ -1803,9 +1818,7 @@ var MilitaryArt = class MilitaryArt {
     _loadBlenderEnvPack() {
         if (typeof THREE === 'undefined' || !THREE.GLTFLoader) return;
         var self = this;
-        var url = 'art/v15/env_military_pack.glb';
-        if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=1910';
-        new THREE.GLTFLoader().load(url, function(gltf) {
+        this.ready = MilitaryArt.preload().then(function(gltf) {
             try {
                 var sharedMat = null;
                 var geos = {};
@@ -1815,7 +1828,7 @@ var MilitaryArt = class MilitaryArt {
                         if (!sharedMat && o.material) sharedMat = o.material;
                     }
                 });
-                if (!sharedMat || !geos.PineTree) return;
+                if (!sharedMat || !geos.PineTree) throw Error('Military environment pack is missing PineTree/material');
                 // r149 linear-to-sRGB display transform matching Soldier/Enemy PBR pipeline
                 sharedMat.onBeforeCompile = function(shader) {
                     shader.fragmentShader = shader.fragmentShader.replace(
@@ -1934,12 +1947,17 @@ var MilitaryArt = class MilitaryArt {
                     self._horizonFortress.add(gateMesh);
                 }
                 // 立即刷新实例矩阵到当前 anchor
-                var curZ = isFinite(self._anchor) ? self._anchor : 0;
-                self._anchor = Infinity;
+                var curZ = self._lastSquadZ || 0;
+                self.setTheme(self.themeName || 'dawn');
                 self.update(curZ);
+                return true;
             } catch (e) {
                 console.warn('[MilitaryArt] V15 env pack load fallback:', e);
+                return false;
             }
+        }).catch(function(error) {
+            console.warn('[MilitaryArt] environment fallback:', error.message);
+            return false;
         });
     }
 
@@ -2079,9 +2097,12 @@ var MilitaryArt = class MilitaryArt {
         }
         this.biome = biome;
         this.themeName = themeName;
+        // Hidden matrices may have been skipped for a different biome/anchor.
+        this._anchor = Infinity;
     }
 
     update(squadZ) {
+        this._lastSquadZ = squadZ || 0;
         if (this._horizonFortress) {
             this._horizonFortress.position.z = (squadZ || 0) - 74;
         }
@@ -2091,6 +2112,7 @@ var MilitaryArt = class MilitaryArt {
         var scratch = this._scratch;
         for (var m = 0; m < this._meshes.length; m++) {
             var mesh = this._meshes[m];
+            if (!mesh.visible) continue;
             var records = mesh.userData.records;
             for (var i = 0; i < records.length; i++) {
                 var item = records[i];
@@ -12090,11 +12112,9 @@ var SoldierRenderer = class SoldierRenderer {
         this.ghosts = [];
         this._shootT = new Float32Array(this.capacity);
         this._debugPoses = [];
-        this._cycleSamples = [];
+        this._ghostPoses = [];
         this._lastRoots = [];
         this._lastTime = 0;
-        this._denseSampleTime = -Infinity;
-        this._denseSample = true;
         this._hitT = 0;
 
         this._p = new THREE.Vector3();
@@ -12110,6 +12130,11 @@ var SoldierRenderer = class SoldierRenderer {
         // V16: 职业辨识 — 实例染色 scratch + 职业附件库(gunner肩甲/medic急救包)
         this._v16Color = new THREE.Color();
         this._v16AccBanks = {};
+        this._tintStates = {
+            hero: { classId: null, visibleCount: -1 },
+            lod: { classId: null, visibleCount: -1 }
+        };
+        this._tintBank = null;
 
         this._createBank('hero');
         this._createBank('lod');
@@ -12268,16 +12293,15 @@ var SoldierRenderer = class SoldierRenderer {
 
         var bankName = squad.count > SoldierRenderer.HERO_LIMIT ? 'lod' : 'hero';
         this._selectBank(bankName, squad.count);
-        this._denseSample = bankName === 'hero' || time - this._denseSampleTime >= 1 / 30;
-        if (this._denseSample) this._denseSampleTime = time;
 
         var bank = this.banks[bankName];
         // V16: 职业辨识 — 每实例染色 + 职业附件(读取 squad._gameRef._classStats.id)
         var clsId = (squad._gameRef && squad._gameRef._classStats && squad._gameRef._classStats.id) || 'rifleman';
         var clsPres = SoldierRenderer.CLASS_PRESENTATION[clsId] || SoldierRenderer.CLASS_PRESENTATION.rifleman;
-        this._v16Color.setRGB(clsPres.tint[0], clsPres.tint[1], clsPres.tint[2]);
         for (var k in this._v16AccBanks) this._v16AccBanks[k].count = 0;
-        var accBank = clsPres.attach ? this._classAccBank(clsPres.attach) : null;
+        // Dense LOD formations never display class attachments, so do not construct
+        // their geometry/bank or calculate attachment matrices until hero detail returns.
+        var accBank = bankName === 'hero' && clsPres.attach ? this._classAccBank(clsPres.attach) : null;
         for (var index = 0; index < squad.count; index++) {
             this._composeRoot(index, squad, moving, lean, tilt, this._root);
             if (!this._lastRoots[index]) this._lastRoots[index] = new THREE.Matrix4();
@@ -12290,33 +12314,48 @@ var SoldierRenderer = class SoldierRenderer {
                 this._temp.setPosition(squad.x + (sObj ? sObj.x : 0), 0.032, squad.z + (sObj ? sObj.z : 0));
                 this._shadowMesh.setMatrixAt(index, this._temp);
             }
-            var pose = this._poseFor(index, squad.soldiers[index], moving, time, this._denseSample);
+            var pose = this._poseFor(index, squad.soldiers[index], moving, time);
             for (var p = 0; p < this.parts.length; p++) {
                 var part = this.parts[p];
                 this._partMatrix(part, bank.source, this._root, pose, this._temp);
                 bank.meshes[part].setMatrixAt(index, this._temp);
-                bank.meshes[part].setColorAt(index, this._v16Color);
-            }
-            if (accBank && index < SoldierRenderer.ACC_MAX) {
-                var aSlot = accBank.count++;
-                this._partMatrix('Body', bank.source, this._root, pose, this._temp);
-                accBank.mesh.setMatrixAt(aSlot, this._temp);
+                if (part === 'Body' && accBank && index < SoldierRenderer.ACC_MAX) {
+                    accBank.mesh.setMatrixAt(accBank.count++, this._temp);
+                }
             }
         }
 
         for (var ghostIndex = 0; ghostIndex < this.ghosts.length; ghostIndex++) {
             var ghost = this.ghosts[ghostIndex];
             var slot = squad.count + ghostIndex;
-            var deathPose = this._deathPose(ghost);
+            var deathPose = this._ghostPoses[ghostIndex];
+            if (!deathPose) deathPose = this._ghostPoses[ghostIndex] = this._createPose();
+            this._deathPose(ghost, deathPose);
             for (var gp = 0; gp < this.parts.length; gp++) {
                 var ghostPart = this.parts[gp];
                 this._partMatrix(ghostPart, bank.source, ghost.root, deathPose, this._temp);
                 bank.meshes[ghostPart].setMatrixAt(slot, this._temp);
-                bank.meshes[ghostPart].setColorAt(slot, this._v16Color);
             }
         }
 
         var visibleCount = squad.count + this.ghosts.length;
+        var tintState = this._tintStates[bankName];
+        var bankChanged = this._tintBank !== bankName;
+        var classChanged = tintState.classId !== clsId;
+        var visibleChanged = tintState.visibleCount !== visibleCount;
+        if (bankChanged || classChanged || visibleChanged) {
+            this._v16Color.setRGB(clsPres.tint[0], clsPres.tint[1], clsPres.tint[2]);
+            var colorStart = (!bankChanged && !classChanged && visibleCount > tintState.visibleCount)
+                ? tintState.visibleCount : 0;
+            for (var colorIndex = colorStart; colorIndex < visibleCount; colorIndex++) {
+                for (var colorPart = 0; colorPart < this.parts.length; colorPart++) {
+                    bank.meshes[this.parts[colorPart]].setColorAt(colorIndex, this._v16Color);
+                }
+            }
+            tintState.classId = clsId;
+            tintState.visibleCount = visibleCount;
+        }
+        this._tintBank = bankName;
         // V11.6: 前缀上传(只传已用槽位, 上限500时GPU带宽减半以上)
         for (var m = 0; m < this.parts.length; m++) {
             var partMesh = bank.meshes[this.parts[m]];
@@ -12324,20 +12363,24 @@ var SoldierRenderer = class SoldierRenderer {
             partMesh.instanceMatrix.updateRange.offset = 0;
             partMesh.instanceMatrix.updateRange.count = visibleCount * 16;
             partMesh.instanceMatrix.needsUpdate = true;
-            if (partMesh.instanceColor) {
-                partMesh.instanceColor.updateRange.offset = 0;
-                partMesh.instanceColor.updateRange.count = visibleCount * 3;
+            if (partMesh.instanceColor && (bankChanged || classChanged || visibleChanged)) {
+                partMesh.instanceColor.updateRange.offset = colorStart * 3;
+                partMesh.instanceColor.updateRange.count = Math.max(0, visibleCount - colorStart) * 3;
                 partMesh.instanceColor.needsUpdate = true;
             }
         }
         // V16: 职业附件上传(仅 hero 银行可见; LOD 大编制隐藏以省调用)
         for (var ak in this._v16AccBanks) {
-            var am = this._v16AccBanks[ak].mesh, au = this._v16AccBanks[ak].count;
-            am.count = au;
-            am.visible = au > 0 && bankName === 'hero';
-            am.instanceMatrix.updateRange.offset = 0;
-            am.instanceMatrix.updateRange.count = au * 16;
-            am.instanceMatrix.needsUpdate = true;
+            var accessoryBank = this._v16AccBanks[ak];
+            var am = accessoryBank.mesh;
+            var activeAccessory = bankName === 'hero' && accessoryBank === accBank && accessoryBank.count > 0;
+            am.count = activeAccessory ? accessoryBank.count : 0;
+            am.visible = activeAccessory;
+            if (activeAccessory) {
+                am.instanceMatrix.updateRange.offset = 0;
+                am.instanceMatrix.updateRange.count = accessoryBank.count * 16;
+                am.instanceMatrix.needsUpdate = true;
+            }
         }
         if (this._shadowMesh) {
             this._shadowMesh.count = squad.count;
@@ -12363,64 +12406,83 @@ var SoldierRenderer = class SoldierRenderer {
         return target.compose(this._p, this._q, this._s);
     }
 
-    _poseFor(index, soldier, moving, time, sampleCycle) {
-        var cycle = this._cycleSamples[index];
-        if (!cycle) cycle = this._cycleSamples[index] = { run: 0, idle: 0, victory: 0 };
-        if (sampleCycle) {
-            cycle.run = Math.sin(time * 8 + (soldier.phase || 0));
-            cycle.idle = Math.sin(time * 2 + (soldier.phase || 0));
-            cycle.victory = Math.sin(time * 5 + (soldier.phase || 0));
-        }
+    _createPose() {
+        return {
+            state: 'Idle', phase: 0,
+            swingL: 0, swingR: 0,
+            bodyPitch: 0, bodyYaw: 0,
+            headYaw: 0, headLift: 0,
+            armsPitch: 0, armsLift: 0,
+            recoil: 0, deathT: 0, deathDirection: 0
+        };
+    }
+
+    _poseFor(index, soldier, moving, time) {
+        var phase = soldier.phase || 0;
         var recoil = this._shootT[index] > 0
             ? Math.sin((this._shootT[index] / SoldierRenderer.SHOOT_DURATION) * Math.PI * 0.5)
             : 0;
-        if (this.state === 'Shoot') recoil = Math.abs(Math.sin(time * 16 + (soldier.phase || 0))) * .8 + .2;
+        if (this.state === 'Shoot') recoil = Math.abs(Math.sin(time * 16 + phase)) * .8 + .2;
         var state = this.state || (moving ? 'Run' : 'Idle');
         if (this._hitT > 0) state = 'Hit';
         if (recoil > 0) state = 'Shoot';
         if (this.state === 'Victory') state = 'Victory';
         if (this.state === 'Death') state = 'Death';
-        var pose = {
-            state: state,
-            phase: soldier.phase || 0,
-            swingL: moving && state !== 'Victory' ? cycle.run * 0.6 : 0,
-            swingR: moving && state !== 'Victory' ? -cycle.run * 0.6 : 0,
-            bodyPitch: moving ? cycle.run * 0.025 : 0,
-            bodyYaw: 0,
-            headYaw: (state === 'Idle' ? cycle.idle * 0.035 : 0),
-            headLift: (state === 'Idle' ? cycle.idle * 0.008 : 0),
-            armsPitch: 0,
-            armsLift: 0,
-            recoil: recoil,
-            deathT: 0,
-            deathDirection: 0
-        };
+        var runCycle = ((moving && state !== 'Victory' && state !== 'Death') || state === 'Hit')
+            ? Math.sin(time * 8 + phase) : 0;
+        var idleCycle = state === 'Idle' ? Math.sin(time * 2 + phase) : 0;
+        var victoryCycle = state === 'Victory' ? Math.sin(time * 5 + phase) : 0;
+        var pose = this._debugPoses[index];
+        if (!pose) pose = this._debugPoses[index] = this._createPose();
+        pose.state = state;
+        pose.phase = phase;
+        pose.swingL = moving && state !== 'Victory' ? runCycle * 0.6 : 0;
+        pose.swingR = moving && state !== 'Victory' ? -runCycle * 0.6 : 0;
+        pose.bodyPitch = moving ? runCycle * 0.025 : 0;
+        pose.bodyYaw = 0;
+        pose.headYaw = state === 'Idle' ? idleCycle * 0.035 : 0;
+        pose.headLift = state === 'Idle' ? idleCycle * 0.008 : 0;
+        pose.armsPitch = 0;
+        pose.armsLift = 0;
+        pose.recoil = recoil;
+        pose.deathT = 0;
+        pose.deathDirection = 0;
         if (state === 'Hit') {
             pose.bodyPitch = -0.12 * (this._hitT > 0 ? this._hitT / SoldierRenderer.HIT_DURATION : 1);
-            pose.headYaw = cycle.run * 0.08;
+            pose.headYaw = runCycle * 0.08;
         } else if (state === 'Death') {
-            pose = this._deathPose({ age: this._stateAge, phase: soldier.phase, direction: 1 });
+            this._setDeathPose(pose, this._stateAge, phase, 1);
         } else if (state === 'Victory') {
-            pose.bodyPitch = cycle.victory * 0.04;
-            pose.headLift = Math.abs(cycle.victory) * 0.03;
-            pose.armsPitch = -0.55 - Math.abs(cycle.victory) * 0.18;
+            pose.bodyPitch = victoryCycle * 0.04;
+            pose.headLift = Math.abs(victoryCycle) * 0.03;
+            pose.armsPitch = -0.55 - Math.abs(victoryCycle) * 0.18;
             pose.armsLift = 0.06;
-            pose.swingL = cycle.victory * 0.12;
-            pose.swingR = -cycle.victory * 0.12;
+            pose.swingL = victoryCycle * 0.12;
+            pose.swingR = -victoryCycle * 0.12;
         }
-        this._debugPoses[index] = pose;
         return pose;
     }
 
-    _deathPose(ghost) {
-        var t = Math.min(1, ghost.age / SoldierRenderer.DEATH_DURATION);
-        return {
-            state: 'Death', phase: ghost.phase,
-            swingL: 0.12, swingR: -0.12,
-            bodyPitch: 0, bodyYaw: 0, headYaw: 0, headLift: 0,
-            armsPitch: 0, armsLift: 0, recoil: 0,
-            deathT: t, deathDirection: ghost.direction
-        };
+    _setDeathPose(target, age, phase, direction) {
+        target.state = 'Death';
+        target.phase = phase || 0;
+        target.swingL = 0.12;
+        target.swingR = -0.12;
+        target.bodyPitch = 0;
+        target.bodyYaw = 0;
+        target.headYaw = 0;
+        target.headLift = 0;
+        target.armsPitch = 0;
+        target.armsLift = 0;
+        target.recoil = 0;
+        target.deathT = Math.min(1, age / SoldierRenderer.DEATH_DURATION);
+        target.deathDirection = direction;
+        return target;
+    }
+
+    _deathPose(ghost, target) {
+        if (!target) target = ghost._pose || (ghost._pose = this._createPose());
+        return this._setDeathPose(target, ghost.age, ghost.phase, ghost.direction);
     }
 
     _partMatrix(part, source, root, pose, target) {
@@ -12457,7 +12519,7 @@ var SoldierRenderer = class SoldierRenderer {
         target = target || new THREE.Vector3();
         if (index < 0 || index >= squad.count) return null;
         this._composeRoot(index, squad, !!squad._moving, squad._lean || 0, squad._tilt || 0, this._root);
-        var pose = this._poseFor(index, squad.soldiers[index], !!squad._moving, this._lastTime, true);
+        var pose = this._poseFor(index, squad.soldiers[index], !!squad._moving, this._lastTime);
         var bank = this.banks[this.activeBank];
         this._partMatrix('Arms', bank.source, this._root, pose, this._temp);
         bank.meshes.Arms.setMatrixAt(index, this._temp);
@@ -12499,48 +12561,58 @@ if (typeof window !== 'undefined') window.SoldierRenderer = SoldierRenderer;
 // V4.2: local Blender assets, cached immutable resources and rigid-part batches.
 var EnemyModelLoader = class EnemyModelLoader {
     static load(keys) {
-        // V11.6: 子集加载+后台续载 — 启动只等关键资源(士兵+normal/fast), 其余模型战斗中后台补齐
-        // (_bank 有 normal 回退, 未就绪体格短暂降级不崩溃)
         if (keys === undefined) keys = this.KEYS;
-        if (this._data) {
-            var missing = keys.filter(function(k) { return !this._data.styles[k]; }, this);
-            if (!missing.length) return Promise.resolve(this._data);
-            // V12: 续载并发去重 — 同一缺键集合已有在途续载时复用, 防重复加载
-            if (this._contPromise && this._contKeys === missing.join(',')) return this._contPromise;
-            this._contKeys = missing.join(',');
-            // V11.6: 错峰续载 — 逐体型串行+间隔; 战斗中自动拉长间隔(解码不与实时玩法抢主线程)
-            var contPromise = missing.reduce(function(p, k) {
-                return p.then(function() {
-                    var playing = typeof window !== 'undefined' && window.__game && window.__game.state === 'playing';
-                    var gap = playing ? 1500 : 400;
-                    return new Promise(function(res) { setTimeout(res, gap); })
-                        .then(function() { return this._loadKeys([k]); }.bind(this))
-                        .then(function(styles) { for (var mk in styles) this._data.styles[mk] = styles[mk]; }.bind(this));
-                }.bind(this));
-            }.bind(this), Promise.resolve()).then(function() {
-                this.status = 'loaded';
-                this._contPromise = null; // V12: 在途标记清理
-                return this._data;
-            }.bind(this)).catch(function(e) { this.status = 'partial_failed'; this._contPromise = null; throw e; }.bind(this));
-            this._contPromise = contPromise;
-            return contPromise;
-        }
-        if (this._promise) return this._promise;
-        this._bootT0 = performance.now();
-        this._promise = this._loadKeys(keys).then(function(styles) {
-            this._data = { parts: this.PARTS, styles: styles };
-            this.status = keys.length === this.KEYS.length ? 'loaded' : 'partial';
-            this.loadMs = performance.now() - this._bootT0;
+        if (!this._data) this._data = { parts: this.PARTS, styles: {} };
+        if (!this._keyPromises) this._keyPromises = {};
+        if (!this._failedKeys) this._failedKeys = {};
+        if (!this._bootT0) this._bootT0 = performance.now();
+        var initial = !Object.keys(this._data.styles).length;
+        return Promise.all(keys.map(function(key) {
+            if (this._data.styles[key]) return Promise.resolve();
+            if (this._keyPromises[key]) return this._keyPromises[key];
+            // Decode critical banks together; background banks are serialized and
+            // yield to input/rendering without adding seconds of artificial delay.
+            var start = initial ? Promise.resolve() : (this._queue || Promise.resolve()).then(function() {
+                return new Promise(function(resolve) {
+                    if (typeof window !== 'undefined' && window.requestIdleCallback) {
+                        window.requestIdleCallback(resolve, { timeout: 120 });
+                    } else setTimeout(resolve, 16);
+                });
+            });
+            var task = start.then(function() { return this._loadKeys([key]); }.bind(this)).then(function(styles) {
+                this._data.styles[key] = styles[key];
+                delete this._keyPromises[key];
+                delete this._failedKeys[key];
+                this._updateLoadStatus();
+                return styles[key];
+            }.bind(this), function(error) {
+                delete this._keyPromises[key];
+                this._failedKeys[key] = true;
+                this._updateLoadStatus();
+                throw error;
+            }.bind(this));
+            this._keyPromises[key] = task;
+            if (!initial) this._queue = task.catch(function() {});
+            return task;
+        }, this)).then(function() {
+            this._updateLoadStatus();
+            if (!this.loadMs) this.loadMs = performance.now() - this._bootT0;
             return this._data;
         }.bind(this)).catch(function(e) {
-            this._promise = null; this._data = null; this.status = 'failed'; throw e;
+            this._updateLoadStatus();
+            throw e;
         }.bind(this));
-        return this._promise;
+    }
+    static _updateLoadStatus() {
+        var loaded = Object.keys(this._data.styles).length;
+        if (Object.keys(this._keyPromises).length) this.status = 'loading';
+        else if (Object.keys(this._failedKeys).length) this.status = loaded ? 'partial_failed' : 'failed';
+        else this.status = loaded === this.KEYS.length ? 'loaded' : 'partial';
     }
     static loadCritical() {
-        // V16.3-P1: 启动关键集包含普通/快速/重装/酸液/投弹/伏击(均为独立Blender雕塑GLB)/精英/Boss
-        if (typeof window !== 'undefined' && window.__BootProgress) window.__BootProgress.total = 22;
-        return this.load(['normal', 'fast', 'shield', 'spitter', 'thrower', 'flanker', 'bomber', 'elite', 'bruiser', 'overlord']);
+        // First encounter uses normal/fast. Special enemies continue after home is usable.
+        if (typeof window !== 'undefined' && window.__BootProgress) window.__BootProgress.total = 6;
+        return this.load(['normal', 'fast']);
     }
     static _loadKeys(keys) {
         var loaded = [], loader = new THREE.GLTFLoader();
@@ -14437,7 +14509,6 @@ class World {
             this.buildings = [];
             this.clouds = [];
             this._buildSky();
-            if (typeof SceneryV121 !== 'undefined') this._v121Scenery = new SceneryV121(this);
             this._militaryArt = new MilitaryArt(this);
         } else {
             this._buildRoad();
@@ -14481,28 +14552,31 @@ class World {
         fill.position.set(-6, 8, -10);
         this.scene.add(fill);
         if (typeof THREE.PMREMGenerator !== 'undefined' && this.renderer) {
+            var pmrem, envTexture;
             try {
-                var pmrem = new THREE.PMREMGenerator(this.renderer);
-                var envScene = new THREE.Scene();
+                pmrem = new THREE.PMREMGenerator(this.renderer);
                 var envCv = document.createElement('canvas');
-                envCv.width = 64; envCv.height = 64;
+                // Broad sky/ground bands need a 64px reflection cube, rather
+                // than six 256px scene captures and an extra sphere/material.
+                envCv.width = 256; envCv.height = 128;
                 var ectx = envCv.getContext('2d');
-                var eg = ectx.createLinearGradient(0, 0, 0, 64);
+                var eg = ectx.createLinearGradient(0, 0, 0, 128);
                 eg.addColorStop(0.0, '#5CB8FF');
                 eg.addColorStop(0.45, '#FFE8C2');
                 eg.addColorStop(0.55, '#334155');
                 eg.addColorStop(1.0, '#0F172A');
                 ectx.fillStyle = eg;
-                ectx.fillRect(0, 0, 64, 64);
-                var envDome = new THREE.Mesh(
-                    new THREE.SphereGeometry(10, 12, 8),
-                    new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(envCv), side: THREE.BackSide })
-                );
-                envScene.add(envDome);
-                this._envRT = pmrem.fromScene(envScene, 0.04);
+                ectx.fillRect(0, 0, 256, 128);
+                envTexture = new THREE.CanvasTexture(envCv);
+                envTexture.mapping = THREE.EquirectangularReflectionMapping;
+                this._envRT = pmrem.fromEquirectangular(envTexture);
                 this.scene.environment = this._envRT.texture;
-                pmrem.dispose();
-            } catch (e) {}
+            } catch (e) {
+                console.warn('Environment lighting fallback:', e.message);
+            } finally {
+                if (envTexture) envTexture.dispose();
+                if (pmrem) pmrem.dispose();
+            }
         }
     }
 
@@ -14760,6 +14834,11 @@ class World {
     // 12人: 6.1/7.8(清晰) | 100人: +1.2 | 300人: +2.0 | 500人: +2.6(全景)
     updateCamera(squadX, squadZ, dt, squadCount, formationDepth) {
         const cam = this.camera;
+        // Damping follows the unshaken position; feedback offsets must not feed
+        // into the next frame's follow target and leave a lingering drift.
+        cam.position.x -= this._shakeOffsetX || 0;
+        cam.position.y -= this._shakeOffsetY || 0;
+        this._shakeOffsetX = this._shakeOffsetY = 0;
         var n=squadCount||1,cols=n<=1?1:n<=12?Math.ceil(Math.sqrt(n)):n<=100?6:n<=300?11:13;
         var spacing=n<=12?.72:n<=100?.74:n<=300?.50:.46;
         var depth=formationDepth===undefined ? Math.max(0,Math.ceil(n/cols)-1)*spacing : formationDepth;
@@ -14783,21 +14862,18 @@ class World {
         var lookAhead = CONFIG.CAMERA_LOOK_AHEAD - this._camScale * 1.5 + sDepth * 0.68;
 
         const targetX = squadX * CONFIG.CAMERA_FOLLOW_X;
-        const targetPos = new THREE.Vector3(
-            targetX,
-            offY,
-            squadZ + offZ
-        );
-        cam.position.x = damp(cam.position.x, targetPos.x, 6, dt);
-        cam.position.y = damp(cam.position.y, targetPos.y, 5, dt);
-        cam.position.z = damp(cam.position.z, targetPos.z, 8, dt);
+        cam.position.x = damp(cam.position.x, targetX, 6, dt);
+        cam.position.y = damp(cam.position.y, offY, 5, dt);
+        cam.position.z = damp(cam.position.z, squadZ + offZ, 8, dt);
         // Game Feel: Trauma^2 平滑多频正弦震屏(真实dt衰减, 不随机乱抖, 轻击微震重击有力)
         if (this._shakeT > 0.001) {
             this._shakeT = Math.max(0, this._shakeT - dt * (this._shakeDecay || 2.4));
             this._shakePhase = (this._shakePhase || 0) + dt * 34.0;
             var sAmp = this._shakeAmp * (this._shakeT * this._shakeT);
-            cam.position.x += Math.sin(this._shakePhase * 1.7) * sAmp;
-            cam.position.y += Math.sin(this._shakePhase * 2.3) * sAmp * 0.55;
+            this._shakeOffsetX = Math.sin(this._shakePhase * 1.7) * sAmp;
+            this._shakeOffsetY = Math.sin(this._shakePhase * 2.3) * sAmp * 0.55;
+            cam.position.x += this._shakeOffsetX;
+            cam.position.y += this._shakeOffsetY;
         }
         cam.lookAt(targetX * 0.5, 0, squadZ + lookAhead);
         // V12视觉: 天空穹顶与V15白云跟随相机(XZ), 保持地平线稳定
@@ -19962,6 +20038,7 @@ class Game {
         this.maxCombo = 0;
         this._prevKillCount = 0;
         this._comboMilestone = 0;
+        this._comboFeedbackCooldown = 0;
         // 性能统计
         this._fpsEma = 0;
         this._frameTimes = [];
@@ -21452,6 +21529,7 @@ class Game {
             this.maxCombo = 0;
             this._prevKillCount = 0;
             this._comboMilestone = 0;
+            this._comboFeedbackCooldown = 0;
             if (this.ui.comboBox) this.ui.comboBox.classList.add('hidden');
             this._prevDamage = this.squad.getDamage();
             this._prevFireRate = this.squad.getFireRate();
@@ -21681,17 +21759,12 @@ class Game {
         if (this._challenge) this._updateChallenge(dt);
         // V3.3: 连杀系统 — 击杀数增长时combo+1, 2秒无击杀清零
         var kc = this.enemies.killCount;
+        this._comboFeedbackCooldown = Math.max(0, this._comboFeedbackCooldown - dt);
         if (kc > this._prevKillCount) {
             var newKills = kc - this._prevKillCount;
             var previousCombo = this.combo;
-            this.combo += kc - this._prevKillCount;
+            this.combo += newKills;
             this.comboTimer = 3.0;
-            this.world.shake(Math.min(.12, .045 + newKills * .009), .1);
-            if (this.ui.comboBox) {
-                this.ui.comboBox.classList.remove('combo-hit');
-                void this.ui.comboBox.offsetWidth;
-                this.ui.comboBox.classList.add('combo-hit');
-            }
             // 连杀里程碑
             var milestones = [10, 30, 50, 100];
             for (var mi = 0; mi < milestones.length; mi++) {
@@ -21700,8 +21773,15 @@ class Game {
                         this._comboMilestone = milestones[mi];
                         this.effects.floatText(this.squad.x, 2.2, this.squad.z - 1, milestones[mi] + '连杀!', '#FFC247', true);
                         this.effects.shockwave(this.squad.x, 0.05, this.squad.z, 0xFFC247);
-                        this.world.shake(0.22, 0.28);
-                        if (milestones[mi] >= 30) this.triggerHitStop(0.035, 0.22);
+                        // Celebrate milestones without interrupting ordinary fire.
+                        if (this._comboFeedbackCooldown === 0) {
+                            this.world.shake(0.08, 0.18);
+                            this._comboFeedbackCooldown = 1;
+                            if (this.ui.comboBox) {
+                                this.ui.comboBox.classList.remove('combo-hit');
+                                this.ui.comboBox.classList.add('combo-hit');
+                            }
+                        }
                     }
                 }
             }
@@ -22126,7 +22206,10 @@ class Game {
         window.__BootProgress && window.__BootProgress.stage('整备绿色小队…', 2);
         var error = document.getElementById('error-display');
         if (error) error.remove();
-        // V11.6: 关键资源优先启动 — 只等士兵+普通/快速僵尸(6 GLB), 其余20个模型战斗中后台补齐
+        // Optional scenery downloads alongside the six critical character GLBs.
+        // Its playable fallback is built immediately if the pack is unavailable.
+        if (typeof MilitaryArt !== 'undefined') MilitaryArt.preload().catch(function() {});
+        // Critical characters first; remaining styles continue after home is usable.
         // (_bank 对未就绪体格有 normal 回退; Boss通常开局1-3分钟后才出场, 届时早已加载完成)
         Promise.all([SoldierModelLoader.load(), EnemyModelLoader.loadCritical()]).then(function() {
             window.__BootProgress && window.__BootProgress.stage('构建战场与渲染管线…', 99);
@@ -22134,7 +22217,9 @@ class Game {
             // 同canvas二次new Game()会重复注册输入监听; 此路径引导用户刷新页面整体重置
             try {
                 if (!window.__game) window.__game = new Game();
-                EnemyModelLoader.load(); // V11.6: 后台续载剩余模型(不阻塞进入游戏)
+                EnemyModelLoader.load().catch(function(error) {
+                    console.warn('Optional enemy models use fallback until retry:', error.message);
+                });
             } catch (e) {
                 starting = false;
                 showError('游戏初始化失败：' + e.message + '\n请刷新页面重试。');

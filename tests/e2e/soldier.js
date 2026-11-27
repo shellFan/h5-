@@ -147,13 +147,13 @@ async function suiteFailureAndRetry(browser) {
     watchPage(page, true);
     let aborted = 0;
     let successfulHeroResponses = 0;
-    const pattern = '**/assets/models/soldier/soldier.glb*';
+    const pattern = '**/assets/game/models/soldier/soldier.glb*';
     await page.route(pattern, route => {
         aborted++;
         return route.abort('failed');
     });
     page.on('response', response => {
-        if (/\/assets\/models\/soldier\/soldier\.glb(?:\?|$)/.test(response.url()) && response.ok()) successfulHeroResponses++;
+        if (/\/assets\/game\/models\/soldier\/soldier\.glb(?:\?|$)/.test(response.url()) && response.ok()) successfulHeroResponses++;
     });
 
     await test('aborted hero GLB shows a visible boot error and creates no Game', async () => {
@@ -443,12 +443,13 @@ async function suiteLoadedModel(browser) {
             return [1,12,31,100,101,300,500].map(n=>{
                 g.squad.reset(n);g.squad.update(1,3,g.squad.z);
                 const r=g.squad.renderer;
-                return {n,bank:r.activeBank,width:g.squad.getHalfWidth(),visible:Object.values(r.banks).flatMap(b=>Object.values(b.meshes)).filter(m=>m.visible).length,count:r.mesh.count,phases:new Set(g.squad.soldiers.map(s=>s.phase)).size};
+                const width = g.squad.getHalfWidth();
+                return {n,bank:r.activeBank,width,centerRange:MovementMath.centerBounds(width),roadHalf:CONFIG.ROAD_HALF_WIDTH,visible:Object.values(r.banks).flatMap(b=>Object.values(b.meshes)).filter(m=>m.visible).length,count:r.mesh.count,phases:new Set(g.squad.soldiers.map(s=>s.phase)).size};
             });
         });
         for(const c of cases){
             assert(c.bank === (c.n<=100?'hero':'lod'), 'LOD threshold '+JSON.stringify(c));
-            assert(c.width<=2.3 && c.visible===5 && c.count===c.n, 'Formation/bank '+JSON.stringify(c));
+            assert(c.width+c.centerRange<=c.roadHalf && c.visible===5 && c.count===c.n, 'Formation/bank '+JSON.stringify(c));
             assert(c.phases===c.n,'Animation phases are synchronized');
         }
     });

@@ -1,0 +1,710 @@
+{
+  "cpuThrottle": 4,
+  "viewport": "390x844, DPR1",
+  "metric": "CPU + render submission; excludes asynchronous GPU completion",
+  "runs": [
+    {
+      "boot": {
+        "readyMs": 2099.5999999940395,
+        "soldierMs": 304.19999998807907,
+        "enemiesMs": 302.2000000178814,
+        "enemyStyles": 2,
+        "requests": [
+          {
+            "url": "game/v15/env_military_pack.glb?v=1910",
+            "ms": 3.5,
+            "bytes": 425364
+          },
+          {
+            "url": "game/models/soldier/soldier.glb",
+            "ms": 3.4000000059604645,
+            "bytes": 267572
+          },
+          {
+            "url": "game/models/soldier/soldier-lod.glb",
+            "ms": 3.4000000059604645,
+            "bytes": 114480
+          },
+          {
+            "url": "game/models/zombies/normal/normal.glb?v=1910",
+            "ms": 3,
+            "bytes": 70524
+          },
+          {
+            "url": "game/models/zombies/normal/normal-lod.glb?v=1910",
+            "ms": 2.5,
+            "bytes": 41800
+          },
+          {
+            "url": "game/models/zombies/fast/fast.glb?v=1910",
+            "ms": 1.699999988079071,
+            "bytes": 46224
+          },
+          {
+            "url": "game/models/zombies/fast/fast-lod.glb?v=1910",
+            "ms": 1.300000011920929,
+            "bytes": 29472
+          }
+        ],
+        "profileSelfMs": [
+          [
+            "(program)",
+            955.2399999999993
+          ],
+          [
+            "ys",
+            483.9420000000003
+          ],
+          [
+            "(anonymous)",
+            113.41299999999998
+          ],
+          [
+            "(idle)",
+            57.736999999999995
+          ],
+          [
+            "fetch",
+            30.837000000000003
+          ],
+          [
+            "yt",
+            13.717
+          ],
+          [
+            "i",
+            12.055
+          ],
+          [
+            "us",
+            10.715
+          ],
+          [
+            "ss",
+            10.146999999999998
+          ],
+          [
+            "(garbage collector)",
+            9.93
+          ],
+          [
+            "load",
+            8.818999999999999
+          ],
+          [
+            "setup",
+            8.356
+          ],
+          [
+            "update",
+            8.209
+          ],
+          [
+            "parse",
+            7.529000000000001
+          ],
+          [
+            "Game",
+            7.507
+          ],
+          [
+            "Js.render",
+            7.139
+          ],
+          [
+            "resize",
+            7.058
+          ],
+          [
+            "_build",
+            6.872
+          ],
+          [
+            "RegExp: ^[ \\t]*#include +<([\\w\\d./]+)>",
+            6.5569999999999995
+          ],
+          [
+            "EnemyManager",
+            6.417
+          ],
+          [
+            "createImageBitmap",
+            6.186
+          ],
+          [
+            "Effects",
+            6.0169999999999995
+          ]
+        ]
+      },
+      "sceneReadyMs": 2164.5,
+      "battle": [
+        {
+          "count": 31,
+          "frameMs": {
+            "mean": 13.044999999801318,
+            "p95": 19.5
+          },
+          "updateMs": {
+            "mean": 5.469999998559555,
+            "p95": 9.5
+          },
+          "renderSubmitMs": {
+            "mean": 7.575000001241763,
+            "p95": 10.800000011920929
+          },
+          "soldiersMs": {
+            "mean": 0.48583333343267443,
+            "p95": 1.2000000178813934
+          },
+          "drawCalls": 56,
+          "triangles": 474218
+        },
+        {
+          "count": 100,
+          "frameMs": {
+            "mean": 11.165833333134652,
+            "p95": 16.899999976158142
+          },
+          "updateMs": {
+            "mean": 4.640000001092752,
+            "p95": 8.699999988079071
+          },
+          "renderSubmitMs": {
+            "mean": 6.525833332041899,
+            "p95": 9.699999988079071
+          },
+          "soldiersMs": {
+            "mean": 0.7483333336810271,
+            "p95": 2
+          },
+          "drawCalls": 54,
+          "triangles": 1137002
+        },
+        {
+          "count": 300,
+          "frameMs": {
+            "mean": 13.085833333184322,
+            "p95": 19.69999998807907
+          },
+          "updateMs": {
+            "mean": 6.283333331098159,
+            "p95": 10.5
+          },
+          "renderSubmitMs": {
+            "mean": 6.802500002086163,
+            "p95": 10.800000011920929
+          },
+          "soldiersMs": {
+            "mean": 2.1150000005960465,
+            "p95": 4.800000011920929
+          },
+          "drawCalls": 56,
+          "triangles": 982892
+        },
+        {
+          "count": 500,
+          "frameMs": {
+            "mean": 7.9424999994536245,
+            "p95": 16
+          },
+          "updateMs": {
+            "mean": 4.195000000794729,
+            "p95": 10
+          },
+          "renderSubmitMs": {
+            "mean": 3.7474999986588955,
+            "p95": 9.699999988079071
+          },
+          "soldiersMs": {
+            "mean": 1.9008333330353102,
+            "p95": 6.4000000059604645
+          },
+          "drawCalls": 55,
+          "triangles": 1520776
+        }
+      ],
+      "longTasks": [
+        {
+          "start": 779.7999999821186,
+          "ms": 339
+        },
+        {
+          "start": 1170.8999999761581,
+          "ms": 150
+        },
+        {
+          "start": 1555,
+          "ms": 539
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boot": {
+        "readyMs": 1231.4000000059605,
+        "soldierMs": 284.7000000178814,
+        "enemiesMs": 290.09999999403954,
+        "enemyStyles": 2,
+        "requests": [
+          {
+            "url": "game/v15/env_military_pack.glb?v=1910",
+            "ms": 4.700000017881393,
+            "bytes": 425364
+          },
+          {
+            "url": "game/models/soldier/soldier.glb",
+            "ms": 3.699999988079071,
+            "bytes": 267572
+          },
+          {
+            "url": "game/models/soldier/soldier-lod.glb",
+            "ms": 3.5999999940395355,
+            "bytes": 114480
+          },
+          {
+            "url": "game/models/zombies/normal/normal.glb?v=1910",
+            "ms": 3.7000000178813934,
+            "bytes": 70524
+          },
+          {
+            "url": "game/models/zombies/normal/normal-lod.glb?v=1910",
+            "ms": 2.4000000059604645,
+            "bytes": 41800
+          },
+          {
+            "url": "game/models/zombies/fast/fast.glb?v=1910",
+            "ms": 1.800000011920929,
+            "bytes": 46224
+          },
+          {
+            "url": "game/models/zombies/fast/fast-lod.glb?v=1910",
+            "ms": 1.5999999940395355,
+            "bytes": 29472
+          }
+        ],
+        "profileSelfMs": [
+          [
+            "(program)",
+            624.7389999999996
+          ],
+          [
+            "(anonymous)",
+            114.71699999999997
+          ],
+          [
+            "(idle)",
+            105.49699999999999
+          ],
+          [
+            "fetch",
+            18.186
+          ],
+          [
+            "(garbage collector)",
+            18.061
+          ],
+          [
+            "load",
+            13.756
+          ],
+          [
+            "li",
+            11.857
+          ],
+          [
+            "yt",
+            11.017
+          ],
+          [
+            "Js.render",
+            7.672000000000001
+          ],
+          [
+            "ys",
+            7.114000000000001
+          ],
+          [
+            "GLTFBinaryExtension",
+            7.056000000000001
+          ],
+          [
+            "install",
+            6.781000000000001
+          ],
+          [
+            "resize",
+            6.66
+          ],
+          [
+            "i",
+            6.149
+          ],
+          [
+            "gl",
+            6.122999999999999
+          ],
+          [
+            "createImageBitmap",
+            6.0120000000000005
+          ],
+          [
+            "_build",
+            5.423
+          ],
+          [
+            "parse",
+            5.025
+          ],
+          [
+            "update",
+            4.878
+          ],
+          [
+            "Effects",
+            4.77
+          ],
+          [
+            "_setupIdleShowcase",
+            4.743
+          ],
+          [
+            "Fs",
+            4.737
+          ]
+        ]
+      },
+      "sceneReadyMs": 1301.9000000059605,
+      "battle": [
+        {
+          "count": 31,
+          "frameMs": {
+            "mean": 11.529999999950329,
+            "p95": 17.80000001192093
+          },
+          "updateMs": {
+            "mean": 4.692499999701977,
+            "p95": 9.799999982118607
+          },
+          "renderSubmitMs": {
+            "mean": 6.837500000248353,
+            "p95": 11
+          },
+          "soldiersMs": {
+            "mean": 0.3758333327869574,
+            "p95": 1
+          },
+          "drawCalls": 56,
+          "triangles": 474218
+        },
+        {
+          "count": 100,
+          "frameMs": {
+            "mean": 12.24416666701436,
+            "p95": 17.299999982118607
+          },
+          "updateMs": {
+            "mean": 5.089999998609225,
+            "p95": 8.599999994039536
+          },
+          "renderSubmitMs": {
+            "mean": 7.154166668405136,
+            "p95": 10.400000005960464
+          },
+          "soldiersMs": {
+            "mean": 0.9008333340287209,
+            "p95": 2.2000000178813934
+          },
+          "drawCalls": 54,
+          "triangles": 1137002
+        },
+        {
+          "count": 300,
+          "frameMs": {
+            "mean": 12.999166666716338,
+            "p95": 20.900000005960464
+          },
+          "updateMs": {
+            "mean": 6.385000001639128,
+            "p95": 11.400000005960464
+          },
+          "renderSubmitMs": {
+            "mean": 6.614166665077209,
+            "p95": 10.599999994039536
+          },
+          "soldiersMs": {
+            "mean": 2.0974999986588956,
+            "p95": 4.4000000059604645
+          },
+          "drawCalls": 56,
+          "triangles": 982892
+        },
+        {
+          "count": 500,
+          "frameMs": {
+            "mean": 14.529999999950329,
+            "p95": 22.80000001192093
+          },
+          "updateMs": {
+            "mean": 7.286666665971279,
+            "p95": 13.5
+          },
+          "renderSubmitMs": {
+            "mean": 7.24333333397905,
+            "p95": 10.899999976158142
+          },
+          "soldiersMs": {
+            "mean": 3.2691666685044765,
+            "p95": 7.0999999940395355
+          },
+          "drawCalls": 55,
+          "triangles": 1520776
+        }
+      ],
+      "longTasks": [
+        {
+          "start": 714.3000000119209,
+          "ms": 312
+        },
+        {
+          "start": 1026.9000000059605,
+          "ms": 164
+        }
+      ],
+      "errors": []
+    },
+    {
+      "boot": {
+        "readyMs": 1067.0999999940395,
+        "soldierMs": 233.5,
+        "enemiesMs": 237.90000000596046,
+        "enemyStyles": 2,
+        "requests": [
+          {
+            "url": "game/v15/env_military_pack.glb?v=1910",
+            "ms": 3.199999988079071,
+            "bytes": 425364
+          },
+          {
+            "url": "game/models/soldier/soldier.glb",
+            "ms": 4.300000011920929,
+            "bytes": 267572
+          },
+          {
+            "url": "game/models/soldier/soldier-lod.glb",
+            "ms": 2.199999988079071,
+            "bytes": 114480
+          },
+          {
+            "url": "game/models/zombies/normal/normal.glb?v=1910",
+            "ms": 2.2999999821186066,
+            "bytes": 70524
+          },
+          {
+            "url": "game/models/zombies/normal/normal-lod.glb?v=1910",
+            "ms": 2.300000011920929,
+            "bytes": 41800
+          },
+          {
+            "url": "game/models/zombies/fast/fast.glb?v=1910",
+            "ms": 2.4000000059604645,
+            "bytes": 46224
+          },
+          {
+            "url": "game/models/zombies/fast/fast-lod.glb?v=1910",
+            "ms": 2.0999999940395355,
+            "bytes": 29472
+          }
+        ],
+        "profileSelfMs": [
+          [
+            "(program)",
+            599.0130000000001
+          ],
+          [
+            "(anonymous)",
+            86.09
+          ],
+          [
+            "(idle)",
+            32.038999999999994
+          ],
+          [
+            "fetch",
+            22.404000000000003
+          ],
+          [
+            "yt",
+            11.503
+          ],
+          [
+            "load",
+            9.985999999999999
+          ],
+          [
+            "(garbage collector)",
+            9.341
+          ],
+          [
+            "li",
+            8.451
+          ],
+          [
+            "ys",
+            8.25
+          ],
+          [
+            "resize",
+            6.788
+          ],
+          [
+            "i",
+            6.483
+          ],
+          [
+            "makeRidgeMesh",
+            5.839
+          ],
+          [
+            "Js.setSize",
+            4.985
+          ],
+          [
+            "copy",
+            4.963
+          ],
+          [
+            "createImageBitmap",
+            4.8629999999999995
+          ],
+          [
+            "Mt",
+            4.845
+          ],
+          [
+            "getX",
+            4.595
+          ],
+          [
+            "ee",
+            4.396000000000001
+          ],
+          [
+            "_buildHorizonFortress",
+            4.299
+          ],
+          [
+            "bl",
+            4.221
+          ],
+          [
+            "_makeRoadTexture",
+            4.071
+          ],
+          [
+            "get",
+            3.981
+          ]
+        ]
+      },
+      "sceneReadyMs": 1145.5999999940395,
+      "battle": [
+        {
+          "count": 31,
+          "frameMs": {
+            "mean": 10.725833333532016,
+            "p95": 18.099999994039536
+          },
+          "updateMs": {
+            "mean": 4.447499999900659,
+            "p95": 8.900000005960464
+          },
+          "renderSubmitMs": {
+            "mean": 6.278333333631356,
+            "p95": 10.400000005960464
+          },
+          "soldiersMs": {
+            "mean": 0.3483333336810271,
+            "p95": 1
+          },
+          "drawCalls": 56,
+          "triangles": 474218
+        },
+        {
+          "count": 100,
+          "frameMs": {
+            "mean": 12.229166665921609,
+            "p95": 19.099999994039536
+          },
+          "updateMs": {
+            "mean": 5.198333332687616,
+            "p95": 9.599999994039536
+          },
+          "renderSubmitMs": {
+            "mean": 7.030833333233992,
+            "p95": 11.899999976158142
+          },
+          "soldiersMs": {
+            "mean": 0.8966666671137015,
+            "p95": 2.2000000178813934
+          },
+          "drawCalls": 54,
+          "triangles": 1137002
+        },
+        {
+          "count": 300,
+          "frameMs": {
+            "mean": 11.802500000347694,
+            "p95": 20.099999994039536
+          },
+          "updateMs": {
+            "mean": 5.885000000149011,
+            "p95": 11.900000005960464
+          },
+          "renderSubmitMs": {
+            "mean": 5.917500000198682,
+            "p95": 11
+          },
+          "soldiersMs": {
+            "mean": 1.8233333341777325,
+            "p95": 4.899999976158142
+          },
+          "drawCalls": 56,
+          "triangles": 982892
+        },
+        {
+          "count": 500,
+          "frameMs": {
+            "mean": 9.499166666716338,
+            "p95": 15.799999982118607
+          },
+          "updateMs": {
+            "mean": 5.126666666318973,
+            "p95": 8.700000017881393
+          },
+          "renderSubmitMs": {
+            "mean": 4.372500000397364,
+            "p95": 8.299999982118607
+          },
+          "soldiersMs": {
+            "mean": 1.9833333318432171,
+            "p95": 4
+          },
+          "drawCalls": 55,
+          "triangles": 1520776
+        }
+      ],
+      "longTasks": [
+        {
+          "start": 593,
+          "ms": 290
+        },
+        {
+          "start": 887.5,
+          "ms": 142
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

@@ -44,7 +44,7 @@
         })();
         // VNext: 加载进度追踪器(被 soldier-loader / enemy-models 调用; 仅统计真实文件进度, 无定时器伪造)
         window.__BootProgress = {
-            files: {}, total: 26, // 2士兵 + 12×2 僵尸/Boss GLB
+            files: {}, total: 6, // Soldier hero/LOD + normal/fast hero/LOD
             _done: false,
             file: function(url, loaded, total) {
                 // V15修复: done() 闩锁 — 后台续载的进度事件不得把"准备完毕!100%"
@@ -293,7 +293,7 @@
     </script>
     <script src="assets/game/catalog.js?v=500"></script>
     <script src="js/art-ui.js?v=500"></script>
-    <script src="js/military-art.js?v=500"></script>
+    <script src="js/military-art.js?v=20261128"></script>
     <script src="js/config.js?v=51"></script>
     <script src="js/utils.js?v=50"></script>
     <script src="js/economy.js?v=51"></script>
@@ -314,12 +314,12 @@
     <script src="js/movement.js"></script>
     <script src="js/vendor/GLTFLoader.js"></script>
     <script src="js/soldier-loader.js?v=50"></script>
-    <script src="js/soldier-renderer.js?v=50"></script>
-    <script src="js/enemy-models.js?v=16122"></script>
+    <script src="js/soldier-renderer.js?v=20261128"></script>
+    <script src="js/enemy-models.js?v=20261128"></script>
     <script src="js/boss-v42.js?v=50"></script>
     <script src="js/art-v42.js?v=16122"></script>
     <script src="js/scenery-v121.js?v=16122"></script>
-    <script src="js/world.js?v=16122"></script>
+    <script src="js/world.js?v=20261128"></script>
     <script src="js/effects.js?v=141"></script>
     <script src="js/squad.js?v=117"></script>
     <script src="js/gates.js?v=117"></script>
@@ -344,6 +344,6 @@
         Platform.initialize();
         window.__adService = setupAdService();
     </script>
-    <script src="js/game.js?v=140"></script>
+    <script src="js/game.js?v=20261128"></script>
 </body>
 </html>

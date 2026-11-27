@@ -6,6 +6,16 @@ const assert = require('assert/strict');
 
 const ROOT = path.join(__dirname, '..', '..');
 global.THREE = require(path.join(ROOT, 'js/vendor/three.min.js'));
+// Shadow decals need a tiny canvas facade; this test checks transforms, not pixels.
+global.document = {
+    getElementById: () => null,
+    createElement: tag => {
+        assert.equal(tag, 'canvas');
+        return { width: 0, height: 0, getContext: () => ({
+            createRadialGradient: () => ({ addColorStop() {} }), fillRect() {}
+        }) };
+    }
+};
 
 function source(name) {
     return fs.readFileSync(path.join(ROOT, name), 'utf8');
@@ -73,6 +83,7 @@ assert(shot.z < squad.z + squad.soldiers[shot.shooterIndex].z - 0.25, 'muzzle mu
 assert(squad.renderer.pose(shot.shooterIndex).recoil > 0, 'shoot trigger must be observable');
 
 const before = squad.count;
+squad.renderer._shootT.fill(0); // Isolate Hit from the earlier Shoot overlay.
 squad.killSoldiers(2);
 assert.equal(squad.count, before - 2);
 assert.equal(squad.renderer.ghosts.length, 2);
@@ -86,6 +97,9 @@ assert.equal(squad.renderer.pose(0).state, 'Victory');
 console.log('PASS soldier runtime: banks, aliases, muzzle, overlays, ghosts, victory');
 for(const n of [31,100,300,500]) {
     squad.reset(n);
+    // Test the logical row direction independently of authored cosmetic jitter.
+    squad.soldiers.forEach(s => { s.jz = 0; });
+    squad._updateFormation();
     assert(squad.soldiers.every(s=>s.fz>=-.03),'Army must trail its logical combat front, never wrap around approaching enemies');
     assert(squad.getDepth()>0,'Camera must know army depth');
 }

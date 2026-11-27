@@ -102,6 +102,7 @@ class Game {
         this.maxCombo = 0;
         this._prevKillCount = 0;
         this._comboMilestone = 0;
+        this._comboFeedbackCooldown = 0;
         // 性能统计
         this._fpsEma = 0;
         this._frameTimes = [];
@@ -1592,6 +1593,7 @@ class Game {
             this.maxCombo = 0;
             this._prevKillCount = 0;
             this._comboMilestone = 0;
+            this._comboFeedbackCooldown = 0;
             if (this.ui.comboBox) this.ui.comboBox.classList.add('hidden');
             this._prevDamage = this.squad.getDamage();
             this._prevFireRate = this.squad.getFireRate();
@@ -1821,17 +1823,12 @@ class Game {
         if (this._challenge) this._updateChallenge(dt);
         // V3.3: 连杀系统 — 击杀数增长时combo+1, 2秒无击杀清零
         var kc = this.enemies.killCount;
+        this._comboFeedbackCooldown = Math.max(0, this._comboFeedbackCooldown - dt);
         if (kc > this._prevKillCount) {
             var newKills = kc - this._prevKillCount;
             var previousCombo = this.combo;
-            this.combo += kc - this._prevKillCount;
+            this.combo += newKills;
             this.comboTimer = 3.0;
-            this.world.shake(Math.min(.12, .045 + newKills * .009), .1);
-            if (this.ui.comboBox) {
-                this.ui.comboBox.classList.remove('combo-hit');
-                void this.ui.comboBox.offsetWidth;
-                this.ui.comboBox.classList.add('combo-hit');
-            }
             // 连杀里程碑
             var milestones = [10, 30, 50, 100];
             for (var mi = 0; mi < milestones.length; mi++) {
@@ -1840,8 +1837,15 @@ class Game {
                         this._comboMilestone = milestones[mi];
                         this.effects.floatText(this.squad.x, 2.2, this.squad.z - 1, milestones[mi] + '连杀!', '#FFC247', true);
                         this.effects.shockwave(this.squad.x, 0.05, this.squad.z, 0xFFC247);
-                        this.world.shake(0.22, 0.28);
-                        if (milestones[mi] >= 30) this.triggerHitStop(0.035, 0.22);
+                        // Celebrate milestones without interrupting ordinary fire.
+                        if (this._comboFeedbackCooldown === 0) {
+                            this.world.shake(0.08, 0.18);
+                            this._comboFeedbackCooldown = 1;
+                            if (this.ui.comboBox) {
+                                this.ui.comboBox.classList.remove('combo-hit');
+                                this.ui.comboBox.classList.add('combo-hit');
+                            }
+                        }
                     }
                 }
             }
@@ -2266,7 +2270,10 @@ class Game {
         window.__BootProgress && window.__BootProgress.stage('整备绿色小队…', 2);
         var error = document.getElementById('error-display');
         if (error) error.remove();
-        // V11.6: 关键资源优先启动 — 只等士兵+普通/快速僵尸(6 GLB), 其余20个模型战斗中后台补齐
+        // Optional scenery downloads alongside the six critical character GLBs.
+        // Its playable fallback is built immediately if the pack is unavailable.
+        if (typeof MilitaryArt !== 'undefined') MilitaryArt.preload().catch(function() {});
+        // Critical characters first; remaining styles continue after home is usable.
         // (_bank 对未就绪体格有 normal 回退; Boss通常开局1-3分钟后才出场, 届时早已加载完成)
         Promise.all([SoldierModelLoader.load(), EnemyModelLoader.loadCritical()]).then(function() {
             window.__BootProgress && window.__BootProgress.stage('构建战场与渲染管线…', 99);
@@ -2274,7 +2281,9 @@ class Game {
             // 同canvas二次new Game()会重复注册输入监听; 此路径引导用户刷新页面整体重置
             try {
                 if (!window.__game) window.__game = new Game();
-                EnemyModelLoader.load(); // V11.6: 后台续载剩余模型(不阻塞进入游戏)
+                EnemyModelLoader.load().catch(function(error) {
+                    console.warn('Optional enemy models use fallback until retry:', error.message);
+                });
             } catch (e) {
                 starting = false;
                 showError('游戏初始化失败：' + e.message + '\n请刷新页面重试。');

@@ -36,7 +36,6 @@ class World {
             this.buildings = [];
             this.clouds = [];
             this._buildSky();
-            if (typeof SceneryV121 !== 'undefined') this._v121Scenery = new SceneryV121(this);
             this._militaryArt = new MilitaryArt(this);
         } else {
             this._buildRoad();
@@ -80,28 +79,31 @@ class World {
         fill.position.set(-6, 8, -10);
         this.scene.add(fill);
         if (typeof THREE.PMREMGenerator !== 'undefined' && this.renderer) {
+            var pmrem, envTexture;
             try {
-                var pmrem = new THREE.PMREMGenerator(this.renderer);
-                var envScene = new THREE.Scene();
+                pmrem = new THREE.PMREMGenerator(this.renderer);
                 var envCv = document.createElement('canvas');
-                envCv.width = 64; envCv.height = 64;
+                // Broad sky/ground bands need a 64px reflection cube, rather
+                // than six 256px scene captures and an extra sphere/material.
+                envCv.width = 256; envCv.height = 128;
                 var ectx = envCv.getContext('2d');
-                var eg = ectx.createLinearGradient(0, 0, 0, 64);
+                var eg = ectx.createLinearGradient(0, 0, 0, 128);
                 eg.addColorStop(0.0, '#5CB8FF');
                 eg.addColorStop(0.45, '#FFE8C2');
                 eg.addColorStop(0.55, '#334155');
                 eg.addColorStop(1.0, '#0F172A');
                 ectx.fillStyle = eg;
-                ectx.fillRect(0, 0, 64, 64);
-                var envDome = new THREE.Mesh(
-                    new THREE.SphereGeometry(10, 12, 8),
-                    new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(envCv), side: THREE.BackSide })
-                );
-                envScene.add(envDome);
-                this._envRT = pmrem.fromScene(envScene, 0.04);
+                ectx.fillRect(0, 0, 256, 128);
+                envTexture = new THREE.CanvasTexture(envCv);
+                envTexture.mapping = THREE.EquirectangularReflectionMapping;
+                this._envRT = pmrem.fromEquirectangular(envTexture);
                 this.scene.environment = this._envRT.texture;
-                pmrem.dispose();
-            } catch (e) {}
+            } catch (e) {
+                console.warn('Environment lighting fallback:', e.message);
+            } finally {
+                if (envTexture) envTexture.dispose();
+                if (pmrem) pmrem.dispose();
+            }
         }
     }
 
@@ -359,6 +361,11 @@ class World {
     // 12人: 6.1/7.8(清晰) | 100人: +1.2 | 300人: +2.0 | 500人: +2.6(全景)
     updateCamera(squadX, squadZ, dt, squadCount, formationDepth) {
         const cam = this.camera;
+        // Damping follows the unshaken position; feedback offsets must not feed
+        // into the next frame's follow target and leave a lingering drift.
+        cam.position.x -= this._shakeOffsetX || 0;
+        cam.position.y -= this._shakeOffsetY || 0;
+        this._shakeOffsetX = this._shakeOffsetY = 0;
         var n=squadCount||1,cols=n<=1?1:n<=12?Math.ceil(Math.sqrt(n)):n<=100?6:n<=300?11:13;
         var spacing=n<=12?.72:n<=100?.74:n<=300?.50:.46;
         var depth=formationDepth===undefined ? Math.max(0,Math.ceil(n/cols)-1)*spacing : formationDepth;
@@ -382,21 +389,18 @@ class World {
         var lookAhead = CONFIG.CAMERA_LOOK_AHEAD - this._camScale * 1.5 + sDepth * 0.68;
 
         const targetX = squadX * CONFIG.CAMERA_FOLLOW_X;
-        const targetPos = new THREE.Vector3(
-            targetX,
-            offY,
-            squadZ + offZ
-        );
-        cam.position.x = damp(cam.position.x, targetPos.x, 6, dt);
-        cam.position.y = damp(cam.position.y, targetPos.y, 5, dt);
-        cam.position.z = damp(cam.position.z, targetPos.z, 8, dt);
+        cam.position.x = damp(cam.position.x, targetX, 6, dt);
+        cam.position.y = damp(cam.position.y, offY, 5, dt);
+        cam.position.z = damp(cam.position.z, squadZ + offZ, 8, dt);
         // Game Feel: Trauma^2 平滑多频正弦震屏(真实dt衰减, 不随机乱抖, 轻击微震重击有力)
         if (this._shakeT > 0.001) {
             this._shakeT = Math.max(0, this._shakeT - dt * (this._shakeDecay || 2.4));
             this._shakePhase = (this._shakePhase || 0) + dt * 34.0;
             var sAmp = this._shakeAmp * (this._shakeT * this._shakeT);
-            cam.position.x += Math.sin(this._shakePhase * 1.7) * sAmp;
-            cam.position.y += Math.sin(this._shakePhase * 2.3) * sAmp * 0.55;
+            this._shakeOffsetX = Math.sin(this._shakePhase * 1.7) * sAmp;
+            this._shakeOffsetY = Math.sin(this._shakePhase * 2.3) * sAmp * 0.55;
+            cam.position.x += this._shakeOffsetX;
+            cam.position.y += this._shakeOffsetY;
         }
         cam.lookAt(targetX * 0.5, 0, squadZ + lookAhead);
         // V12视觉: 天空穹顶与V15白云跟随相机(XZ), 保持地平线稳定

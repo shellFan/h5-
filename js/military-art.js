@@ -1,6 +1,21 @@
 // Runtime military-base presentation (V5.1 visual upgrade).
 // Self-contained instanced 3D cartoon military base; allocates once at init, never per frame.
 var MilitaryArt = class MilitaryArt {
+    static preload() {
+        if (this._preloadPromise) return this._preloadPromise;
+        var url = 'assets/game/v15/env_military_pack.glb';
+        if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=1910';
+        this._preloadPromise = new Promise(function(resolve, reject) {
+            new THREE.GLTFLoader().load(url, resolve, undefined, function(error) {
+                reject(Error('Military environment load failed: ' + (error.message || url)));
+            });
+        }).catch(function(error) {
+            MilitaryArt._preloadPromise = null; // Explicit subsequent attempts can retry.
+            throw error;
+        });
+        return this._preloadPromise;
+    }
+
     constructor(world) {
         this.world = world;
         this.scene = world.scene;
@@ -611,9 +626,7 @@ var MilitaryArt = class MilitaryArt {
     _loadBlenderEnvPack() {
         if (typeof THREE === 'undefined' || !THREE.GLTFLoader) return;
         var self = this;
-        var url = 'assets/game/v15/env_military_pack.glb';
-        if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=1910';
-        new THREE.GLTFLoader().load(url, function(gltf) {
+        this.ready = MilitaryArt.preload().then(function(gltf) {
             try {
                 var sharedMat = null;
                 var geos = {};
@@ -623,7 +636,7 @@ var MilitaryArt = class MilitaryArt {
                         if (!sharedMat && o.material) sharedMat = o.material;
                     }
                 });
-                if (!sharedMat || !geos.PineTree) return;
+                if (!sharedMat || !geos.PineTree) throw Error('Military environment pack is missing PineTree/material');
                 // r149 linear-to-sRGB display transform matching Soldier/Enemy PBR pipeline
                 sharedMat.onBeforeCompile = function(shader) {
                     shader.fragmentShader = shader.fragmentShader.replace(
@@ -742,12 +755,17 @@ var MilitaryArt = class MilitaryArt {
                     self._horizonFortress.add(gateMesh);
                 }
                 // 立即刷新实例矩阵到当前 anchor
-                var curZ = isFinite(self._anchor) ? self._anchor : 0;
-                self._anchor = Infinity;
+                var curZ = self._lastSquadZ || 0;
+                self.setTheme(self.themeName || 'dawn');
                 self.update(curZ);
+                return true;
             } catch (e) {
                 console.warn('[MilitaryArt] V15 env pack load fallback:', e);
+                return false;
             }
+        }).catch(function(error) {
+            console.warn('[MilitaryArt] environment fallback:', error.message);
+            return false;
         });
     }
 
@@ -887,9 +905,12 @@ var MilitaryArt = class MilitaryArt {
         }
         this.biome = biome;
         this.themeName = themeName;
+        // Hidden matrices may have been skipped for a different biome/anchor.
+        this._anchor = Infinity;
     }
 
     update(squadZ) {
+        this._lastSquadZ = squadZ || 0;
         if (this._horizonFortress) {
             this._horizonFortress.position.z = (squadZ || 0) - 74;
         }
@@ -899,6 +920,7 @@ var MilitaryArt = class MilitaryArt {
         var scratch = this._scratch;
         for (var m = 0; m < this._meshes.length; m++) {
             var mesh = this._meshes[m];
+            if (!mesh.visible) continue;
             var records = mesh.userData.records;
             for (var i = 0; i < records.length; i++) {
                 var item = records[i];

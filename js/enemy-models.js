@@ -1,48 +1,58 @@
 // V4.2: local Blender assets, cached immutable resources and rigid-part batches.
 var EnemyModelLoader = class EnemyModelLoader {
     static load(keys) {
-        // V11.6: 子集加载+后台续载 — 启动只等关键资源(士兵+normal/fast), 其余模型战斗中后台补齐
-        // (_bank 有 normal 回退, 未就绪体格短暂降级不崩溃)
         if (keys === undefined) keys = this.KEYS;
-        if (this._data) {
-            var missing = keys.filter(function(k) { return !this._data.styles[k]; }, this);
-            if (!missing.length) return Promise.resolve(this._data);
-            // V12: 续载并发去重 — 同一缺键集合已有在途续载时复用, 防重复加载
-            if (this._contPromise && this._contKeys === missing.join(',')) return this._contPromise;
-            this._contKeys = missing.join(',');
-            // V11.6: 错峰续载 — 逐体型串行+间隔; 战斗中自动拉长间隔(解码不与实时玩法抢主线程)
-            var contPromise = missing.reduce(function(p, k) {
-                return p.then(function() {
-                    var playing = typeof window !== 'undefined' && window.__game && window.__game.state === 'playing';
-                    var gap = playing ? 1500 : 400;
-                    return new Promise(function(res) { setTimeout(res, gap); })
-                        .then(function() { return this._loadKeys([k]); }.bind(this))
-                        .then(function(styles) { for (var mk in styles) this._data.styles[mk] = styles[mk]; }.bind(this));
-                }.bind(this));
-            }.bind(this), Promise.resolve()).then(function() {
-                this.status = 'loaded';
-                this._contPromise = null; // V12: 在途标记清理
-                return this._data;
-            }.bind(this)).catch(function(e) { this.status = 'partial_failed'; this._contPromise = null; throw e; }.bind(this));
-            this._contPromise = contPromise;
-            return contPromise;
-        }
-        if (this._promise) return this._promise;
-        this._bootT0 = performance.now();
-        this._promise = this._loadKeys(keys).then(function(styles) {
-            this._data = { parts: this.PARTS, styles: styles };
-            this.status = keys.length === this.KEYS.length ? 'loaded' : 'partial';
-            this.loadMs = performance.now() - this._bootT0;
+        if (!this._data) this._data = { parts: this.PARTS, styles: {} };
+        if (!this._keyPromises) this._keyPromises = {};
+        if (!this._failedKeys) this._failedKeys = {};
+        if (!this._bootT0) this._bootT0 = performance.now();
+        var initial = !Object.keys(this._data.styles).length;
+        return Promise.all(keys.map(function(key) {
+            if (this._data.styles[key]) return Promise.resolve();
+            if (this._keyPromises[key]) return this._keyPromises[key];
+            // Decode critical banks together; background banks are serialized and
+            // yield to input/rendering without adding seconds of artificial delay.
+            var start = initial ? Promise.resolve() : (this._queue || Promise.resolve()).then(function() {
+                return new Promise(function(resolve) {
+                    if (typeof window !== 'undefined' && window.requestIdleCallback) {
+                        window.requestIdleCallback(resolve, { timeout: 120 });
+                    } else setTimeout(resolve, 16);
+                });
+            });
+            var task = start.then(function() { return this._loadKeys([key]); }.bind(this)).then(function(styles) {
+                this._data.styles[key] = styles[key];
+                delete this._keyPromises[key];
+                delete this._failedKeys[key];
+                this._updateLoadStatus();
+                return styles[key];
+            }.bind(this), function(error) {
+                delete this._keyPromises[key];
+                this._failedKeys[key] = true;
+                this._updateLoadStatus();
+                throw error;
+            }.bind(this));
+            this._keyPromises[key] = task;
+            if (!initial) this._queue = task.catch(function() {});
+            return task;
+        }, this)).then(function() {
+            this._updateLoadStatus();
+            if (!this.loadMs) this.loadMs = performance.now() - this._bootT0;
             return this._data;
         }.bind(this)).catch(function(e) {
-            this._promise = null; this._data = null; this.status = 'failed'; throw e;
+            this._updateLoadStatus();
+            throw e;
         }.bind(this));
-        return this._promise;
+    }
+    static _updateLoadStatus() {
+        var loaded = Object.keys(this._data.styles).length;
+        if (Object.keys(this._keyPromises).length) this.status = 'loading';
+        else if (Object.keys(this._failedKeys).length) this.status = loaded ? 'partial_failed' : 'failed';
+        else this.status = loaded === this.KEYS.length ? 'loaded' : 'partial';
     }
     static loadCritical() {
-        // V16.3-P1: 启动关键集包含普通/快速/重装/酸液/投弹/伏击(均为独立Blender雕塑GLB)/精英/Boss
-        if (typeof window !== 'undefined' && window.__BootProgress) window.__BootProgress.total = 22;
-        return this.load(['normal', 'fast', 'shield', 'spitter', 'thrower', 'flanker', 'bomber', 'elite', 'bruiser', 'overlord']);
+        // First encounter uses normal/fast. Special enemies continue after home is usable.
+        if (typeof window !== 'undefined' && window.__BootProgress) window.__BootProgress.total = 6;
+        return this.load(['normal', 'fast']);
     }
     static _loadKeys(keys) {
         var loaded = [], loader = new THREE.GLTFLoader();

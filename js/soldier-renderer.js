@@ -17,11 +17,9 @@ var SoldierRenderer = class SoldierRenderer {
         this.ghosts = [];
         this._shootT = new Float32Array(this.capacity);
         this._debugPoses = [];
-        this._cycleSamples = [];
+        this._ghostPoses = [];
         this._lastRoots = [];
         this._lastTime = 0;
-        this._denseSampleTime = -Infinity;
-        this._denseSample = true;
         this._hitT = 0;
 
         this._p = new THREE.Vector3();
@@ -37,6 +35,11 @@ var SoldierRenderer = class SoldierRenderer {
         // V16: 职业辨识 — 实例染色 scratch + 职业附件库(gunner肩甲/medic急救包)
         this._v16Color = new THREE.Color();
         this._v16AccBanks = {};
+        this._tintStates = {
+            hero: { classId: null, visibleCount: -1 },
+            lod: { classId: null, visibleCount: -1 }
+        };
+        this._tintBank = null;
 
         this._createBank('hero');
         this._createBank('lod');
@@ -195,16 +198,15 @@ var SoldierRenderer = class SoldierRenderer {
 
         var bankName = squad.count > SoldierRenderer.HERO_LIMIT ? 'lod' : 'hero';
         this._selectBank(bankName, squad.count);
-        this._denseSample = bankName === 'hero' || time - this._denseSampleTime >= 1 / 30;
-        if (this._denseSample) this._denseSampleTime = time;
 
         var bank = this.banks[bankName];
         // V16: 职业辨识 — 每实例染色 + 职业附件(读取 squad._gameRef._classStats.id)
         var clsId = (squad._gameRef && squad._gameRef._classStats && squad._gameRef._classStats.id) || 'rifleman';
         var clsPres = SoldierRenderer.CLASS_PRESENTATION[clsId] || SoldierRenderer.CLASS_PRESENTATION.rifleman;
-        this._v16Color.setRGB(clsPres.tint[0], clsPres.tint[1], clsPres.tint[2]);
         for (var k in this._v16AccBanks) this._v16AccBanks[k].count = 0;
-        var accBank = clsPres.attach ? this._classAccBank(clsPres.attach) : null;
+        // Dense LOD formations never display class attachments, so do not construct
+        // their geometry/bank or calculate attachment matrices until hero detail returns.
+        var accBank = bankName === 'hero' && clsPres.attach ? this._classAccBank(clsPres.attach) : null;
         for (var index = 0; index < squad.count; index++) {
             this._composeRoot(index, squad, moving, lean, tilt, this._root);
             if (!this._lastRoots[index]) this._lastRoots[index] = new THREE.Matrix4();
@@ -217,33 +219,48 @@ var SoldierRenderer = class SoldierRenderer {
                 this._temp.setPosition(squad.x + (sObj ? sObj.x : 0), 0.032, squad.z + (sObj ? sObj.z : 0));
                 this._shadowMesh.setMatrixAt(index, this._temp);
             }
-            var pose = this._poseFor(index, squad.soldiers[index], moving, time, this._denseSample);
+            var pose = this._poseFor(index, squad.soldiers[index], moving, time);
             for (var p = 0; p < this.parts.length; p++) {
                 var part = this.parts[p];
                 this._partMatrix(part, bank.source, this._root, pose, this._temp);
                 bank.meshes[part].setMatrixAt(index, this._temp);
-                bank.meshes[part].setColorAt(index, this._v16Color);
-            }
-            if (accBank && index < SoldierRenderer.ACC_MAX) {
-                var aSlot = accBank.count++;
-                this._partMatrix('Body', bank.source, this._root, pose, this._temp);
-                accBank.mesh.setMatrixAt(aSlot, this._temp);
+                if (part === 'Body' && accBank && index < SoldierRenderer.ACC_MAX) {
+                    accBank.mesh.setMatrixAt(accBank.count++, this._temp);
+                }
             }
         }
 
         for (var ghostIndex = 0; ghostIndex < this.ghosts.length; ghostIndex++) {
             var ghost = this.ghosts[ghostIndex];
             var slot = squad.count + ghostIndex;
-            var deathPose = this._deathPose(ghost);
+            var deathPose = this._ghostPoses[ghostIndex];
+            if (!deathPose) deathPose = this._ghostPoses[ghostIndex] = this._createPose();
+            this._deathPose(ghost, deathPose);
             for (var gp = 0; gp < this.parts.length; gp++) {
                 var ghostPart = this.parts[gp];
                 this._partMatrix(ghostPart, bank.source, ghost.root, deathPose, this._temp);
                 bank.meshes[ghostPart].setMatrixAt(slot, this._temp);
-                bank.meshes[ghostPart].setColorAt(slot, this._v16Color);
             }
         }
 
         var visibleCount = squad.count + this.ghosts.length;
+        var tintState = this._tintStates[bankName];
+        var bankChanged = this._tintBank !== bankName;
+        var classChanged = tintState.classId !== clsId;
+        var visibleChanged = tintState.visibleCount !== visibleCount;
+        if (bankChanged || classChanged || visibleChanged) {
+            this._v16Color.setRGB(clsPres.tint[0], clsPres.tint[1], clsPres.tint[2]);
+            var colorStart = (!bankChanged && !classChanged && visibleCount > tintState.visibleCount)
+                ? tintState.visibleCount : 0;
+            for (var colorIndex = colorStart; colorIndex < visibleCount; colorIndex++) {
+                for (var colorPart = 0; colorPart < this.parts.length; colorPart++) {
+                    bank.meshes[this.parts[colorPart]].setColorAt(colorIndex, this._v16Color);
+                }
+            }
+            tintState.classId = clsId;
+            tintState.visibleCount = visibleCount;
+        }
+        this._tintBank = bankName;
         // V11.6: 前缀上传(只传已用槽位, 上限500时GPU带宽减半以上)
         for (var m = 0; m < this.parts.length; m++) {
             var partMesh = bank.meshes[this.parts[m]];
@@ -251,20 +268,24 @@ var SoldierRenderer = class SoldierRenderer {
             partMesh.instanceMatrix.updateRange.offset = 0;
             partMesh.instanceMatrix.updateRange.count = visibleCount * 16;
             partMesh.instanceMatrix.needsUpdate = true;
-            if (partMesh.instanceColor) {
-                partMesh.instanceColor.updateRange.offset = 0;
-                partMesh.instanceColor.updateRange.count = visibleCount * 3;
+            if (partMesh.instanceColor && (bankChanged || classChanged || visibleChanged)) {
+                partMesh.instanceColor.updateRange.offset = colorStart * 3;
+                partMesh.instanceColor.updateRange.count = Math.max(0, visibleCount - colorStart) * 3;
                 partMesh.instanceColor.needsUpdate = true;
             }
         }
         // V16: 职业附件上传(仅 hero 银行可见; LOD 大编制隐藏以省调用)
         for (var ak in this._v16AccBanks) {
-            var am = this._v16AccBanks[ak].mesh, au = this._v16AccBanks[ak].count;
-            am.count = au;
-            am.visible = au > 0 && bankName === 'hero';
-            am.instanceMatrix.updateRange.offset = 0;
-            am.instanceMatrix.updateRange.count = au * 16;
-            am.instanceMatrix.needsUpdate = true;
+            var accessoryBank = this._v16AccBanks[ak];
+            var am = accessoryBank.mesh;
+            var activeAccessory = bankName === 'hero' && accessoryBank === accBank && accessoryBank.count > 0;
+            am.count = activeAccessory ? accessoryBank.count : 0;
+            am.visible = activeAccessory;
+            if (activeAccessory) {
+                am.instanceMatrix.updateRange.offset = 0;
+                am.instanceMatrix.updateRange.count = accessoryBank.count * 16;
+                am.instanceMatrix.needsUpdate = true;
+            }
         }
         if (this._shadowMesh) {
             this._shadowMesh.count = squad.count;
@@ -290,64 +311,83 @@ var SoldierRenderer = class SoldierRenderer {
         return target.compose(this._p, this._q, this._s);
     }
 
-    _poseFor(index, soldier, moving, time, sampleCycle) {
-        var cycle = this._cycleSamples[index];
-        if (!cycle) cycle = this._cycleSamples[index] = { run: 0, idle: 0, victory: 0 };
-        if (sampleCycle) {
-            cycle.run = Math.sin(time * 8 + (soldier.phase || 0));
-            cycle.idle = Math.sin(time * 2 + (soldier.phase || 0));
-            cycle.victory = Math.sin(time * 5 + (soldier.phase || 0));
-        }
+    _createPose() {
+        return {
+            state: 'Idle', phase: 0,
+            swingL: 0, swingR: 0,
+            bodyPitch: 0, bodyYaw: 0,
+            headYaw: 0, headLift: 0,
+            armsPitch: 0, armsLift: 0,
+            recoil: 0, deathT: 0, deathDirection: 0
+        };
+    }
+
+    _poseFor(index, soldier, moving, time) {
+        var phase = soldier.phase || 0;
         var recoil = this._shootT[index] > 0
             ? Math.sin((this._shootT[index] / SoldierRenderer.SHOOT_DURATION) * Math.PI * 0.5)
             : 0;
-        if (this.state === 'Shoot') recoil = Math.abs(Math.sin(time * 16 + (soldier.phase || 0))) * .8 + .2;
+        if (this.state === 'Shoot') recoil = Math.abs(Math.sin(time * 16 + phase)) * .8 + .2;
         var state = this.state || (moving ? 'Run' : 'Idle');
         if (this._hitT > 0) state = 'Hit';
         if (recoil > 0) state = 'Shoot';
         if (this.state === 'Victory') state = 'Victory';
         if (this.state === 'Death') state = 'Death';
-        var pose = {
-            state: state,
-            phase: soldier.phase || 0,
-            swingL: moving && state !== 'Victory' ? cycle.run * 0.6 : 0,
-            swingR: moving && state !== 'Victory' ? -cycle.run * 0.6 : 0,
-            bodyPitch: moving ? cycle.run * 0.025 : 0,
-            bodyYaw: 0,
-            headYaw: (state === 'Idle' ? cycle.idle * 0.035 : 0),
-            headLift: (state === 'Idle' ? cycle.idle * 0.008 : 0),
-            armsPitch: 0,
-            armsLift: 0,
-            recoil: recoil,
-            deathT: 0,
-            deathDirection: 0
-        };
+        var runCycle = ((moving && state !== 'Victory' && state !== 'Death') || state === 'Hit')
+            ? Math.sin(time * 8 + phase) : 0;
+        var idleCycle = state === 'Idle' ? Math.sin(time * 2 + phase) : 0;
+        var victoryCycle = state === 'Victory' ? Math.sin(time * 5 + phase) : 0;
+        var pose = this._debugPoses[index];
+        if (!pose) pose = this._debugPoses[index] = this._createPose();
+        pose.state = state;
+        pose.phase = phase;
+        pose.swingL = moving && state !== 'Victory' ? runCycle * 0.6 : 0;
+        pose.swingR = moving && state !== 'Victory' ? -runCycle * 0.6 : 0;
+        pose.bodyPitch = moving ? runCycle * 0.025 : 0;
+        pose.bodyYaw = 0;
+        pose.headYaw = state === 'Idle' ? idleCycle * 0.035 : 0;
+        pose.headLift = state === 'Idle' ? idleCycle * 0.008 : 0;
+        pose.armsPitch = 0;
+        pose.armsLift = 0;
+        pose.recoil = recoil;
+        pose.deathT = 0;
+        pose.deathDirection = 0;
         if (state === 'Hit') {
             pose.bodyPitch = -0.12 * (this._hitT > 0 ? this._hitT / SoldierRenderer.HIT_DURATION : 1);
-            pose.headYaw = cycle.run * 0.08;
+            pose.headYaw = runCycle * 0.08;
         } else if (state === 'Death') {
-            pose = this._deathPose({ age: this._stateAge, phase: soldier.phase, direction: 1 });
+            this._setDeathPose(pose, this._stateAge, phase, 1);
         } else if (state === 'Victory') {
-            pose.bodyPitch = cycle.victory * 0.04;
-            pose.headLift = Math.abs(cycle.victory) * 0.03;
-            pose.armsPitch = -0.55 - Math.abs(cycle.victory) * 0.18;
+            pose.bodyPitch = victoryCycle * 0.04;
+            pose.headLift = Math.abs(victoryCycle) * 0.03;
+            pose.armsPitch = -0.55 - Math.abs(victoryCycle) * 0.18;
             pose.armsLift = 0.06;
-            pose.swingL = cycle.victory * 0.12;
-            pose.swingR = -cycle.victory * 0.12;
+            pose.swingL = victoryCycle * 0.12;
+            pose.swingR = -victoryCycle * 0.12;
         }
-        this._debugPoses[index] = pose;
         return pose;
     }
 
-    _deathPose(ghost) {
-        var t = Math.min(1, ghost.age / SoldierRenderer.DEATH_DURATION);
-        return {
-            state: 'Death', phase: ghost.phase,
-            swingL: 0.12, swingR: -0.12,
-            bodyPitch: 0, bodyYaw: 0, headYaw: 0, headLift: 0,
-            armsPitch: 0, armsLift: 0, recoil: 0,
-            deathT: t, deathDirection: ghost.direction
-        };
+    _setDeathPose(target, age, phase, direction) {
+        target.state = 'Death';
+        target.phase = phase || 0;
+        target.swingL = 0.12;
+        target.swingR = -0.12;
+        target.bodyPitch = 0;
+        target.bodyYaw = 0;
+        target.headYaw = 0;
+        target.headLift = 0;
+        target.armsPitch = 0;
+        target.armsLift = 0;
+        target.recoil = 0;
+        target.deathT = Math.min(1, age / SoldierRenderer.DEATH_DURATION);
+        target.deathDirection = direction;
+        return target;
+    }
+
+    _deathPose(ghost, target) {
+        if (!target) target = ghost._pose || (ghost._pose = this._createPose());
+        return this._setDeathPose(target, ghost.age, ghost.phase, ghost.direction);
     }
 
     _partMatrix(part, source, root, pose, target) {
@@ -384,7 +424,7 @@ var SoldierRenderer = class SoldierRenderer {
         target = target || new THREE.Vector3();
         if (index < 0 || index >= squad.count) return null;
         this._composeRoot(index, squad, !!squad._moving, squad._lean || 0, squad._tilt || 0, this._root);
-        var pose = this._poseFor(index, squad.soldiers[index], !!squad._moving, this._lastTime, true);
+        var pose = this._poseFor(index, squad.soldiers[index], !!squad._moving, this._lastTime);
         var bank = this.banks[this.activeBank];
         this._partMatrix('Arms', bank.source, this._root, pose, this._temp);
         bank.meshes.Arms.setMatrixAt(index, this._temp);
