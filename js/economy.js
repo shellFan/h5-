@@ -98,7 +98,8 @@ class GameProfile {
             bag: d.bag || [],
             records: d.records || [],
             weaponAffix: d.weaponAffix || null, // V11.3: 武器词条持久化
-            classMastery: d.classMastery || {} // V11.4: 职业专精
+            classMastery: d.classMastery || {}, // V11.4: 职业专精
+            tutorialSeen: !!d.tutorialSeen // V17: 新手教程已阅标记(不进白名单会被启动归一化静默清掉, 弹窗每次重开)
         };
     }
 

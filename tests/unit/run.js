@@ -17,6 +17,7 @@ const SOURCE_FILES = [
     'js/pacing.js',         // V4.0: 节奏控制器(纯逻辑)
     'js/economy.js',        // V5.1: 金币经济
     'js/upgrades.js',       // V5.1: 升级商店
+    'js/tutorial.js',       // V17: 新手教程(纯逻辑部分: 触发判定/页内容/已阅标记)
     'js/tech-tree.js',      // V8.0: 科技树(科技点经济)
     'js/squad.js',          // V5.1: 小队(类定义, 单测不实例化渲染器)
     'js/gates.js',          // V5.1: 门系统+奖励池

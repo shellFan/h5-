@@ -18,6 +18,7 @@ const COPY_LIST = [
     'style-v120.css', // V12视觉升级层: 设计令牌/HUD精修/结算/排行榜/手机安全区
     'style-v118.css', // Approved navy/gold UI and local weapon illustration atlas.
     'style-v130.css', // V13视觉精修层: 动效统一/军械库剪影/科技树连线/排行榜状态
+    'style-tutorial.css', // V17新手教程: 指南弹窗 + 首页入口
     'js/vendor/three.min.js',
     'js/vendor/GLTFLoader.js',
     'js/vendor/THREE-LICENSE.txt',
@@ -26,6 +27,7 @@ const COPY_LIST = [
     'js/economy.js',
     'js/energy-core.js',
     'js/ui-v60.js',
+    'js/tutorial.js', // V17: 新手教程(触发判定纯逻辑 + 懒装配弹窗DOM)
     'js/weapon-showcase.js',
     'js/skills.js',
     'js/affixes.js',

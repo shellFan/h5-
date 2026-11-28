@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="style-v120.css?v=120">
     <link rel="stylesheet" href="style-v118.css?v=118">
     <link rel="stylesheet" href="style-v130.css?v=140">
+    <!-- V17新手教程: 指南弹窗 + 首页入口 (js/tutorial.js) -->
+    <link rel="stylesheet" href="style-tutorial.css?v=170">
 </head>
 <body>
     <!-- VNext: 真实资源加载进度(文件级统计, 阶段推进, 失败重试) -->
@@ -193,6 +195,7 @@
                 <button id="btn-start" class="btn-primary">开始游戏</button>
                 <div id="level-select" aria-label="关卡选择"></div>
                 <p class="hint-text">左右拖动切换跑道</p>
+                <button id="btn-tutorial" class="btn-tutorial-entry">❓ 新手指南</button>
             </div>
         </div>
 
@@ -305,6 +308,7 @@
     <script src="js/progression.js?v=60"></script>
     <script src="js/challenge.js?v=60"></script>
     <script src="js/ui-v60.js?v=140"></script>
+    <script src="js/tutorial.js?v=170"></script>
     <script src="js/weapon-showcase.js?v=143"></script>
     <script src="js/upgrades.js?v=51"></script>
     <script src="js/movement.js"></script>

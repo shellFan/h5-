@@ -39,6 +39,7 @@ const GAME_SCRIPTS = [
     'js/progression.js',
     'js/challenge.js',
     'js/ui-v60.js',
+    'js/tutorial.js',
     'js/weapon-showcase.js',
     'js/upgrades.js',
     'js/movement.js',
@@ -90,7 +91,7 @@ const ASSET_RULES = [
     { match: /\.svg$/, priority: 'P3', role: '矢量图标' }
 ];
 
-const CSS_FILES = ['style.css', 'style-v42.css', 'style-v51.css', 'style-v60.css', 'style-v120.css', 'style-v118.css', 'style-v130.css'];
+const CSS_FILES = ['style.css', 'style-v42.css', 'style-v51.css', 'style-v60.css', 'style-v120.css', 'style-v118.css', 'style-v130.css', 'style-tutorial.css'];
 
 function mustRead(rel) {
     const p = path.join(ROOT, rel);

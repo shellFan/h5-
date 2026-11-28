@@ -27,6 +27,7 @@
     "sim": "node tools/run-sim.js",
     "perf": "node tools/v50-performance.js",
     "test:e2e": "node tests/e2e/run.js",
+    "test:tutorial": "node tests/e2e/tutorial.js",
     "test:visual": "node tests/e2e/visual.js",
     "test:v41": "node tools/v41-verify.js",
     "test:soldier": "node tests/e2e/soldier.js",

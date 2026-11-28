@@ -264,6 +264,9 @@ class Game {
         // V5.1.4: 胜利页商店入口(静态元素, 此处可绑)
         var btnShopWin = document.getElementById('btn-open-shop-win');
         if (btnShopWin) btnShopWin.addEventListener('click', function() { self._sfx('click'); self._openShop(); });
+        // V17: 新手指南首页入口(静态元素, 随时重看)
+        var btnTutorial = document.getElementById('btn-tutorial');
+        if (btnTutorial) btnTutorial.addEventListener('click', function() { self._sfx('click'); if (typeof TutorialUI !== 'undefined') TutorialUI.openFromHome(self); });
         // V5.1: 商店UI装配
         this._setupShopUI();
         this._refreshCoinDisplays();
@@ -896,6 +899,8 @@ class Game {
 
     start() {
         try {
+            // V17: 取消未决的新手教程延迟弹窗(防玩家在600ms窗口内点了下一关/重开, 弹窗延迟到战斗中)
+            if (typeof TutorialUI !== 'undefined') TutorialUI.cancelPending();
             var level = LEVELS[this.levelIndex];
             // V5.1: 永久升级应用 — 初始人数 = 关卡基础 + 新兵招募等级; 穿透初始等级
             var startCount = this.shop ? this.shop.startCount(this.profile, level.startCount) : level.startCount;
@@ -1485,6 +1490,8 @@ class Game {
         if (this.ui.btnNextLevel) {
             this.ui.btnNextLevel.classList.toggle('hidden', !hasNext);
         }
+        // V17: 新手教程 — 首次通关第1关后弹出(延迟叠加在结算页上, 只弹一次)
+        if (typeof TutorialUI !== 'undefined') TutorialUI.maybeShowAfterWin(this);
     }
 
     _lose(reason) {
@@ -1553,6 +1560,8 @@ class Game {
         // V3.4: 复活按钮(每局限1次)
         this._updateAdButtons();
         if (this.ui.loseScreen) this.ui.loseScreen.classList.remove('hidden');
+        // V17: 新手教程 — 首次在第2关失败后弹出变强指南(延迟叠加在失败页上, 只弹一次)
+        if (typeof TutorialUI !== 'undefined') TutorialUI.maybeShowAfterLose(this);
     }
 
     // ===== V3.3: 存档系统(关卡解锁进度) =====
