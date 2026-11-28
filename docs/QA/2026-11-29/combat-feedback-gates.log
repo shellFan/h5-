@@ -1,0 +1,20 @@
+PASS L6 blocked gate waits then releases at 30Hz
+PASS L6 blocked gate waits then releases at 60Hz
+PASS L6 blocked gate waits then releases at 120Hz
+PASS all authored gate rows remain reachable in L6–L10
+FAIL volley fires 1–5 positions on the shipped DPS budget per shot: {"count":7,"damage":4,"expected":4,"shots":6,"volley":2}
+
+6 !== 2
+
+PASS fractional hit, splash, chain, burn and poison preserve their multipliers
+FAIL rear ambush can be cleared while waiting for a gate: page.evaluate: TypeError: Cannot read properties of undefined (reading 'apply')
+    at eval (eval at evaluate (:370:30), <anonymous>:6:63)
+    at UtilityScript.evaluate (<anonymous>:372:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+PASS kill recruitment respects the technology-expanded squad cap
+FAIL automatic recruitment reports actual capped gains and clears on restart: Expected values to be strictly equal:
+
+12 !== 25
+
+PASS repeated kill recruits aggregate without particle spam
+PASS no browser errors

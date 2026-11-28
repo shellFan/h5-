@@ -1,0 +1,2 @@
+PASS steady HUD avoids layout dimension reads
+PASS badge projection follows resized CSS viewport

@@ -439,6 +439,7 @@ var V60UI = {
             '<div class="v15-page-title-wrap"><span class="v15-page-kicker">BARRACKS</span><strong>士兵训练中心</strong></div>' +
             '<div class="v15-page-coin"><img src="assets/game/ui/coin.png" alt=""><span>' + (game.profile.coins || 0) + '</span></div>' +
             '</div>';
+        header.querySelector('.v15-page-back').onclick = function() { self.hidePages(); };
 
         // 左右 6 个独立战术装备槽 + 中央大型士兵展示台
         var svgHelmet = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 14a8 8 0 0 1 16 0v2H4v-2Z"/><path d="M3 16h18v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2Z"/></svg>';
@@ -660,6 +661,13 @@ var V60UI = {
                 '<div class="v118-armory-hero-stats">' + statTextOf(wStats) + '</div>' +
                 nextLine + evoTag +
                 '<div class="v15-armory-hero-actions" id="v15-armory-hero-actions"></div></div>';
+            hero.querySelector('.v15-page-back').onclick = function() { self.hidePages(); };
+            if (wStats.affixName) {
+                var affixLabel = document.createElement('div');
+                affixLabel.className = 'v15-armory-affix v15-armory-next';
+                affixLabel.textContent = '词条：' + wStats.affixName;
+                hero.querySelector('.v118-armory-hero-info').appendChild(affixLabel);
+            }
 
             // 主操作区固定在当前武器展示台下方(不再在下方重复出现大卡片!)
             var heroActs = hero.querySelector('#v15-armory-hero-actions');
@@ -706,7 +714,7 @@ var V60UI = {
             var unlockedNow = !def.unlockCondition || isCurrent || canUnlock ||
                 (def.unlockCondition.type === 'clear' && (game.profile.data.unlockedLevel || 1) > def.unlockCondition.level);
             var row = document.createElement('button');
-            row.type = 'button';
+            row.setAttribute('type', 'button');
             row.className = 'v60-armory-row v15-weapon-tile' + (isCurrent ? ' equipped' : unlockedNow ? ' owned' : ' locked');
             row.setAttribute('data-weapon', id);
             var badgeText = isCurrent ? '装备中' : (unlockedNow ? ('Lv.' + wLv) : ('第' + def.unlockCondition.level + '关'));

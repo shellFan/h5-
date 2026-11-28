@@ -1,0 +1,46 @@
+node:assert:152
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: V5.1.4 progress endpoint = final hold position
++ actual - expected
+
+  [
++   -89,
++   -97,
++   -116,
++   -119,
+-   -76,
+-   -84,
+-   -106,
+-   -106,
+    -145.5,
++   -161.5,
++   -143.5,
++   -143.5,
++   -161.5,
++   -203.5
+  ]
+
+    at Object.<anonymous> (D:\git\fan\AI项目\h5\tests\unit\v42-gameplay.js:4:8)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [
+       -89,    -97,   -116,
+      -119, -145.5, -161.5,
+    -143.5, -143.5, -161.5,
+    -203.5
+  ],
+  expected: [ -76, -84, -106, -106, -145.5 ],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.22.3

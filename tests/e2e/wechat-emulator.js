@@ -117,7 +117,9 @@ async function main() {
             const hero = doc.querySelector('#start-screen .art-home-hero');
             const navIds = ['map', 'train', 'armory', 'tech', 'codex', 'challenge', 'rank', 'ach', 'daily', 'set'];
             const nav = navIds.map(id => {
-                const node = doc.getElementById('v60-btn-' + id);
+                const dock = ['train', 'armory', 'rank'].includes(id);
+                const node = doc.querySelector(dock ? '#v15-bottom-dock [data-dock="' + id + '"]'
+                    : '.v15-side-btn[data-trigger="v60-btn-' + id + '"]');
                 return {
                     id,
                     text: node ? node.textContent.trim() : '',
@@ -128,14 +130,15 @@ async function main() {
                 rootClass: root ? root.className : '',
                 panelBox: panel && panel._box ? { x: panel._box.x, y: panel._box.y, w: panel._box.w, h: panel._box.h } : null,
                 heroExists: Boolean(hero),
+                logo: doc.querySelector('.v15-logo-img') && doc.querySelector('.v15-logo-img').getAttribute('alt'),
                 heroText: hero ? hero.textContent : '',
                 nav
             };
         });
         check('军事首页英雄区通过 minidom 后代选择器安装',
-            militaryHome.heroExists && /art-military/.test(militaryHome.rootClass) && /小小军团/.test(militaryHome.heroText),
+            militaryHome.heroExists && /art-military/.test(militaryHome.rootClass) && militaryHome.logo === '膨胀小队',
             JSON.stringify({ rootClass: militaryHome.rootClass, hero: militaryHome.heroExists, text: militaryHome.heroText }));
-        const expectedNavLabels = ['地图', '训练', '军械库', '科技', '图鉴', '挑战', '排行', '成就', '每日', '设置'];
+        const expectedNavLabels = ['地图', '特种兵', '军械', '科技', '图鉴', '挑战', '排行', '成就', '每日', '设置'];
         check('军事首页十个导航保留真实文本标签',
             militaryHome.nav.every((item, index) => item.text.indexOf(expectedNavLabels[index]) !== -1),
             militaryHome.nav.map(item => item.id + '=' + item.text).join(', '));
@@ -152,16 +155,18 @@ async function main() {
         await page.screenshot({ path: path.join(SHOT_DIR, 'wechat-home.png') });
         console.log('  截图: docs/WeChat/screenshots/wechat-home.png');
 
-        // Inventory art must be packaged and cropped to a single atlas cell.
+        // Processed standalone weapon PNGs must use their complete source image.
         await page.evaluate(() => {
             window.__atlasDrawCalls = [];
             const original = CanvasRenderingContext2D.prototype.drawImage;
             window.__restoreAtlasDraw = () => { CanvasRenderingContext2D.prototype.drawImage = original; };
             CanvasRenderingContext2D.prototype.drawImage = function(...args) {
-                if (args.length === 9 && /ui-v118|ui-art/.test(String(args[0].src || ''))) window.__atlasDrawCalls.push(args.slice(1, 5));
+                if (args.length === 9 && /\/weapons\//.test(String(args[0].src || ''))) {
+                    window.__atlasDrawCalls.push({ rect: args.slice(1, 5), width: args[0].naturalWidth || args[0].width, height: args[0].naturalHeight || args[0].height });
+                }
                 return original.apply(this, args);
             };
-            window.__minidom.document.getElementById('v60-btn-armory').onclick();
+            window.__minidom.document.querySelector('#v15-bottom-dock [data-dock="armory"]').click();
         });
         await page.waitForTimeout(1800);
         await page.evaluate(() => { window.__minidom.document.getElementById('v60-armory-list').scrollTop = 10000; });
@@ -170,14 +175,22 @@ async function main() {
             const art = window.__minidom.document.querySelectorAll('.v118-weapon-art');
             const loaded = Array.from(art).filter(e => e._bgImgState === 'loaded').length;
             const textures = new Set(Array.from(art).filter(e => e._bgImg).map(e => e._bgImg)).size;
-            const cells = new Set(window.__atlasDrawCalls.map(c => c.join(','))).size;
+            const fullImages = window.__atlasDrawCalls.length > 0 && window.__atlasDrawCalls.every(c =>
+                c.rect[0] === 0 && c.rect[1] === 0 && c.rect[2] === c.width && c.rect[3] === c.height);
+            const tiles = docTiles();
+            function docTiles() {
+                return Array.from(window.__minidom.document.querySelectorAll('.v15-weapon-tile')).filter(e => e._box && e._box.w > 0 && e._box.h > 0).length;
+            }
             window.__restoreAtlasDraw();
-            window.__minidom.document.getElementById('v60-armory-back').onclick();
-            return { count: art.length, loaded, cells, textures };
+            const back = window.__minidom.document.querySelector('#v118-armory-hero .v15-page-back');
+            back.click();
+            return { count: art.length, loaded, fullImages, textures, tiles,
+                closed: window.__minidom.document.getElementById('v60-armory-page').classList.contains('hidden') };
         });
-        check('军械库透明图集随包加载', artState.count === 9 && artState.loaded === 9, JSON.stringify(artState));
-        check('军械库8种插图按单格裁切', artState.cells === 8, JSON.stringify(artState));
-        check('军械库共享单张图集解码', artState.textures === 1, JSON.stringify(artState));
+        check('军械库8个可见选项与9个插图完整加载', artState.count === 9 && artState.loaded === 9 && artState.tiles === 8, JSON.stringify(artState));
+        check('军械库单张武器图完整显示', artState.fullImages, JSON.stringify(artState));
+        check('军械库当前展示图复用对应武器解码', artState.textures === 8, JSON.stringify(artState));
+        check('军械库可见返回按钮关闭页面', artState.closed, JSON.stringify(artState));
         await page.waitForTimeout(300);
 
         // 4. 点击开始 → 进入战斗

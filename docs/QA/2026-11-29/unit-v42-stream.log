@@ -1,0 +1,1345 @@
+node:assert:152
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: V5.1 five-level waves: all enemies, types and positions retained
++ actual - expected
+... Skipped lines
+
+  [
+    {
++     totalZ: -89,
+-     totalZ: -76,
+      waves: [
+        {
+          enemies: [
+            {
++             count: 7,
+-             count: 21,
+              type: 'normal'
+            },
++           {
++             count: 3,
++             type: 'fast'
++           }
+          ],
+          z: -18
+        },
+        {
+          enemies: [
+            {
++             count: 10,
+-             count: 26,
+              type: 'normal'
+            },
+            {
++             count: 5,
+-             count: 6,
+              type: 'fast'
+            }
+          ],
+          z: -40
+        },
+...
+            {
++             count: 11,
+-             count: 21,
+              type: 'normal'
+            },
+            {
++             count: 5,
+-             count: 9,
+              type: 'fast'
+            },
++           {
++             count: 2,
++             type: 'shield'
++           },
++           {
++             count: 3,
++             type: 'flanker'
++           }
+          ],
+          z: -64
+        },
+        {
+          enemies: [
+...
+            },
++           {
++             count: 2,
++             type: 'shield'
++           },
++           {
++             count: 3,
++             type: 'flanker'
++           }
+          ],
+          z: -78
+        },
++       {
++         enemies: [
++           {
++             count: 8,
++             type: 'normal'
++           },
++           {
++             count: 4,
++             type: 'fast'
++           },
++           {
++             count: 2,
++             type: 'shield'
++           },
++           {
++             count: 3,
++             type: 'flanker'
++           }
++         ],
++         z: -85
++       },
++       {
++         enemies: [
++           {
++             count: 8,
++             type: 'normal'
++           },
++           {
++             count: 4,
++             type: 'fast'
++           },
++           {
++             count: 2,
++             type: 'shield'
++           },
++           {
++             count: 3,
++             type: 'flanker'
++           }
++         ],
++         z: -91
++       }
+      ]
+    },
+    {
++     totalZ: -97,
+-     totalZ: -84,
+      waves: [
+        {
+          enemies: [
+            {
++             count: 32,
+-             count: 60,
+              type: 'fast'
+            },
+            {
++             count: 28,
+-             count: 48,
+              type: 'normal'
+            }
+          ],
+          z: -20
+        },
+...
+            {
++             count: 44,
+-             count: 84,
+              type: 'fast'
+            },
+            {
++             count: 30,
+-             count: 48,
+              type: 'normal'
+            },
++           {
++             count: 8,
++             type: 'flanker'
++           }
+          ],
+          z: -46
+        },
+        {
+          enemies: [
+            {
++             count: 56,
+-             count: 69,
+              type: 'fast'
+            },
+            {
++             count: 30,
+-             count: 36,
+              type: 'normal'
+            },
+            {
++             count: 10,
+-             count: 9,
+              type: 'shield'
+            },
++           {
++             count: 10,
++             type: 'flanker'
++           },
++           {
++             count: 8,
++             type: 'spitter'
++           }
+          ],
+          z: -72
+        },
+        {
+          enemies: [
+            {
++             count: 20,
+-             count: 36,
+              type: 'fast'
+            },
++           {
++             count: 6,
++             type: 'spitter'
++           },
++           {
++             count: 6,
++             type: 'thrower'
++           },
++           {
++             count: 4,
++             type: 'flanker'
++           }
+          ],
+          z: -86
+        },
++       {
++         enemies: [
++           {
++             count: 24,
++             type: 'normal'
++           },
++           {
++             count: 12,
++             type: 'fast'
++           },
++           {
++             count: 6,
++             type: 'spitter'
++           },
++           {
++             count: 4,
++             type: 'thrower'
++           },
++           {
++             count: 4,
++             type: 'flanker'
++           }
++         ],
++         z: -93
++       },
++       {
++         enemies: [
++           {
++             count: 20,
++             type: 'normal'
++           },
++           {
++             count: 10,
++             type: 'fast'
++           },
++           {
++             count: 6,
++             type: 'shield'
++           },
++           {
++             count: 6,
++             type: 'spitter'
++           },
++           {
++             count: 4,
++             type: 'thrower'
++           },
++           {
++             count: 4,
++             type: 'flanker'
++           }
++         ],
++         z: -99
++       }
+      ]
+    },
+    {
++     totalZ: -116,
+-     totalZ: -106,
+      waves: [
+        {
+          enemies: [
+            {
++             count: 24,
+-             count: 54,
+              type: 'shield'
+            },
+            {
++             count: 48,
+-             count: 69,
+              type: 'normal'
+            }
+          ],
+          z: -22
+        },
+...
+            {
++             count: 42,
+-             count: 78,
+              type: 'shield'
+            },
+            {
++             count: 40,
+-             count: 54,
+              type: 'fast'
+            }
+          ],
+          z: -50
+        },
+...
+            {
++             count: 32,
+-             count: 69,
+              type: 'shield'
+            },
+            {
++             count: 48,
+-             count: 69,
+              type: 'normal'
+            },
+            {
++             count: 14,
+-             count: 15,
+              type: 'spitter'
+            },
++           {
++             count: 8,
++             type: 'thrower'
++           },
++           {
++             count: 12,
++             type: 'flanker'
++           }
+          ],
+          z: -78
+        },
+        {
+          enemies: [
+            {
++             count: 22,
+-             count: 39,
+              type: 'shield'
+            },
+            {
++             count: 40,
+-             count: 54,
+              type: 'normal'
+            },
+            {
++             count: 16,
+-             count: 24,
+              type: 'spitter'
+            },
++           {
++             count: 8,
++             type: 'thrower'
++           },
++           {
++             count: 8,
++             type: 'flanker'
++           }
+          ],
+          z: -94
+        },
+        {
+          enemies: [
+            {
++             count: 35,
+-             count: 39,
+              type: 'shield'
+            },
+            {
++             count: 29,
+-             count: 39,
+              type: 'fast'
+            },
++           {
++             count: 8,
++             type: 'flanker'
++           },
++           {
++             count: 6,
++             type: 'thrower'
++           }
+          ],
+          z: -108
+        },
++       {
++         enemies: [
++           {
++             count: 26,
++             type: 'normal'
++           },
++           {
++             count: 12,
++             type: 'fast'
++           },
++           {
++             count: 8,
++             type: 'split'
++           },
++           {
++             count: 8,
++             type: 'flanker'
++           },
++           {
++             count: 6,
++             type: 'thrower'
++           }
++         ],
++         z: -114
++       },
++       {
++         enemies: [
++           {
++             count: 24,
++             type: 'normal'
++           },
++           {
++             count: 12,
++             type: 'fast'
++           },
++           {
++             count: 10,
++             type: 'shield'
++           },
++           {
++             count: 6,
++             type: 'thrower'
++           },
++           {
++             count: 4,
++             type: 'flanker'
++           }
++         ],
++         z: -118
++       }
+      ]
+    },
+    {
++     totalZ: -119,
+-     totalZ: -106,
+      waves: [
+        {
+          enemies: [
+            {
+              count: 51,
+...
+        },
++       {
++         enemies: [
++           {
++             count: 28,
++             type: 'normal'
++           },
++           {
++             count: 14,
++             type: 'fast'
++           },
++           {
++             count: 8,
++             type: 'spitter'
++           },
++           {
++             count: 8,
++             type: 'thrower'
++           },
++           {
++             count: 6,
++             type: 'flanker'
++           }
++         ],
++         z: -115
++       },
++       {
++         enemies: [
++           {
++             count: 24,
++             type: 'normal'
++           },
++           {
++             count: 10,
++             type: 'shield'
++           },
++           {
++             count: 6,
++             type: 'bomber'
++           },
++           {
++             count: 6,
++             type: 'thrower'
++           },
++           {
++             count: 6,
++             type: 'flanker'
++           }
++         ],
++         z: -121
++       }
+      ]
+    },
+    {
+      totalZ: -145.5,
+      waves: [
+...
+        },
++       {
++         enemies: [
++           {
++             count: 30,
++             type: 'normal'
++           },
++           {
++             count: 14,
++             type: 'fast'
++           },
++           {
++             count: 10,
++             type: 'shield'
++           },
++           {
++             count: 8,
++             type: 'thrower'
++           },
++           {
++             count: 6,
++             type: 'flanker'
++           }
++         ],
++         z: -132
++       },
++       {
++         enemies: [
++           {
++             count: 24,
++             type: 'normal'
++           },
++           {
++             count: 12,
++             type: 'shield'
++           },
++           {
++             count: 3,
++             type: 'elite'
++           },
++           {
++             count: 5,
++             type: 'thrower'
++           },
++           {
++             count: 5,
++             type: 'flanker'
++           }
++         ],
++         z: -141
++       }
+      ]
+    },
++   {
++     totalZ: -161.5,
++     waves: [
++       {
++         enemies: [
++           {
++             count: 90,
++             type: 'normal'
++           },
++           {
++             count: 60,
++             type: 'fast'
++           }
++         ],
++         z: -24
++       },
++       {
++         enemies: [
++           {
++             count: 5,
++             type: 'elite'
++           },
++           {
++             count: 35,
++             type: 'shield'
++           },
++           {
++             count: 55,
++             type: 'normal'
++           }
++         ],
++         z: -56
++       },
++       {
++         enemies: [
++           {
++             count: 8,
++             type: 'elite'
++           },
++           {
++             count: 40,
++             type: 'spitter'
++           },
++           {
++             count: 45,
++             type: 'split'
++           },
++           {
++             count: 45,
++             type: 'fast'
++           }
++         ],
++         z: -102
++       },
++       {
++         enemies: [
++           {
++             count: 10,
++             type: 'elite'
++           },
++           {
++             count: 50,
++             type: 'shield'
++           },
++           {
++             count: 35,
++             type: 'spitter'
++           },
++           {
++             count: 70,
++             type: 'normal'
++           }
++         ],
++         z: -134
++       },
++       {
++         enemies: [
++           {
++             count: 26,
++             type: 'normal'
++           },
++           {
++             count: 14,
++             type: 'fast'
++           },
++           {
++             count: 10,
++             type: 'shield'
++           },
++           {
++             count: 8,
++             type: 'thrower'
++           },
++           {
++             count: 8,
++             type: 'flanker'
++           }
++         ],
++         z: -156
++       }
++     ]
++   },
++   {
++     totalZ: -143.5,
++     waves: [
++       {
++         enemies: [
++           {
++             count: 80,
++             type: 'normal'
++           },
++           {
++             count: 50,
++             type: 'fast'
++           }
++         ],
++         z: -24
++       },
++       {
++         enemies: [
++           {
++             count: 6,
++             type: 'elite'
++           },
++           {
++             count: 60,
++             type: 'fast'
++           },
++           {
++             count: 50,
++             type: 'normal'
++           }
++         ],
++         z: -56
++       },
++       {
++         enemies: [
++           {
++             count: 5,
++             type: 'elite'
++           },
++           {
++             count: 40,
++             type: 'shield'
++           },
++           {
++             count: 25,
++             type: 'spitter'
++           }
++         ],
++         z: -78
++       },
++       {
++         enemies: [
++           {
++             count: 8,
++             type: 'elite'
++           },
++           {
++             count: 60,
++             type: 'split'
++           },
++           {
++             count: 40,
++             type: 'shield'
++           }
++         ],
++         z: -112
++       },
++       {
++         enemies: [
++           {
++             count: 26,
++             type: 'normal'
++           },
++           {
++             count: 14,
++             type: 'fast'
++           },
++           {
++             count: 12,
++             type: 'split'
++           },
++           {
++             count: 8,
++             type: 'thrower'
++           },
++           {
++             count: 8,
++             type: 'flanker'
++           }
++         ],
++         z: -137
++       }
++     ]
++   },
++   {
++     totalZ: -143.5,
++     waves: [
++       {
++         enemies: [
++           {
++             count: 40,
++             type: 'shield'
++           },
++           {
++             count: 60,
++             type: 'normal'
++           },
++           {
++             count: 40,
++             type: 'fast'
++           }
++         ],
++         z: -24
++       },
++       {
++         enemies: [
++           {
++             count: 8,
++             type: 'elite'
++           },
++           {
++             count: 40,
++             type: 'spitter'
++           },
++           {
++             count: 50,
++             type: 'fast'
++           },
++           {
++             count: 10,
++             type: 'bomber'
++           }
++         ],
++         z: -58
++       },
++       {
++         enemies: [
++           {
++             count: 10,
++             type: 'elite'
++           },
++           {
++             count: 50,
++             type: 'shield'
++           },
++           {
++             count: 70,
++             type: 'normal'
++           }
++         ],
++         z: -108
++       },
++       {
++         enemies: [
++           {
++             count: 26,
++             type: 'normal'
++           },
++           {
++             count: 14,
++             type: 'fast'
++           },
++           {
++             count: 10,
++             type: 'spitter'
++           },
++           {
++             count: 6,
++             type: 'bomber'
++           },
++           {
++             count: 8,
++             type: 'thrower'
++           },
++           {
++             count: 8,
++             type: 'flanker'
++           }
++         ],
++         z: -136
++       }
++     ]
++   },
++   {
++     totalZ: -161.5,
++     waves: [
++       {
++         enemies: [
++           {
++             count: 6,
++             type: 'elite'
++           },
++           {
++             count: 80,
++             type: 'normal'
++           },
++           {
++             count: 60,
++             type: 'fast'
++           }
++         ],
++         z: -24
++       },
++       {
++         enemies: [
++           {
++             count: 10,
++             type: 'elite'
++           },
++           {
++             count: 60,
++             type: 'shield'
++           },
++           {
++             count: 45,
++             type: 'spitter'
++           }
++         ],
++         z: -58
++       },
++       {
++         enemies: [
++           {
++             count: 10,
++             type: 'elite'
++           },
++           {
++             count: 50,
++             type: 'split'
++           },
++           {
++             count: 60,
++             type: 'fast'
++           },
++           {
++             count: 70,
++             type: 'normal'
++           }
++         ],
++         z: -92
++       },
++       {
++         enemies: [
++           {
++             count: 28,
++             type: 'normal'
++           },
++           {
++             count: 14,
++             type: 'shield'
++           },
++           {
++             count: 10,
++             type: 'spitter'
++           },
++           {
++             count: 4,
++             type: 'elite'
++           },
++           {
++             count: 8,
++             type: 'thrower'
++           },
++           {
++             count: 6,
++             type: 'flanker'
++           }
++         ],
++         z: -119
++       }
++     ]
++   },
++   {
++     totalZ: -203.5,
++     waves: [
++       {
++         enemies: [
++           {
++             count: 8,
++             type: 'elite'
++           },
++           {
++             count: 80,
++             type: 'normal'
++           },
++           {
++             count: 70,
++             type: 'fast'
++           },
++           {
++             count: 12,
++             type: 'bomber'
++           }
++         ],
++         z: -26
++       },
++       {
++         enemies: [
++           {
++             count: 14,
++             type: 'elite'
++           },
++           {
++             count: 80,
++             type: 'shield'
++           },
++           {
++             count: 50,
++             type: 'spitter'
++           },
++           {
++             count: 10,
++             type: 'bomber'
++           }
++         ],
++         z: -60
++       },
++       {
++         enemies: [
++           {
++             count: 16,
++             type: 'elite'
++           },
++           {
++             count: 70,
++             type: 'split'
++           },
++           {
++             count: 70,
++             type: 'shield'
++           },
++           {
++             count: 70,
++             type: 'fast'
++           }
++         ],
++         z: -110
++       },
++       {
++         enemies: [
++           {
++             count: 14,
++             type: 'elite'
++           },
++           {
++             count: 40,
++             type: 'spitter'
++           },
++           {
++             count: 40,
++             type: 'shield'
++           },
++           {
++             count: 80,
++             type: 'normal'
++           },
++           {
++             count: 60,
++             type: 'fast'
++           }
++         ],
++         z: -144
++       },
++       {
++         enemies: [
++           {
++             count: 16,
++             type: 'elite'
++           },
++           {
++             count: 90,
++             type: 'normal'
++           },
++           {
++             count: 70,
++             type: 'fast'
++           },
++           {
++             count: 40,
++             type: 'shield'
++           },
++           {
++             count: 35,
++             type: 'spitter'
++           }
++         ],
++         z: -178
++       },
++       {
++         enemies: [
++           {
++             count: 28,
++             type: 'normal'
++           },
++           {
++             count: 16,
++             type: 'fast'
++           },
++           {
++             count: 12,
++             type: 'shield'
++           },
++           {
++             count: 4,
++             type: 'elite'
++           },
++           {
++             count: 10,
++             type: 'thrower'
++           },
++           {
++             count: 8,
++             type: 'flanker'
++           }
++         ],
++         z: -196
++       }
++     ]
++   }
+  ]
+
+    at Object.<anonymous> (D:\git\fan\AI项目\h5\tests\unit\v42-stream.js:5:8)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [
+    {
+      totalZ: -89,
+      waves: [
+        { z: -18, enemies: [ [Object], [Object] ] },
+        { z: -40, enemies: [ [Object], [Object] ] },
+        { z: -64, enemies: [ [Object], [Object], [Object], [Object] ] },
+        { z: -78, enemies: [ [Object], [Object], [Object] ] },
+        { z: -85, enemies: [ [Object], [Object], [Object], [Object] ] },
+        { z: -91, enemies: [ [Object], [Object], [Object], [Object] ] }
+      ]
+    },
+    {
+      totalZ: -97,
+      waves: [
+        { z: -20, enemies: [ [Object], [Object] ] },
+        { z: -46, enemies: [ [Object], [Object], [Object] ] },
+        {
+          z: -72,
+          enemies: [ [Object], [Object], [Object], [Object], [Object] ]
+        },
+        { z: -86, enemies: [ [Object], [Object], [Object], [Object] ] },
+        {
+          z: -93,
+          enemies: [ [Object], [Object], [Object], [Object], [Object] ]
+        },
+        {
+          z: -99,
+          enemies: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ]
+        }
+      ]
+    },
+    {
+      totalZ: -116,
+      waves: [
+        { z: -22, enemies: [ [Object], [Object] ] },
+        { z: -50, enemies: [ [Object], [Object] ] },
+        {
+          z: -78,
+          enemies: [ [Object], [Object], [Object], [Object], [Object] ]
+        },
+        {
+          z: -94,
+          enemies: [ [Object], [Object], [Object], [Object], [Object] ]
+        },
+        {
+          z: -108,
+          enemies: [ [Object], [Object], [Object], [Object] ]
+        },
+        {
+          z: -114,
+          enemies: [ [Object], [Object], [Object], [Object], [Object] ]
+        },
+        {
+          z: -118,
+          enemies: [ [Object], [Object], [Object], [Object], [Object] ]
+        }
+      ]
+    },
+    {
+      totalZ: -119,
+      waves: [
+        { z: -22, enemies: [ [Object], [Object] ] },
+        { z: -50, enemies: [ [Object], [Object], [Object] ] },
+        { z: -78, enemies: [ [Object], [Object], [Object] ] },
+        { z: -94, enemies: [ [Object], [Object], [Object] ] },
+        { z: -108, enemies: [ [Object], [Object] ] },
+        {
+          z: -115,
+          enemies: [ [Object], [Object], [Object], [Object], [Object] ]
+        },
+        {
+          z: -121,
+          enemies: [ [Object], [Object], [Object], [Object], [Object] ]
+        }
+      ]
+    },
+    {
+      totalZ: -145.5,
+      waves: [
+        { z: -22, enemies: [ [Object], [Object] ] },
+        { z: -52, enemies: [ [Object], [Object], [Object] ] },
+        { z: -82, enemies: [ [Object], [Object], [Object] ] },
+        {
+          z: -110,
+          enemies: [ [Object], [Object], [Object], [Object] ]
+        },
+        { z: -124, enemies: [ [Object], [Object], [Object] ] },
+        {
+          z: -132,
+          enemies: [ [Object], [Object], [Object], [Object], [Object] ]
+        },
+        {
+          z: -141,
+          enemies: [ [Object], [Object], [Object], [Object], [Object] ]
+        }
+      ]
+    },
+    {
+      totalZ: -161.5,
+      waves: [
+        { z: -24, enemies: [ [Object], [Object] ] },
+        { z: -56, enemies: [ [Object], [Object], [Object] ] },
+        {
+          z: -102,
+          enemies: [ [Object], [Object], [Object], [Object] ]
+        },
+        {
+          z: -134,
+          enemies: [ [Object], [Object], [Object], [Object] ]
+        },
+        {
+          z: -156,
+          enemies: [ [Object], [Object], [Object], [Object], [Object] ]
+        }
+      ]
+    },
+    {
+      totalZ: -143.5,
+      waves: [
+        { z: -24, enemies: [ [Object], [Object] ] },
+        { z: -56, enemies: [ [Object], [Object], [Object] ] },
+        { z: -78, enemies: [ [Object], [Object], [Object] ] },
+        { z: -112, enemies: [ [Object], [Object], [Object] ] },
+        {
+          z: -137,
+          enemies: [ [Object], [Object], [Object], [Object], [Object] ]
+        }
+      ]
+    },
+    {
+      totalZ: -143.5,
+      waves: [
+        { z: -24, enemies: [ [Object], [Object], [Object] ] },
+        { z: -58, enemies: [ [Object], [Object], [Object], [Object] ] },
+        { z: -108, enemies: [ [Object], [Object], [Object] ] },
+        {
+          z: -136,
+          enemies: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ]
+        }
+      ]
+    },
+    {
+      totalZ: -161.5,
+      waves: [
+        { z: -24, enemies: [ [Object], [Object], [Object] ] },
+        { z: -58, enemies: [ [Object], [Object], [Object] ] },
+        { z: -92, enemies: [ [Object], [Object], [Object], [Object] ] },
+        {
+          z: -119,
+          enemies: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ]
+        }
+      ]
+    },
+    {
+      totalZ: -203.5,
+      waves: [
+        { z: -26, enemies: [ [Object], [Object], [Object], [Object] ] },
+        { z: -60, enemies: [ [Object], [Object], [Object], [Object] ] },
+        {
+          z: -110,
+          enemies: [ [Object], [Object], [Object], [Object] ]
+        },
+        {
+          z: -144,
+          enemies: [ [Object], [Object], [Object], [Object], [Object] ]
+        },
+        {
+          z: -178,
+          enemies: [ [Object], [Object], [Object], [Object], [Object] ]
+        },
+        {
+          z: -196,
+          enemies: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ]
+        }
+      ]
+    }
+  ],
+  expected: [
+    {
+      totalZ: -76,
+      waves: [
+        { z: -18, enemies: [ [Object] ] },
+        { z: -40, enemies: [ [Object], [Object] ] },
+        { z: -64, enemies: [ [Object], [Object] ] },
+        { z: -78, enemies: [ [Object] ] }
+      ]
+    },
+    {
+      totalZ: -84,
+      waves: [
+        { z: -20, enemies: [ [Object], [Object] ] },
+        { z: -46, enemies: [ [Object], [Object] ] },
+        { z: -72, enemies: [ [Object], [Object], [Object] ] },
+        { z: -86, enemies: [ [Object] ] }
+      ]
+    },
+    {
+      totalZ: -106,
+      waves: [
+        { z: -22, enemies: [ [Object], [Object] ] },
+        { z: -50, enemies: [ [Object], [Object] ] },
+        { z: -78, enemies: [ [Object], [Object], [Object] ] },
+        { z: -94, enemies: [ [Object], [Object], [Object] ] },
+        { z: -108, enemies: [ [Object], [Object] ] }
+      ]
+    },
+    {
+      totalZ: -106,
+      waves: [
+        { z: -22, enemies: [ [Object], [Object] ] },
+        { z: -50, enemies: [ [Object], [Object], [Object] ] },
+        { z: -78, enemies: [ [Object], [Object], [Object] ] },
+        { z: -94, enemies: [ [Object], [Object], [Object] ] },
+        { z: -108, enemies: [ [Object], [Object] ] }
+      ]
+    },
+    {
+      totalZ: -145.5,
+      waves: [
+        { z: -22, enemies: [ [Object], [Object] ] },
+        { z: -52, enemies: [ [Object], [Object], [Object] ] },
+        { z: -82, enemies: [ [Object], [Object], [Object] ] },
+        {
+          z: -110,
+          enemies: [ [Object], [Object], [Object], [Object] ]
+        },
+        { z: -124, enemies: [ [Object], [Object], [Object] ] }
+      ]
+    }
+  ],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.22.3

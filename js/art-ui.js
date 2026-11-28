@@ -221,6 +221,11 @@ var ArtUI = {
             nodes[i].style.backgroundImage = 'url("assets/game/weapons/' + map[id] + '.png")';
             nodes[i].style.backgroundPosition = 'center';
             nodes[i].style.backgroundSize = 'contain';
+            // Each processed PNG is one complete weapon, not a 4x2 atlas.
+            nodes[i].setAttribute('data-atlas-cols', '1');
+            nodes[i].setAttribute('data-atlas-rows', '1');
+            nodes[i].setAttribute('data-atlas-col', '0');
+            nodes[i].setAttribute('data-atlas-row', '0');
         }
         // The remaining designs are cosmetic previews, not additional weapon mechanics.
         var hero = document.getElementById('v118-armory-hero');

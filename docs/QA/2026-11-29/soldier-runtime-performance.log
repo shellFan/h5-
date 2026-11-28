@@ -1,0 +1,5 @@
+PASS 120 Hz LOD frames advance leg poses without replacing cached pose objects
+PASS instance tint uploads occur only for class or visible-slot changes
+PASS LOD classes skip accessory creation and hero accessories restore on return
+PASS muzzle remains attached to rigid Arms and animation priorities are unchanged
+PASS soldier runtime checks emit no browser errors

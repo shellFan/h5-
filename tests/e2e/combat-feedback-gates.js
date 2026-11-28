@@ -89,21 +89,26 @@ const PORT = 8395;
                 try {
                     for (const count of [1, 7, 31, 100, 500]) {
                         g.squad.setCount(count);
-                        let damage = 0, shots = 0;
-                        combat._fire = (pos, dmg) => { damage += dmg; shots++; };
+                        let damage = 0, shots = 0, decorativeShots = 0;
+                        combat._fire = (pos, dmg, target, crit, decorative) => {
+                            if (decorative) { assertZeroDamage(dmg); decorativeShots++; }
+                            else { damage += dmg; shots++; }
+                        };
+                        function assertZeroDamage(dmg) { if (dmg !== 0) throw new Error('decorative tracer has damage'); }
                         combat.fireTimer = 0;
                         const visualRate = Math.min(2 + Math.sqrt(count) * 2.2, 30);
                         const volley = Math.min(5, 1 + Math.floor(Math.sqrt(count) / 2.3));
                         const perShot = Math.max(1, Math.round(count * g.squad.getDamage() * g.squad.getFireRate() / visualRate));
                         const expected = perShot * Math.min(volley, count);
                         combat.update(0.001, g.squad, g.enemies, null);
-                        results.push({ count, damage, expected, shots, volley: Math.min(volley, count) });
+                        results.push({ count, damage, expected, shots, decorativeShots, volley: Math.min(volley, count) });
                     }
                 } finally { combat._fire = originalFire; }
                 return results;
             });
             for (const r of results) {
                 assert.equal(r.shots, r.volley, JSON.stringify(r));
+                assert(r.decorativeShots <= 12, JSON.stringify(r));
                 assert(Math.abs(r.damage - r.expected) < 1e-6, JSON.stringify(r));
             }
         });
@@ -128,13 +133,13 @@ const PORT = 8395;
             assert(Math.abs(r.burn - 0.06) < 1e-6 && Math.abs(r.venom - 0.048) < 1e-6, JSON.stringify(r));
         });
 
-        await check('rear ambush can be cleared while waiting for a gate', async () => {
+        await check('current flank ambush can be cleared while waiting for a gate', async () => {
             const r = await page.evaluate(() => {
                 const g = window.__game; g.levelIndex = 5; g.start(); RandomEvents._t = 99999;
                 g.gates.chosenRows.add(-8); g.squad.z = -35;
                 g.squad.setCount(1); g.squad.damageBuff = 20; g.squad.invulnT = 9999;
                 g.pacing.waves[0].state = 'clearing'; g.pacing.activeWave = g.pacing.waves[0];
-                RANDOM_EVENT_DEFS.find(x => x.id === 'ambush').apply(g);
+                RANDOM_EVENT_DEFS.find(x => x.id === 'flank_ambush').apply(g);
                 const ambushers = g.enemies.enemies.slice();
                 for (let i = 0; i < 20 * 60 && !g.gates.isRowChosen(-40); i++) {
                     g.time += 1 / 60; g._update(1 / 60);
@@ -165,7 +170,9 @@ const PORT = 8395;
             const result = await page.evaluate(() => {
                 const g = window.__game; g.start(); RandomEvents._t = 99999;
                 g.squad.setCount(10);
-                RANDOM_EVENT_DEFS.find(x => x.id === 'airdrop').apply(g);
+                const random = Math.random;
+                try { Math.random = () => .99; RANDOM_EVENT_DEFS.find(x => x.id === 'airdrop').apply(g); }
+                finally { Math.random = random; }
                 const el = document.getElementById('reinforcement-notice');
                 const airdrop = { count: g.squad.count, text: el && el.textContent, visible: el && !el.hidden };
                 g.squad.setCount(g.squad._maxLimit() - 1);
@@ -179,8 +186,8 @@ const PORT = 8395;
                 g.start();
                 return { airdrop, added, atCap, cappedText, rings, expired, resetHidden: el.hidden };
             });
-            assert.equal(result.airdrop.count, 25);
-            assert(result.airdrop.visible && result.airdrop.text.includes('空投补给 +15人'), JSON.stringify(result));
+            assert.equal(result.airdrop.count, 13);
+            assert(result.airdrop.visible && result.airdrop.text.includes('紧急空投 +3人'), JSON.stringify(result));
             assert.equal(result.added, 1); assert.equal(result.atCap, 0);
             assert(result.cappedText.includes('战地医疗 +1人'), result.cappedText);
             assert(result.rings <= 2, 'recruit effects must be bounded');

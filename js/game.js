@@ -807,7 +807,7 @@ class Game {
         for (var i = 0; i < this._activeSkillOrder.length; i++) {
             (function(cfg) {
                 var btn = document.createElement('button');
-                btn.type = 'button';
+                btn.setAttribute('type', 'button');
                 btn.id = 'v15-btn-' + cfg.id;
                 btn.className = 'v15-skill-btn hidden';
                 var ico = (self._skillSvgIcons && self._skillSvgIcons[cfg.id]) || '';

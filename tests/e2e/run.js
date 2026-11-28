@@ -213,14 +213,14 @@ async function suiteBasics(page) {
 
 async function suiteGameplay(page) {
     _current = '状态门';
-    await step('穿门人数增加(+5)', async () => {
+    await step('穿过当前首排左门准确增加3人', async () => {
         await gotoGame(page);
         await gameApi(page, '(g) => g.start()');
-        // 传送到门前(V5.1: 第一排门 z=-8, lane0 为 +8 门, 队伍停在门前0.5单位)
+        // V18首排左门+3，严格1人开局；传送到门前0.5单位。
         await gameApi(page, '(g) => { const gz = LEVELS[0].segments.find(s => s.type === "gates").z; g.squad.z = gz + 0.5; g.squad.x = -2; g.squad.lane = 0; g.squad.targetX = -2; }');
         await page.waitForTimeout(500);
         const count = await gameApi(page, '(g) => g.squad.count');
-        assert(count >= 6, '穿门后人数应≥6, 实际' + count);
+        assert(count === 4, '穿门后人数应为4, 实际' + count);
     });
     await step('门触发后移除(无残留碰撞)', async () => {
         // 越过门后等待淡出
@@ -344,7 +344,7 @@ async function suiteAdMock(page) {
         await page.waitForTimeout(4600);
         assert(await gameApi(page, '(g) => g.state') === 'playing', '应复活为playing');
         const count = await gameApi(page, '(g) => g.squad.count');
-        assert(count >= 5, '复活人数应≥5, 实际' + count);
+        assert(count === 1, '本局峰值1人，按40%向上取整复活应为1人，实际' + count);
         const inv = await gameApi(page, '(g) => g.squad.invulnT');
         assert(inv > 0, '应有复活无敌, 实际' + inv);
     });

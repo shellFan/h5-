@@ -178,11 +178,12 @@
 .v15-stage-ctrl {
     display:flex;
     align-items:center;
-    gap:10px;
+    gap:2px;
 }
 .v15-stage-arrow {
-    width:26px;
-    height:26px;
+    width:44px;
+    height:44px;
+    flex-shrink:0;
     border-radius:50%;
     border:1.5px solid #FFE27A;
     background:linear-gradient(180deg,#6E9244,#3F5C24);
@@ -197,7 +198,7 @@
     font-weight:900;
     color:#FFFFFF;
     text-shadow:0 2px 0 #162412;
-    min-width:68px;
+    min-width:48px;
     text-align:center;
 }
 .v15-stage-map-btn {
@@ -1030,6 +1031,8 @@
 }
 .v15-page-back {
     appearance: none;
+    min-width:44px;
+    min-height:44px;
     border: 1.5px solid #6b9158;
     background: linear-gradient(180deg, rgba(44, 74, 48, 0.92), rgba(24, 44, 28, 0.95));
     color: #f3f7ec;

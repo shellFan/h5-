@@ -1,0 +1,171 @@
+
+■ MemoryStorageAdapter
+  ✓ set/get 往返
+  ✓ get 不存在的键返回默认值
+  ✓ 损坏JSON返回默认值
+  ✓ remove/keys
+
+■ LocalStorageAdapter
+  ✓ Node无window时降级到内存存储
+
+■ GameStorage 前缀封装
+  ✓ 键自动加前缀且互不冲突
+  ✓ keys()返回去前缀列表
+
+■ RewardLedger 幂等账本
+  ✓ mark一次后has为真且二次mark被拒
+  ✓ 账本跨实例持久(模拟页面刷新)
+
+■ WebMockAdService 基础流程
+
+■ 可靠性防护
+
+■ GameAdCoordinator 场景限制
+
+■ 平台降级
+
+■ MovementMath 拖动映射
+  ✓ 灵敏度语义: 拖过整屏宽度 = 横穿全可玩范围
+  ✓ 灵敏度单调性: 越大移动越快(V5.0语义修正)
+  ✓ 锚点相对映射: 起点世界坐标 + 像素位移×worldPerPx
+  ✓ 反向拖动为负位移
+  ✓ 目标钳制在±maxX内(超长拖动不越界)
+
+■ MovementMath 键盘
+  ✓ 单步移动距离=keyStep
+  ✓ 边界钳制
+
+■ MovementMath 中心边界(队伍宽度约束)
+  ✓ 小队伍全路自由移动
+  ✓ 大队伍: 人群边缘不出路(包络优先)
+  ✓ 大队伍边界不高于minCenterRange
+
+■ 帧率无关阻尼(damp)
+  ✓ 30FPS与120FPS同样总时长收敛结果一致
+  ✓ followLambda由配置推导
+
+■ 门触发窗口(队伍宽度补偿)
+  ✓ 窗口=门半宽+队伍半宽补偿(封顶0.7)
+  ✓ 左右门(间距4)触发区间永不重叠
+  ✓ 大队伍(中心±1.03)仍可达侧门(±2)
+  ✓ 加载失败(error场景) → failed 不发奖
+  ✓ 未初始化 → failed(NOT_INITIALIZED)
+  ✓ 不支持广告的平台(空实现) → failed(NOT_AVAILABLE)
+
+■ GamePacingController 波次构建
+  ✓ 从关卡segments生成波次计划
+  ✓ clear清空
+
+■ 波次激活与分批生成
+  ✓ 未到triggerZ不激活
+  ✓ 到达triggerZ激活, 首批延迟firstContactGrace后生成1-4只
+  ✓ 批次间隔≥spawnIntervalMin
+  ✓ 场上活敌达上限时暂停生成
+  ✓ 队列耗尽→clearing→alive归零→done+回调
+  ✓ 生成位置在队伍前方屏幕外(11~11+纵深)
+
+■ Boss节奏
+  ✓ bossTriggerAhead触发预警→bossWarningTime延迟→屏幕外出生
+
+■ 关卡缩放
+  ✓ maxAlive按V5.1尸潮矩阵逐关取值(越界取末档)
+  ✓ V5.1.1持续推进: 普通波不再停驻(仅Boss预警停)
+  ✓ 批次规模不超过有效上限
+  ✓ 时间驱动与帧率无关(0.5s×2步 == 1.0s×1步激活状态)
+
+■ CONFIG.DIRS 方向约定
+  ✓ 玩家前进为-Z, 怪物追击为+Z, 射击为-Z
+  ✓ BattleKinematics.advanceZ: 前进使z递减
+  ✓ BattleKinematics.enemyApproachZ: 怪物向防线(z增大)移动
+  ✓ BattleKinematics.bulletZ: 子弹z递减(射向前方怪群)
+
+■ V5.1 防守不后退
+  ✓ V5.1.1持续推进: 无combatAdvance/无停驻字段(行进中交火)
+  ✓ 怪群在军团前方涌现且成堆(纵深收紧)
+  ✓ MAX_ALIVE尸潮矩阵覆盖十关且非递减(V5.1.5: L1=70; V10 QA: 随V8扩关补齐L6-L10)
+  ✓ 怪群生成于军团前方(行进中迎面相遇)
+
+■ CONFIG.DIRS 方向约定
+  ✓ 玩家前进为-Z, 怪物追击为+Z, 射击为-Z
+  ✓ BattleKinematics.advanceZ: 前进使z递减
+  ✓ BattleKinematics.enemyApproachZ: 怪物向防线(z增大)移动
+  ✓ BattleKinematics.bulletZ: 子弹z递减(射向前方怪群)
+
+■ V5.1 防守不后退
+  ✓ V5.1.1持续推进: 无combatAdvance/无停驻字段(行进中交火)
+
+■ UPGRADE_DEFS 配置完整性
+  ✓ 五项升级全部有价格阶梯
+  ✓ 等级上限符合任务书
+
+■ UpgradeShop.purchase
+  ✓ 购买成功: 扣款+升级+持久化(模拟刷新页面)
+  ✓ 余额不足: 不扣款不升级
+  ✓ 等级上限: MAX后拒绝
+  ✓ 重复点击不多次扣款(原子spend)
+
+■ 升级战斗应用
+  ✓ startCount = 关卡基础 + recruit
+  ✓ damageBonus/fireRateMul/pierceBonus
+  ✓ 满级快速射击不突破全局射速上限
+  ✓ 伤害公式: base1 + 永久gun + 门buff(集成公式)
+
+■ 奖励池结构
+  ✓ 三档池存在且标签/操作合法
+  ✓ ×2 仅存在于稀有池(不再是普通奖励)
+  ✓ 普通池以人数与基础buff为主体
+
+■ GateRewardPool.roll 概率与质量
+  ✓ 稀有度概率接近75/20/5
+  ✓ ×2连续抑制: ×2后的下一次选择不可能是×2
+  ✓ forceNoMul 完全排除×2
+  ✓ 人数少时人数门权重提高
+  ✓ 满级属性不再出现(无效奖励抑制)
+  ✓ roll输出含tier与lane
+
+■ 关卡门质量(静态检查)
+  ✓ 五关每排三门lane互不重复
+  ✓ 同排三门label互不相同(有意义的选择)
+  ✓ 教学关首排全为人数门(任何首选都增长)
+  ✓ ×2在全部关卡门中占比≤10%(技能门不计)
+  ✓ 技能门出现在L2/L4/L6
+
+■ applyGate 新操作(squad行为)
+  ✓ addpct 计算: 至少+1
+  ✓ damage2 改为固定+2(防×2失控)
+  ✓ explosive/chain 层数封顶2
+
+■ WxStorageAdapter (V12 微信存储)
+  ✓ 基本读写与 JSON 语义
+  ✓ 存储异常降级内存不崩溃
+
+■ GameStorage.getSafe/setSafe (V12 存档加固)
+  ✓ 主档损坏自动回退 .bak 备份
+  ✓ 双份损坏保留现场不静默清零
+  ✓ 正常路径无损
+  ✓ remove 同时清理主档/备份/损坏标记
+
+■ GameStorage.getLegacy/setLegacy (V12 旧键迁移)
+  ✓ 命名空间优先, 裸键兼容读, setLegacy 清理裸键
+
+■ GameProfile 走安全读写 (V12)
+  ✓ save() 主档 + .bak 双写
+  ✓ 主档损坏后重建档案 → 从 .bak 恢复, 不清零
+
+■ 平台检测 (V12 微信分支就绪)
+  ✓ 无 wx/tt 全局 → h5
+  ✓ 提前关闭 → abandoned 不发奖
+  ✓ 完整观看 → completed + transactionId
+  ✓ 连点: 第二次立即BUSY不发起展示
+  ✓ grantReward 防重复发放(同事务ID只发一次)
+  ✓ 复活: 每局最多1次
+  ✓ 双倍结算: 每次通关最多1次
+  ✓ startRun 重置每局计数
+  ✓ 广告期间暂停游戏, 结束后恢复
+  ✓ 切后台中断 → failed(INTERRUPTED) 不发奖
+  ✓ 流程结束后状态机归位idle(可再次展示)
+  ✓ 刷门: 默认每局2次上限
+  ✓ 复活奖励人数=失败前最大人数×50%(至少5)
+
+======================
+通过 102 / 失败 0 / 共 102

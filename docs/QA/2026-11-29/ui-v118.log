@@ -1,0 +1,10 @@
+PASS local leaderboard identifies source and preserves empty/sparse/full records
+FAIL armory has eight illustrated weapons and working equip/upgrade actions: locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('.v60-armory-row').filter({ has: locator('.v60-armory-name').filter({ hasText: '散弹枪' }) }).getByRole('button', { name: '切换', exact: true })
+
+FAIL menus remain reachable at 360x640: {"bottom":0,"left":0,"right":0,"height":0,"overflow":0,"viewport":640}
+FAIL menus remain reachable at 390x844: {"bottom":0,"left":0,"right":0,"height":0,"overflow":0,"viewport":844}
+FAIL menus remain reachable at 430x932: {"bottom":0,"left":0,"right":0,"height":0,"overflow":0,"viewport":932}
+FAIL menus remain reachable at 768x1024: {"bottom":0,"left":0,"right":0,"height":0,"overflow":0,"viewport":1024}
+PASS no browser errors

@@ -1,0 +1,17 @@
+
+[soldier boot failure/retry]
+  ✓ aborted hero GLB shows a visible boot error and creates no Game
+  ✓ retry loads the GLB once and creates one game canvas
+
+[soldier loaded model/runtime]
+  ✓ real GLBs provide five indexed parts with shared material and no procedural soldier geometry
+  ✓ embedded base-color and ORM textures are decoded by the browser
+  ✓ loader promise/data cache is referentially stable and does not refetch
+  ✓ movement, count growth, gate effect, and combat still operate with GLB soldiers
+  ✓ shoot positions equal the transformed Arms/Muzzle attachment in x/y/z
+  ✓ all six animation states change real part transforms and death leaves a bounded ghost
+  ✓ real GLB banks switch at 100/101 and all requested formation sizes fit the road
+  ✓ win progression survives a real page reload
+  ✓ successful soldier boot is free of browser errors
+
+Soldier E2E: 11 passed / 0 failed

@@ -78,11 +78,10 @@ const PORT = 8398;
             assert.equal(await page.locator('.v60-armory-row').count(), 8);
             assert.equal(await page.locator('.v60-armory-row .v118-weapon-art').count(), 8);
             assert.equal(await page.locator('#v118-armory-hero .v118-weapon-art').count(), 1);
-            const shotgun = page.locator('.v60-armory-row').filter({ has: page.locator('.v60-armory-name', { hasText: '散弹枪' }) });
-            await shotgun.getByRole('button', { name: '切换', exact: true }).click();
+            await page.locator('.v15-weapon-tile[data-weapon="shotgun"]').click();
             assert.equal(await page.evaluate(() => WeaponSystem.current(window.__game.profile)), 'shotgun');
             const before = await page.evaluate(() => ({ lv: WeaponSystem.level(window.__game.profile), coins: window.__game.profile.coins, cost: WeaponSystem.upgradeCost(window.__game.profile) }));
-            await page.locator('.v60-armory-row.equipped button.upgrade').click();
+            await page.locator('#v15-armory-hero-actions button.upgrade').click();
             const after = await page.evaluate(() => ({ lv: WeaponSystem.level(window.__game.profile), coins: window.__game.profile.coins }));
             assert.equal(after.lv, before.lv + 1); assert.equal(after.coins, before.coins - before.cost);
         });
@@ -95,7 +94,10 @@ const PORT = 8398;
                         V60UI[name === 'rank' ? 'renderRank' : 'renderArmory'](window.__game);
                     }, name);
                     const state = await page.evaluate(name => {
-                        const back = document.getElementById(`v60-${name}-back`).getBoundingClientRect();
+                        const backNode = name === 'armory'
+                            ? document.querySelector('#v118-armory-hero .v15-page-back')
+                            : document.getElementById('v60-rank-back');
+                        const back = backNode.getBoundingClientRect();
                         const panel = document.querySelector(`#v60-${name}-page .title-panel`);
                         return { bottom: back.bottom, left: back.left, right: back.right, height: back.height,
                             overflow: panel.scrollWidth - panel.clientWidth, viewport: innerHeight };

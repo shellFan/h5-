@@ -98,7 +98,7 @@ async function main() {
   var ui = await page.evaluate(function() {
     var g = window.__game;
     V60UI.showPage('v60-armory-page'); V60UI.renderArmory(g);
-    var txt = document.getElementById('v60-armory-list').textContent;
+    var txt = document.getElementById('v118-armory-hero').textContent;
     return { affix: txt.indexOf('词条') >= 0, evolved: txt.indexOf('已进化') >= 0 };
   });
   assert(ui.affix && ui.evolved, '军械库显示词条/进化');

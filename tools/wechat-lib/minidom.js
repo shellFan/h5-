@@ -244,6 +244,15 @@
         if (i !== -1) arr.splice(i, 1);
     };
     VElement.prototype._dispatch = function (ev) {
+        // Both physical taps and programmatic clicks must honor disabled
+        // controls, including taps on an icon inside a disabled button.
+        if (ev.type === 'click') {
+            var control = this;
+            while (control) {
+                if (control.disabled) return;
+                control = control.parent;
+            }
+        }
         // 冒泡
         var node = this;
         ev.target = ev.target || this;
@@ -266,6 +275,14 @@
             if (ev._stopped) break;
             node = node.parent;
         }
+    };
+    VElement.prototype.click = function () {
+        if (this.disabled) return;
+        this._dispatch({
+            type: 'click', target: this, timeStamp: now(),
+            preventDefault: function () {},
+            stopPropagation: function () { this._stopped = true; }
+        });
     };
     /**
      * DOM query selector subset used by the game runtime. Unlike the CSS
@@ -744,7 +761,26 @@
         /* ---- img src 赋值(含 svg 文本加载) ---- */
         function setImgSrc(el, src) {
             el.attrs.src = src;
-            if (el.tag !== 'img' || !el._imgHost) return;
+            if (el.tag !== 'img') return;
+            // Parsed HTML creates virtual elements directly, unlike
+            // createElement('img'), whose hybrid host is also used by Three.
+            if (!el._imgHost) {
+                var parsedHost = el._imgHost = opts.createImage();
+                parsedHost.onload = function () {
+                    el._imgState = 'loaded';
+                    el._naturalW = parsedHost.naturalWidth || parsedHost.width;
+                    el._naturalH = parsedHost.naturalHeight || parsedHost.height;
+                    el._dispatch({ type: 'load', target: el });
+                    if (typeof el.onload === 'function') el.onload();
+                    bump();
+                };
+                parsedHost.onerror = function () {
+                    el._imgState = 'failed';
+                    el._dispatch({ type: 'error', target: el });
+                    if (typeof el.onerror === 'function') el.onerror();
+                    bump();
+                };
+            }
             if (/\.svg(\?|$)/i.test(src)) {
                 el._imgState = 'pending';
                 if (opts.loadText) {
@@ -1251,7 +1287,7 @@
                 var h = len(el, s.height, availH);
                 var nw = el._naturalW || (el._svgDoc ? 24 : 0), nh = el._naturalH || (el._svgDoc ? 24 : 0);
                 if (w !== undefined && h !== undefined) return { w: w, h: h };
-                if (w !== undefined && nh) return { w: w, h: h * (w / Math.max(1, nw)) };
+                if (w !== undefined && nh) return { w: w, h: nh * (w / Math.max(1, nw)) };
                 if (h !== undefined && nw) return { w: nw * (h / Math.max(1, nh)), h: h };
                 return { w: nw || 0, h: nh || 0 };
             }
@@ -2387,6 +2423,7 @@
         }
 
         function computeTree(el) {
+            if (el.tag === 'img' && el.attrs.src && !el._imgHost) setImgSrc(el, el.attrs.src);
             el._style = computeElStyle(el);
             el._fs = null;
             for (var i = 0; i < el.childNodes.length; i++) {

@@ -1,0 +1,8 @@
+PASS home waits only for normal and fast enemy banks
+PASS environment preload is reused and resolves installed scenery
+PASS routine kills keep camera and game time steady
+PASS combo milestones do not pause soldier simulation
+PASS camera shake cannot bias the subsequent follow position
+PASS hidden scenery avoids uploads and themes restore valid matrices
+PASS no runtime errors
+PASS scenery network failure settles and preserves the fallback

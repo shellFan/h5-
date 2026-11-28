@@ -1,0 +1,32 @@
+[1] 加载模拟器与游戏入口...
+  ✓ 微信入口启动: window.__game 就绪
+  ✓ minidom UI 纹理挂接(3D叠加)
+  ✓ 军营场景随包加载且不重复构建旧地图 — {"ready":true,"model":true,"legacySceneCreated":false}
+  ✓ UI DOM 节点构建 — nodes=699, rules=1293, keyframes=25
+  ✗ 军事首页英雄区通过 minidom 后代选择器安装 — {"rootClass":"v42-ui art-military art-mini","hero":true,"text":"地图科技每日挑战成就图鉴设置"}
+  ✓ 军事首页十个导航保留真实文本标签 — map=地图, train=训练, armory=军械库, tech=科技, codex=图鉴, challenge=挑战, rank=排行, ach=成就, daily=每日, set=设置
+  ✗ 微信首页面板与导航布局不越过 390px 视口 — {"panel":{"x":10,"y":8,"w":370,"h":330},"nav":[null,null,null,null,null,null,null,null,null,null]}
+  ✓ 首页开始按钮布局 — {"x":164.04,"y":251.41366906474815}
+  截图: docs/WeChat/screenshots/wechat-home.png
+  ✗ 军械库透明图集随包加载 — {"count":1,"loaded":1,"cells":1,"textures":1}
+  ✗ 军械库8种插图按单格裁切 — {"count":1,"loaded":1,"cells":1,"textures":1}
+  ✓ 军械库共享单张图集解码 — {"count":1,"loaded":1,"cells":1,"textures":1}
+  ✓ 点击开始进入战斗(state=playing)
+  ✓ 战斗HUD人数渲染 — 人数=3
+  ✓ 战斗状态持续
+  截图: docs/WeChat/screenshots/wechat-battle.png
+  ✓ 拖动输入桥接(队伍移动) — x: 0.00 → -2.24
+  ✓ 暂停按钮生效
+  截图: docs/WeChat/screenshots/wechat-pause.png
+  ✓ 恢复按钮生效
+  ✓ 存档写入 wx 存储 — keys=pz_squad_profile_v51,pz_squad_profile_v51.bak
+  ✓ 切后台自动暂停战斗 — paused: false → true
+  ✓ 广告服务装配(wechat分支)
+  ✓ 未配置广告位ID时如实不可用(不伪造) — isAvailable=false
+  ✓ 战斗帧率采样 — 60 FPS (模拟器软件渲染, 真机预期更高)
+  ✓ 无致命运行时错误 — 0条普通日志
+  元信息: 版本=v14.0 平台=wechat UI节点=719
+  ✓ 平台检测为 wechat
+
+======================
+微信模拟器冒烟: 通过 20 / 24

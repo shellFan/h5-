@@ -1,0 +1,1 @@
+PASS minidom art selectors: descendant and child combinators preserve scoped DOM order

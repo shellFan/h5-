@@ -81,7 +81,7 @@ async function main() {
   assert(bomber.died && bomber.lost >= 1 && bomber.lost <= 3, '爆炸僵尸自爆波及(损失' + bomber.lost + ')');
   assert(bomber.shockFired, '自爆红色冲击反馈');
 
-  // 5. 配置: L10波次含bomber + 模型复用
+  // 5. 当前美术包给bomber独立模型，波次仍包含该敌人。
   var cfg = await page.evaluate(function() {
     var found = 0;
     LEVELS.forEach(function(lv) {
@@ -96,7 +96,7 @@ async function main() {
     return { waves: found, style: style };
   });
   assert(cfg.waves >= 3, '波次配置含爆炸僵尸(' + cfg.waves + '处)');
-  assert(cfg.style === 'fast', 'bomber复用fast模型(无新资源)');
+  assert(cfg.style === 'bomber', 'bomber使用当前独立模型');
 
   var realErrors = pageErrors.filter(function(e) { return e.indexOf('favicon') < 0; });
   if (!realErrors.length) ok('全程无页面JS错误');

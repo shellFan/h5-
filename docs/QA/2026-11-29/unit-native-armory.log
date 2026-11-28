@@ -1,0 +1,9 @@
+PASS native armory retains all eight element tiles and nine art owners
+PASS native visible back control closes the armory
+PASS armory identifies the active affix
+PASS standalone weapon PNG uses the complete image instead of an atlas crop
+PASS programmatic clicks forward listeners and onclick with bubbling; disabled buttons stay inert
+PASS native active skill buttons remain traversable elements
+PASS native training visible back control closes its page
+PASS rerendering armory replaces the affix label instead of duplicating it
+PASS touch-generated clicks cannot activate disabled controls or their children

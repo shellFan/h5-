@@ -1,5 +1,5 @@
 // ===== game-bundle.js (V12 微信小游戏构建产物: 单一模块作用域, 源脚本按 index.html 顺序拼接) =====
-// 生成: tools/build-wechat.js @ 2026-11-27T18:01:25.427Z
+// 生成: tools/build-wechat.js @ 2026-11-28T17:04:39.059Z
 // 代码与 H5 完全同源; 平台差异收敛于入口 game.js
 /* ==== index.html 内联脚本(BootProgress/错误横幅, H5 中先于业务脚本执行 — 保序) ==== */
 
@@ -1095,6 +1095,11 @@ var ArtUI = {
             nodes[i].style.backgroundImage = 'url("art/weapons/' + map[id] + '.png")';
             nodes[i].style.backgroundPosition = 'center';
             nodes[i].style.backgroundSize = 'contain';
+            // Each processed PNG is one complete weapon, not a 4x2 atlas.
+            nodes[i].setAttribute('data-atlas-cols', '1');
+            nodes[i].setAttribute('data-atlas-rows', '1');
+            nodes[i].setAttribute('data-atlas-col', '0');
+            nodes[i].setAttribute('data-atlas-row', '0');
         }
         // The remaining designs are cosmetic previews, not additional weapon mechanics.
         var hero = document.getElementById('v118-armory-hero');
@@ -5392,6 +5397,7 @@ var V60UI = {
             '<div class="v15-page-title-wrap"><span class="v15-page-kicker">BARRACKS</span><strong>士兵训练中心</strong></div>' +
             '<div class="v15-page-coin"><img src="art/ui/coin.png" alt=""><span>' + (game.profile.coins || 0) + '</span></div>' +
             '</div>';
+        header.querySelector('.v15-page-back').onclick = function() { self.hidePages(); };
 
         // 左右 6 个独立战术装备槽 + 中央大型士兵展示台
         var svgHelmet = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 14a8 8 0 0 1 16 0v2H4v-2Z"/><path d="M3 16h18v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2Z"/></svg>';
@@ -5613,6 +5619,13 @@ var V60UI = {
                 '<div class="v118-armory-hero-stats">' + statTextOf(wStats) + '</div>' +
                 nextLine + evoTag +
                 '<div class="v15-armory-hero-actions" id="v15-armory-hero-actions"></div></div>';
+            hero.querySelector('.v15-page-back').onclick = function() { self.hidePages(); };
+            if (wStats.affixName) {
+                var affixLabel = document.createElement('div');
+                affixLabel.className = 'v15-armory-affix v15-armory-next';
+                affixLabel.textContent = '词条：' + wStats.affixName;
+                hero.querySelector('.v118-armory-hero-info').appendChild(affixLabel);
+            }
 
             // 主操作区固定在当前武器展示台下方(不再在下方重复出现大卡片!)
             var heroActs = hero.querySelector('#v15-armory-hero-actions');
@@ -5659,7 +5672,7 @@ var V60UI = {
             var unlockedNow = !def.unlockCondition || isCurrent || canUnlock ||
                 (def.unlockCondition.type === 'clear' && (game.profile.data.unlockedLevel || 1) > def.unlockCondition.level);
             var row = document.createElement('button');
-            row.type = 'button';
+            row.setAttribute('type', 'button');
             row.className = 'v60-armory-row v15-weapon-tile' + (isCurrent ? ' equipped' : unlockedNow ? ' owned' : ' locked');
             row.setAttribute('data-weapon', id);
             var badgeText = isCurrent ? '装备中' : (unlockedNow ? ('Lv.' + wLv) : ('第' + def.unlockCondition.level + '关'));
@@ -20747,7 +20760,7 @@ class Game {
         for (var i = 0; i < this._activeSkillOrder.length; i++) {
             (function(cfg) {
                 var btn = document.createElement('button');
-                btn.type = 'button';
+                btn.setAttribute('type', 'button');
                 btn.id = 'v15-btn-' + cfg.id;
                 btn.className = 'v15-skill-btn hidden';
                 var ico = (self._skillSvgIcons && self._skillSvgIcons[cfg.id]) || '';

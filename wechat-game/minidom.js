@@ -1111,6 +1111,14 @@
             node = node.parent;
         }
     };
+    VElement.prototype.click = function () {
+        if (this.disabled) return;
+        this._dispatch({
+            type: 'click', target: this, timeStamp: now(),
+            preventDefault: function () {},
+            stopPropagation: function () { this._stopped = true; }
+        });
+    };
     /**
      * DOM query selector subset used by the game runtime. Unlike the CSS
      * cascade parser this path returns elements, so keep a small local parser
