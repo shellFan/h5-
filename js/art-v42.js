@@ -770,9 +770,6 @@
             propBase.filter(function (_, i) { return i % 3 === 0; }).map(function (r) { return { x: r.x + r.s * 0.2, y: 0.67, z: r.z - 0.08, sx: 1, sy: 1, sz: 1, ry: r.s * 0.1 }; }));
         addInstancedCategory(env, 'cones', new THREE.ConeGeometry(0.13, 0.42, 7), coral,
             propBase.filter(function (_, i) { return i % 3 === 1; }).map(function (r) { return { x: r.x, y: 0.21, z: r.z, ry: random() * TAU }; }));
-        addInstancedCategory(env, 'barriers', roundedRectGeometry(0.96, 0.27, 0.07, 0.14), cream,
-            propBase.filter(function (_, i) { return i % 3 === 2; }).map(function (r) { return { x: r.x, y: 0.42, z: r.z, ry: r.s > 0 ? -0.15 : 0.15 }; }), { castShadow: true });
-
         var buildings = makeRecords(50, function (i) {
             var side = i % 2 ? 1 : -1;
             var h = 3.4 + random() * 4.6;
@@ -788,19 +785,7 @@
         addInstancedCategory(env, 'coral-buildings', roundedRectGeometry(1, 1, 0.08, 1), coral,
             buildings.filter(function (_, i) { return i % 3 === 2; }));
 
-        // A single overhanging cap gives the skyline a deliberate toy-city
-        // silhouette without multiplying each building into several meshes.
-        addInstancedCategory(env, 'roof-trims', new THREE.BoxGeometry(1, 0.14, 1), teal,
-            buildings.map(function (b) {
-                return {
-                    x: b.x,
-                    y: b.h * 1.06,
-                    z: b.z,
-                    sx: b.w * 1.08,
-                    sy: 1,
-                    sz: b.sz * 1.07
-                };
-            }));
+        // No decorative roof caps or roadside rails in the combat view.
 
         var windows = [];
         for (var bi = 0; bi < buildings.length; bi++) {
@@ -875,20 +860,7 @@
             cxPanels.push(rec(hSide * 4.6, 0.26, hz, 0.16, 0.5, 0.2));
             cxGlow.push(rec(hSide * 4.6, 0.55, hz, 0.1, 0.12, 0.1));
         }
-        // 跨街横幅(高空, 城市族街道峡谷感): 门柱+旗面×2色
-        var banFrames = [], banClothA = [], banClothB = [];
-        for (var bn = 0; bn < 4; bn++) {
-            var bz = -10 - bn * 38;
-            banFrames.push(rec(-4.6, 3.1, bz, 0.08, 1.0, 0.08));
-            banFrames.push(rec(4.6, 3.1, bz, 0.08, 1.0, 0.08));
-            if (bn % 2 === 0) { banClothA.push(rec(0, 3.62, bz, 9.4, 0.5, 0.04)); }
-            else { banClothB.push(rec(0, 3.62, bz, 9.4, 0.5, 0.04)); }
-        }
-        addInstancedCategory(env, 'cityx-banner-frames', box, makeCityMaterial(0x3A4652, { roughness: 0.5, metalness: 0.3 }), banFrames, { themes: CITY_ALIVE });
-        var clothA = makeCityMaterial(0x2E4A6E, { roughness: 0.85 }); clothA.map = facade;
-        var clothB = makeCityMaterial(0x8E4A42, { roughness: 0.85 }); clothB.map = facade;
-        addInstancedCategory(env, 'cityx-banner-a', box, clothA, banClothA, { themes: CITY_ALIVE });
-        addInstancedCategory(env, 'cityx-banner-b', box, clothB, banClothB, { themes: CITY_ALIVE });
+        // Cross-street decorative banners removed: keep the battle sightline clear.
         addInstancedCategory(env, 'cityx-frames', box, makeCityMaterial(0x2E3A42, { roughness: 0.5, metalness: 0.3 }), cxFrames, { themes: CITY_ALIVE, castShadow: true });
         addInstancedCategory(env, 'cityx-panels', box, makeCityMaterial(0x9AAFA8), cxPanels, { themes: CITY_ALIVE, castShadow: true });
         var cityxGlowMat = new THREE.MeshBasicMaterial({ color: 0xFFE9A8, toneMapped: false }); cityxGlowMat.__noThemeTint = true;
@@ -957,7 +929,7 @@
         addInstancedCategory(env, 'mech-debris', box, makeCityMaterial(0x3E4248, { roughness: 0.7, metalness: 0.4 }), mechDebris, { themes: ['mechanical'] });
 
         // —— 最终防线(fortress): 防御墙/瞭望塔/废弃坦克/沙袋 ——
-        var fortWalls = [], fortTowers = [], fortHulls = [], fortTurrets = [], fortSandbags = [], fortArches = [];
+        var fortWalls = [], fortTowers = [], fortHulls = [], fortTurrets = [], fortSandbags = [];
         for (var fi = 0; fi < 9; fi++) {
             var fSide = fi % 2 ? 1 : -1, fz = 4 - fi * 18 + random() * 5;
             fortWalls.push(rec(fSide * 5.15, 0.85, fz, 1.2, 1.7, 6.5 + random() * 2));
@@ -973,14 +945,7 @@
                 fortSandbags.push(rec(fSide * 4.85, 0.1 + sb * 0.11, fz + 1.2 + sb * 0.3, 0.5, 0.18, 0.3, random() * 0.2));
             }
         }
-        // 跨路防御拱门: 门柱在路缘外(±4.75), 横梁在高空(y=3.6) — 视觉签名, 零碰撞影响
-        for (var ar = 0; ar < 4; ar++) {
-            var arz = -6 - ar * 34;
-            fortArches.push(rec(-4.75, 1.9, arz, 0.9, 3.8, 1.0));
-            fortArches.push(rec(4.75, 1.9, arz, 0.9, 3.8, 1.0));
-            fortArches.push(rec(0, 3.85, arz, 10.4, 0.8, 0.9));
-        }
-        addInstancedCategory(env, 'fort-arches', box, makeCityMaterial(0x4E5E6C, { roughness: 0.75, metalness: 0.3 }), fortArches, { themes: ['fortress'], castShadow: true });
+        // Decorative arches removed; gameplay gate rows are separate.
         addInstancedCategory(env, 'fort-walls', box, makeCityMaterial(0x5E6E7C, { roughness: 0.85 }), fortWalls, { themes: ['fortress'], castShadow: true });
         addInstancedCategory(env, 'fort-towers', box, makeCityMaterial(0x5E6E7C, { roughness: 0.8, metalness: 0.2 }), fortTowers, { themes: ['fortress'], castShadow: true });
         addInstancedCategory(env, 'fort-tank-hulls', roundedRectGeometry(1, 1, 0.1, 1), makeCityMaterial(0x4A5A50, { roughness: 0.6, metalness: 0.4 }), fortHulls, { themes: ['fortress'], castShadow: true });
@@ -992,7 +957,7 @@
         for (var cw = 0; cw < 4; cw++) {
             var cwz = 12 - cw * 44;
             for (var cst = 0; cst < 5; cst++) {
-                crosswalks.push(rec(-2.8 + cst * 1.4, 0.012, cwz, 0.85, 1, 0.4));
+                crosswalks.push(rec(-2.8 + cst * 1.4, 0.012, cwz, 0.85, 0.012, 0.4));
             }
         }
         addInstancedCategory(env, 'cityx-crosswalk', box, new THREE.MeshBasicMaterial({ color: 0xD8DCE0 }), crosswalks, { themes: CITY_ALIVE });

@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-11-22T23:36:32.120Z",
-  "passed": 20,
-  "total": 20,
+  "timestamp": "2026-11-23T03:01:31.187Z",
+  "passed": 21,
+  "total": 21,
   "results": [
     {
       "name": "微信入口启动: window.__game 就绪",
@@ -12,6 +12,11 @@
       "name": "minidom UI 纹理挂接(3D叠加)",
       "ok": true,
       "detail": ""
+    },
+    {
+      "name": "五主题地图材质随包加载并裁切",
+      "ok": true,
+      "detail": "{\"tiles\":8,\"mapped\":true}"
     },
     {
       "name": "UI DOM 节点构建",
@@ -56,7 +61,7 @@
     {
       "name": "拖动输入桥接(队伍移动)",
       "ok": true,
-      "detail": "x: 0.00 → -2.04"
+      "detail": "x: 0.00 → -2.02"
     },
     {
       "name": "暂停按钮生效",
@@ -91,12 +96,12 @@
     {
       "name": "战斗帧率采样",
       "ok": true,
-      "detail": "92 FPS (模拟器软件渲染, 真机预期更高)"
+      "detail": "60 FPS (模拟器软件渲染, 真机预期更高)"
     },
     {
       "name": "无致命运行时错误",
       "ok": true,
-      "detail": "1条普通日志"
+      "detail": "0条普通日志"
     },
     {
       "name": "平台检测为 wechat",
@@ -104,7 +109,5 @@
       "detail": ""
     }
   ],
-  "consoleErrors": [
-    "Failed to load resource: the server responded with a status of 404 (Not Found)"
-  ]
+  "consoleErrors": []
 }

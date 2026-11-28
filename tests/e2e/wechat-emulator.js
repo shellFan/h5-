@@ -70,6 +70,8 @@ async function main() {
         || await chromium.launch({ headless: true, channel: 'msedge', args: ['--enable-unsafe-swiftshader'] });
 
     const page = await browser.newPage({ viewport: { width: 480, height: 960 } });
+    // Browser harness runs under /tests; packaged local images resolve from the mini-game root.
+    await page.route(/\/tests\/assets\/art-v121\/world-materials\.jpg$/, route => route.fulfill({ contentType: 'image/jpeg', body: fs.readFileSync(path.join(ROOT, 'wechat-game/assets/art-v121/world-materials.jpg')) }));
     const consoleErrors = [];
     page.on('console', msg => {
         if (msg.type() === 'error') consoleErrors.push(msg.text());
@@ -94,6 +96,12 @@ async function main() {
         // 2. UI 纹理挂接
         await page.waitForFunction('window.__uiScene !== undefined', { timeout: 20000 });
         check('minidom UI 纹理挂接(3D叠加)', true);
+        const worldAtlas = await page.evaluate(async () => {
+            const scenery = window.__game.world._v121Scenery;
+            await scenery.ready;
+            return { tiles: scenery.tiles.length, mapped: !!scenery.materials.rock.map };
+        });
+        check('五主题地图材质随包加载并裁切', worldAtlas.tiles === 8 && worldAtlas.mapped, JSON.stringify(worldAtlas));
         const uiStats = await page.evaluate('window.__minidom.getStats()');
         check('UI DOM 节点构建', uiStats.nodes > 100, `nodes=${uiStats.nodes}, rules=${uiStats.rules}, keyframes=${uiStats.keyframes}`);
 

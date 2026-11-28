@@ -1,0 +1,525 @@
+{
+  "ok": true,
+  "assets": [
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/zombies/bomber/textures/bomber-basecolor.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2314,
+      "color_count": 95,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/zombies/bomber/textures/bomber-orm.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2081,
+      "color_count": 15,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/zombies/elite/textures/elite-basecolor.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2319,
+      "color_count": 95,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/zombies/elite/textures/elite-orm.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2081,
+      "color_count": 15,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/zombies/fast/textures/fast-basecolor.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2325,
+      "color_count": 93,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/zombies/fast/textures/fast-orm.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2081,
+      "color_count": 15,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/zombies/normal/textures/normal-basecolor.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2286,
+      "color_count": 95,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/zombies/normal/textures/normal-orm.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2081,
+      "color_count": 15,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/zombies/shield/textures/shield-basecolor.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2313,
+      "color_count": 95,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/zombies/shield/textures/shield-orm.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2081,
+      "color_count": 15,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/zombies/spitter/textures/spitter-basecolor.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2319,
+      "color_count": 95,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/zombies/spitter/textures/spitter-orm.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2081,
+      "color_count": 15,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/zombies/split/textures/split-basecolor.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2323,
+      "color_count": 95,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/zombies/split/textures/split-orm.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2081,
+      "color_count": 15,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/bosses/bruiser/textures/bruiser-basecolor.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2322,
+      "color_count": 95,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/bosses/bruiser/textures/bruiser-orm.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2081,
+      "color_count": 15,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/bosses/bulwark/textures/bulwark-basecolor.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2313,
+      "color_count": 95,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/bosses/bulwark/textures/bulwark-orm.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2081,
+      "color_count": 15,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/bosses/hivelord/textures/hivelord-basecolor.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2325,
+      "color_count": 92,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/bosses/hivelord/textures/hivelord-orm.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2081,
+      "color_count": 15,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/bosses/overlord/textures/overlord-basecolor.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2320,
+      "color_count": 93,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/bosses/overlord/textures/overlord-orm.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2081,
+      "color_count": 15,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/bosses/spitking/textures/spitking-basecolor.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2311,
+      "color_count": 95,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/bosses/spitking/textures/spitking-orm.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2081,
+      "color_count": 15,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/bosses/titan/textures/titan-basecolor.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2321,
+      "color_count": 95,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    },
+    {
+      "path": "D:/git/fan/AI\u9879\u76ee/h5/assets/models/bosses/titan/textures/titan-orm.png",
+      "format": "PNG",
+      "mode": "RGBA",
+      "width": 256,
+      "height": 256,
+      "bytes": 2081,
+      "color_count": 15,
+      "has_alpha": true,
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "content_bounds": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "problems": []
+    }
+  ]
+}

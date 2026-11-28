@@ -1,5 +1,5 @@
 // ===== game-bundle.js (V12 微信小游戏构建产物: 单一模块作用域, 源脚本按 index.html 顺序拼接) =====
-// 生成: tools/build-wechat.js @ 2026-11-22T19:49:37.879Z
+// 生成: tools/build-wechat.js @ 2026-11-23T03:00:10.342Z
 // 代码与 H5 完全同源; 平台差异收敛于入口 game.js
 /* ==== index.html 内联脚本(BootProgress/错误横幅, H5 中先于业务脚本执行 — 保序) ==== */
 
@@ -10214,8 +10214,9 @@ var EnemyModelLoader = class EnemyModelLoader {
             window.__BootProgress.total = 2 + this.KEYS.length * 2; // 士兵2 + 全部僵尸/Boss
         }
         return Promise.allSettled(keys.flatMap(key => ['hero','lod'].map(lod=>new Promise((resolve,reject)=>{
-            var category=['normal','fast','shield','split','spitter','elite'].includes(key)?'zombies':'bosses';
+            var category=['normal','fast','shield','split','spitter','elite','bomber'].includes(key)?'zombies':'bosses';
             var url='assets/models/'+category+'/'+key+'/'+key+(lod==='lod'?'-lod':'')+'.glb';
+            if (typeof Platform === 'undefined' || Platform.id === 'h5') url += '?v=121';
             loader.load(url,g=>{
                 try {
                     g.scene.updateMatrixWorld(true);
@@ -10246,9 +10247,10 @@ var EnemyModelLoader = class EnemyModelLoader {
                 if(l.material!==h.material)SoldierModelLoader._disposeMaterial(l.material);
                 l.material=h.material;
                 h.material.onBeforeCompile=function(shader){shader.fragmentShader=shader.fragmentShader.replace('#include <encodings_fragment>','gl_FragColor = LinearTosRGB( gl_FragColor );');};
-                if(['spitter','spitking','hivelord','overlord'].includes(key)) {
+                if(['spitter','spitking','hivelord','overlord','bomber'].includes(key)) {
                     var image=h.material.map.image,canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;
-                    var ctx=canvas.getContext('2d');ctx.drawImage(image,0,0);var pixels=ctx.getImageData(0,0,canvas.width,canvas.height);
+                    var ctx=canvas.getContext('2d');ctx.drawImage(image._impl || image,0,0);var pixels=ctx.getImageData(0,0,canvas.width,canvas.height);
+                    // Blender cell 11 is bottom-origin row 2; PNG/canvas flips it to top-origin row 1.
                     for(var py=0;py<canvas.height;py++)for(var px=0;px<canvas.width;px++) {
                         if(px<canvas.width*.75 || py<canvas.height*.25 || py>=canvas.height*.5) {
                             var off=(py*canvas.width+px)*4;pixels.data[off]=pixels.data[off+1]=pixels.data[off+2]=0;
@@ -10261,7 +10263,7 @@ var EnemyModelLoader = class EnemyModelLoader {
                         shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n\n#ifdef USE_INSTANCING_COLOR\nfloat glowPower=max(totalEmissiveRadiance.r,max(totalEmissiveRadiance.g,totalEmissiveRadiance.b));\nif(vColor.r>1.25 && vColor.g<.8)totalEmissiveRadiance=vec3(1.,.08,.15)*glowPower;\nelse if(vColor.r>1.05 && vColor.g<.95 && vColor.b>1.15)totalEmissiveRadiance=vec3(.7,.15,1.)*glowPower;\n#endif');
                     };
                 }
-                h.material.customProgramCacheKey=function(){return 'v42-pbr-display';};
+                h.material.customProgramCacheKey=function(){return 'v121-pbr-display';};
             }
             return styles;
         }).catch(e=>{loaded.forEach(s=>SoldierModelLoader._disposeScene(s));throw e;});
@@ -10269,7 +10271,7 @@ var EnemyModelLoader = class EnemyModelLoader {
     static get(){return this._data;}
 };
 EnemyModelLoader.PARTS=['Body','Head','Arms','LegL','LegR'];
-EnemyModelLoader.KEYS=['normal','fast','shield','split','spitter','elite','bruiser','bulwark','spitking','hivelord','titan','overlord'];
+EnemyModelLoader.KEYS=['normal','fast','shield','split','spitter','elite','bomber','bruiser','bulwark','spitking','hivelord','titan','overlord'];
 EnemyModelLoader.status='idle';EnemyModelLoader.loadMs=0;
 // V14.2: Boss 造型辨识表 — 每型专属染色/体态/入场特效色(表现层; GLB 资产不动)。
 // 解决 hivelord/titan 等实机同形同色不可辨识的问题(逐型实机截图审计)。
@@ -10402,7 +10404,6 @@ var EnemyArmyRenderer = class EnemyArmyRenderer {
             }
             // V12视觉: 特殊体型染色(冰冻/受击闪烁随后覆盖)
             if(e.type==='elite')this._color.setRGB(1.22,1.08,.72);          // 精英金染
-            else if(e.type==='bomber')this._color.setRGB(1.5,.55,.5);       // 自爆尸红染(fast模型区分)
             if(e.frozenT>0)this._color.setRGB(.50,.85,1.35);
             if(e.phaseIndex>=3)this._color.setRGB(1.35,.72,.75);
             else if(e.phaseIndex===2)this._color.setRGB(1.12,.85,1.2);
@@ -11384,9 +11385,6 @@ var V42BossController = {
             propBase.filter(function (_, i) { return i % 3 === 0; }).map(function (r) { return { x: r.x + r.s * 0.2, y: 0.67, z: r.z - 0.08, sx: 1, sy: 1, sz: 1, ry: r.s * 0.1 }; }));
         addInstancedCategory(env, 'cones', new THREE.ConeGeometry(0.13, 0.42, 7), coral,
             propBase.filter(function (_, i) { return i % 3 === 1; }).map(function (r) { return { x: r.x, y: 0.21, z: r.z, ry: random() * TAU }; }));
-        addInstancedCategory(env, 'barriers', roundedRectGeometry(0.96, 0.27, 0.07, 0.14), cream,
-            propBase.filter(function (_, i) { return i % 3 === 2; }).map(function (r) { return { x: r.x, y: 0.42, z: r.z, ry: r.s > 0 ? -0.15 : 0.15 }; }), { castShadow: true });
-
         var buildings = makeRecords(50, function (i) {
             var side = i % 2 ? 1 : -1;
             var h = 3.4 + random() * 4.6;
@@ -11402,19 +11400,7 @@ var V42BossController = {
         addInstancedCategory(env, 'coral-buildings', roundedRectGeometry(1, 1, 0.08, 1), coral,
             buildings.filter(function (_, i) { return i % 3 === 2; }));
 
-        // A single overhanging cap gives the skyline a deliberate toy-city
-        // silhouette without multiplying each building into several meshes.
-        addInstancedCategory(env, 'roof-trims', new THREE.BoxGeometry(1, 0.14, 1), teal,
-            buildings.map(function (b) {
-                return {
-                    x: b.x,
-                    y: b.h * 1.06,
-                    z: b.z,
-                    sx: b.w * 1.08,
-                    sy: 1,
-                    sz: b.sz * 1.07
-                };
-            }));
+        // No decorative roof caps or roadside rails in the combat view.
 
         var windows = [];
         for (var bi = 0; bi < buildings.length; bi++) {
@@ -11489,20 +11475,7 @@ var V42BossController = {
             cxPanels.push(rec(hSide * 4.6, 0.26, hz, 0.16, 0.5, 0.2));
             cxGlow.push(rec(hSide * 4.6, 0.55, hz, 0.1, 0.12, 0.1));
         }
-        // 跨街横幅(高空, 城市族街道峡谷感): 门柱+旗面×2色
-        var banFrames = [], banClothA = [], banClothB = [];
-        for (var bn = 0; bn < 4; bn++) {
-            var bz = -10 - bn * 38;
-            banFrames.push(rec(-4.6, 3.1, bz, 0.08, 1.0, 0.08));
-            banFrames.push(rec(4.6, 3.1, bz, 0.08, 1.0, 0.08));
-            if (bn % 2 === 0) { banClothA.push(rec(0, 3.62, bz, 9.4, 0.5, 0.04)); }
-            else { banClothB.push(rec(0, 3.62, bz, 9.4, 0.5, 0.04)); }
-        }
-        addInstancedCategory(env, 'cityx-banner-frames', box, makeCityMaterial(0x3A4652, { roughness: 0.5, metalness: 0.3 }), banFrames, { themes: CITY_ALIVE });
-        var clothA = makeCityMaterial(0x2E4A6E, { roughness: 0.85 }); clothA.map = facade;
-        var clothB = makeCityMaterial(0x8E4A42, { roughness: 0.85 }); clothB.map = facade;
-        addInstancedCategory(env, 'cityx-banner-a', box, clothA, banClothA, { themes: CITY_ALIVE });
-        addInstancedCategory(env, 'cityx-banner-b', box, clothB, banClothB, { themes: CITY_ALIVE });
+        // Cross-street decorative banners removed: keep the battle sightline clear.
         addInstancedCategory(env, 'cityx-frames', box, makeCityMaterial(0x2E3A42, { roughness: 0.5, metalness: 0.3 }), cxFrames, { themes: CITY_ALIVE, castShadow: true });
         addInstancedCategory(env, 'cityx-panels', box, makeCityMaterial(0x9AAFA8), cxPanels, { themes: CITY_ALIVE, castShadow: true });
         var cityxGlowMat = new THREE.MeshBasicMaterial({ color: 0xFFE9A8, toneMapped: false }); cityxGlowMat.__noThemeTint = true;
@@ -11587,14 +11560,7 @@ var V42BossController = {
                 fortSandbags.push(rec(fSide * 4.85, 0.1 + sb * 0.11, fz + 1.2 + sb * 0.3, 0.5, 0.18, 0.3, random() * 0.2));
             }
         }
-        // 跨路防御拱门: 门柱在路缘外(±4.75), 横梁在高空(y=3.6) — 视觉签名, 零碰撞影响
-        for (var ar = 0; ar < 4; ar++) {
-            var arz = -6 - ar * 34;
-            fortArches.push(rec(-4.75, 1.9, arz, 0.9, 3.8, 1.0));
-            fortArches.push(rec(4.75, 1.9, arz, 0.9, 3.8, 1.0));
-            fortArches.push(rec(0, 3.85, arz, 10.4, 0.8, 0.9));
-        }
-        addInstancedCategory(env, 'fort-arches', box, makeCityMaterial(0x4E5E6C, { roughness: 0.75, metalness: 0.3 }), fortArches, { themes: ['fortress'], castShadow: true });
+        // Decorative arches removed; gameplay gate rows are separate.
         addInstancedCategory(env, 'fort-walls', box, makeCityMaterial(0x5E6E7C, { roughness: 0.85 }), fortWalls, { themes: ['fortress'], castShadow: true });
         addInstancedCategory(env, 'fort-towers', box, makeCityMaterial(0x5E6E7C, { roughness: 0.8, metalness: 0.2 }), fortTowers, { themes: ['fortress'], castShadow: true });
         addInstancedCategory(env, 'fort-tank-hulls', roundedRectGeometry(1, 1, 0.1, 1), makeCityMaterial(0x4A5A50, { roughness: 0.6, metalness: 0.4 }), fortHulls, { themes: ['fortress'], castShadow: true });
@@ -11606,7 +11572,7 @@ var V42BossController = {
         for (var cw = 0; cw < 4; cw++) {
             var cwz = 12 - cw * 44;
             for (var cst = 0; cst < 5; cst++) {
-                crosswalks.push(rec(-2.8 + cst * 1.4, 0.012, cwz, 0.85, 1, 0.4));
+                crosswalks.push(rec(-2.8 + cst * 1.4, 0.012, cwz, 0.85, 0.012, 0.4));
             }
         }
         addInstancedCategory(env, 'cityx-crosswalk', box, new THREE.MeshBasicMaterial({ color: 0xD8DCE0 }), crosswalks, { themes: CITY_ALIVE });
@@ -11854,6 +11820,7 @@ class World {
         this._buildRoad();
         V42Art.buildEnvironment(this);
         this._buildSky();
+        if (typeof SceneryV121 !== 'undefined') this._v121Scenery = new SceneryV121(this);
 
         this.resize();
         window.addEventListener('resize', () => this.resize());
@@ -12009,6 +11976,7 @@ class World {
         roadTex.anisotropy = 4;
 
         const roadMat = new THREE.MeshLambertMaterial({ map: roadTex });
+        this._v121RoadMaterial = roadMat;
         this.roadMat = roadMat; // V14: 主题地面纹理切换需要引用
 
         // V3.5: 每段合并为3个mesh(路面/路侧结构/草地) — 原9个, drawCalls 108→36
@@ -12022,14 +11990,10 @@ class World {
             road.receiveShadow = true;
             seg.add(road);
 
-            // 路侧结构合并: 人行道×2 + 护栏×2 + 顶盖×2 (顶点色单材质)
+            // Keep low sidewalks; remove decorative guardrails and caps.
             var structGeos = [
                 { g: new THREE.BoxGeometry(0.8, 0.1, SEG_LEN), x: -3.8, y: 0.05, z: 0, c: 0xC5CDC9 },
-                { g: new THREE.BoxGeometry(0.8, 0.1, SEG_LEN), x: 3.8, y: 0.05, z: 0, c: 0xC5CDC9 },
-                { g: new THREE.BoxGeometry(0.25, 0.35, SEG_LEN), x: -4.35, y: 0.17, z: 0, c: 0x8E8AA0 },
-                { g: new THREE.BoxGeometry(0.25, 0.35, SEG_LEN), x: 4.35, y: 0.17, z: 0, c: 0x8E8AA0 },
-                { g: new THREE.BoxGeometry(0.3, 0.06, SEG_LEN), x: -4.35, y: 0.37, z: 0, c: 0xA8A4B8 },
-                { g: new THREE.BoxGeometry(0.3, 0.06, SEG_LEN), x: 4.35, y: 0.37, z: 0, c: 0xA8A4B8 }
+                { g: new THREE.BoxGeometry(0.8, 0.1, SEG_LEN), x: 3.8, y: 0.05, z: 0, c: 0xC5CDC9 }
             ].map(function(item) {
                 item.g.translate(item.x, item.y, item.z);
                 return colorize(item.g, item.c);
@@ -12105,7 +12069,8 @@ class World {
      * 重开/复活/传送自动正确。
      */
     updateRoadScroll(squadZ) {
-        if(this._v42Environment)this._v42Environment.update(squadZ);
+        if(this._v42Environment && this._v42Environment.root.visible)this._v42Environment.update(squadZ);
+        if(this._v121Scenery)this._v121Scenery.update(squadZ);
         const SEG_LEN = 12;
         // 路段: 覆盖 [squadZ+18, squadZ-114], 共12段
         const base = Math.ceil((squadZ + SEG_LEN * 1.5) / SEG_LEN) * SEG_LEN;
@@ -12233,6 +12198,7 @@ class World {
             }
         }
         this._themeApplied = themeName;
+        if(this._v121Scenery)this._v121Scenery.setTheme(themeName);
     }
 
     /** V13: 按主题重绘天穹渐变(与 _buildSky 同规格: 4 停靠点 + 顶部太阳光晕) */
@@ -12308,6 +12274,236 @@ class World {
 
 }
 // V10.1: 移除无调用的 World.render()(game.js 直接 renderer.render)
+
+
+/* ===== [[ js/scenery-v121.js ]] ===== */
+// Generated diffuse materials + real reusable roadside geometry. Visuals only.
+var SceneryV121 = class SceneryV121 {
+    constructor(world) {
+        this.world = world;
+        this.groups = {};
+        this.active = null;
+        this.materials = {};
+        this.tiles = [];
+        this._matrix = new THREE.Object3D();
+        this._lastZ = Infinity;
+        this.geometries = {
+            box: new THREE.BoxGeometry(1, 1, 1),
+            rock: new THREE.IcosahedronGeometry(1, 1),
+            orb: new THREE.IcosahedronGeometry(1, 2),
+            cylinder: new THREE.CylinderGeometry(1, 1, 1, 10),
+            cone: new THREE.ConeGeometry(1, 1, 10),
+            ring: new THREE.TorusGeometry(1, .16, 5, 16),
+            arch: new THREE.TorusGeometry(1, .16, 5, 16, Math.PI)
+        };
+        var colors = { asphalt: 0x72818a, stone: 0xb4a38b, metal: 0x798794,
+            rock: 0x81768d, organic: 0x715074, ground: 0x9b794f,
+            armor: 0x7c8b95, fortress: 0xb6a58d, rubber: 0x253241,
+            glass: 0x70bdcc, orange: 0xd88a48, blue: 0x597ba0,
+            red: 0x9b4754, stem: 0x87789d };
+        for (var key in colors) this.materials[key] = new THREE.MeshLambertMaterial({ color: colors[key] });
+        this.materials.cyan = new THREE.MeshBasicMaterial({ color: 0x68e6e2 });
+        this.materials.purple = new THREE.MeshBasicMaterial({ color: 0xc18ae7 });
+        this.materials.light = new THREE.MeshBasicMaterial({ color: 0xffd68b });
+        this._road = world._v121RoadMaterial;
+        this._originalRoad = this._road && this._road.map;
+        this._roadSides = [];
+        world.roadGroup.traverse(o => {
+            if (o.isMesh && o.material !== this._road && !this._roadSides.some(x => x.material === o.material)) {
+                this._roadSides.push({ material: o.material, color: o.material.color.clone() });
+            }
+        });
+        this.setTheme('default');
+        this.ready = new Promise((resolve, reject) => {
+            var atlasUrl = 'assets/art-v121/world-materials.jpg';
+            if (typeof Platform === 'undefined' || Platform.id === 'h5') atlasUrl += '?v=121';
+            new THREE.TextureLoader().load(atlasUrl, texture => {
+                try {
+                var image = texture.image._impl || texture.image;
+                var names = ['asphalt', 'stone', 'metal', 'rock', 'organic', 'ground', 'armor', 'fortress'];
+                for (var i = 0; i < names.length; i++) {
+                    var canvas = document.createElement('canvas'); canvas.width = canvas.height = 256;
+                    canvas.getContext('2d').drawImage(image, (i % 4) * image.width / 4, Math.floor(i / 4) * image.height / 2,
+                        image.width / 4, image.height / 2, 0, 0, 256, 256);
+                    var tile = new THREE.CanvasTexture(canvas);
+                    tile.wrapS = tile.wrapT = THREE.RepeatWrapping;
+                    tile.anisotropy = 2;
+                    this.tiles.push(tile);
+                    this.materials[names[i]].map = tile;
+                    this.materials[names[i]].color.setHex(0xffffff);
+                    this.materials[names[i]].needsUpdate = true;
+                }
+                texture.dispose();
+                this._applyRoad(this.theme);
+                resolve(this);
+                } catch (error) { texture.dispose(); reject(error); }
+            }, undefined, error => reject(Error('World material atlas failed: ' + (error.message || error))));
+        });
+        // Loading failure leaves the readable material-color fallback in place.
+        this.ready.catch(error => console.warn(error.message));
+    }
+
+    _bucket(group, shape, material, x, y, z, sx, sy, sz, rx, ry, rz) {
+        var key = shape + ':' + material;
+        var buckets = group.userData.buckets;
+        (buckets[key] || (buckets[key] = { shape, material, records: [] })).records.push({
+            x, y, z, sx, sy, sz, rx: rx || 0, ry: ry || 0, rz: rz || 0
+        });
+    }
+
+    _build(theme) {
+        var group = new THREE.Group();
+        group.name = 'scenery-v121-' + theme;
+        group.userData = { artSource: 'js/scenery-v121.js + assets/art-v121/world-materials.jpg',
+            collidable: false, buckets: {}, entries: [] };
+        var add = this._bucket.bind(this, group);
+        for (var i = 0; i < 16; i++) {
+            var side = i % 2 ? 1 : -1;
+            var z = 12 - Math.floor(i / 2) * 21;
+            var x = side * 4.7;
+            var ground = { default: 'stone', cave: 'rock', mechanical: 'ground', fortress: 'stone', apocalypse: 'organic' }[theme];
+            add('box', ground, side * 14, -.04, z, 19.6, .08, 21.2);
+            if (theme === 'default') {
+                // Actual cars have separate tires, cabin, glass and body volumes.
+                if (i % 4 < 2) {
+                    add('box', i % 3 ? 'orange' : 'blue', x + side * .2, .58, z, 1.35, .6, 2.5, 0, side * .08);
+                    add('box', 'metal', x + side * .2, .98, z - .18, 1.2, .48, 1.3);
+                    add('box', 'glass', x - side * .42, 1.03, z - .18, .025, .3, 1.08);
+                    add('box', 'glass', x + side * .2, 1.04, z + .49, 1.06, .3, .035);
+                    for (var axle of [-.78, .78]) for (var wheel of [-.65, .65])
+                        add('cylinder', 'rubber', x + side * .2 + wheel, .32, z + axle, .29, .18, .29, 0, 0, Math.PI / 2);
+                    add('box', 'light', x + side * .2, .58, z + 1.27, .8, .12, .03);
+                } else {
+                    for (var b = 0; b < 4; b++) add('orb', 'ground', side * 5.1, .3 + (b % 2) * .25, z - .8 + b * .45, .48, .18, .27);
+                }
+                add('box', 'stone', side * 6.0, .25, z - 4, 1.3, .45, 1.1, 0, i * .4);
+                add('box', 'metal', side * 6.0, .5, z - 4, .9, .13, .85, 0, i * .4);
+                add('cone', 'orange', side * 3.9, .28, z - 2.4, .16, .5, .16);
+            } else if (theme === 'cave') {
+                add('rock', 'rock', side * 8.8, 2.8, z, 2.5, 4.1, 5.2, .12, i * .7, side * .12);
+                add('rock', 'rock', side * 5.2, .7, z - 4, 1.15, 1.3, 2.5, .2, i);
+                add('cylinder', 'stem', x, .55, z - 1.6, .13, 1.1, .13, 0, 0, side * .2);
+                add('cone', 'cyan', x, 1.17, z - 1.6, .65, .3, .65);
+                add('orb', 'organic', side * 5.3, 1.2, z + 3, .95, 1.4, 1.0);
+                add('orb', 'purple', side * 4.8, 1.6, z + 3.6, .32, .38, .23);
+                add('rock', 'rock', side * 7.8, 7.5, z, 4, 1.7, 10, 0, i * .3);
+                if (side === 1) add('arch', 'rock', 0, 2.4, z, 6.3, 4.3, 1.1);
+            } else if (theme === 'mechanical') {
+                add('cylinder', 'metal', side * 7.0, 3.1, z, 1.45, 6.2, 1.45);
+                add('ring', 'armor', side * 7.0, 4.7, z, 1.48, 1.48, .7, Math.PI / 2);
+                add('box', 'armor', side * 5.3, 2.7, z - 3.8, .6, 5.4, .7);
+                add('box', 'metal', side * 6.3, .5, z + 3, 2.2, .9, 2.4);
+                add('ring', 'metal', side * 6.2, 1.4, z - 6.2, 1.25, 1.25, .75, 0, Math.PI / 2);
+                for (var tooth = 0; tooth < 10; tooth++) {
+                    var a = tooth * Math.PI / 5;
+                    add('box', 'armor', side * 6.2, 1.4 + Math.cos(a) * 1.23, z - 6.2 + Math.sin(a) * 1.23, .5, .35, .35, a, 0, 0);
+                }
+            } else if (theme === 'fortress') {
+                add('box', 'fortress', side * 6.0, 2.25, z, 2.2, 4.5, 21.2);
+                for (var crenel = 0; crenel < 7; crenel++) add('box', 'fortress', side * 6.0, 4.85, z - 8.4 + crenel * 2.8, 2.2, .8, 1.3);
+                add('cylinder', 'stone', side * 7.0, 3.4, z + 6.0, 2, 6.8, 2);
+                add('ring', 'armor', side * 7.0, 6.4, z + 6.0, 2.05, 2.05, .7, Math.PI / 2);
+                add('cylinder', 'metal', side * 4.6, 2.5, z - 2, .06, 4.9, .06);
+                add('box', i % 4 ? 'blue' : 'red', side * 4.5, 3.4, z - 2, .045, 1.8, .85);
+            } else {
+                add('orb', 'organic', side * 6.0, 2, z, 2.4, 2.6, 3.0, 0, i * .5);
+                add('ring', 'organic', side * 5.2, 2.0, z + .8, 1.6, 2.0, .9, 0, side * .7);
+                add('orb', 'cyan', side * 4.9, 2.15, z + 1.35, .6, .8, .36);
+                add('cone', 'rock', side * 4.6, 1.1, z - 4.5, .5, 2.2, .6, 0, 0, side * -.3);
+                add('cone', 'purple', side * 7.0, 4.2, z - 3, .8, 4.1, .8, 0, 0, side * -.16);
+                add('cylinder', 'organic', side * 5.2, .3, z - 3, .26, 4.1, .26, Math.PI / 2, 0, side * .25);
+                add('box', 'metal', side * 8.0, 3.2, z - 6.7, 1.5, 6.4, 1.5, 0, 0, side * .12);
+                add('box', 'cyan', side * 7.7, 3.5, z - 6.7, .08, 3.5, .55);
+            }
+        }
+        for (var key in group.userData.buckets) {
+            var b = group.userData.buckets[key];
+            var mesh = new THREE.InstancedMesh(this.geometries[b.shape], this.materials[b.material], b.records.length);
+            mesh.name = 'v121-' + theme + '-' + key;
+            mesh.userData = { artSource: group.userData.artSource, collidable: false };
+            mesh.frustumCulled = false;
+            mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+            mesh.receiveShadow = true;
+            for (var ri = 0; ri < b.records.length; ri++) this._setMatrix(mesh, ri, b.records[ri]);
+            group.add(mesh);
+            group.userData.entries.push({ mesh, records: b.records });
+        }
+        this.world.scene.add(group);
+        this.groups[theme] = group;
+        return group;
+    }
+
+    _setMatrix(mesh, i, r) {
+        var o = this._matrix;
+        o.position.set(r.x, r.y, r.z); o.scale.set(r.sx, r.sy, r.sz);
+        o.rotation.set(r.rx, r.ry, r.rz); o.updateMatrix();
+        mesh.setMatrixAt(i, o.matrix);
+    }
+
+    setTheme(name) {
+        var theme = ['cave', 'mechanical', 'fortress', 'apocalypse'].indexOf(name) >= 0 ? name : 'default';
+        for (var key in this.groups) this.groups[key].visible = false;
+        this.active = this.groups[theme] || this._build(theme);
+        this.active.visible = true; this.theme = theme; this._lastZ = Infinity;
+        var w = this.world;
+        if (w._v42Environment) {
+            w._v42Environment.root.visible = theme === 'default';
+        }
+        var palettes = {
+            default: [0xbfd9e6, 0xfff0d3, 0xffffff], cave: [0x252239, 0x9eb8ed, 0x88729c],
+            mechanical: [0x7d8f9d, 0xffcf98, 0xb3a08a], fortress: [0xaeb6be, 0xffe0ad, 0xc0b49f],
+            apocalypse: [0x4c3557, 0xc1bded, 0x90749d]
+        };
+        var palette = palettes[theme];
+        if (theme !== 'default') {
+        w.scene.fog.color.setHex(palette[0]); w.scene.fog.near = theme === 'cave' ? 22 : 38; w.scene.fog.far = theme === 'cave' ? 80 : 110;
+        w.scene.background = new THREE.Color(palette[0]);
+        w.sunLight.color.setHex(palette[1]); w.sunLight.intensity = theme === 'cave' ? .65 : .78;
+        if (w._skyDome) w._skyDome.material.color.setHex(palette[2]);
+        }
+        if (w._skyDome) w._skyDome.visible = theme !== 'cave';
+        for (var side of this._roadSides) side.material.color.copy(side.color).multiply(new THREE.Color(palette[2]));
+        this._applyRoad(theme);
+        this.update(w._v42Environment && isFinite(w._v42Environment.lastSquadZ) ? w._v42Environment.lastSquadZ : 0);
+    }
+
+    _applyRoad(theme) {
+        if (!this._road || !this.tiles.length) return;
+        if (!this._roadMaps) this._roadMaps = {};
+        if (!this._roadMaps[theme]) {
+            var tile = { default: 0, cave: 3, mechanical: 2, fortress: 7, apocalypse: 4 }[theme];
+            var canvas = document.createElement('canvas'); canvas.width = 256; canvas.height = 512;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(this.tiles[tile].image, 0, 0, 256, 512);
+            // Lane markings are decorative and preserve the existing road width.
+            ctx.fillStyle = theme === 'mechanical' ? '#d7c79b' : '#dce1df';
+            for (var x of [85, 171]) for (var y = 4; y < 512; y += 112) ctx.fillRect(x - 1.5, y, 3, 54);
+            ctx.fillStyle = theme === 'cave' ? '#797b93' : '#b8aa78';
+            ctx.fillRect(3, 0, 2, 512); ctx.fillRect(251, 0, 2, 512);
+            var map = new THREE.CanvasTexture(canvas); map.wrapS = map.wrapT = THREE.RepeatWrapping; map.anisotropy = 2;
+            this._roadMaps[theme] = map;
+        }
+        this._road.map = this._roadMaps[theme]; this._road.needsUpdate = true;
+    }
+
+    update(squadZ) {
+        if (!this.active || Math.abs(squadZ - this._lastZ) < .2) return;
+        this._lastZ = squadZ;
+        // Large props behind the squad can enter the camera's near field and
+        // obscure the lane. Recycle them before they reach that camera corridor.
+        var front = squadZ + 3, back = front - 168;
+        for (var entry of this.active.userData.entries) {
+            var changed = false;
+            for (var i = 0; i < entry.records.length; i++) {
+                var r = entry.records[i], old = r.z;
+                if (r.z > front) r.z -= 168 * Math.ceil((r.z - front) / 168);
+                else if (r.z < back) r.z += 168 * Math.ceil((back - r.z) / 168);
+                if (r.z !== old) { this._setMatrix(entry.mesh, i, r); changed = true; }
+            }
+            if (changed) entry.mesh.instanceMatrix.needsUpdate = true;
+        }
+    }
+};
 
 
 /* ===== [[ js/effects.js ]] ===== */
@@ -13855,10 +14051,10 @@ class Enemy {
         this.spawnT = this.isBoss ? 0 : 1; // V4.0: Boss弹性入场动画
 
         // V3.5: 大众僵尸使用合并批处理模型(2 mesh/只), Boss/精英保留Group模型(细节动画+独立材质)
-        this.artStyle = styleOverride || (this.isBoss ? 'bruiser' : (type === 'bomber' ? 'fast' : type)); // V11.5: 爆炸僵尸复用快速尸模型(红染/小体)
+        this.artStyle = styleOverride || (this.isBoss ? 'bruiser' : type); // V12.1: bomber owns a distinct round hazard-canister silhouette
         this.model = new THREE.Group();
         this.model.userData.merged = true;
-        this.model.userData.artSource = 'assets/models/'+(['normal','fast','shield','split','spitter','elite'].includes(this.artStyle)?'zombies':'bosses')+'/'+this.artStyle+'/'+this.artStyle+'.glb (instanced anchor)';
+        this.model.userData.artSource = 'assets/models/'+(['normal','fast','shield','split','spitter','elite','bomber'].includes(this.artStyle)?'zombies':'bosses')+'/'+this.artStyle+'/'+this.artStyle+'.glb (instanced anchor)';
         this.model.position.set(x, 0, z);
         this.model.scale.setScalar(this.cfg.scale); // V2.2修复: 存活时应用类型scale
         this.visScale = this.cfg.scale; // 实际视觉scale(分裂僵尸会缩小)

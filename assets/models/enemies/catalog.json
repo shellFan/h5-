@@ -1,5 +1,5 @@
 {
-  "version": 42,
+  "version": 121,
   "generator": {
     "script": "tools/create-enemies.py",
     "helper": "tools/blender_art_common.py",
@@ -22,8 +22,8 @@
         "../zombies/normal/textures/normal-basecolor.png",
         "../zombies/normal/textures/normal-orm.png"
       ],
-      "triangles": 3676,
-      "lodTriangles": 1054,
+      "triangles": 3720,
+      "lodTriangles": 1068,
       "budgets": {
         "hero": 7000,
         "lod": 2000
@@ -35,14 +35,14 @@
           0.2
         ],
         "cloth": [
-          0.2,
-          0.32,
-          0.13
+          0.55,
+          0.43,
+          0.25
         ],
         "accent": [
-          0.48,
-          0.7,
-          0.32
+          0.78,
+          0.68,
+          0.38
         ],
         "dark": [
           0.045,
@@ -85,9 +85,9 @@
           0.28
         ],
         "glow": [
-          0.48,
-          0.7,
-          0.32
+          0.78,
+          0.68,
+          0.38
         ],
         "vein": [
           0.18,
@@ -165,8 +165,8 @@
         "../zombies/fast/textures/fast-basecolor.png",
         "../zombies/fast/textures/fast-orm.png"
       ],
-      "triangles": 3744,
-      "lodTriangles": 1076,
+      "triangles": 3776,
+      "lodTriangles": 1086,
       "budgets": {
         "hero": 7000,
         "lod": 2000
@@ -178,9 +178,9 @@
           0.25
         ],
         "cloth": [
-          0.72,
-          0.08,
-          0.06
+          0.24,
+          0.16,
+          0.19
         ],
         "accent": [
           0.96,
@@ -287,7 +287,7 @@
           0
         ]
       },
-      "height": 1.19,
+      "height": 1.2792,
       "up": "+Y",
       "forward": "+Z",
       "frontAnchor": [
@@ -308,8 +308,8 @@
         "../zombies/shield/textures/shield-basecolor.png",
         "../zombies/shield/textures/shield-orm.png"
       ],
-      "triangles": 4468,
-      "lodTriangles": 1285,
+      "triangles": 4484,
+      "lodTriangles": 1290,
       "budgets": {
         "hero": 7000,
         "lod": 2000
@@ -326,9 +326,9 @@
           0.38
         ],
         "accent": [
-          0.64,
+          0.9,
           0.68,
-          0.7
+          0.12
         ],
         "dark": [
           0.045,
@@ -371,9 +371,9 @@
           0.28
         ],
         "glow": [
-          0.64,
+          0.9,
           0.68,
-          0.7
+          0.12
         ],
         "vein": [
           0.18,
@@ -451,8 +451,8 @@
         "../zombies/split/textures/split-basecolor.png",
         "../zombies/split/textures/split-orm.png"
       ],
-      "triangles": 4184,
-      "lodTriangles": 1202,
+      "triangles": 4472,
+      "lodTriangles": 1286,
       "budgets": {
         "hero": 7000,
         "lod": 2000
@@ -594,8 +594,8 @@
         "../zombies/spitter/textures/spitter-basecolor.png",
         "../zombies/spitter/textures/spitter-orm.png"
       ],
-      "triangles": 3920,
-      "lodTriangles": 1126,
+      "triangles": 4116,
+      "lodTriangles": 1182,
       "budgets": {
         "hero": 7000,
         "lod": 2000
@@ -743,8 +743,8 @@
         "../zombies/elite/textures/elite-basecolor.png",
         "../zombies/elite/textures/elite-orm.png"
       ],
-      "triangles": 3652,
-      "lodTriangles": 1048,
+      "triangles": 4084,
+      "lodTriangles": 1174,
       "budgets": {
         "hero": 7000,
         "lod": 2000
@@ -875,6 +875,151 @@
       ],
       "muzzleMouth": null,
       "glowCells": [],
+      "boss": false,
+      "phaseTint": null
+    },
+    {
+      "key": "bomber",
+      "hero": "../zombies/bomber/bomber.glb",
+      "lod": "../zombies/bomber/bomber-lod.glb",
+      "textures": [
+        "../zombies/bomber/textures/bomber-basecolor.png",
+        "../zombies/bomber/textures/bomber-orm.png"
+      ],
+      "triangles": 4896,
+      "lodTriangles": 1408,
+      "budgets": {
+        "hero": 7000,
+        "lod": 2000
+      },
+      "palette": {
+        "skin": [
+          0.32,
+          0.52,
+          0.24
+        ],
+        "cloth": [
+          0.6,
+          0.19,
+          0.08
+        ],
+        "accent": [
+          1.0,
+          0.46,
+          0.06
+        ],
+        "dark": [
+          0.045,
+          0.055,
+          0.055
+        ],
+        "armor": [
+          0.28,
+          0.32,
+          0.34
+        ],
+        "metal": [
+          0.48,
+          0.53,
+          0.54
+        ],
+        "leather": [
+          0.22,
+          0.1,
+          0.045
+        ],
+        "ivory": [
+          0.94,
+          0.9,
+          0.72
+        ],
+        "ink": [
+          0.012,
+          0.018,
+          0.018
+        ],
+        "mouth": [
+          0.3,
+          0.035,
+          0.045
+        ],
+        "gum": [
+          0.72,
+          0.18,
+          0.28
+        ],
+        "glow": [
+          1.0,
+          0.46,
+          0.06
+        ],
+        "vein": [
+          0.18,
+          0.055,
+          0.24
+        ],
+        "sole": [
+          0.055,
+          0.045,
+          0.035
+        ],
+        "tooth": [
+          0.98,
+          0.96,
+          0.82
+        ],
+        "highlight": [
+          0.4696,
+          0.7256,
+          0.36719999999999997
+        ]
+      },
+      "parts": [
+        "Body",
+        "Head",
+        "Arms",
+        "LegL",
+        "LegR"
+      ],
+      "origins": {
+        "Body": [
+          0,
+          0.48,
+          0
+        ],
+        "Head": [
+          0,
+          0.94,
+          0.02
+        ],
+        "Arms": [
+          0,
+          0.65,
+          0.02
+        ],
+        "LegL": [
+          -0.105,
+          0.34,
+          0
+        ],
+        "LegR": [
+          0.105,
+          0.34,
+          0
+        ]
+      },
+      "height": 1.16,
+      "up": "+Y",
+      "forward": "+Z",
+      "frontAnchor": [
+        0,
+        0.915,
+        0.205
+      ],
+      "muzzleMouth": null,
+      "glowCells": [
+        11
+      ],
       "boss": false,
       "phaseTint": null
     },
@@ -1029,8 +1174,8 @@
         "../bosses/bulwark/textures/bulwark-basecolor.png",
         "../bosses/bulwark/textures/bulwark-orm.png"
       ],
-      "triangles": 4600,
-      "lodTriangles": 1232,
+      "triangles": 4624,
+      "lodTriangles": 1240,
       "budgets": {
         "hero": 15000,
         "lod": 4500
@@ -1172,8 +1317,8 @@
         "../bosses/spitking/textures/spitking-basecolor.png",
         "../bosses/spitking/textures/spitking-orm.png"
       ],
-      "triangles": 4348,
-      "lodTriangles": 1160,
+      "triangles": 4544,
+      "lodTriangles": 1214,
       "budgets": {
         "hero": 15000,
         "lod": 4500
@@ -1321,8 +1466,8 @@
         "../bosses/hivelord/textures/hivelord-basecolor.png",
         "../bosses/hivelord/textures/hivelord-orm.png"
       ],
-      "triangles": 4204,
-      "lodTriangles": 1125,
+      "triangles": 4504,
+      "lodTriangles": 1205,
       "budgets": {
         "hero": 15000,
         "lod": 4500
@@ -1470,8 +1615,8 @@
         "../bosses/titan/textures/titan-basecolor.png",
         "../bosses/titan/textures/titan-orm.png"
       ],
-      "triangles": 3816,
-      "lodTriangles": 1021,
+      "triangles": 4064,
+      "lodTriangles": 1087,
       "budgets": {
         "hero": 15000,
         "lod": 4500
@@ -1613,8 +1758,8 @@
         "../bosses/overlord/textures/overlord-basecolor.png",
         "../bosses/overlord/textures/overlord-orm.png"
       ],
-      "triangles": 4276,
-      "lodTriangles": 1146,
+      "triangles": 4532,
+      "lodTriangles": 1216,
       "budgets": {
         "hero": 15000,
         "lod": 4500

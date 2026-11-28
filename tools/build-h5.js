@@ -46,6 +46,7 @@ const COPY_LIST = [
     'js/boss-v42.js',
     'js/art-v42.js',
     'js/world.js',
+    'js/scenery-v121.js',
     'js/effects.js',
     'js/squad.js',
     'js/gates.js',

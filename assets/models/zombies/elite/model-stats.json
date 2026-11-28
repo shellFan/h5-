@@ -1,9 +1,10 @@
 {
   "key": "elite",
+  "assetVersion": 121,
   "blender": "4.2.15 LTS",
   "generator": "tools/create-enemies.py",
-  "triangles": 3652,
-  "lodTriangles": 1048,
+  "triangles": 4084,
+  "lodTriangles": 1174,
   "height": 1.16,
   "forward": "+Z",
   "up": "+Y",

@@ -1,0 +1,8 @@
+{
+  "scenario": "Cave:100 squad +40 enemies, fixed scene, 60 warmup +120 RAF intervals; desktop headless Edge, no CPU throttle",
+  "fps": 60.00300015000751,
+  "p95Ms": 16.799999999999272,
+  "drawCalls": 120,
+  "triangles": 1493438,
+  "textures": 24
+}

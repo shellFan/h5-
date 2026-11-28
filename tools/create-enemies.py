@@ -1,4 +1,4 @@
-"""Generate twelve original five-part V42 cartoon enemies in Blender 4.2.15.
+"""Generate thirteen original five-part V121 cartoon enemies in Blender 4.2.15.
 
 Run:
   D:/tools/blender-v41/blender-4.2.15-windows-x64/blender.exe --background --python tools/create-enemies.py
@@ -24,7 +24,7 @@ BOSS_ROOT = os.path.join(MODELS_ROOT, 'bosses')
 for directory in (MANIFEST_ROOT, ZOMBIE_ROOT, BOSS_ROOT):
     os.makedirs(directory, exist_ok=True)
 
-KEYS = ['normal', 'fast', 'shield', 'split', 'spitter', 'elite',
+KEYS = ['normal', 'fast', 'shield', 'split', 'spitter', 'elite', 'bomber',
         'bruiser', 'bulwark', 'spitking', 'hivelord', 'titan', 'overlord']
 BOSSES = {'bruiser', 'bulwark', 'spitking', 'hivelord', 'titan', 'overlord'}
 ORIGINS = {
@@ -41,12 +41,13 @@ def output_dir_for(key):
     return os.path.join(BOSS_ROOT if key in BOSSES else ZOMBIE_ROOT, key)
 
 BASE_COLORS = {
-    'normal': ((.18, .48, .20), (.20, .32, .13), (.48, .70, .32)),
-    'fast': ((.36, .62, .25), (.72, .08, .06), (.96, .25, .12)),
-    'shield': ((.28, .46, .25), (.31, .35, .38), (.64, .68, .70)),
+    'normal': ((.18, .48, .20), (.55, .43, .25), (.78, .68, .38)),
+    'fast': ((.36, .62, .25), (.24, .16, .19), (.96, .25, .12)),
+    'shield': ((.28, .46, .25), (.31, .35, .38), (.90, .68, .12)),
     'split': ((.42, .23, .52), (.29, .10, .39), (.72, .32, .78)),
     'spitter': ((.38, .55, .18), (.27, .38, .12), (.40, .98, .12)),
     'elite': ((.25, .44, .22), (.42, .13, .10), (.91, .38, .12)),
+    'bomber': ((.32, .52, .24), (.60, .19, .08), (1.0, .46, .06)),
     'bruiser': ((.30, .39, .25), (.48, .23, .09), (.94, .55, .12)),
     'bulwark': ((.27, .39, .28), (.25, .31, .35), (.80, .70, .24)),
     'spitking': ((.40, .50, .12), (.32, .23, .08), (.54, 1.0, .08)),
@@ -225,14 +226,62 @@ def shield_prop(art, massive=False):
         art.ell('Shield rivet', (-.02 + math.cos(a) * radius * .60,
                                  .57 + math.sin(a) * radius * .60, z + .073),
                 (.018, .018, .010), 'Arms', 'metal', 8, 5)
+    # Three raised hazard slashes survive the small portrait camera and make the role readable
+    # without relying on the gray/yellow palette alone.
+    stripe_y = .49 if massive else .50
+    span = .16 if massive else .13
+    for x in (-.12, 0, .12) if massive else (-.09, .02):
+        art.tube('Raised shield hazard slash', [(x - .045, stripe_y - span * .40, z + .092),
+                                                (x + .045, stripe_y + span * .40, z + .092)],
+                 .018, 'Arms', 'accent', 0)
+
+
+def fast_hair(art):
+    """Swept-back spikes strengthen the runner silhouette from front and side."""
+    for x, lift, reach in [(-.09, .035, -.16), (-.03, .08, -.20),
+                           (.04, .06, -.19), (.10, .025, -.14)]:
+        art.tube('Swept runner hair', [(x, 1.12, .05),
+                                      (x * 1.18, 1.18 + lift, reach)],
+                 .022, 'Head', 'dark', 0)
+
+
+def bomber_details(art):
+    """Round pressure belly, paired canisters and a live fuse: no fast-zombie reuse."""
+    art.ell('Orange pressure belly', (0, .57, .255), (.245, .225, .105),
+            'Body', 'accent', 18, 10)
+    art.torus('Pressure belly rim', (0, .57, .352), .135, .025,
+              'Body', 'metal', 18, 6)
+    art.ell('Danger badge', (0, .57, .383), (.085, .085, .018),
+            'Body', 'ivory', 12, 7)
+    art.box('Danger badge bar', (0, .57, .406), (.012, .052, .008),
+            'Body', 'mouth', .004)
+    art.ell('Danger badge dot', (0, .50, .407), (.014, .014, .007),
+            'Body', 'mouth', 8, 5)
+    for side in (-1, 1):
+        x = side * .20
+        art.cylinder('Side blast canister', (x, .62, -.105), .075, .31,
+                     'Body', 'metal', 14)
+        art.torus('Canister hazard band', (x, .69, -.105), .077, .013,
+                  'Body', 'accent', 14, 5)
+        art.tube('Canister hose', [(x, .76, -.10), (side * .14, .83, -.02),
+                                   (side * .07, .78, .08)], .016,
+                 'Body', 'dark', 0)
+    art.tube('Lit fuse', [(.10, .77, -.05), (.18, .88, -.08),
+                          (.17, 1.00, -.01)], .020, 'Body', 'dark', 0)
+    art.ell('Fuse ember', (.17, 1.02, -.005), (.042, .042, .042),
+            'Body', 'glow', 10, 6)
 
 
 def variant_details(art, key):
     if key == 'split':
-        for p, r in [((.19, .77, .02), .10), ((.23, .90, -.01), .075),
-                     ((.15, 1.10, .00), .065), ((.26, .60, -.03), .055)]:
+        # Two dominant sacs use deliberately unequal volumes, with smaller satellite growths.
+        for p, r in [((-.16, .83, -.10), .14), ((.21, .74, -.08), .19),
+                     ((.23, .99, -.01), .075), ((.27, .57, -.03), .055)]:
             art.ell('Asymmetric mutant growth', p, (r, r * .86, r * .80),
                     'Head' if p[1] > .82 else 'Body', 'accent', 12, 7)
+            art.ell('Mutant sac highlight', (p[0] - r * .22, p[1] + r * .18, p[2] + r * .70),
+                    (r * .28, r * .24, r * .12),
+                    'Head' if p[1] > .82 else 'Body', 'highlight', 9, 5)
         art.tube('Raised purple vein', [(.20, .52, .13), (.15, .67, .16),
                                         (.20, .81, .12), (.14, .94, .14)],
                  .012, 'Body', 'vein')
@@ -249,6 +298,10 @@ def variant_details(art, key):
         for x in (-.045, 0, .045):
             art.ell('Glowing mouth gland', (x, .87, .275), (.028, .023, .018),
                     'Head', 'glow', 9, 5)
+        art.ell('Acid gland throat pouch', (0, .805, .235),
+                ((.16 if key == 'spitking' else .125),
+                 (.12 if key == 'spitking' else .095), .055),
+                'Head', 'glow', 14, 8)
         if key == 'spitking':
             art.box('Jaw canister cradle', (0, .825, .205), (.13, .045, .035),
                     'Head', 'metal', .016)
@@ -265,15 +318,38 @@ def variant_details(art, key):
                     (slab, .09, .13), 'Arms', 'armor', .026)
             art.box('Shoulder stripe', (side * .25, .77, .13),
                     (slab * .65, .025, .018), 'Arms', 'accent', .008)
+            if key == 'elite':
+                art.cone('Elite shoulder stud', (side * .25, .86, .01),
+                         .012, .036, .10, 'Arms', 'metal', 8)
+        if key == 'elite':
+            for side in (-1, 1):
+                art.ell('Elite giant fist guard', (side * .33, .50, .22),
+                        (.13, .11, .13), 'Arms', 'armor', 12, 7)
+                art.box('Elite fist hazard plate', (side * .33, .50, .345),
+                        (.085, .055, .018), 'Arms', 'accent', .012)
+        else:
+            # Titan owns the mechanical-fist read: squared gauntlets and piston rails.
+            for side in (-1, 1):
+                art.box('Titan mechanical gauntlet', (side * .38, .49, .23),
+                        (.16, .13, .16), 'Arms', 'armor', .035)
+                art.cylinder('Titan fist piston', (side * .38, .60, .02), .032, .23,
+                             'Arms', 'metal', 10)
+                art.box('Titan knuckle hazard plate', (side * .38, .49, .395),
+                        (.105, .065, .018), 'Arms', 'accent', .010)
     elif key == 'bruiser':
         for side in (-1, 1):
             x = side * .33
-            art.box('Industrial glove cuff', (x, .52, .11), (.11, .09, .10),
+            dominant = 1.45 if side < 0 else .78
+            art.box('Industrial glove cuff', (x, .52, .11),
+                    (.11 * dominant, .09 * dominant, .10 * dominant),
                     'Arms', 'metal', .028)
-            art.ell('Oversized industrial fist', (x, .49, .23), (.145, .12, .15),
+            art.ell('Oversized industrial fist', (x, .49, .23),
+                    (.145 * dominant, .12 * dominant, .15 * dominant),
                     'Arms', 'armor', 14, 8)
             for dx in (-.07, -.023, .023, .07):
-                art.ell('Metal glove knuckle', (x + dx, .54, .35), (.027, .026, .032),
+                art.ell('Metal glove knuckle', (x + dx * dominant, .54,
+                                                .23 + .12 * dominant),
+                        (.027 * dominant, .026 * dominant, .032 * dominant),
                         'Arms', 'accent', 9, 5)
     elif key == 'hivelord':
         art.surface('Back cocoon', [(.39, .16, .11, -.15), (.55, .29, .15, -.19),
@@ -292,6 +368,9 @@ def variant_details(art, key):
                      .021, 'Body', 'accent')
         art.tube('Cocoon seam', [(-.12, .42, -.28), (0, .57, -.34),
                                  (.12, .76, -.27)], .014, 'Body', 'glow')
+        for x, y, r in [(-.11, .53, .055), (.10, .62, .070), (0, .73, .045)]:
+            art.ell('Hive egg window', (x, y, -.315), (r, r * 1.15, .018),
+                    'Body', 'glow', 10, 6)
     elif key == 'overlord':
         art.torus('Glowing chest core ring', (0, .62, .19), .105, .028,
                   'Body', 'metal', 20, 7)
@@ -304,6 +383,13 @@ def variant_details(art, key):
             art.tube('Reactor conduit', [(side * .12, .75, -.30),
                                          (side * .24, .81, -.10),
                                          (side * .26, .70, .04)], .020, 'Body', 'glow')
+            art.box('Crown shoulder slab', (side * .32, .78, .00),
+                    (.15, .085, .14), 'Arms', 'armor', .025)
+            for i in range(3):
+                art.cone('Crown shoulder prong',
+                         (side * (.27 + i * .055), .91 + i * .025, -.01),
+                         .012, .035, .12 + i * .025, 'Arms',
+                         'glow' if i == 1 else 'metal', 8)
 
 
 def make_enemy(key, index):
@@ -311,10 +397,14 @@ def make_enemy(key, index):
     os.makedirs(out, exist_ok=True)
     art = EnemyArt(out, key, palette_for(key), 4200 + index)
     if key == 'normal':
-        body(art, .18, ragged=True); legs(art); face(art, toothy=True); arms(art, .18); headgear(art, key)
+        body(art, .18, ragged=True); legs(art); face(art, wide=True, toothy=True); arms(art, .18)
+        headgear(art, key)
+        art.box('Torn shirt patch', (-.10, .58, .155), (.045, .075, .012),
+                'Body', 'dark', .006)
     elif key == 'fast':
         body(art, .145, lean=.075); legs(art, thin=True, crouch=.025)
-        face(art, thin=True, z=.105, jaw=.07); arms(art, .145, forward=.23); headgear(art, key, .105)
+        face(art, thin=True, z=.105, jaw=.07); arms(art, .145, forward=.23)
+        headgear(art, key, .105); fast_hair(art)
     elif key == 'shield':
         body(art, .22, armored=True); legs(art, heavy=True); face(art, wide=True)
         arms(art, .22, armored=True); headgear(art, key); shield_prop(art)
@@ -327,6 +417,10 @@ def make_enemy(key, index):
     elif key == 'elite':
         body(art, .23, armored=True); legs(art, heavy=True); face(art, wide=True)
         arms(art, .23, huge=True, armored=True); variant_details(art, key)
+    elif key == 'bomber':
+        body(art, .235, belly=.88, ragged=True); legs(art, heavy=True)
+        face(art, wide=True, toothy=True); arms(art, .235, forward=.10)
+        bomber_details(art)
     elif key == 'bruiser':
         body(art, .25, belly=.10); legs(art, heavy=True); face(art, wide=True)
         arms(art, .25, huge=True); variant_details(art, key)
@@ -352,22 +446,23 @@ def make_enemy(key, index):
     hero, lod, height = art.export(ORIGINS, mouth if has_mouth_anchor else None,
                                    .27 if key in BOSSES else .29)
     stats = {
-        'key': key, 'blender': bpy.app.version_string, 'generator': 'tools/create-enemies.py',
+        'key': key, 'assetVersion': 121, 'blender': bpy.app.version_string,
+        'generator': 'tools/create-enemies.py',
         'triangles': hero, 'lodTriangles': lod, 'height': round(height, 4),
         'forward': '+Z', 'up': '+Y', 'parts': list(PART_NAMES), 'origins': ORIGINS,
         'frontAnchor': [0, mouth[1], mouth[2]],
         'muzzleMouth': list(mouth) if has_mouth_anchor else None,
-        'glowCells': [11] if key in ('spitter', 'spitking', 'hivelord', 'overlord') else [],
+        'glowCells': [11] if key in ('spitter', 'spitking', 'hivelord', 'overlord', 'bomber') else [],
         'originalReferenceAvailable': False,
     }
     write_json(os.path.join(out, 'model-stats.json'), stats)
-    print('V42_ASSET', key, hero, lod, round(height, 4))
+    print('V121_ASSET', key, hero, lod, round(height, 4))
     return stats
 
 
 def write_model_readme(key, stats):
     out = output_dir_for(key)
-    text = f"""# {key.title()} V42 model
+    text = f"""# {key.title()} V121 model
 
 Original cartoon enemy generated by Blender 4.2.15 from `tools/create-enemies.py` and
 `tools/blender_art_common.py`; no downloaded reference mesh was available or used.
@@ -409,7 +504,7 @@ all_stats = ([read_existing_stats(key) for key in KEYS] if metadata_only else
 for item in all_stats:
     write_model_readme(item['key'], item)
 catalog = {
-    'version': 42,
+        'version': 121,
     'generator': {
         'script': 'tools/create-enemies.py', 'helper': 'tools/blender_art_common.py',
         'blender': bpy.app.version_string,
@@ -437,4 +532,4 @@ for stats in all_stats:
         'phaseTint': ['teal', 'amber', 'magenta'] if key == 'overlord' else None,
     })
 write_json(os.path.join(MANIFEST_ROOT, 'catalog.json'), catalog)
-print('V42_ENEMY_CATALOG', len(catalog['enemies']))
+print('V121_ENEMY_CATALOG', len(catalog['enemies']))

@@ -30,6 +30,7 @@ class World {
         this._buildRoad();
         V42Art.buildEnvironment(this);
         this._buildSky();
+        if (typeof SceneryV121 !== 'undefined') this._v121Scenery = new SceneryV121(this);
 
         this.resize();
         window.addEventListener('resize', () => this.resize());
@@ -185,6 +186,7 @@ class World {
         roadTex.anisotropy = 4;
 
         const roadMat = new THREE.MeshLambertMaterial({ map: roadTex });
+        this._v121RoadMaterial = roadMat;
         this.roadMat = roadMat; // V14: 主题地面纹理切换需要引用
 
         // V3.5: 每段合并为3个mesh(路面/路侧结构/草地) — 原9个, drawCalls 108→36
@@ -198,14 +200,10 @@ class World {
             road.receiveShadow = true;
             seg.add(road);
 
-            // 路侧结构合并: 人行道×2 + 护栏×2 + 顶盖×2 (顶点色单材质)
+            // Keep low sidewalks; remove decorative guardrails and caps.
             var structGeos = [
                 { g: new THREE.BoxGeometry(0.8, 0.1, SEG_LEN), x: -3.8, y: 0.05, z: 0, c: 0xC5CDC9 },
-                { g: new THREE.BoxGeometry(0.8, 0.1, SEG_LEN), x: 3.8, y: 0.05, z: 0, c: 0xC5CDC9 },
-                { g: new THREE.BoxGeometry(0.25, 0.35, SEG_LEN), x: -4.35, y: 0.17, z: 0, c: 0x8E8AA0 },
-                { g: new THREE.BoxGeometry(0.25, 0.35, SEG_LEN), x: 4.35, y: 0.17, z: 0, c: 0x8E8AA0 },
-                { g: new THREE.BoxGeometry(0.3, 0.06, SEG_LEN), x: -4.35, y: 0.37, z: 0, c: 0xA8A4B8 },
-                { g: new THREE.BoxGeometry(0.3, 0.06, SEG_LEN), x: 4.35, y: 0.37, z: 0, c: 0xA8A4B8 }
+                { g: new THREE.BoxGeometry(0.8, 0.1, SEG_LEN), x: 3.8, y: 0.05, z: 0, c: 0xC5CDC9 }
             ].map(function(item) {
                 item.g.translate(item.x, item.y, item.z);
                 return colorize(item.g, item.c);
@@ -281,7 +279,8 @@ class World {
      * 重开/复活/传送自动正确。
      */
     updateRoadScroll(squadZ) {
-        if(this._v42Environment)this._v42Environment.update(squadZ);
+        if(this._v42Environment && this._v42Environment.root.visible)this._v42Environment.update(squadZ);
+        if(this._v121Scenery)this._v121Scenery.update(squadZ);
         const SEG_LEN = 12;
         // 路段: 覆盖 [squadZ+18, squadZ-114], 共12段
         const base = Math.ceil((squadZ + SEG_LEN * 1.5) / SEG_LEN) * SEG_LEN;
@@ -409,6 +408,7 @@ class World {
             }
         }
         this._themeApplied = themeName;
+        if(this._v121Scenery)this._v121Scenery.setTheme(themeName);
     }
 
     /** V13: 按主题重绘天穹渐变(与 _buildSky 同规格: 4 停靠点 + 顶部太阳光晕) */

@@ -1,0 +1,434 @@
+{
+  "version": 121,
+  "approved_direction": "Existing cartoon concepts approved by user; production renders supplied for inspection",
+  "assets": [
+    {
+      "id": "normal-hero",
+      "path": "assets/models/zombies/normal/normal.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "normal-lod",
+      "path": "assets/models/zombies/normal/normal-lod.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "fast-hero",
+      "path": "assets/models/zombies/fast/fast.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "fast-lod",
+      "path": "assets/models/zombies/fast/fast-lod.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "shield-hero",
+      "path": "assets/models/zombies/shield/shield.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "shield-lod",
+      "path": "assets/models/zombies/shield/shield-lod.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "split-hero",
+      "path": "assets/models/zombies/split/split.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "split-lod",
+      "path": "assets/models/zombies/split/split-lod.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "spitter-hero",
+      "path": "assets/models/zombies/spitter/spitter.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "spitter-lod",
+      "path": "assets/models/zombies/spitter/spitter-lod.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "elite-hero",
+      "path": "assets/models/zombies/elite/elite.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "elite-lod",
+      "path": "assets/models/zombies/elite/elite-lod.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "bomber-hero",
+      "path": "assets/models/zombies/bomber/bomber.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "bomber-lod",
+      "path": "assets/models/zombies/bomber/bomber-lod.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "bruiser-hero",
+      "path": "assets/models/bosses/bruiser/bruiser.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "bruiser-lod",
+      "path": "assets/models/bosses/bruiser/bruiser-lod.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "bulwark-hero",
+      "path": "assets/models/bosses/bulwark/bulwark.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "bulwark-lod",
+      "path": "assets/models/bosses/bulwark/bulwark-lod.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "spitking-hero",
+      "path": "assets/models/bosses/spitking/spitking.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "spitking-lod",
+      "path": "assets/models/bosses/spitking/spitking-lod.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "hivelord-hero",
+      "path": "assets/models/bosses/hivelord/hivelord.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "hivelord-lod",
+      "path": "assets/models/bosses/hivelord/hivelord-lod.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "titan-hero",
+      "path": "assets/models/bosses/titan/titan.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "titan-lod",
+      "path": "assets/models/bosses/titan/titan-lod.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "overlord-hero",
+      "path": "assets/models/bosses/overlord/overlord.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "overlord-lod",
+      "path": "assets/models/bosses/overlord/overlord-lod.glb",
+      "kind": "mesh",
+      "source": {
+        "kind": "original-procedural",
+        "tool": "Blender 4.2.15",
+        "script": "tools/create-enemies.py"
+      },
+      "license": "Project-original; no external mesh",
+      "alpha": "opaque",
+      "pivot": "feet at Y0; +Y up, +Z forward; five-part origins in catalog",
+      "collision": "visual only",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "world-materials",
+      "path": "assets/art-v121/world-materials.jpg",
+      "kind": "diffuse-atlas",
+      "size": [
+        1024,
+        512
+      ],
+      "alpha": "opaque",
+      "source": {
+        "kind": "ai-generated",
+        "tool": "image_gen",
+        "record": "docs/design/art-v121-source/README.md",
+        "normalization": "tools/prepare-world-art-v121.py"
+      },
+      "license": "New generated project artwork; no third-party download; platform AI disclosure if required",
+      "collision": "none",
+      "technical_checks_passed": true
+    },
+    {
+      "id": "theme-geometry",
+      "path": "js/scenery-v121.js",
+      "kind": "procedural-instanced-meshes",
+      "themes": [
+        "default",
+        "cave",
+        "mechanical",
+        "fortress",
+        "apocalypse"
+      ],
+      "source": {
+        "kind": "original-code",
+        "tool": "Three.js149"
+      },
+      "license": "Project-original",
+      "collision": "none",
+      "technical_checks_passed": true
+    }
+  ]
+}
